@@ -269,7 +269,7 @@ response_plan = await iicp_client.coordinate_crisis_response(crisis_response)
 ## 🏗️ Technical Foundation
 
 ### Protocol Specification
-The complete technical specification is available in [draft_1.4.2.txt](./draft_1.4.2.txt), which includes:
+The complete technical specification is available in [IICP_IICP_draft_1.4.2.txt](./IICP_IICP_draft_1.4.2.txt), which includes:
 
 - **Message Types**: 14 standardized message types for all communication patterns
 - **Security Framework**: Post-quantum cryptography and decentralized identity
@@ -416,7 +416,7 @@ We seek rUv Network's assessment on:
 
 ## 📚 Resources
 
-- **Technical Specification**: [draft_1.4.2.txt](./draft_1.4.2.txt)
+- **Technical Specification**: [IICP_draft_1.4.2.txt](./IICP_draft_1.4.2.txt)
 - **rUv Network Projects**: [https://github.com/ruvnet](https://github.com/ruvnet)
 - **Community Forum**: [Coming Soon]
 - **Developer Documentation**: [Coming Soon]
