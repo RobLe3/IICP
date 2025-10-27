@@ -454,5 +454,3 @@ Special thanks to:
 - **rUv Network** for innovative protocols that inspired IICP's design philosophy and provided specific integration components (QuDAG transport)
 - **The global AI research community** for creating the foundation upon which this work builds
 - **All contributors** who believe in a more open and collaborative future for artificial intelligence
-
-*Note: IICP is an independent protocol specification. While it provides QuDAG transport integration, the core protocol design, sub-protocol encapsulation concept, and universal routing capabilities are original innovations.*
