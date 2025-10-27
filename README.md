@@ -1,5 +1,7 @@
 # IICP: Intent-based Inter-agent Communication Protocol
 
+![IICP Logo](IICP_Logo.webp)
+
 *Building the HTTP for the Age of Generative AI*
 
 > **Note on Naming**: The initial working name "SYNAPSE" may not be freely available for use and could have trademark or branding conflicts. For now, this specification is referred to as **IICP** (Intent-based Inter-agent Communication Protocol). We welcome community suggestions for a more descriptive and freely available name that better captures the vision of universal AI agent communication and the Internet of AI (IoA) concept.
