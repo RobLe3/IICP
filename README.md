@@ -77,11 +77,6 @@ IICP provides integration pathways for rUv Network's protocols:
    - Support for quantum-resistant distributed communication
    - Compatible with rUv Network's "darknet for agent swarms" architecture
 
-2. **Agent Name Service (ANS) Integration**: 
-   - Incorporates rUv Network's ANS framework for agent discovery
-   - Enhanced security through IICP's post-quantum cryptography
-   - Unified namespace management across protocol families
-
 ### Original IICP Innovations
 
 IICP introduces novel capabilities for universal AI protocol transport:
@@ -101,7 +96,7 @@ IICP introduces novel capabilities for universal AI protocol transport:
 
 Rather than replacing existing protocols, IICP embraces a **collaborative ecosystem approach**:
 - Existing rUv Network deployments can integrate IICP as an overlay
-- IICP gateways can route to QuDAG, ANS, and other specialized networks
+- IICP gateways can route to QuDAG and other specialized networks
 - Cross-protocol interoperability enables broader AI resource sharing
 
 ## 🌍 The Torrent-Like AI Cloud Vision
@@ -343,17 +338,12 @@ We specifically invite **[rUv Network](https://github.com/ruvnet)** to evaluate 
    - Performance implications of gossip-based routing with IICP messages
    - Security model alignment between IICP and QuDAG encryption
 
-2. **ANS Framework Integration**
-   - Compatibility between IICP intent-based discovery and ANS protocols
-   - Namespace management across IICP and ANS systems
-   - Migration pathways for existing ANS deployments
-
-3. **Ecosystem Implementation Readiness**
+2. **Ecosystem Implementation Readiness**
    - Resource requirements for IICP integration into rUv Network infrastructure
    - Timeline and complexity for Claude Flow / Agentic Flow integration
    - Potential performance benefits of unified protocol layer
 
-4. **IoA Multiplier Effect**
+3. **IoA Multiplier Effect**
    - Scalability potential when combining IICP routing with rUv Network's swarm intelligence
    - Cross-protocol interoperability benefits for the broader AI ecosystem
    - Community adoption acceleration through proven infrastructure
@@ -461,9 +451,8 @@ This project is released under the MIT License to ensure maximum accessibility a
 ## 🙏 Acknowledgments
 
 Special thanks to:
-- **rUv Network** for innovative protocols that inspired IICP's design philosophy and provided specific integration components (QuDAG transport, ANS framework)
-- **OWASP GenAI Security Project** for security frameworks and standards
+- **rUv Network** for innovative protocols that inspired IICP's design philosophy and provided specific integration components (QuDAG transport)
 - **The global AI research community** for creating the foundation upon which this work builds
 - **All contributors** who believe in a more open and collaborative future for artificial intelligence
 
-*Note: IICP is an independent protocol specification. While it incorporates rUv Network's ANS framework and provides QuDAG transport integration, the core protocol design, sub-protocol encapsulation concept, and universal routing capabilities are original innovations.*
+*Note: IICP is an independent protocol specification. While it provides QuDAG transport integration, the core protocol design, sub-protocol encapsulation concept, and universal routing capabilities are original innovations.*
