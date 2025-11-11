@@ -271,7 +271,7 @@ response_plan = await iicp_client.coordinate_crisis_response(crisis_response)
 ## 🏗️ Technical Foundation
 
 ### Protocol Specification
-The complete technical specification is available in [IICP_IICP_draft_1.4.2.txt](./IICP_IICP_draft_1.4.2.txt), which includes:
+The complete technical specification is available in [IICP_draft_1.4.2.txt](./IICP_draft_1.4.2.txt), which includes:
 
 - **Message Types**: 14 standardized message types for all communication patterns
 - **Security Framework**: Post-quantum cryptography and decentralized identity
