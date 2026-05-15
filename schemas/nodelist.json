@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/spec/schemas/nodelist.json",
+  "title": "NodeListResponse",
+  "description": "Response to GET /v1/discover. Returns nodes pre-scored and pre-sorted by the directory. See spec/iicp-dir.md §2.3 and project/ARCHITECTURE.md §Discovery.",
+  "type": "object",
+  "required": ["nodes"],
+  "additionalProperties": false,
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "description": "Ordered list of eligible nodes, highest score first. Empty array if no eligible nodes exist.",
+      "items": {
+        "$ref": "#/$defs/NodeSummary"
+      }
+    }
+  },
+  "$defs": {
+    "NodeSummary": {
+      "type": "object",
+      "required": ["node_id", "endpoint", "score", "available"],
+      "additionalProperties": false,
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Globally unique node identifier assigned at registration."
+        },
+        "endpoint": {
+          "type": "string",
+          "format": "uri",
+          "description": "HTTPS base URL for submitting tasks to this node."
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Directory-computed ADR-008 composite score. Nodes with score < 0.1 are excluded."
+        },
+        "latency_estimate_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Estimated round-trip latency in milliseconds based on recent heartbeat timing. Optional; omit if unavailable."
+        },
+        "available": {
+          "type": "boolean",
+          "description": "True if node is within its availability window AND last_seen within 90 seconds."
+        },
+        "region": {
+          "type": "string",
+          "description": "Region declared by the node at registration (e.g. eu-central). Optional."
+        },
+        "capabilities": {
+          "type": "array",
+          "description": "Capability subset relevant to the requested intent. Full capabilities available via GET /v1/node/{id}.",
+          "items": {
+            "type": "object",
+            "required": ["intent"],
+            "properties": {
+              "intent": {
+                "type": "string",
+                "pattern": "^urn:iicp:intent:[a-z0-9_-]+:[a-z0-9_-]+:v[0-9]+$"
+              },
+              "models": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "nodes": [
+        {
+          "node_id": "550e8400-e29b-41d4-a716-446655440001",
+          "endpoint": "https://node1.example.com",
+          "score": 0.91,
+          "latency_estimate_ms": 120,
+          "available": true,
+          "region": "eu-central",
+          "capabilities": [
+            {
+              "intent": "urn:iicp:intent:llm:chat:v1",
+              "models": ["llama3", "mistral"]
+            }
+          ]
+        },
+        {
+          "node_id": "550e8400-e29b-41d4-a716-446655440002",
+          "endpoint": "https://node2.example.com",
+          "score": 0.74,
+          "latency_estimate_ms": 210,
+          "available": true
+        }
+      ]
+    }
+  ]
+}

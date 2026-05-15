@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/spec/schemas/task.json",
+  "title": "IicpTask",
+  "description": "IICP task submission message (Phase 1 wire format). See spec/iicp-core.md §3.",
+  "type": "object",
+  "required": ["task_id", "intent", "payload", "constraints", "auth"],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "UUID v4 unique identifier for this task. MUST be globally unique per CALL."
+    },
+    "intent": {
+      "type": "string",
+      "pattern": "^urn:iicp:intent:[a-z0-9_-]+:[a-z0-9_-]+:v[0-9]+$",
+      "description": "Intent URN identifying the task type. Format: urn:iicp:intent:<domain>:<action>:v<N>."
+    },
+    "payload": {
+      "type": "object",
+      "description": "Opaque task payload. Structure is intent-specific. MUST NOT be logged by intermediaries."
+    },
+    "constraints": {
+      "type": "object",
+      "required": ["timeout_ms"],
+      "additionalProperties": false,
+      "properties": {
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 300000,
+          "description": "Maximum execution time in milliseconds. Provider MUST abort task if exceeded."
+        },
+        "qos": {
+          "type": "string",
+          "enum": ["interactive", "batch", "best-effort"],
+          "default": "interactive",
+          "description": "Quality-of-service hint for scheduling priority."
+        },
+        "region": {
+          "type": "string",
+          "description": "Optional preferred region for execution (e.g. eu-central)."
+        }
+      }
+    },
+    "trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "trace_id": {
+          "type": "string",
+          "description": "Distributed trace identifier. Propagated as X-IICP-Trace-Id."
+        },
+        "origin_node": {
+          "type": "string",
+          "format": "uuid",
+          "description": "node_id of the originating proxy or node."
+        }
+      }
+    },
+    "auth": {
+      "type": "object",
+      "required": ["node_token"],
+      "additionalProperties": false,
+      "properties": {
+        "node_token": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Bearer token issued at node registration. Phase 1: static token. Phase 2+: JWT."
+        }
+      }
+    },
+    "billing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_credits": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Maximum credits the sender authorises for this task. Phase 3+ only."
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["standard", "premium"],
+          "description": "Premium tasks get priority queue placement. Phase 3+ only."
+        }
+      },
+      "description": "Optional billing constraints. Ignored in Phase 1."
+    }
+  },
+  "examples": [
+    {
+      "task_id": "550e8400-e29b-41d4-a716-446655440000",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "payload": {
+        "messages": [{ "role": "user", "content": "Hello" }]
+      },
+      "constraints": {
+        "timeout_ms": 5000,
+        "qos": "interactive"
+      },
+      "trace": {
+        "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+        "origin_node": "123e4567-e89b-12d3-a456-426614174000"
+      },
+      "auth": {
+        "node_token": "iicp_tok_example"
+      }
+    }
+  ]
+}

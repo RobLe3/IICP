@@ -1,0 +1,175 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-05-14",
+  "authority": "https://iicp.network",
+  "description": "IICP Intent URN Registry \u2014 authoritative list of defined intents. New intents require Protocol Steward sign-off.",
+  "intents": [
+    {
+      "urn": "urn:iicp:intent:llm:chat:v1",
+      "name": "LLM Chat Completion",
+      "description": "Multi-turn chat completion using the messages array format (OpenAI-compatible).",
+      "payload_schema": {
+        "messages": "array of {role: string, content: string}",
+        "max_tokens": "integer (optional)",
+        "temperature": "float 0-2 (optional)",
+        "stop": "array of strings (optional)"
+      },
+      "phase": 1,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:llm:completion:v1",
+      "name": "LLM Text Completion",
+      "description": "Single-turn text completion from a prompt string.",
+      "payload_schema": {
+        "prompt": "string",
+        "max_tokens": "integer (optional)",
+        "temperature": "float 0-2 (optional)"
+      },
+      "phase": 1,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:llm:embedding:v1",
+      "name": "Text Embedding",
+      "description": "Generate dense vector embedding(s) from input text.",
+      "payload_schema": {
+        "input": "string or array of strings"
+      },
+      "phase": 1,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:code:lint:v1",
+      "name": "Code Lint and Analysis",
+      "description": "Static analysis and lint of code. Returns issues with severity and location.",
+      "payload_schema": {
+        "code": "string",
+        "language": "string",
+        "rules": "array of strings (optional)"
+      },
+      "phase": 1,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:code:optimize:v1",
+      "name": "Code Optimization",
+      "description": "Suggest or apply optimizations to code.",
+      "payload_schema": {
+        "code": "string",
+        "language": "string",
+        "target": "string (optional: performance | readability | size)"
+      },
+      "phase": 1,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:research:summarize:v1",
+      "name": "Research Summarization",
+      "description": "Summarize a long document or set of documents.",
+      "payload_schema": {
+        "documents": "array of strings",
+        "format": "string (optional: bullet | paragraph | abstract)",
+        "max_length": "integer (optional)"
+      },
+      "phase": 1,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:education:tutor:v1",
+      "name": "Educational Tutoring",
+      "description": "Provide tutoring, explanation, or guided problem-solving on a topic.",
+      "payload_schema": {
+        "topic": "string",
+        "level": "string (optional: beginner | intermediate | advanced)",
+        "question": "string"
+      },
+      "phase": 1,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:translate:v1",
+      "name": "Text Translation",
+      "description": "Translate text from one natural language to another.",
+      "payload_schema": {
+        "text": "string",
+        "source_language": "string (optional: auto-detect if absent)",
+        "target_language": "string"
+      },
+      "phase": 1,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:classify:v1",
+      "name": "Text Classification",
+      "description": "Classify text into one or more categories from a provided set.",
+      "payload_schema": {
+        "text": "string",
+        "categories": "array of strings",
+        "multi_label": "boolean (optional, default false)"
+      },
+      "phase": 1,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:embedding:multimodal:v1",
+      "name": "Multimodal Embedding",
+      "description": "Generate embeddings from mixed text and image inputs.",
+      "payload_schema": {
+        "inputs": "array of {type: 'text'|'image_url', content: string}"
+      },
+      "phase": 1,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:mcp:tools/call:v1",
+      "name": "MCP Tool Call",
+      "description": "Execute an MCP tool call via IICP transport. Formal binding spec: spec/iicp-mcp-binding.md (Phase 2).",
+      "payload_schema": {
+        "tool_name": "string",
+        "arguments": "object"
+      },
+      "phase": 2,
+      "status": "reserved"
+    },
+    {
+      "urn": "urn:iicp:intent:llm:summarize:v1",
+      "name": "LLM Summarization",
+      "description": "Summarize a document or long text into a condensed form. Part of the Cooperative Inference Profile (Phase 5).",
+      "payload_schema": {
+        "text": "string",
+        "max_length": "integer (optional \u2014 target word count)",
+        "format": "string (optional: bullets | paragraph | headline)",
+        "language": "string (optional: ISO 639-1, default source language)"
+      },
+      "phase": 5,
+      "status": "reserved"
+    },
+    {
+      "urn": "urn:iicp:intent:llm:classify:v1",
+      "name": "LLM Classification",
+      "description": "Classify text using an LLM with optional chain-of-thought. Complements urn:iicp:intent:classify:v1 which is label-only. Part of the Cooperative Inference Profile (Phase 5).",
+      "payload_schema": {
+        "text": "string",
+        "categories": "array of strings",
+        "multi_label": "boolean (optional, default false)",
+        "explain": "boolean (optional \u2014 return reasoning)"
+      },
+      "phase": 5,
+      "status": "reserved"
+    },
+    {
+      "urn": "urn:iicp:intent:llm:rerank:v1",
+      "name": "LLM Reranking",
+      "description": "Rerank a list of candidate passages or results by relevance to a query using an LLM or cross-encoder. Part of the Cooperative Inference Profile (Phase 5).",
+      "payload_schema": {
+        "query": "string",
+        "candidates": "array of strings",
+        "top_k": "integer (optional)",
+        "return_scores": "boolean (optional, default false)"
+      },
+      "phase": 5,
+      "status": "reserved"
+    }
+  ]
+}
