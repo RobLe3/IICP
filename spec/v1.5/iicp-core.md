@@ -1,7 +1,7 @@
 # IICP Core — Wire Format and Mandatory Requirements
 
-**Version**: 1.0.0
-**Date**: 2026-05-15
+**Version**: 1.2.0
+**Date**: 2026-05-18
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -65,7 +65,7 @@ Content-Type: `application/json`
 | `endpoint` | string (URL) | HTTPS only; MUST be validated by directory liveness check before token issued [→ DIR-REG-04] |
 | `region` | string | IANA-style tag (e.g., `us-west`, `eu-central`); max 64 chars |
 | `capabilities` | array | MUST contain at least one capability object |
-| `capabilities[].intent` | string | MUST match `urn:iicp:intent:<domain>:<action>:v<N>` format |
+| `capabilities[].intent` | string | Standard: `urn:iicp:intent:<domain>:<action>:v<N>`; Custom: `urn:iicp:intent:x.<vendor>:<action>:v<N>` — see `iicp-semantics.md §1.1` |
 | `capabilities[].models` | array | At least one model name string |
 | `capabilities[].max_tokens` | integer | MUST be > 0 |
 | `limits.max_concurrent` | integer | MUST be in range 1–256 |
@@ -78,6 +78,8 @@ Content-Type: `application/json`
 | `node_id` | UUID v4 | Client MAY provide; directory generates if absent |
 | `public_key` | base64 string | Phase 2 signing key; ignored in Phase 1 |
 | `availability` | array | Time-based sharing windows (see `iicp-semantics.md`) |
+| `capabilities[].quantization` | string | Advisory. One of `fp16`, `q8`, `q5_k_m`, `q4_k_m`. Helps trust scoring and output fingerprinting. Directory MUST NOT reject an unrecognised value; treat as absent. |
+| `capabilities[].inference_engine` | string | Advisory. One of `vllm`, `llama.cpp`, `tgi`, `ollama`. Used by trust auditors to build per-engine fingerprint references. Directory MUST NOT reject an unrecognised value; treat as absent. |
 
 ### 2.2 Response (ACK)
 
@@ -88,7 +90,8 @@ HTTP 201 Created
   "node_id": "uuid-v4",
   "node_token": "opaque-32-byte-hex",
   "expires_at": null,
-  "directory": "https://iicp.network"
+  "directory": "https://iicp.network",
+  "observed_source_ip": "203.0.113.42"
 }
 ```
 
@@ -97,6 +100,7 @@ MUST requirements:
 - `node_token` MUST be returned exactly once in plaintext; the directory MUST store only the bcrypt hash [→ DIR-REG-07]
 - Directory MUST perform a liveness check (`GET {endpoint}/iicp/health`) before issuing a token [→ DIR-REG-04]
 - Directory MUST rate-limit: 10 INIT requests per minute per source IP [→ DIR-RL-01]
+- ACK MUST include `observed_source_ip` — the source IP the directory observed for this request [→ DIR-ADDR-02]
 
 ---
 
@@ -122,7 +126,9 @@ Content-Type: `application/json`
 
 | Field | Type | Notes |
 |-------|------|-------|
-| `constraints.qos` | string | `interactive` \| `batch` \| `best-effort` — see `iicp-semantics.md` |
+| `constraints.qos` | string | `realtime` \| `interactive` \| `batch` \| `best-effort` — see `iicp-semantics.md` §2.1 |
+| `constraints.priority` | string | `low` \| `normal` (default) \| `high` \| `critical` — client-declared task urgency, orthogonal to `qos`. Adapter SHOULD use this to order tasks when concurrency slots are contested (higher priority tasks scheduled ahead of lower). Proxy SHOULD prefer nodes with available `critical`/`high` capacity when routing high-priority tasks. MAY be ignored by Phase 5 adapters. |
+| `constraints.consensus` | string | `none` (default) \| `first_completed` \| `majority_of_3` \| `majority_of_5` — see §3.3 |
 | `trace.trace_id` | 16-byte hex | Propagated for observability |
 | `trace.origin_node` | UUID | Identifies the requesting proxy |
 
@@ -144,12 +150,56 @@ HTTP 200 OK
     "latency_ms": 320,
     "tokens_used": 120
   },
+  "model_used": "llama-3-8b",
   "error": null
 }
 ```
 
+**Optional response fields**
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `model_used` | string | Actual model identifier used for this inference. Adapter SHOULD include in every successful response. Allows proxy to verify declared model matches execution. |
+| `attestation_receipt` | string (base64) | Signed execution proof. OPTIONAL — Phase 6 prerequisite. Requires ADR-024 (signed message envelope, #155) and identity slot (#150). Adapters MUST NOT include until ADR-024 is ratified. |
+
 On error: `status = "error"`, `result = null`, `error = {"code": "...", "message": "..."}`.
 Error responses MUST NOT include stack traces, file paths, or database structure [→ ERR-2].
+
+### 3.3 Consensus Mode (`constraints.consensus`)
+
+**Phase 5 — opt-in cross-validation inference.**
+
+When `constraints.consensus` is set to a value other than `none`, the proxy MUST submit the
+task to N nodes in parallel and apply the specified aggregation strategy:
+
+| Value | Nodes | Agreement rule | Credit cost |
+|-------|-------|----------------|-------------|
+| `none` | 1 (default) | First success returned | 1× |
+| `first_completed` | N (configured) | Fastest response wins | N× |
+| `majority_of_3` | 3 | ≥ 2 agree (exact match or embedding similarity ≥ 0.95) | 3× |
+| `majority_of_5` | 5 | ≥ 3 agree | 5× |
+
+**Normative requirements:**
+
+- Proxy MUST charge N× credits when consensus mode is active [→ billing, ADR-019].
+- When ≥ 2 nodes disagree and no majority is reached, proxy MUST return HTTP 502
+  with error code `no_consensus`.
+- Outlier nodes (response outside the consensus cluster) MUST receive a reputation
+  delta of −0.15 per `iicp-semantics.md` §11 delta rules.
+- `first_completed` mode MUST cancel in-flight requests to other nodes after the
+  first successful response (resource cleanup obligation).
+
+**Mapping to full CIP `cip` block** (for implementations using the detailed protocol):
+`constraints.consensus` is a shorthand over the `cip` object in `spec/iicp-cooperative-inference.md`:
+
+| `constraints.consensus` | `cip.policy` | `cip.replicas` |
+|------------------------|--------------|----------------|
+| `none` | — (no `cip` block) | — |
+| `first_completed` | `best_of_n` | 2+ (impl choice) |
+| `majority_of_3` | `majority_vote` | 3 |
+| `majority_of_5` | `majority_vote` | 5 |
+
+Implementations MAY accept either form; the `cip` block takes precedence if both are present.
 
 ---
 
@@ -176,6 +226,7 @@ Authorization header MUST be present and valid. Invalid or absent token → 401 
 | `load` | float 0–1 | `active_jobs / max_concurrent` |
 | `active_jobs` | integer | Current concurrent task count |
 | `available` | boolean | Whether node is currently accepting tasks |
+| `sla_p95_ms` | integer ≥ 0 | Declared p95 latency SLA in milliseconds. Directory stores this and MAY expose it in discovery responses. When declared, the directory SHOULD compare against observed telemetry (§T4) and flag nodes whose observed p95 consistently exceeds their declared SLA. Absence means the node makes no latency SLA declaration. |
 
 ### 4.2 Response (PONG)
 
@@ -196,7 +247,7 @@ Discovery in Phase 1 is a directory REST query.
 
 | Parameter | Required | Constraint |
 |-----------|---------|-----------|
-| `intent` | MUST | Full `urn:iicp:intent:*:v*` URN |
+| `intent` | MUST | Standard: `urn:iicp:intent:*:v*`; Custom: `urn:iicp:intent:x.<vendor>:*:v*` |
 | `qos` | SHOULD | `interactive` \| `batch` \| `best-effort` |
 | `region` | MAY | Preference, not exclusion |
 | `limit` | MAY | Default 10, max 50 |
@@ -229,12 +280,35 @@ MUST requirements:
 
 ## 6. Transport
 
-| Aspect | Phase 1 (MUST) | Phase 2+ |
-|--------|---------------|----------|
-| Encoding | JSON | CBOR (Phase 3) |
-| Transport | HTTPS/1.1 or HTTPS/2 | QUIC (Phase 3), QuDAG (Phase 2) |
-| TLS version | TLS 1.3 MUST [→ SEC-TLS-01] | — |
-| Auth | Bearer node_token | JWT (Phase 2), DID (Phase 3), PQ (Phase 4) |
+**Port assignment**: Port **9484** is the canonical IICP protocol port (TCP and UDP). All
+node-to-node and node-to-directory communication MUST use port 9484 unless an alternative
+is explicitly negotiated during registration. See §11.3 for address-learning requirements.
+
+| Aspect | Phase 1 (deployed) | Phase 2 (deployed) | Phase 3 (target) | Phase 4+ (roadmap) |
+|--------|-------------------|--------------------|-------------------|---------------------|
+| Port | 9484 TCP (MUST) | 9484 TCP (MUST) | 9484 TCP (MUST) | 9484 TCP + UDP (MUST) |
+| Encoding | JSON | JSON + CBOR optional | CBOR preferred (`application/cbor`) | CBOR (default) |
+| Transport | HTTPS/1.1 or HTTPS/2 | HTTPS/2 | HTTP/2 on port 9484 | QUIC on port 9484 UDP |
+| Framing | REST (no custom framing) | REST + HMAC-SHA256 envelope | REST (IICP binary framing optional) | Native IICP binary framing |
+| TLS version | TLS 1.3 MUST [→ SEC-TLS-01] | TLS 1.3 MUST | TLS 1.3 MUST | TLS 1.3 + PQ option |
+| Auth | Bearer node_token | JWT HS256 | W3C DID (Phase 3+) | PQ — Dilithium3 |
+| Peer discovery | Directory REST | Gossip (PEER_EXCHANGE) | DID-resolved mesh | — |
+
+**Phase 1 rationale (ADR-002)**: JSON over HTTPS was chosen for Phase 1 to maximise
+tooling compatibility and minimise implementation risk at PoC scale. CBOR and QUIC were
+deferred explicitly to Phase 3 (see `project/decisions/ADR-002-phase1-transport.md`).
+
+**Phase 3 transport resolution**: Phase 3 is now deployed. HTTP/2 on port 9484 TCP is
+the current mandatory transport for node-to-node CALL/RESPONSE exchanges. CBOR is accepted
+as an alternative encoding when the client sends `Content-Type: application/cbor` — the
+directory and adapter MUST respond in CBOR if the request was CBOR-encoded. QUIC on port
+9484 UDP is the Phase 4 target and is tracked in issue #230.
+
+**Network standard intent**: IICP is designed to become a network-level standard for
+AI-to-AI communication — analogous to HTTP for web resources or SQL for data. The
+IETF Standards Track intent from v1.4.2 (QUIC + CBOR + QuDAG + port 9484) was never
+abandoned; it was phased. All implementations SHOULD register on port 9484 to build the
+network effect needed for standardisation.
 
 All components MUST validate TLS certificates on outbound connections.
 Plaintext HTTP connections to IICP endpoints MUST be rejected.
@@ -250,9 +324,10 @@ Plaintext HTTP connections to IICP endpoints MUST be rejected.
 | `not_found` | 404 | node_id not in registry |
 | `conflict` | 409 | Duplicate task_id (idempotency — ADR-010) |
 | `rate_limited` | 429 | Registration rate limit exceeded |
-| `capacity_exceeded` | 429 | max_concurrent reached at adapter |
+| `capacity_exceeded` | 429 | max_concurrent reached at adapter; body MUST include `qos_class` and `retry_after_ms` (§2.2) |
 | `task_timeout` | 504 | Task exceeded constraints.timeout_ms |
 | `backend_error` | 502 | Inference backend failed (details not exposed) |
+| `no_consensus` | 502 | Consensus mode active and no majority agreement reached (§3.3) |
 | `validation_error` | 422 | Input schema validation failed |
 
 All error responses MUST use structured JSON:
@@ -260,6 +335,35 @@ All error responses MUST use structured JSON:
 ```json
 { "error": { "code": "<code>", "message": "<human-readable>" } }
 ```
+
+The full IICP-E numeric code registry (IICP-E001 through IICP-E032) is maintained in
+`project/ARCHITECTURE.md §Error Codes`. Implementations MUST use those codes on the wire;
+the slug codes above are the Phase 1 canonical names. Phase 2 / Phase 3 / Phase 5 codes
+in active use:
+
+**Phase 5 — Cooperative Inference (S.12)**
+
+| Code | HTTP | Component | Meaning |
+|------|------|-----------|---------|
+| `IICP-E020` | 403 | Adapter (Worker) | Coordinator reputation below provider's `minimum_reputation` floor |
+| `IICP-E021` | 503 | Adapter (Worker) | Worker at `max_concurrent_remote` capacity — reject without queuing |
+| `IICP-E022` | 503 | Proxy (Coordinator) | No CIP-eligible workers available for dispatch (S.12 §2.2) |
+| `IICP-E023` | 429 | Adapter (Worker) | Policy evaluation rate limit exceeded (TC-9b / resource protection) |
+| `IICP-E024` | 504 | Proxy (Coordinator) | All dispatched workers timed out within `worker_timeout` |
+| `IICP-E025` | 422 | Proxy (Coordinator) | Invalid replica count for `majority_vote` — must be odd ≥ 3 |
+| `IICP-E026` | 422 | Proxy (Coordinator) | Incomplete map-reduce split — coverage gaps detected before dispatch |
+| `IICP-E027` | 422 | Directory | CIPWorkerReceipt HMAC-SHA256 signature invalid, absent, or HMAC key not provisioned; credit ceiling violation (TC-9c: amount exceeds `ceil(tokens/1000)×multiplier×1.1`); nonce replay (TC-9d: nonce already seen); credit award rate limit exceeded (TC-9b: >1000 credits/hour per node_id, per S.12 §10.6) |
+| `IICP-E028` | 422 | Proxy / Adapter | Invalid CIP field value — `cip.policy` enum, `cip.replicas` range, `cip_role` value, or `cip_parent_task_id` format |
+
+**Phase 2 / Phase 3 — Mesh + Model Routing**
+
+| Code | HTTP | Component | Meaning |
+|------|------|-----------|---------|
+| `IICP-E029` | 404 | Adapter | Model not registered on this adapter node (model_task handler) |
+| `IICP-E030` | 404 | Adapter | Relay target peer not in peer list — peer list may be stale (30 s gossip cycle) |
+| `IICP-E031` | 502 | Adapter | Relay forwarding to target peer failed — peer unreachable or returned error |
+| `IICP-E032` | 401 | Directory | Invalid or missing proxy_token — `POST /v1/telemetry` requires proxy_token Bearer, not node_token |
+| `IICP-E033` | 503 | Proxy (Client) | No nodes serve this intent — directory was reachable and returned 0 candidates after intent + region + reputation filtering. Distinct from generic "no_available_node" (which conflates this with directory unreachability). Operator next-step: verify intent URN, check `/nodes` page for matching capabilities, or wait for new providers. |
 
 ---
 
@@ -271,6 +375,7 @@ All error responses MUST use structured JSON:
 - Adapter MUST validate `node_token` on every `POST /v1/task` [→ TASK-1]
 - Error responses MUST NOT include stack traces, file paths, or DB structure [→ ERR-2]
 - Task payloads MUST NOT appear in logs [→ SEC-LOG-01]
+- **Privacy**: Implementers and operators MUST inform clients that the inference-executing node receives the full task payload in plaintext, including any user-provided content. IICP provides confidentiality for transit (TLS 1.3) and isolation of the directory from payload content; it does not provide confidentiality against the inference-executing node. [→ SEC-PRIV-01]
 
 ---
 
@@ -298,11 +403,92 @@ conformance test suite. Any conformant implementation MUST pass all tests with a
 
 ---
 
+## 11. Implicit Address Learning
+
+IICP directories observe the source IP of every authenticated request and make
+this observation available to the registering node. Nodes have no reliable way
+to self-report their externally-visible IP; the directory provides an authoritative
+view.
+
+### 11.1 Requirements (DIR-ADDR-01 — DIR-ADDR-07)
+
+**DIR-ADDR-01** — The directory MUST record the source IP address observed on
+every `POST /v1/register` request, independent of any `endpoint` field supplied
+by the registering node.
+
+**DIR-ADDR-02** — The directory MUST include `observed_source_ip` in the ACK
+response body (HTTP 201) of every successful registration. The value MUST be the
+IP the directory observed for that specific HTTP request, not a cached or inferred
+value.
+
+**DIR-ADDR-03** — The directory MUST update the stored `observed_source_ip` on
+every valid (authenticated) `POST /v1/heartbeat` from a registered node. The
+most-recently-observed IP is the authoritative value.
+
+**DIR-ADDR-04** — The directory MUST expose `GET /v1/me` as an authenticated
+endpoint. A node presenting a valid `node_token` MUST receive:
+
+```json
+{
+  "node_id": "uuid-v4",
+  "observed_source_ip": "203.0.113.42",
+  "endpoint": "https://node.example.com"
+}
+```
+
+The `endpoint` field is the value the node registered; `observed_source_ip` is
+what the directory currently records for that node.
+
+**DIR-ADDR-05** — The directory MUST extract the client IP from the
+`CF-Connecting-IP` header when present (Cloudflare proxy). If absent, it MUST
+fall back to `X-Forwarded-For` (first value), then to the raw TCP source IP.
+The directory MUST NOT trust these headers on unauthenticated requests for any
+security-sensitive decision; address observation is informational only.
+
+**DIR-ADDR-06** — The directory MUST persist address history. Each observed IP
+event (register, heartbeat) MUST be stored as an immutable record with the
+request type and timestamp. The history MUST be retained for at least 30 days.
+
+**DIR-ADDR-07** — The directory MUST NOT expose address history records to any
+caller other than the owning node. `GET /v1/me` returns only the current
+observed IP, not the full history. History access is operator-internal only.
+
+### 11.2 Proxy Client Behaviour
+
+A conformant proxy MUST parse `observed_source_ip` from the ACK on registration.
+
+If the `observed_source_ip` does not match the hostname resolved from the
+configured `endpoint`, the proxy SHOULD log a warning at WARNING level:
+
+```
+[WARN] Observed external IP <ip> does not match endpoint host <host> —
+       this node may be behind NAT or a misconfigured reverse proxy.
+```
+
+The proxy MUST expose the most-recently-observed IP in the output of any
+status or health command (e.g., `iicp-proxy status`).
+
+### 11.3 Default Port
+
+Port **9484** (TCP and UDP) is the default IICP port for node-to-directory
+and node-to-node communication. This port is IANA-unassigned and is reserved
+for IICP use. Implementations SHOULD listen on port 9484 by default and MUST
+advertise it in registered `endpoint` URLs when no other port is specified.
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
 | 1.0.0 | 2026-05-15 | Initial draft — extracted from IICP_draft_1.4.2.txt and IICP-core-phase1-profile.md as part of S.5 spec split |
+| 1.1.0 | 2026-05-15 | Added §11 Implicit Address Learning (DIR-ADDR-01..07) and default port 9484 |
+| 1.2.0 | 2026-05-17 | §3.1: added constraints.consensus optional field; added realtime to constraints.qos values. §3.3: Consensus Mode — majority_of_3, majority_of_5, first_completed; no_consensus 502; N× credit cost; outlier −0.15 reputation. §7: no_consensus error code; capacity_exceeded note (qos_class+retry_after_ms). Closes #120 (spec). |
+| 1.2.5 | 2026-05-21 | §7: added IICP-E033 (Proxy 503 — no nodes serve this intent, distinct from "no_available_node" runtime-failure code). Actionable next-step text included (verify intent URN / check /nodes / wait for providers). Closes WQ-030 friction #3 from iter-318 happy-path audit. |
+| 1.2.4 | 2026-05-20 | §2.1: added optional `capabilities[].quantization` and `capabilities[].inference_engine` advisory fields. Enables output fingerprinting (#118) and per-engine trust scoring. Directory MUST NOT reject unrecognised values. |
+| 1.2.3 | 2026-05-20 | §7: IICP-E027 description extended to cover TC-9b credit award rate limit rejection (>1000 credits/hour per node_id, per S.12 §10.6). Cross-references TC-9b/TC-9c/TC-9d inline. |
+| 1.2.2 | 2026-05-19 | §7: added Phase 5 CIP error codes IICP-E020..E028 to the active-use table; split Phase 2/3 and Phase 5 sections; IICP-E027 description updated to cover hmac_key_not_provisioned sub-case and ceiling/nonce sub-cases. |
+| 1.2.1 | 2026-05-19 | §7: registered IICP-E029..E032 (Phase 2/3/5 adapter + directory codes); added IICP-E numeric code registry pointer. Closes #186 (spec). |
 
 ---
 
