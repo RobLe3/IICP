@@ -1,35 +1,80 @@
-# IICP v1.5 Specification Documents
+# IICP Protocol Specification Index
 
-This directory contains the canonical IICP v1.5 specification split into focused documents.
+This directory contains the normative and informational protocol documents for IICP.
 
-## Reading order
+---
 
-1. **[iicp-core.md](iicp-core.md)** — Start here. MUST requirements. Wire format, message types, error codes.
-2. **[IICP-core-phase1-profile.md](IICP-core-phase1-profile.md)** — Phase 1 field subset for minimal implementations.
-3. **[iicp-dir.md](iicp-dir.md)** — IICP-DIR sub-protocol: how to register, heartbeat, discover.
-4. **[iicp-semantics.md](iicp-semantics.md)** — Routing, QoS, scoring, retry policy.
-5. **[iicp-extensions.md](iicp-extensions.md)** — Billing, reputation, CIP, post-quantum (future).
+## Recommended reading order
 
-## All documents
+Start here when you are new to the protocol. Each document builds on the previous ones.
 
-| File | Status | Phase |
-|------|--------|-------|
-| [iicp-v1.5-overview.md](iicp-v1.5-overview.md) | Draft | — |
-| [iicp-core.md](iicp-core.md) | Draft | 1 |
-| [iicp-semantics.md](iicp-semantics.md) | Draft | 1 |
-| [iicp-extensions.md](iicp-extensions.md) | Draft | 3+ |
-| [IICP-core-phase1-profile.md](IICP-core-phase1-profile.md) | Draft signed | 1 |
-| [iicp-dir.md](iicp-dir.md) | Draft signed | 1–2 |
-| [iicp-mcp-binding.md](iicp-mcp-binding.md) | Draft signed | 2 |
-| [node-capability-format.md](node-capability-format.md) | Draft signed | 1 |
-| [iicp-billing-extension.md](iicp-billing-extension.md) | Draft signed | 3 |
-| [iicp-cbor-wire.md](iicp-cbor-wire.md) | Draft | 3 |
-| [conformance-test-suite.md](conformance-test-suite.md) | Draft signed | 1 |
-| [validation-methodology.md](validation-methodology.md) | Draft signed | 1 |
-| [VERSION](VERSION) | — | — |
+| # | File | What it covers |
+|---|------|----------------|
+| 1 | [`iicp-core.md`](./iicp-core.md) | **Start here.** Wire format, message types (CALL/RESPONSE/INIT), mandatory fields, error codes (IICP-E001–E033), retry/idempotency rules, QoS hints. |
+| 2 | [`iicp-dir.md`](./iicp-dir.md) | Directory sub-protocol — register, heartbeat, discover, probe endpoints; node token auth; observed-IP recording. |
+| 3 | [`iicp-semantics.md`](./iicp-semantics.md) | Routing semantics, QoS, node selection, intent URN grammar (including `x.<vendor>` custom namespace). |
+| 4 | [`IICP-core-phase1-profile.md`](./IICP-core-phase1-profile.md) | Accepted Phase 1 conformance baseline — the minimal implementation contract. |
+| 5 | [`iicp-cooperative-inference.md`](./iicp-cooperative-inference.md) | CIP — multi-node cooperative inference (Phase 5). Coordinator/worker roles, HMAC receipt, credit flow, conformance levels. |
+| 6 | [`iicp-federated-directory.md`](./iicp-federated-directory.md) | Federated control plane — Genesis Seed, replica sync, Ed25519 event log (Phase 6). |
+| 7 | [`iicp-framing.md`](./iicp-framing.md) | Binary framing layer (draft) — 11-byte frame header, CBOR schemas, version negotiation, HTTP fallback. NOT YET RATIFIED. |
 
-## Normative language
+---
 
-All MUST / SHOULD / MAY / MUST NOT in these documents are interpreted per RFC 2119 / BCP 14.
+## Supporting specifications
 
-Documents marked "Draft signed" have received Protocol Steward review and are stable for implementation. "Draft" documents are still being revised.
+| File | What it covers | ADRs |
+|------|----------------|------|
+| [`iicp-extensions.md`](./iicp-extensions.md) | Billing, reputation, and sub-protocol bindings (umbrella doc) | ADR-008 |
+| [`iicp-billing-extension.md`](./iicp-billing-extension.md) | Declarative pricing, credit cost multiplier | ADR-007, ADR-008, ADR-019 |
+| [`iicp-telemetry.md`](./iicp-telemetry.md) | Telemetry trust model — proxy token auth, sybil quorum, outlier weighting | ADR-012, ADR-023 |
+| [`iicp-mcp-binding.md`](./iicp-mcp-binding.md) | IICP↔MCP protocol bridge binding | ADR-007, ADR-009 |
+| [`iicp-cbor-wire.md`](./iicp-cbor-wire.md) | CBOR wire format reference (Phase 4+) | — |
+| [`node-capability-format.md`](./node-capability-format.md) | Node capability envelope schema | ADR-007 |
+| [`iicp-recognition.md`](./iicp-recognition.md) | Operator recognition / gamification (draft skeleton — PS review pending) | ADR-030 |
+
+---
+
+## Testing and methodology
+
+| File | What it covers |
+|------|----------------|
+| [`conformance-test-suite.md`](./conformance-test-suite.md) | **Canonical test IDs** (DIR-REG-*, DIR-DISC-*, PROXY-ROUTE-*, etc.) — use this to map spec requirements to test files. |
+| [`conformance-badges.md`](./conformance-badges.md) | Self-attested conformance badge system (S.14) |
+| [`validation-methodology.md`](./validation-methodology.md) | How conformance is measured; k6 latency targets; REACH probe descriptions |
+
+---
+
+## Spec-to-ADR cross-reference
+
+Which ADR is authoritative for a given spec section:
+
+| Spec file | Key sections | Authoritative ADR(s) |
+|-----------|-------------|----------------------|
+| `iicp-core.md` | Wire format, retry | ADR-002 (JSON/HTTPS), ADR-010 (idempotency) |
+| `iicp-core.md` | Intent URN format | ADR-007 |
+| `iicp-core.md` | Error codes | ADR-002 + spec §7 |
+| `iicp-dir.md` | Node auth (node_token) | ADR-006 |
+| `iicp-dir.md` | Discovery scoring | ADR-008 |
+| `iicp-dir.md` | Event log / replica sync | ADR-013 |
+| `iicp-dir.md` | OTel trace spans | ADR-014 |
+| `iicp-dir.md` | Declarative pricing | ADR-019 |
+| `iicp-semantics.md` | Node selection, client scoring | ADR-008, ADR-024 |
+| `iicp-cooperative-inference.md` | CIP scoring, reputation | ADR-012, ADR-026 |
+| `iicp-cooperative-inference.md` | Credit substrate | ADR-019 |
+| `iicp-federated-directory.md` | Federated control plane | ADR-013 |
+| `iicp-telemetry.md` | Telemetry trust | ADR-014, ADR-023 |
+| `iicp-framing.md` | Binary framing, CBOR | ADR-002 (Phase 1+), ADR-024 |
+| `iicp-billing-extension.md` | Pricing declaration | ADR-019 |
+
+For the full ADR list, see [`project/decisions/README.md`](../project/decisions/README.md).
+
+---
+
+## Spec status legend
+
+| Status | Meaning |
+|--------|---------|
+| `accepted` | Ratified — implementations MUST conform |
+| `draft` | Active and normative within the project; not yet externally ratified |
+| `Draft (skeleton)` | Structure committed; normative bodies pending review |
+| `NOT YET RATIFIED` | Experimental — do not implement without maintainer sign-off |

@@ -1,0 +1,16 @@
+{
+  "task_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "intent": "urn:iicp:intent:llm:completion:v1",
+  "payload": {
+    "prompt": "Write a poem about distributed systems.",
+    "max_tokens": 200
+  },
+  "constraints": {
+    "timeout_ms": 30000,
+    "qos": "batch",
+    "region": "eu-central"
+  },
+  "auth": {
+    "node_token": "iicp_tok_batch_node"
+  }
+}

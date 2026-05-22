@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/conformance-badge.json",
+  "title": "IICPConformanceBadge",
+  "description": "S.14 §3 — Badge attestation record for an IICP conformance tier claim.",
+  "type": "object",
+  "required": [
+    "badge_id",
+    "tier",
+    "subject_did",
+    "subject_component",
+    "suite_version",
+    "passed_at",
+    "test_results_url",
+    "issuer_did",
+    "sig"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "badge_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "UUID v4 — unique identifier for this badge instance."
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "iicp:core:v1",
+        "iicp:mesh:v1",
+        "iicp:sdk:v1",
+        "iicp:federated:v1",
+        "iicp:full:v1"
+      ],
+      "description": "Conformance tier claimed by this badge (S.14 §2)."
+    },
+    "subject_did": {
+      "type": "string",
+      "pattern": "^did:[a-z]+:.+$",
+      "description": "DID of the entity claiming the badge (e.g. did:web:node.example.com)."
+    },
+    "subject_component": {
+      "type": "string",
+      "enum": ["adapter", "proxy", "sdk", "replica"],
+      "description": "Which component of the subject is being attested."
+    },
+    "suite_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver of the conformance test suite used (S.10 / conformance-test-suite.md)."
+    },
+    "passed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC timestamp of the test run that produced the passing results."
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC timestamp when the badge expires (BADGE-03: 90 days after passed_at). Set by the issuer."
+    },
+    "test_results_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL of the full S.14 §5 test results JSON. MUST remain accessible for 90 days (BADGE-06)."
+    },
+    "issuer_did": {
+      "type": "string",
+      "pattern": "^did:[a-z]+:.+$",
+      "description": "DID of the issuing authority. Genesis Seed: did:web:iicp.network. Self-attested: same as subject_did."
+    },
+    "verification_mode": {
+      "type": "string",
+      "enum": ["genesis-verified", "self-attested"],
+      "default": "genesis-verified",
+      "description": "Whether the badge was independently verified by the Genesis Seed (BADGE-05)."
+    },
+    "sig": {
+      "type": "string",
+      "description": "Base64url-encoded Ed25519 signature over badge_id:tier:subject_did:passed_at:SHA256_hex(canonical_json(test_results)). (S.14 §3)"
+    }
+  }
+}

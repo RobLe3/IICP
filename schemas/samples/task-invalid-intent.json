@@ -1,0 +1,8 @@
+{
+  "_comment": "INVALID: intent does not follow urn:iicp:intent:<domain>:<action>:v<N> format",
+  "task_id": "550e8400-e29b-41d4-a716-446655440002",
+  "intent": "urn:openai:gpt4",
+  "payload": {"messages": [{"role": "user", "content": "bad intent"}]},
+  "constraints": {"timeout_ms": 5000},
+  "auth": {"node_token": "tok"}
+}

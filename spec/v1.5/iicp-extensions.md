@@ -41,6 +41,20 @@ The credits extension introduces a compute unit economy. One credit ≈ 1000 tok
 (configurable). Nodes earn credits for inference they provide; clients spend credits
 for inference they consume.
 
+### 1.1a Ledger Design
+
+The IICP credit ledger is a **signed append-only event log** — not a blockchain or
+distributed ledger. Signed credit receipts (§1.3) form the immutable sequence of
+events; the directory maintains the canonical ledger and current balance for each node.
+
+This design provides:
+- Auditability without consensus overhead or token issuance
+- Compatibility with centralized, federated, and delegated directory architectures
+- No requirement for cryptocurrency wallets, miners, or on-chain settlement
+
+Implementations MUST NOT describe the ledger as a "blockchain" in user-facing
+documentation. The term "signed event log" or "credit ledger" is preferred.
+
 ### 1.2 CALL extension fields
 
 When billing is enabled, a CALL message MAY include a `billing` block:

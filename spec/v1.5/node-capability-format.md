@@ -51,6 +51,7 @@ For nodes serving language model inference.
   "context_length": 32768,
   "supports_streaming": false,
   "quantization": "q4_k_m",
+  "inference_engine": "llama.cpp",
   "hardware": "cuda",
   "avg_tokens_per_second": 45.0
 }
@@ -63,6 +64,7 @@ For nodes serving language model inference.
 | `context_length` | integer | SHOULD | Max context window (input + output) |
 | `supports_streaming` | bool | MAY | Default false (Phase 1) |
 | `quantization` | string | MAY | e.g., `q4_k_m`, `fp16`, `awq` |
+| `inference_engine` | string | MAY | e.g., `llama.cpp`, `ollama`, `vllm`, `exllamav2` |
 | `hardware` | string | MAY | `cuda`, `metal`, `cpu`, `rocm` |
 | `avg_tokens_per_second` | float | MAY | Self-reported throughput estimate |
 
@@ -155,6 +157,34 @@ A single node MAY declare multiple capabilities:
 }
 ```
 
+A node supporting Phase 5 CIP intents (summarization, reranking, classification) uses the `llm:` URN namespace:
+
+```json
+{
+  "capabilities": [
+    {
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "models": ["llama3.2"],
+      "max_tokens": 8192
+    },
+    {
+      "intent": "urn:iicp:intent:llm:summarize:v1",
+      "models": ["llama3.2"],
+      "max_length": 512
+    },
+    {
+      "intent": "urn:iicp:intent:llm:rerank:v1",
+      "models": ["llama3.2"],
+      "max_candidates": 20
+    },
+    {
+      "intent": "urn:iicp:intent:llm:classify:v1",
+      "models": ["llama3.2"]
+    }
+  ]
+}
+```
+
 **Rules**:
 - Each intent URN MUST appear at most once per capabilities array.
 - The directory MUST index each capability by its `intent` for discovery filtering.
@@ -206,7 +236,9 @@ ignored by nodes that do not implement the CIP.
     "allow_browser_automation": false,
     "allow_private_memory_access": false,
     "minimum_caller_reputation": 0.70,
-    "require_credits": true
+    "require_credits": true,
+    "minimum_reputation": 0.5,
+    "max_concurrent_remote": 2
   },
   "pricing": {
     "accepts_credits": true,
@@ -226,6 +258,8 @@ ignored by nodes that do not implement the CIP.
 | `allow_private_memory_access` | false | MUST remain false — safety boundary |
 | `minimum_caller_reputation` | 0.0 | Caller reputation score threshold (0.0 = accept all) |
 | `require_credits` | false | If true, caller must have credits before task is accepted |
+| `minimum_reputation` | 0.0 | CIP-specific: minimum reputation score of the requesting coordinator (0.0 = accept any); used in §2.1 Provider Opt-In gate. If the coordinator's `reputation_score` is below this value, the provider MUST reject with `IICP-E020`. |
+| `max_concurrent_remote` | 2 | Maximum simultaneous inbound CIP sub-tasks this node will accept. If reached, MUST return `IICP-E021` (capacity exhausted). MUST NOT silently queue. |
 
 The directory MUST return `policy` in NODELIST. Clients MUST pre-screen nodes for
 policy compatibility before submitting a CALL (e.g., skip nodes with
@@ -249,6 +283,7 @@ protocol version.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.2 | 2026-05-17 | §9 policy block: added `minimum_reputation` and `max_concurrent_remote` fields with IICP-E020/E021 error references; closes #72 |
 | 0.1.0 | 2026-05-14 | Initial draft — capability object schema, intent URN format, policy block (Phase 5 reserved); closes issue #19 |
 | 0.1.1 | 2026-05-15 | Added Changelog section (A6 spec cleanup) |
 

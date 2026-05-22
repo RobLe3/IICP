@@ -1,0 +1,17 @@
+{
+  "task_id": "550e8400-e29b-41d4-a716-446655440000",
+  "intent": "urn:iicp:intent:llm:chat:v1",
+  "payload": {
+    "messages": [{"role": "user", "content": "Hello"}]
+  },
+  "constraints": {
+    "timeout_ms": 5000,
+    "qos": "interactive"
+  },
+  "trace": {
+    "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736"
+  },
+  "auth": {
+    "node_token": "iicp_tok_example"
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:iicp:schema:feedback-envelope:v0.1.0-draft",
+  "title": "IICP Feedback Envelope",
+  "description": "Two-sided feedback envelope for IICP task quality and compliance ratings (REP4, draft — not normative pending Protocol Steward ratification).",
+  "$defs": {
+    "quality_reason_code": {
+      "type": "string",
+      "enum": [
+        "output_truncated",
+        "wrong_format",
+        "factually_wrong",
+        "refused_valid_request",
+        "hallucination_detected",
+        "excellent_quality",
+        "other"
+      ]
+    },
+    "compliance_status": {
+      "type": "string",
+      "enum": [
+        "compliant",
+        "minor_issue",
+        "protocol_violation",
+        "abusive"
+      ]
+    },
+    "violation_code": {
+      "type": "string",
+      "enum": [
+        "malformed_intent",
+        "prompt_injection_attempt",
+        "rate_limit_evasion",
+        "signature_invalid",
+        "payment_protocol_violation",
+        "spec_violation_other"
+      ]
+    },
+    "quality_feedback": {
+      "type": "object",
+      "description": "Client → Node: output quality rating submitted by the requesting proxy after receiving task output.",
+      "required": ["task_id", "rater_id", "rated_node_id", "intent_match", "output_useful", "would_route_again", "timestamp", "signature"],
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "UUID of the completed task being rated."
+        },
+        "rater_id": {
+          "type": "string",
+          "description": "node_id or identity token of the rating client."
+        },
+        "rated_node_id": {
+          "type": "string",
+          "description": "node_id of the node that executed the task."
+        },
+        "intent_match": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "1–5: did the output match the stated intent? 1=complete miss, 5=exact match."
+        },
+        "output_useful": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "1–5: was the output practically useful? 1=unusable, 5=excellent."
+        },
+        "would_route_again": {
+          "type": "boolean",
+          "description": "Would the client route future tasks of this intent class to this node again?"
+        },
+        "reason_codes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/quality_reason_code" },
+          "description": "Optional structured reason codes. Use to enable aggregate analysis."
+        },
+        "comment": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Optional free-text comment. Private to the node operator — not disclosed in public stats."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of feedback submission."
+        },
+        "signature": {
+          "type": "string",
+          "description": "HMAC-SHA256 over canonical envelope bytes (task_id || rater_id || rated_node_id || intent_match || output_useful || would_route_again || timestamp)."
+        }
+      }
+    },
+    "compliance_feedback": {
+      "type": "object",
+      "description": "Node → Client: compliance rating submitted by the executing node (adapter) after task completion.",
+      "required": ["task_id", "rater_id", "rated_client_id", "request_well_formed", "compliance_status", "would_serve_again", "timestamp", "signature"],
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "UUID of the completed task being rated."
+        },
+        "rater_id": {
+          "type": "string",
+          "description": "node_id of the node submitting the compliance rating."
+        },
+        "rated_client_id": {
+          "type": "string",
+          "description": "Identity token or node_id of the client that submitted the task."
+        },
+        "request_well_formed": {
+          "type": "boolean",
+          "description": "Was the request parseable and schema-valid without errors?"
+        },
+        "compliance_status": {
+          "$ref": "#/$defs/compliance_status",
+          "description": "Overall compliance assessment."
+        },
+        "violation_codes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/violation_code" },
+          "description": "Required if compliance_status is protocol_violation or abusive. Must reference testable, observable signals."
+        },
+        "would_serve_again": {
+          "type": "boolean",
+          "description": "Would the node serve future requests from this client again?"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of feedback submission."
+        },
+        "signature": {
+          "type": "string",
+          "description": "HMAC-SHA256 over canonical envelope bytes (task_id || rater_id || rated_client_id || compliance_status || timestamp)."
+        }
+      }
+    },
+    "commit_payload": {
+      "type": "object",
+      "description": "Phase 1 of commit-reveal: party submits a hash commitment before the other side's rating is visible.",
+      "required": ["task_id", "rater_id", "commit_hash", "timestamp"],
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "rater_id": {
+          "type": "string"
+        },
+        "commit_hash": {
+          "type": "string",
+          "description": "SHA-256(canonical_rating_json || nonce). Hex-encoded."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "reveal_payload": {
+      "type": "object",
+      "description": "Phase 2 of commit-reveal: party reveals the rating and nonce for verification.",
+      "required": ["task_id", "rater_id", "nonce", "feedback_type"],
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "rater_id": {
+          "type": "string"
+        },
+        "nonce": {
+          "type": "string",
+          "description": "Random nonce used in the commit hash. 32+ bytes, hex-encoded."
+        },
+        "feedback_type": {
+          "type": "string",
+          "enum": ["quality", "compliance"],
+          "description": "Which feedback envelope type is being revealed."
+        },
+        "quality_feedback": {
+          "$ref": "#/$defs/quality_feedback",
+          "description": "Present when feedback_type is quality."
+        },
+        "compliance_feedback": {
+          "$ref": "#/$defs/compliance_feedback",
+          "description": "Present when feedback_type is compliance."
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "description": "Commit payload (Phase 1).",
+      "properties": {
+        "type": { "const": "commit" },
+        "payload": { "$ref": "#/$defs/commit_payload" }
+      },
+      "required": ["type", "payload"]
+    },
+    {
+      "type": "object",
+      "description": "Reveal payload (Phase 2).",
+      "properties": {
+        "type": { "const": "reveal" },
+        "payload": { "$ref": "#/$defs/reveal_payload" }
+      },
+      "required": ["type", "payload"]
+    }
+  ]
+}

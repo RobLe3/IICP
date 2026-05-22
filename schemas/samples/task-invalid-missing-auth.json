@@ -1,0 +1,7 @@
+{
+  "_comment": "INVALID: missing required 'auth' field — must fail schema validation",
+  "task_id": "550e8400-e29b-41d4-a716-446655440001",
+  "intent": "urn:iicp:intent:llm:chat:v1",
+  "payload": {"messages": [{"role": "user", "content": "no auth"}]},
+  "constraints": {"timeout_ms": 5000}
+}
