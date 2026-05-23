@@ -546,12 +546,12 @@ This section defines MUST NOT constraints that apply to all CIP roles regardless
 - The directory MUST reject any credit award request whose `receipt_nonce` has been seen before (replay protection). Nonce storage MUST be maintained for at least 24 hours after `expires_at`.
 - Coordinators MUST NOT reuse a `receipt_nonce` across multiple CIP sessions or task IDs.
 
-**Canonical message format for CIPWorkerReceipt HMAC-SHA256:**
+**Canonical message format for CIPWorkerReceipt HMAC-SHA256 (Phase 5):**
 
 The HMAC-SHA256 signature MUST be computed over the following canonical message (UTF-8 encoded, colon-delimited fields):
 
 ```
-{task_id}:{tokens_used}:{cip_parent_task_id}:{cip_session_key}:{nonce}
+{task_id}:{tokens_used}:{cip_parent_task_id}:{cip_session_key}:{nonce}:{response_hash}
 ```
 
 Where:
@@ -560,16 +560,20 @@ Where:
 - `cip_parent_task_id`: The coordinator's parent task UUID, or the empty string `""` if absent
 - `cip_session_key`: The session key received from the Coordinator (see §10.4), or `""` if absent
 - `nonce`: The `receipt_nonce` value (hex-encoded, ≥ 32 hex characters = 128 bits)
+- `response_hash`: SHA-256 hex digest (64 lowercase hex characters) of the canonical JSON encoding of the task `result` field — `sha256(json.dumps(result, sort_keys=True, separators=(',', ':')).encode('utf-8')).hexdigest()`. For a null/empty result, use SHA-256 of zero bytes (`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`).
 
-**Signing key**: The Worker's `node_token` as registered in the directory (UTF-8 encoded string used directly as the HMAC key).
+**`response_hash` requirement (Phase 5)**: The Worker MUST include `response_hash` in every `CIPWorkerReceipt`. A receipt without `response_hash` MUST be rejected by the Coordinator (hash check fails) and by the directory (returns `IICP-E027`). The Coordinator MUST verify `compute_response_hash(received_result) == receipt.response_hash` BEFORE returning the response to the end client AND BEFORE submitting the credit award. Hash mismatch MUST result in the Coordinator discarding the response and trying the next eligible Worker.
+
+**Signing key**: The Worker's `node_hmac_key` as provisioned by the directory at registration (UTF-8 encoded string used directly as the HMAC key).
 
 **Algorithm**: HMAC-SHA256 with `hmac.compare_digest` (constant-time) for verification.
 
 **Directory verification (IICP-E027)**: To validate a CIPWorkerReceipt, the directory MUST:
-1. Look up the Worker's registered `node_hmac_key` by `worker_id` from the receipt. If the node has no `node_hmac_key` provisioned (e.g., registered before the HMAC key feature was introduced), the directory MUST return `IICP-E027` (422 Unprocessable Entity) with message `"Node HMAC key not provisioned"`. The node MUST re-register to obtain a fresh key.
-2. Reconstruct the canonical message from the receipt's `task_id`, `tokens_used`, `cip_parent_task_id`, `cip_session_key`, and `nonce` fields using the format above.
+1. Look up the Worker's registered `node_hmac_key` by `worker_id` from the receipt. If the node has no `node_hmac_key` provisioned, the directory MUST return `IICP-E027` (422 Unprocessable Entity) with message `"Node HMAC key not provisioned"`. The node MUST re-register to obtain a fresh key.
+2. Reconstruct the canonical message from the receipt's `task_id`, `tokens_used`, `cip_parent_task_id`, `cip_session_key`, `nonce`, and `response_hash` fields using the format above.
 3. Compute `HMAC-SHA256(node_hmac_key, canonical_message)` and compare with `receipt.signature` using constant-time comparison.
-4. If the signature is absent, malformed, or does not match: return `IICP-E027` (422 Unprocessable Entity). The directory MUST NOT credit the Worker in this case.
+4. If `response_hash` is absent or not a valid 64-character lowercase hex string: return `IICP-E027` (422) with message `"CIPWorkerReceipt missing response_hash"`.
+5. If the signature is absent, malformed, or does not match: return `IICP-E027` (422 Unprocessable Entity). The directory MUST NOT credit the Worker in this case.
 
 **Credit amount ceiling (anti-inflation, TC-9c)**: The directory MUST reject any credit award request where `amount` exceeds the authorized ceiling:
 

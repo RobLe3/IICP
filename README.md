@@ -4,9 +4,9 @@
 
 *Building the HTTP for the Age of Generative AI*
 
-**Current version**: v1.5.0-draft  
+**Current version**: v1.6.0  
 **Reference implementation**: [iicp.network](https://github.com/RobLe3/iicp.network)  
-**Status**: Draft — open for community review
+**Status**: Active development — Phase 5 (Cooperative Inference Protocol)
 
 ---
 
@@ -161,14 +161,38 @@ See [conformance-test-suite.md](spec/v1.5/conformance-test-suite.md) SEC-* test 
 
 ---
 
+## Development Status
+
+**Phase 5 — Cooperative Inference Protocol (active)**
+
+The reference implementation at [iicp.network](https://iicp.network) is live. Nodes can register, serve tasks, and earn credits today.
+
+| Feature area | Status | Notes |
+|---|---|---|
+| Core protocol — register / discover / route | ✅ Live | 37 conformance probes green continuously |
+| CIP coordinator (multi-node dispatch) | ✅ Implemented | Credit receipts, response integrity verification |
+| Rust node runtime (`iicp-node`) | ✅ Working | `curl -L https://iicp.network/install.sh \| sh` |
+| Reputation scoring | 🟡 Spec-complete | REP1/REP2 pending Protocol Steward ratification |
+| Operator identity (anti-Sybil) | 🔴 Design phase | ADR-030 — Ed25519 key pair, multi-node ownership |
+| Published SDKs (Python / TypeScript / Rust) | 🔴 Not yet | PyPI / npm / crates.io publication pending |
+
+**Estimated progress toward closed beta: ~60%**
+
+The mesh works end-to-end. The main gap before closed beta is a portable operator identity system (so node operators have a persistent, recoverable identity across machines) and published SDK packages for easy client integration.
+
+To run a node today: `curl -L https://iicp.network/install.sh | sh`
+
+---
+
 ## Version History
 
 | Version | Date | Notes |
 |---------|------|-------|
-| **v1.5.0-draft** | 2026-05-15 | Spec split (core/semantics/extensions); 7 sub-protocol docs; 40 conformance test IDs; CBOR wire format |
+| **v1.6.0** | 2026-05-23 | CIP receipt response integrity (TC-9c `response_hash`); framing spec stubs (CBOR/QUIC); 12 additional sub-protocol docs |
+| v1.5.0-draft | 2026-05-15 | Spec split (core/semantics/extensions); 7 sub-protocol docs; 40 conformance test IDs; CBOR wire format |
 | v1.4.2 | 2024 | Original monolithic Internet-Draft |
 
-v1.5 is **wire-compatible with v1.4.2** — no message opcodes, field names, or error codes changed.
+v1.5+ is **wire-compatible with v1.4.2** — no message opcodes, field names, or error codes changed.
 
 ---
 

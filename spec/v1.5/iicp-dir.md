@@ -526,6 +526,35 @@ The iicp-node exposes Prometheus-compatible metrics at `GET /metrics` in text ex
 
 ---
 
+## 7. Optional Extensions
+
+Optional extensions are directory-layer additions that conformant directories MAY implement.
+A directory that omits these extensions is fully IICP-DIR conformant (ADR-031).
+
+### IICP-DIR-EXT-CREDITS: S-Credit Economy
+
+Allows directory operators to run a peer credit economy where nodes earn credits by serving
+tasks and spend credits to route. Implementing this extension is NOT required for core
+IICP conformance.
+
+**Endpoints (all require `Authorization: Bearer <node_token>`):**
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `POST` | `/v1/credits/earn` | Award credits after validated CIPWorkerReceipt |
+| `POST` | `/v1/credits/spend` | Deduct credits before routing (consumer-side) |
+| `GET`  | `/v1/credits/supply` | Mint telemetry — total supply, burn rate, TTL expiry rate |
+
+**Advertise support**: A directory that implements this extension SHOULD return
+`"credits_extension": true` in `GET /api/v1/stats`. Nodes SHOULD check this field before
+calling credit endpoints.
+
+Full design: `research/credit-economy/09-scalability-safety-implementation-plan.md`  
+Governing ADR: ADR-031  
+Tracking: #302
+
+---
+
 ## Changelog
 
 | Version | Date | Change |

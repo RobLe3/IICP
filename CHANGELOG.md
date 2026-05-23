@@ -1,5 +1,38 @@
 # IICP Changelog
 
+## v1.6.0 — 2026-05-23
+
+### Summary
+
+v1.6 adds CIP receipt response integrity verification, expands the sub-protocol suite with 12 additional documents, and introduces the binary framing specification stubs for the Phase 3+ transport roadmap (QUIC + CBOR). The wire format is unchanged.
+
+### Updated documents
+
+| File | Change |
+|------|--------|
+| `iicp-cooperative-inference.md` | §10.3 canonical message now includes `response_hash` (SHA-256 of canonical result JSON). Coordinator MUST verify hash before returning response and before submitting credit award (TC-9c). |
+| `iicp-core.md` | §1 Protocol scope: credit economy clarified as directory-layer optional extension (ADR-031). §6 transport roadmap stub added (QUIC + CBOR Phase 3+). |
+| `iicp-dir.md` | Optional extensions section added grouping credit endpoints under `IICP-DIR-EXT-CREDITS`. |
+| `conformance-test-suite.md` | DIR-REG-08/09 test IDs annotated; test suite at v4.32.0. |
+
+### New documents (added since v1.5)
+
+| File | Description |
+|------|-------------|
+| `iicp-framing.md` | Binary framing specification — custom opcode range 0xF0–0xFE, CBOR payload encoding, QUIC stream mapping (Phase 3+ roadmap) |
+| `iicp-recognition.md` | Gamification and operator recognition framework — passive scoring, operator leaderboards, badge taxonomy |
+| `iicp-federated-directory.md` | Federated directory protocol — Genesis Seed, replica tiers, gossip (Phase 6 roadmap) |
+| `iicp-semantics.md` | Routing semantics — intent matching, QoS tiers, ε-greedy node selection, multi-path |
+| `iicp-telemetry.md` | Telemetry extension — W3C traceparent, OTel span attributes, proxy reporting |
+| `iicp-mcp-binding.md` | MCP ↔ IICP translation rules |
+| `iicp-billing-extension.md` | Credit economy extension — earn/spend/quote, HMAC receipts |
+
+### Wire compatibility
+
+v1.6 is **fully wire-compatible with v1.4.x and v1.5**. The `response_hash` field in `CIPWorkerReceipt` is a CIP-specific addition and does not affect non-CIP task routing.
+
+---
+
 ## v1.5.0-draft — 2026-05-15
 
 ### Summary

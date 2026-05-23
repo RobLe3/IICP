@@ -1,6 +1,6 @@
 # IICP Conformance Test Suite
 
-**Version**: 4.31.0  
+**Version**: 4.32.0  
 **Date**: 2026-05-22  
 **Status**: draft  
 **Issue**: #22  
@@ -59,8 +59,8 @@ docker compose up -d   # brings up directory + adapter + database
 | `DIR-REG-05` | `node_token` in response is ≥ 32 bytes (hex-encoded) | Verify length ≥ 64 hex chars | — (requires node_token from registration) |
 | `DIR-REG-06` | `node_id` assigned by directory when absent | Response `node_id` is valid UUID-v4 | — (requires node_token from registration) |
 | `DIR-REG-07` | `node_token` stored as bcrypt hash, never plaintext | Code review: `NodeRegistry` uses `Hash::make()` before insert | code review only |
-| `DIR-REG-08` | `POST /v1/register` with unrecognised `capabilities[].quantization` value (e.g. `"fp64"`) → 201 | Directory MUST NOT reject unrecognised advisory field values; per iicp-core.md §2.1 v1.2.4 | — |
-| `DIR-REG-09` | `POST /v1/register` with unrecognised `capabilities[].inference_engine` value (e.g. `"tensorrt"`) → 201 | Directory MUST NOT reject unrecognised advisory field values; per iicp-core.md §2.1 v1.2.4 | — |
+| `DIR-REG-08` | `POST /v1/register` with unrecognised `capabilities[].quantization` value (e.g. `"fp64"`) → 201 | Directory MUST NOT reject unrecognised advisory field values; per iicp-core.md §2.1 v1.2.4 | — (directory unit test: `RegisterTest::test_accepts_unrecognised_quantization_value`) |
+| `DIR-REG-09` | `POST /v1/register` with unrecognised `capabilities[].inference_engine` value (e.g. `"tensorrt"`) → 201 | Directory MUST NOT reject unrecognised advisory field values; per iicp-core.md §2.1 v1.2.4 | — (directory unit test: `RegisterTest::test_accepts_unrecognised_inference_engine_value`) |
 
 ### 3.2 Heartbeat (MUST)
 
@@ -652,6 +652,7 @@ These tests verify the badge submission, verification, and lifecycle requirement
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.32.0 | 2026-05-22 | §3.1: DIR-REG-08/DIR-REG-09 — annotated directory unit test coverage (`RegisterTest::test_accepts_unrecognised_quantization_value` + `test_accepts_unrecognised_inference_engine_value`). REACH live probe not feasible (would create live nodes); PHP feature tests cover the MUST constraint. |
 | 4.31.0 | 2026-05-22 | §13.5 CIP-BUG-01 fix: `DirectoryClient.discover(cip_capable=True)` MUST send `cip_capable=1` (integer), not `"true"` (string) — Laravel boolean validation rejects string form. CIP-capable filter silently broken since iter-486 (coordinators received all nodes); fixed to `1`/`0` integers. 2 proxy tests updated; proxy test count unchanged at 391. |
 | 4.30.0 | 2026-05-22 | §12.4 task_handler CC refactor: `validate_task_fields()` + `validate_cip_wire_fields()` extracted from `task_handler()` to reduce cyclomatic complexity (Sentrux cc 36→≤30). Existing CIP-V03-RUST/CIP-V04-RUST/CIP-V05-RUST requirements unchanged — moved to helper functions with 15 additional direct unit tests (`validate_task_fields_*` ×8, `validate_cip_wire_fields_*` ×7). `cargo test` 131→146. Quality 7089→7092. |
 | 4.29.0 | 2026-05-22 | §12.4 CIP-CR1-WIRE added: `FallbackChain.execute()` now wired to call `submit_award()` as background task when CIP response contains `cip_receipt` (TC-9d). `FallbackChain` accepts `replay_cache`, `directory_url`, `node_token`; `_schedule_award()` helper + `_fire_award()` module-level coroutine added. `proxy.main` passes `ReplayCache()` at startup. 3 new proxy tests; proxy 388→391 tests. |

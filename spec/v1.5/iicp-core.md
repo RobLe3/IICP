@@ -1,7 +1,7 @@
 # IICP Core — Wire Format and Mandatory Requirements
 
-**Version**: 1.2.0
-**Date**: 2026-05-18
+**Version**: 1.2.1
+**Date**: 2026-05-22
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -22,6 +22,71 @@ companion documents:
 
 Any implementation that satisfies every MUST in this document is
 **IICP Core conformant** regardless of which extensions it supports.
+
+---
+
+## Protocol Design Principles
+
+IICP makes four structural choices that distinguish it from point-to-point API calls or
+service-level agreements. These principles appear throughout this document and its
+companion specs; they are stated here so implementors and reviewers share a common
+reference frame.
+
+**1. Intent is a capability address, not a semantic goal.**  
+The `intent` field on the wire is a stable URN (e.g. `urn:iicp:intent:llm:chat:v1`).
+It identifies *what kind of capability is being invoked*, not the user's natural-language
+request. The user's actual task lives in the `payload` field (CALL §5.1). Intent URNs are
+versioned and registry-controlled (stable across operator changes); payloads are ephemeral
+and private. See `iicp-semantics.md §1` for the full URN grammar.
+
+**2. Payload is private and MUST NOT be logged or forwarded by the control plane.**  
+The directory service (ADR-003) MUST NOT see, log, or forward task payloads. Telemetry
+carries protocol-layer metadata (task_id, intent URN, region, model, latency, status)
+but never payload content. This boundary is hard — it is not a configuration option.
+
+**3. Constraints and QoS are enforced by the protocol, not advisory SLA hints.**  
+Fields such as `timeout_ms`, `qos`, and `max_credits` in the CALL envelope are
+first-class wire fields. A conforming adapter that accepts a CALL MUST respect these
+bounds or return a structured failure (e.g., `IICP-E006 timeout`, `IICP-E021
+capacity_exhausted`). Silent degradation or ignoring the constraint envelope is a
+conformance violation. See ADR-008 for how QoS influences routing and admission.
+
+**4. Observability is redacted protocol evidence.**  
+Operators and the mesh itself can observe task_id, intent, model, latency, and outcome
+without touching payload content. Stronger correlation (session-level audit trails,
+per-task receipts) requires explicit opt-in via signed receipts (ADR-019 CIP billing,
+ADR-014 OTel). No telemetry path may log the payload or derive payload content from
+observable fields.
+
+In short:
+
+```
+intent      = stable capability address (URN)
+payload     = private semantic content (never logged by control plane)
+constraints = enforced execution envelope (wire-level, not advisory)
+observability = redacted protocol evidence (metadata only, opt-in for more)
+```
+
+---
+
+## Protocol Scope
+
+This document covers the *core* protocol layer: wire format, task lifecycle, error codes,
+security minimums, and conformance requirements that all IICP implementations share.
+
+The following concerns are **outside the core protocol** and are governed by companion
+documents or operator policy:
+
+- **Credit economy** (S-Credits, earn/spend/Mint governance) — a directory-layer optional
+  extension. An IICP directory that does not implement credits is fully conformant.
+  See `spec/iicp-dir.md` §Optional Extensions and ADR-031.
+- **Reputation scoring** — a directory-layer SHOULD (ADR-026). Operators MAY skip.
+- **Operator identity & anti-Sybil** — optional layer (ADR-030), required for
+  gamification and diversity badges but not for task routing.
+- **Federated control plane** — Phase 6+ (ADR-013).
+
+CIP receipt HMAC integrity (ADR-019) *is* core — it prevents token inflation and is a
+MUST for any implementation that issues CIP worker task receipts.
 
 ---
 
