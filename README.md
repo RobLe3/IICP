@@ -165,22 +165,25 @@ See [conformance-test-suite.md](spec/v1.5/conformance-test-suite.md) SEC-* test 
 
 **Phase 5 — Cooperative Inference Protocol (active)**
 
-The reference implementation at [iicp.network](https://iicp.network) is live. Nodes can register, serve tasks, and earn credits today.
+The [iicp.network](https://iicp.network) directory is live and continuously verified by 37 conformance probes. The reference implementation is in active development — the client and node software are not yet publicly distributed. Public operator onboarding will open once security verification, authentication, and the operator identity system are production-ready.
 
 | Feature area | Status | Notes |
 |---|---|---|
 | Core protocol — register / discover / route | ✅ Live | 37 conformance probes green continuously |
 | CIP coordinator (multi-node dispatch) | ✅ Implemented | Credit receipts, response integrity verification |
-| Rust node runtime (`iicp-node`) | ✅ Working | `curl -L https://iicp.network/install.sh \| sh` |
+| Rust node runtime (`iicp-node`) | 🟡 Working (private) | Not yet publicly distributed — pending security sign-off |
 | Reputation scoring | 🟡 Spec-complete | REP1/REP2 pending Protocol Steward ratification |
 | Operator identity (anti-Sybil) | 🔴 Design phase | ADR-030 — Ed25519 key pair, multi-node ownership |
-| Published SDKs (Python / TypeScript / Rust) | 🔴 Not yet | PyPI / npm / crates.io publication pending |
+| Published SDKs (Python / TypeScript / Rust) | 🔴 Not yet | PyPI / npm / crates.io publication pending security + auth readiness |
 
 **Estimated progress toward closed beta: ~60%**
 
-The mesh works end-to-end. The main gap before closed beta is a portable operator identity system (so node operators have a persistent, recoverable identity across machines) and published SDK packages for easy client integration.
+The mesh works end-to-end. The remaining gaps before closed beta are:
+- A portable operator identity system (so node identities survive machine changes)
+- Security and authentication hardening to production standard
+- Published, versioned SDK packages for external operator integration
 
-To run a node today: `curl -L https://iicp.network/install.sh | sh`
+The client and node software will be publicly released once these are verified and polished. Follow this repo or [iicp.network](https://iicp.network) for announcements.
 
 ---
 
@@ -198,7 +201,7 @@ v1.5+ is **wire-compatible with v1.4.2** — no message opcodes, field names, or
 
 ## Reference Implementation
 
-The reference implementation lives at **[RobLe3/iicp.network](https://github.com/RobLe3/iicp.network)**:
+The reference implementation (`RobLe3/iicp.network`) is currently **private** — it will be opened once the system reaches public beta readiness. The architecture is:
 
 | Component | Language | Purpose |
 |-----------|----------|---------|
@@ -206,6 +209,8 @@ The reference implementation lives at **[RobLe3/iicp.network](https://github.com
 | `adapter/` | Python 3.11 + FastAPI | Execution plane — task acceptance, backend dispatch |
 | `proxy/` | Python 3.11 | Client plane — discovery, routing, retry, fallback |
 | `iicp-node/` | Rust 2021 + tokio | High-performance node runtime |
+
+The protocol specification in this repository is the authoritative source for building interoperable implementations. Third-party implementations that conform to the spec (see conformance test suite) are fully compatible with the live network.
 
 ---
 
