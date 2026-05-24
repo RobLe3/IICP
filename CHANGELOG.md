@@ -1,5 +1,32 @@
 # IICP Changelog
 
+## v1.7.0 — 2026-05-24
+
+### Summary
+
+v1.7 ratifies the previously PENDING reputation tier structure and bootstrap traffic floor
+in S.12 (CIP spec), completing the Phase 5 research validation cycle. All 13 Phase 5
+research tracks are closed. The mesh health compound metric (T3) goes live in the
+reference implementation.
+
+### Updated documents
+
+| File | Change |
+|------|--------|
+| `iicp-cooperative-inference.md` | §5.1.1 Tier Structure: PENDING → RATIFIED 2026-05-24. Tier thresholds Silver ≥ 0.40, Gold ≥ 0.65, Platinum ≥ 0.85 + 720h identity-age gate, general reputation update rules (+0.01/−0.05) now normative. §5.1.2 Bootstrap Traffic Floor: PENDING → RATIFIED 2026-05-24. Floor rule normative (1 slot/session, pool ≥ 3 Silver+ guard). Spec version: 0.6.2-draft → 0.6.8. |
+
+### Research tracks closed (Phase 5)
+
+All 13 Phase 5 research tracks confirmed closed:
+REP1/REP2 (#168) · REP5 (#171) · REP6 (#172) · MESH1–4 (#180–183) · MESH5 (#184) ·
+Transport Phase 3 (#230) · FRAME8 (#242) · Portable identity (#277 #307) · WASM (#292)
+
+### Wire compatibility
+
+No wire format changes. Previously advisory reputation parameters are now normative.
+
+---
+
 ## v1.6.0 — 2026-05-23
 
 ### Summary
