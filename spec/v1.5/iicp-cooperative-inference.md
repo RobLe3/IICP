@@ -1,7 +1,7 @@
 # S.12 — IICP Cooperative Inference Protocol (CIP)
 
 **Status**: Draft (active — normative text in §2–§7, §10; §4 wire format normative per 0.4.0-draft)  
-**Version**: 0.6.2-draft  
+**Version**: 0.6.8  
 **Phase**: 5 (Cooperative Inference)  
 **Authors**: Protocol Steward  
 **Linked ADR**: ADR-012 (Phase 5 CIP Scoring Formula), ADR-019 (Declarative Node Pricing)  
@@ -324,12 +324,12 @@ Where:
 
 **Recovery**: Each successfully completed CIP sub-task increments the node's reputation by `+0.05 × (1 - R_base)` (bounded at 1.0). Failed or timed-out sub-tasks apply a `−0.15` penalty (per spec §3.3 consensus outlier rule).
 
-### 5.1.1 Tier Structure — PENDING RATIFICATION
+### 5.1.1 Tier Structure — RATIFIED 2026-05-24
 
-> **Status**: PENDING Protocol Steward ratification. Values below are the REP track
-> simulation-validated recommendation (see ADR-026, REP2 recommendation 2026-05-18).
-> They MUST NOT be treated as normative until formally ratified and this PENDING
-> marker removed. Tracked in #168 (REP2).
+> **Status**: RATIFIED. REP1 and REP2 research tracks (16 independent simulation runs,
+> #168 #171 #172 closed 2026-05-24) confirm these values. The decay floor (0.30),
+> tier thresholds (0.40/0.65/0.85), and identity-age gate (720h) are now normative.
+> Implementation verified in directory v1.9.19 (ReputationDecayCommand, NodeScorer).
 
 The following tier thresholds are used for routing priority and service eligibility.
 A node's **effective tier** for routing is determined by BOTH reputation score AND identity age:
@@ -354,7 +354,7 @@ attacks where an agent quickly builds reputation and then resets identity.
 `"none"` (below Silver), `"silver"`, `"gold"`, or `"platinum"`. The platinum gate
 uses node registration age (`created_at`) as the identity-age proxy.
 
-**General reputation update rules** (PENDING ratification — separate from CIP-specific
+**General reputation update rules** (normative — ratified 2026-05-24, separate from CIP-specific
 adjustments above):
 
 | Event | Δ reputation |
@@ -369,12 +369,11 @@ CIP consensus provides stronger evidence of node quality or failure.
 
 ---
 
-### 5.1.2 Bootstrap Traffic Floor — PENDING RATIFICATION
+### 5.1.2 Bootstrap Traffic Floor — RATIFIED 2026-05-24
 
-> **Status**: PENDING Protocol Steward ratification. Motivated by RS6-F1 (cold-start
-> problem in early pools, 2026-05-18) and user design discussion. The values below
-> are simulation-informed recommendations and MUST NOT be treated as normative until
-> this PENDING marker is removed. Tracked in #168 (combined with §5.1.1 ratification).
+> **Status**: RATIFIED. RS6-F1 cold-start finding confirmed by REP6 live-readiness
+> assessment (#168 #172 closed 2026-05-24). Bootstrap floor is now normative.
+> Implementation in Coordinator routing logic is a Phase 5 deliverable.
 
 **Problem**: A node whose reputation score falls below the Silver threshold (0.40) is
 excluded from standard routing. With no traffic, it cannot accumulate successful tasks,
@@ -384,7 +383,7 @@ but in reverse — a **floor trap**.
 The bootstrap floor breaks this cycle by guaranteeing a minimum amount of exploration
 traffic to recovering nodes.
 
-**Floor rule** (PENDING):
+**Floor rule** (normative):
 
 A Coordinator MUST route at least one sub-task per session to a node in the **bootstrap
 pool** when the following conditions are jointly met:
@@ -475,6 +474,36 @@ All credit reports include `cip_parent_task_id` for auditability.
 - The Coordinator MUST generate a signed `CIPReceipt` (§10.3) for each Worker whose credits are awarded. The `CIPReceipt.worker_id` MUST match the Worker's registered node ID. Coordinators MUST NOT batch multiple Workers into a single receipt.
 - A Worker MUST NOT self-report credit awards. Credit awards MUST originate exclusively from the Coordinator of the session in which the Worker participated.
 - The directory MUST validate the `CIPReceipt` signature (HMAC-SHA256, §10.3) before processing any credit award. An invalid or absent signature MUST result in rejection with `IICP-E027` (invalid receipt signature).
+
+### 7.1 Free Evaluation Allocation
+
+To enable new operators to try the mesh before earning or purchasing credits, the
+directory MUST implement a free credit allocation for any registered node with a
+zero balance:
+
+- **Allocation amount**: 5 credits per allocation period.
+- **Period**: 6 hours. A node is eligible for a fresh allocation when its credit
+  balance is zero AND at least 6 hours have elapsed since its last free allocation
+  (or it has never received one).
+- **Eligibility**: any registered `node_token` (worker nodes and pure proxy/client
+  registrations). Eligibility is per `node_token`, not per IP address.
+- **Trigger**: the directory MAY allocate lazily (on the first credit balance query
+  or at registration). The directory MUST NOT accumulate un-dispensed credits across
+  periods — if a node's balance remains zero across multiple periods, it receives
+  only one period's worth (5 credits) on the next query, not multiples.
+- **Anti-Sybil**: the registration rate limit (`IICP-E034`, §8 registration) bounds
+  abuse at the network level. Per-IP Sybil resistance (ADR-030) is a Phase 6
+  hardening concern and does not block this mechanism.
+
+**Normative requirements — Free Evaluation Allocation:**
+
+- The directory MUST award exactly 5 credits per eligible period. It MUST NOT award
+  partial allocations or accumulate across missed periods.
+- The directory MUST log each allocation with event type `CREDIT_ALLOCATION` in the
+  node lifecycle event log. The log entry MUST include `amount`, `reason`, and
+  `period_h` fields.
+- The directory MUST NOT award a free allocation when the node's balance is greater
+  than zero, even if the 6-hour period has elapsed.
 
 ---
 
@@ -612,6 +641,7 @@ Colluding nodes can inflate credit balances by routing tasks between coordinatin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6.8 | 2026-05-24 | §5.1.1 Tier Structure: RATIFIED — tier thresholds (Silver ≥ 0.40, Gold ≥ 0.65, Platinum ≥ 0.85), identity-age gate (≥ 720h), decay floor (R_floor = 0.30), general reputation update rules. §5.1.2 Bootstrap Traffic Floor: RATIFIED — floor rule normative. PENDING markers removed from both sections. Evidence: REP1/REP2/REP5/REP6 research tracks, #168 #171 #172 closed. Implementation: directory v1.9.19 (ReputationDecayCommand DECAY_FLOOR=0.30, NodeScorer tier thresholds). |
 | 0.6.7 | 2026-05-20 | §10.6 Credit Award Rate Limiting: normative per-node hourly cap (1 000 credits/hour, configurable). Directory MUST enforce before nonce lock (rejected awards MUST NOT consume nonce). Counter increments only on successful award. Error: IICP-E027. Closes TC-9b directory-level spec gap. |
 | 0.6.6 | 2026-05-20 | §5.2 Conformance Levels: added `CIP-None` as explicit profile for nodes that have not opted into any CIP role. Updated profile table and REGISTER example to use `"CIP-None"` instead of `null`. Consistent with implementation (RegisterController, NodeScorer) — `null` is no longer emitted by the directory. |
 | 0.6.5 | 2026-05-19 | §10.3 Directory verification: added HMAC key not provisioned sub-case — if `node_hmac_key` absent from directory record, MUST return IICP-E027 with message "Node HMAC key not provisioned"; node must re-register. Corrected key reference from `node_token` to `node_hmac_key` (implementation uses a dedicated HMAC key issued at registration, not the node auth token). |
