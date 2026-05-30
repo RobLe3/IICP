@@ -1,5 +1,47 @@
 # IICP Changelog
 
+## v1.9.0 — 2026-05-30
+
+### Summary
+
+Security-hardening normative content from the red-team Block-1 audit, plus a code↔spec
+drift closeout that documents endpoints and rules the reference implementation already shipped.
+
+### Updated documents
+
+| File | Change |
+|------|--------|
+| `iicp-semantics.md` | §11.2 per-heartbeat positive reputation-delta cap (+0.10) MUST (RT-01). §11.5 peer audit-report griefing cap — per-reporter 24h limit + max 2 distinct reporters' deltas per target/day MUST (RT-05). Spec v1.1.0 → 1.3.0. |
+| `iicp-dir.md` | §3.9 AUDIT_REPORT endpoint; §3.9b Public Stats (`GET /v1/stats`) schema; §3.10 free-credit allocation rules; §3.4 NODELIST `health_label`/`exposure_mode`/`public_key` + transport fields; §7 credit-endpoint names corrected to shipped routes; §3.7 event-type enum reconciled to snapshot+event-tail model; probation clarified node-detail-only. Spec v0.7.0 → 0.9.0. |
+| `iicp-cooperative-inference.md` | §5.1.1 `reputation_tier` enum floor reconciled `none` → `bronze` (matches reference impl). Spec v0.6.8 → 0.6.9. |
+| `iicp-telemetry.md` | §4 SCORE_UPDATE reconciled to the snapshot model — directory MUST update the reputation snapshot; discrete event emission OPTIONAL. |
+
+### Wire compatibility
+
+No wire-format changes. New normative caps constrain reputation accounting; new sections
+document already-shipped endpoints. Versioning discipline: this is ONE consolidated MINOR
+bump for the entire 2026-05-30 spec session (anti-inflation; see VERSIONING.md).
+
+---
+
+## v1.8.0 — 2026-05-25
+
+### Summary
+
+S.13 ephemeral-by-design federation (ADR-033).
+
+### Updated documents
+
+| File | Change |
+|------|--------|
+| `iicp-federated-directory.md` | v0.3.0: HEARTBEAT/SCORE_UPDATE/REPUTATION_UPDATE removed from the federated event log (snapshot + event-tail model); new `GET /v1/snapshot` bootstrap endpoint. v0.2.0: replica registration handshake (`POST /v1/replicas/register`). |
+
+### Wire compatibility
+
+No wire-format changes. Federated event-log set reduced to durable events only.
+
+---
+
 ## v1.7.0 — 2026-05-24
 
 ### Summary

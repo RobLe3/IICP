@@ -8,7 +8,7 @@
 
 **Format**: `MAJOR.MINOR.PATCH` (semver)  
 **Source of truth**: `spec/v1.5/VERSION` in the [`RobLe3/IICP`](https://github.com/RobLe3/IICP) spec repo  
-**Displayed as**: `IICP v1.7.0` or `IICP Protocol v1.7.0`  
+**Displayed as**: `IICP v1.9.0` or `IICP Protocol v1.9.0`  
 **Changelog**: `CHANGELOG.md` in the IICP spec repo
 
 This is the version that external implementers, operators, and IETF reviewers see. It covers
@@ -19,7 +19,9 @@ the entire IICP specification suite (core, CIP, framing, identity, telemetry, et
 | v1.4.2 | 2024 | Historical — deprecated (inflated performance claims; corrected in v1.5) |
 | v1.5.0-draft | 2026-05-15 | Spec corrections applied; methodology disclosure; v1.4.2 claims moved to non-normative appendix |
 | v1.6.0 | 2026-05-23 | Phase 5 CIP spec added; binary framing stubs; recognition, telemetry, MCP binding, billing extension |
-| **v1.7.0** | **2026-05-24** | **Current** — §5.1.1 tier structure and §5.1.2 bootstrap floor ratified; all 13 Phase-5 research tracks closed |
+| v1.7.0 | 2026-05-24 | §5.1.1 tier structure and §5.1.2 bootstrap floor ratified; all 13 Phase-5 research tracks closed |
+| v1.8.0 | 2026-05-25 | S.13 ephemeral-by-design federation (ADR-033); snapshot+event-tail bootstrap |
+| **v1.9.0** | **2026-05-30** | **Current** — RT-01/RT-05 reputation caps (§11.2/§11.5) + directory drift closeout (audit-report, public stats, free-credit, NODELIST fields, credit-endpoint/SCORE_UPDATE/tier reconciliations) |
 
 **Rules:**
 - Bump MINOR for new normative content (new sections, new specs added to suite)
@@ -47,7 +49,7 @@ which version of a sub-document contains which normative text.
 
 **Rules:**
 - Sub-spec versions are for editors. End users see the Protocol Suite version.
-- When displaying both: `IICP v1.7.0 · S.12 CIP v0.6.8` (suite first, sub-spec second)
+- When displaying both: `IICP v1.9.0 · S.12 CIP v0.6.9` (suite first, sub-spec second)
 - Never use a sub-spec version alone as "the" IICP version on public-facing surfaces
 
 ---
@@ -59,12 +61,12 @@ which version of a sub-document contains which normative text.
 **Source**: `directory/config/app.php iicp_version` (directory service)
 
 The reference implementation version tracks software releases, not protocol releases.
-A software version can be ahead of or behind the spec version (e.g., directory v1.9.x
-implements Protocol Suite v1.7.0).
+A software version can be ahead of or behind the spec version (e.g., directory v1.10.x
+implements Protocol Suite v1.9.0).
 
 | Component | Current version | Location |
 |-----------|----------------|----------|
-| Directory (PHP) | v1.9.19 | `directory/config/app.php` `iicp_version` |
+| Directory (PHP) | v1.10.4 | `directory/config/app.php` `iicp_version` |
 | Adapter (Python) | v1.x — check adapter/VERSION or pyproject.toml | |
 | Proxy (Python) | v1.x | |
 | Rust node | v0.x | `iicp-node/Cargo.toml` |
@@ -80,7 +82,7 @@ implements Protocol Suite v1.7.0).
 
 | Surface | What to display | Example |
 |---------|----------------|---------|
-| Research page badge | Protocol Suite version | `IICP v1.7.0 · Updated 2026-05-24` |
+| Research page badge | Protocol Suite version | `IICP v1.9.0 · Updated 2026-05-30` |
 | Spec references in page body | Suite + sub-spec | `spec S.12 v0.6.8` |
 | Implementation evidence | Software version | `directory v1.9.19` |
 | PR commit messages | Component + software version | `[directory] v1.9.19` |

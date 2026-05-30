@@ -4,7 +4,7 @@
 
 *Building the HTTP for the Age of Generative AI*
 
-**Current version**: v1.6.0  
+**Current version**: v1.9.0  
 **Reference implementation**: [iicp.network](https://github.com/RobLe3/iicp.network)  
 **Status**: Active development — Phase 5 (Cooperative Inference Protocol)
 
@@ -191,6 +191,9 @@ The client and node software will be publicly released once these are verified a
 
 | Version | Date | Notes |
 |---------|------|-------|
+| **v1.9.0** | 2026-05-30 | Security-hardening normative content: per-heartbeat reputation delta cap (§11.2), audit-report griefing cap (§11.5). Directory drift closeout: AUDIT_REPORT endpoint, Public Stats schema, free-credit rules, NODELIST health_label/exposure_mode/public_key + transport fields; credit-endpoint / SCORE_UPDATE-snapshot / tier-enum reconciliations |
+| v1.8.0 | 2026-05-25 | S.13 ephemeral-by-design federation (ADR-033): HEARTBEAT/SCORE_UPDATE/REPUTATION_UPDATE removed from federated event log; snapshot+event-tail bootstrap (GET /v1/snapshot); replica registration handshake |
+| v1.7.0 | 2026-05-24 | §5.1.1 tier structure + §5.1.2 bootstrap floor ratified; all 13 Phase-5 research tracks closed; mesh-health compound metric live |
 | **v1.6.0** | 2026-05-23 | CIP receipt response integrity (TC-9c `response_hash`); framing spec stubs (CBOR/QUIC); 12 additional sub-protocol docs |
 | v1.5.0-draft | 2026-05-15 | Spec split (core/semantics/extensions); 7 sub-protocol docs; 40 conformance test IDs; CBOR wire format |
 | v1.4.2 | 2024 | Original monolithic Internet-Draft |
