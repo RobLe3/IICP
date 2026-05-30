@@ -411,6 +411,19 @@ Deltas from a single heartbeat batch MUST be summed and applied atomically:
 new_score = clamp(old_score + Σ(per_task_delta), 0.0, 1.0)
 ```
 
+**Per-heartbeat positive delta cap (RT-01 / #375)**: To prevent reputation self-inflation via
+self-reported metrics, the positive component of the summed delta from a single heartbeat call
+MUST be capped at **+0.10** before the atomic update. Negative deltas (failures, timeouts)
+are not capped and apply in full. Rationale: a single heartbeat carrying `tasks_success=100`
+would otherwise drive the score from 0.5 to 1.0 in one call; the cap requires at least
+5 minutes of sustained legitimate traffic to achieve maximum reputation.
+
+```
+positive_delta = min(max(0.0, Σ(per_task_delta)), 0.10)
+negative_delta = min(0.0, Σ(per_task_delta))
+new_score = clamp(old_score + positive_delta + negative_delta, 0.0, 1.0)
+```
+
 ### 11.3 Initial value and probation
 
 New nodes start with `reputation_score = 0.5`. Implementations MAY enforce a probation
@@ -422,6 +435,26 @@ details are implementation-defined; the initial score of 0.5 is normative.
 Scores MUST remain within `[0.0, 1.0]` at all times. Implementations MUST clamp before
 persisting. Conformance tests: REP-01 through REP-03 (see conformance-test-suite.md §13.6).
 
+### 11.5 Peer audit-report griefing cap (RT-05 / #379)
+
+A registered node MAY submit a peer audit-report (`POST /v1/audit-report`) reporting a
+`declaration_divergence` finding against a target node. The directory applies a
+`REPUTATION_DELTA = −0.05` on acceptance.
+
+To prevent coordinated reputation griefing (multiple colluding reporters targeting one
+node), the following MUST be enforced:
+
+1. **Per-reporter rate limit**: A given reporter node MUST NOT have more than one accepted
+   report against the same target accepted within any 24-hour window.
+2. **Per-target global cap**: At most **2 distinct reporters** MAY have their delta applied
+   against any single target within a 24-hour window. Reports from additional reporters
+   within the window MUST be acknowledged (HTTP 202) but MUST NOT reduce the target's
+   reputation further. The `delta_suppressed: true` flag SHOULD be included in the event log.
+
+Rationale: without the global cap, 10 colluding nodes each filing one report (within their
+individual rate windows) can reduce a target from 0.5 → 0.0 in a single day. The cap limits
+total daily damage to −0.10 regardless of how many distinct reporters participate.
+
 ---
 
 ## Changelog
@@ -431,6 +464,7 @@ persisting. Conformance tests: REP-01 through REP-03 (see conformance-test-suite
 | 1.0.0 | 2026-05-15 | Initial draft — extracted from ARCHITECTURE.md, RELIABILITY.md, and prior spec work as part of S.5 spec split |
 | 1.1.0 | 2026-05-17 | §11 Reputation Update Rules — normative delta table, latency budgets by QoS class, bounded score invariant. Closes #113. |
 | 1.2.0 | 2026-05-17 | §2.1 Added `realtime` QoS level row. §2.2 QoS Admission Control — MUST 429 capacity_exceeded with qos_class+retry_after_ms, MUST proxy node-switch. §2.3 renumbered from §2.2. Closes #119 (spec). |
+| 1.3.0 | 2026-05-30 | §11.2 Per-heartbeat positive delta cap +0.10 MUST (RT-01 security fix, #375). §11.5 Peer audit-report griefing cap — per-reporter 24h rate limit + 2-reporter global cap per target per day MUST (RT-05 security fix, #379). |
 
 ---
 

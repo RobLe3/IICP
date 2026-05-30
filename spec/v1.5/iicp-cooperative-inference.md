@@ -1,7 +1,7 @@
 # S.12 — IICP Cooperative Inference Protocol (CIP)
 
 **Status**: Draft (active — normative text in §2–§7, §10; §4 wire format normative per 0.4.0-draft)  
-**Version**: 0.6.8  
+**Version**: 0.6.9  
 **Phase**: 5 (Cooperative Inference)  
 **Authors**: Protocol Steward  
 **Linked ADR**: ADR-012 (Phase 5 CIP Scoring Formula), ADR-019 (Declarative Node Pricing)  
@@ -351,8 +351,13 @@ attacks where an agent quickly builds reputation and then resets identity.
 
 **NODELIST surface**: The directory's `GET /v1/discover` response MUST include a
 `reputation_tier` field in each node record. The field value MUST be one of:
-`"none"` (below Silver), `"silver"`, `"gold"`, or `"platinum"`. The platinum gate
-uses node registration age (`created_at`) as the identity-age proxy.
+`"bronze"` (floor tier, reputation ≥ 0.00 — the value the directory emits for
+sub-Silver nodes, including probation nodes), `"silver"`, `"gold"`, or `"platinum"`.
+The platinum gate uses node registration age (`created_at`) as the identity-age proxy.
+
+> **Enum note (reconciled 2026-05-30)**: Earlier drafts named the floor tier `"none"`.
+> The shipped directory (`NodeScorer`) emits `"bronze"` for the floor tier, matching the
+> tier table above. Clients MUST treat `"bronze"` as the floor; `"none"` is retired.
 
 **General reputation update rules** (normative — ratified 2026-05-24, separate from CIP-specific
 adjustments above):
@@ -641,6 +646,7 @@ Colluding nodes can inflate credit balances by routing tasks between coordinatin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6.9 | 2026-05-30 | §5.1.1 reputation_tier enum reconciled (#384): floor tier is `bronze` (matches shipped NodeScorer + the tier table); `none` retired. |
 | 0.6.8 | 2026-05-24 | §5.1.1 Tier Structure: RATIFIED — tier thresholds (Silver ≥ 0.40, Gold ≥ 0.65, Platinum ≥ 0.85), identity-age gate (≥ 720h), decay floor (R_floor = 0.30), general reputation update rules. §5.1.2 Bootstrap Traffic Floor: RATIFIED — floor rule normative. PENDING markers removed from both sections. Evidence: REP1/REP2/REP5/REP6 research tracks, #168 #171 #172 closed. Implementation: directory v1.9.19 (ReputationDecayCommand DECAY_FLOOR=0.30, NodeScorer tier thresholds). |
 | 0.6.7 | 2026-05-20 | §10.6 Credit Award Rate Limiting: normative per-node hourly cap (1 000 credits/hour, configurable). Directory MUST enforce before nonce lock (rejected awards MUST NOT consume nonce). Counter increments only on successful award. Error: IICP-E027. Closes TC-9b directory-level spec gap. |
 | 0.6.6 | 2026-05-20 | §5.2 Conformance Levels: added `CIP-None` as explicit profile for nodes that have not opted into any CIP role. Updated profile table and REGISTER example to use `"CIP-None"` instead of `null`. Consistent with implementation (RegisterController, NodeScorer) — `null` is no longer emitted by the directory. |

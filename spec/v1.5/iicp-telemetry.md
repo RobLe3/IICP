@@ -146,8 +146,21 @@ Deflator attacks and majority attacks are separately addressed by the Sybil quor
 
 ## 4. SCORE_UPDATE event
 
-After each accepted telemetry report, the directory MUST emit a `SCORE_UPDATE` event log
-entry with the following fields:
+> **Snapshot-model reconciliation (2026-05-30, db-D4prime / S.13 v0.3.0)**: Under the
+> federated **snapshot + event-tail** storage model, high-frequency operational events
+> (`SCORE_UPDATE`, `HEARTBEAT`, heartbeat-path `REPUTATION_UPDATE`) are **no longer emitted
+> to the federated event log** — replicas derive current reputation from the
+> `nodes.reputation_score` snapshot column, not from a per-report event stream. The MUST
+> below is therefore **downgraded to "the directory MUST update the node's reputation
+> snapshot"**; emitting a discrete `SCORE_UPDATE` event is OPTIONAL and, in the current
+> directory, not done. The schema is retained for directories that opt into verbose event
+> logging and for the conformance shape. Event types that REMAIN in the federated log:
+> `REGISTER`, `DEREGISTER`, `AUDIT_REPORT`, `CREDIT_AWARD`, `REPUTATION_DECAY`. See iicp-dir
+> §3.7 for the authoritative live event-type set.
+
+After each accepted telemetry report, the directory MUST update the node's reputation
+snapshot (`nodes.reputation_score` / `reputations.score`). A directory MAY additionally emit
+a `SCORE_UPDATE` event log entry with the following fields (OPTIONAL under the snapshot model):
 
 ```json
 {
@@ -174,4 +187,5 @@ verify that the Sybil quorum gate is operating correctly without re-querying the
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 0.3.0 | 2026-05-30 | §4 SCORE_UPDATE reconciled to snapshot model (R1, #384): MUST downgraded to 'update reputation snapshot'; discrete SCORE_UPDATE event now OPTIONAL/not-emitted under db-D4prime. |
 | 1.0-draft | 2026-05-18 | Initial — §T4 Telemetry Trust Model (proxy_token auth + Sybil quorum gate). Derived from #114 implementation. Tracked in #185. |

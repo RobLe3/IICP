@@ -1,7 +1,7 @@
 # IICP-DIR — Directory Sub-Protocol Specification
 
-**Version**: 0.6.1  
-**Date**: 2026-05-20  
+**Version**: 0.9.0  
+**Date**: 2026-05-30  
 **Status**: draft  
 **Issue**: #14  
 **Authority**: Protocol Steward  
@@ -61,7 +61,64 @@ Registers a node's identity, capabilities, and resource limits.
 ```
 
 **Required fields**: `endpoint`, `region`, `capabilities[].intent`, `limits.max_concurrent`  
-**Optional**: `node_id` (directory assigns if absent), `availability`, `limits.tokens_per_min`
+**Optional**: `node_id` (directory assigns if absent), `availability`, `limits.tokens_per_min`, `transport_endpoint`
+
+**Dual-endpoint model (v1.5.0, optional — default to HTTP-only)**:
+
+A node MAY advertise two endpoints with distinct roles:
+
+| Field | Scheme | Role | Used by |
+|-------|--------|------|---------|
+| `endpoint` | `http://` / `https://` | Control plane: health probe, registration heartbeat, HTTP fallback transport | Directory `assertLive`; legacy clients |
+| `transport_endpoint` | `iicp://` / `iicpsec://` | Data plane: native binary framing per ADR-040 (default port 9484) | Clients preferring native transport |
+
+Rules:
+- `endpoint` is REQUIRED (no change from prior versions).
+- `transport_endpoint` is OPTIONAL. When present its URI scheme MUST be `iicp` (plaintext binary framing) or `iicpsec` (TLS-wrapped framing). Default port for both is 9484 (ADR-040 §3).
+- The directory MUST NOT perform an HTTP probe against `transport_endpoint` — its liveness is implied by `endpoint`'s `/iicp/health` response (Phase 5.x scope; native-protocol dial-back is Phase 6).
+- Clients SHOULD prefer `transport_endpoint` when issuing task CALLs. When absent or unreachable, clients fall back to `endpoint` (HTTP transport per spec §3.3).
+- Both endpoints MUST resolve to the same node (operator MUST NOT advertise a `transport_endpoint` belonging to a different host).
+
+Example with both endpoints:
+
+```json
+{
+  "endpoint": "http://203.0.113.5:8080",
+  "transport_endpoint": "iicp://203.0.113.5:9484",
+  ...
+}
+```
+
+When only `endpoint` is set, the directory and clients behave exactly as in v1.4.x (HTTP-only transport). [→ ADR-040 binary framing, #325 routability, #331 NAT observability]
+
+**ADR-041 additions (Phase 5.x, optional — default to current behavior)**:
+
+```json
+{
+  "message_type": "REGISTER",
+  "endpoint": "https://203.0.113.5:8090",
+  ...
+  "transport_method": "upnp_mapped",
+  "transport_candidates": [
+    {"type": "host",  "address": "192.168.1.10", "port": 8090, "priority": 126},
+    {"type": "srflx", "address": "203.0.113.5",  "port": 8090, "priority": 100, "base": "192.168.1.10:8090"}
+  ],
+  "relay_endpoint": null,
+  "nat_type": "full_cone"
+}
+```
+
+| Field | Type | Meaning |
+|-------|------|---------|
+| `transport_method` | enum | `direct \| upnp_mapped \| stun_hole_punch \| turn_relay \| external_tunnel` |
+| `transport_candidates[]` | array | ICE-style candidates (RFC 8445 §5.1.2.1 priority); clients pick highest-priority working candidate |
+| `transport_candidates[].type` | enum | `host \| srflx \| relay` |
+| `relay_endpoint` | string\|null | Set only when `transport_method=turn_relay` |
+| `nat_type` | string\|null | Observability only (`full_cone`, `restricted_cone`, `port_restricted`, `symmetric`, `unknown`) |
+
+Directory MUST accept registrations without these fields (back-compat with Phase 1-5 nodes). When present, the directory stores them and surfaces them in NODELIST responses.
+
+**Endpoint routability invariant (`RoutableEndpoint`, iter-1365 / IICP-E035)**: in `APP_ENV in (production, staging)`, the directory MUST reject endpoints whose host is `localhost`, in `127.0.0.0/8`, `::1`, `RFC1918` ranges, `169.254.0.0/16` link-local, a reserved suffix (`.local`, `.test`, `.example`, `.invalid`, `.lan`, `.internal`), or a bare hostname without TLD. `APP_ENV in (local, testing)` bypasses this check for dev workflows. [→ ADR-041 invariant + #325]
 
 **Response (ACK)**:
 
@@ -151,6 +208,7 @@ GET /v1/discover
     {
       "node_id": "uuid",
       "endpoint": "https://node1.example.com",
+      "transport_endpoint": "iicp://node1.example.com:9484",
       "region": "eu-central",
       "score": 0.91,
       "available": true,
@@ -159,7 +217,6 @@ GET /v1/discover
       "max_concurrent": 4,
       "reputation_score": 0.87,
       "latency_estimate_ms": 120,
-      "probation": false,
       "completed_tasks_count": 1247,
       "cip_policy": {
         "allow_remote_inference": true,
@@ -175,7 +232,9 @@ GET /v1/discover
         "effective_until": null,
         "attested": true
       },
-      "cip_conformance_level": "CIP-Provider"
+      "cip_conformance_level": "CIP-Provider",
+      "health_label": "healthy",
+      "exposure_mode": "ipv4_public_direct"
     }
   ],
   "count": 1,
@@ -187,6 +246,7 @@ GET /v1/discover
 
 | Field | Type | Notes |
 |-------|------|-------|
+| `transport_endpoint` | string\|null | Native IICP binary endpoint (ADR-040). Scheme `iicp://` (plaintext) or `iicpsec://` (TLS). Clients SHOULD prefer this over `endpoint`. `null` = node only serves HTTP transport via `endpoint`. |
 | `reputation_score` | float [0.0, 1.0] | Delta-based EMA per spec §11.2 (ADR-023). Default 0.5 for nodes with no heartbeat history. |
 | `probation` | boolean | `true` when `completed_tasks_count < 100`. Nodes in probation are excluded from `?qos=interactive` and `?qos=realtime` queries. |
 | `completed_tasks_count` | integer | Cumulative count of successfully completed tasks (heartbeat-reported). Used for probation tier gating (spec §11.3). |
@@ -203,6 +263,18 @@ GET /v1/discover
 | `pricing.effective_until` | ISO-8601\|null | null = no expiry. |
 | `pricing.attested` | bool | `true` if `declaration_signature` was verified at last registration (ADR-019 §5.1). |
 | `cip_conformance_level` | string | One of `"CIP-None"`, `"CIP-Consumer"`, `"CIP-Provider"`, `"CIP-Full"`. `"CIP-None"` means the node has not opted into any CIP role (equivalent to not declared). Per spec §5.2. |
+| `health_label` | string\|null | ADR-044 composed health label: `"healthy"` (score ≥85), `"degraded"` (≥65), `"impaired"` (≥40), `"critical"` (<40), `"offline"`. Computed from a weighted combination — reachability 0.30, latency 0.25 (50–500 ms curve), task-success 0.25 (70–100% curve), reputation 0.20 (ADR-044). `null` against directories predating v1.10.0. |
+| `exposure_mode` | string\|null | ADR-043 8-category network exposure classification (e.g. `"ipv4_public_direct"`, `"cgnat_upnp"`, `"ipv6_gua"`). `null` if node has not run qualification. |
+| `transport_method` | string\|null | How the node is reachable for the native IICP transport (`"direct"`, `"upnp"`, `"stun"`, `"relay"`, …). Mirrors the REGISTER value (§3.1 / ADR-041). |
+| `nat_type` | string\|null | Detected NAT topology (ADR-041). Advisory; clients MAY prefer `"direct"`/`"full_cone"`. |
+| `transport_metadata` | object\|null | Transport-specific detail (relay endpoint, candidate list). Shape per ADR-041; opaque to clients that only use `endpoint`. |
+| `address_family` | string\|null | `"ipv4"`, `"ipv6"`, or `"dual"` (maintainer directive 2026-05-27). Lets IPv6-only clients filter. |
+| `relay_capable` | boolean | `true` if the node can act as a relay for NAT-bound peers (Tier-3 reachability). |
+| `public_key` | object\|null | IICP-CX confidentiality key (iicp-confidentiality §3.2): `{algorithm, encoding, key, key_id, not_after, hybrid_pq}`. Present when the node advertises E2E payload encryption support. `null` = node accepts plaintext only. Clients MUST use this to encrypt payloads when `X-IICP-Require-E2E` is set. |
+| `sdk_language` / `sdk_version` | string\|null | Advisory provenance of the serving node's SDK (#338). Informational only. |
+| `models` / `quantization` / `inference_engine` | array\|string\|null | Advisory capability detail (iicp-core §2.1). The directory MUST NOT reject unrecognized values. |
+
+**`probation` (clarification, R3)**: `probation` is computed server-side and used to *filter* discover results (probation nodes are excluded from `?qos=interactive`/`realtime`), but the discover NODELIST does **not** include a `probation` field per node. The full `probation` boolean is surfaced only by `GET /v1/node/{id}` (node-detail). Clients needing the flag query node-detail.
 
 Only nodes with `available = true` AND `last_seen` within 90s are returned.
 Score computed per ADR-008. Nodes with score < 0.1 are excluded.
@@ -326,7 +398,15 @@ Upon receiving `new_peers`, the receiver SHOULD:
 **Status**: Spec draft — not implemented  
 **Normative reference**: `spec/iicp-federated-directory.md` (S.13) — full protocol spec including trust model, DID document structure, replica sync lifecycle, redirect semantics, and 8 conformance requirements (DIR-FED-01–08). This section is the wire schema reference; S.13 is the authoritative normative text.
 
-The event log enables a replica directory to maintain a consistent, cryptographically verifiable view of the Genesis Seed's state without a shared database. All state mutations in the directory emit a signed event; replicas consume events via `GET /v1/events` and replay them to reconstruct current state.
+The event log enables a replica directory to maintain a consistent, cryptographically verifiable view of the Genesis Seed's state without a shared database. Replicas consume events via `GET /v1/events` and replay them on top of a periodic snapshot to reconstruct current state.
+
+> **Snapshot + event-tail model (db-D4prime / S.13 v0.3.0, reconciled 2026-05-30)**: high-frequency
+> operational events are NOT logged — replicas read current reputation/load from the node snapshot
+> (`nodes.*` columns), not from a per-heartbeat event stream. **Live federated event types**:
+> `REGISTER`, `DEREGISTER`, `AUDIT_REPORT`, `CREDIT_AWARD`, `REPUTATION_DECAY`, and
+> `REPUTATION_UPDATE` **only** for the `heartbeat_metrics` source (adapter-reported task outcomes).
+> `HEARTBEAT` and `SCORE_UPDATE` events are NOT emitted (the directory updates the snapshot instead).
+> Earlier drafts listed `HEARTBEAT`/`SCORE_UPDATE` in the enum; they are retired from the live set.
 
 #### Event Envelope
 
@@ -335,7 +415,7 @@ All events share a common envelope:
 ```json
 {
   "event_id": "uuid-v4",
-  "event_type": "REGISTER | HEARTBEAT | SCORE_UPDATE | REPUTATION_UPDATE | CREDIT_AWARD | DEREGISTER",
+  "event_type": "REGISTER | DEREGISTER | AUDIT_REPORT | CREDIT_AWARD | REPUTATION_DECAY | REPUTATION_UPDATE",
   "seq": 1042,
   "ts_ms": 1715644800000,
   "payload": { ... },
@@ -500,6 +580,79 @@ The iicp-node exposes Prometheus-compatible metrics at `GET /metrics` in text ex
 
 **Conformance**: `test_rust_node_metrics_endpoint` (PH4-M6) verifies 200 response with mandatory metrics present.
 
+### 3.9 AUDIT_REPORT (Node → Directory)
+
+**Phase**: 3 (#118 Part D)
+**Status**: Implemented in `AuditReportController`
+**Endpoint**: `POST /api/v1/audit-report` — authenticated via `node_token` (the reporter).
+
+A registered node (the *reporter*) submits a peer-divergence finding about a *target* node.
+
+**Request:**
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `target_node_id` | string (≤36, `^[a-zA-Z0-9][a-zA-Z0-9._:-]*$`) | Node being reported. MUST differ from reporter. |
+| `finding` | string | Enum. v1: `declaration_divergence` (target's `/iicp/health` models[] omits a registered model). |
+
+**Behaviour (normative):**
+
+- A reporter MUST NOT report on itself → `422 invalid_target`.
+- **Per-reporter rate limit**: at most one accepted report per `(reporter, target)` per 24h → `429` with `reason: "rate_limited"`.
+- **Per-target griefing cap (RT-05, spec §11.5)**: at most **2 distinct reporters** MAY apply a reputation delta against one target per 24h. Reports beyond the cap return `202` but MUST NOT reduce reputation further; the emitted event carries `delta_suppressed: true`.
+- On an applied report: reputation delta = **−0.05**, floored at 0.0 (see iicp-semantics §11.2).
+- Every report (applied or suppressed) emits an `AUDIT_REPORT` event to the append-only event log with `{reporter_node_id, finding, reputation_delta, delta_suppressed, old_score, new_score}`.
+- The directory MUST dual-write the new score to both `reputations.score` and `nodes.reputation_score`.
+
+**Response**: `202 {"accepted": true}` on success; `429`/`422` per above.
+
+### 3.9b Public Stats (`GET /v1/stats`)
+
+**Phase**: 3+
+**Status**: Implemented in `StatsController`
+**Auth**: none (public, CDN-cacheable). Consumed by the website and by the DG6 live-state discipline.
+
+```json
+{
+  "server": { "active_nodes": 3, "version": "v1.10.3" },
+  "probes": { "last_probe_at": "2026-05-30T11:30:19+00:00", ... },
+  "credit_schedule": {
+    "formula": "ceil(output_tokens / tokens_per_credit) × tier_weight × node_multiplier",
+    "tokens_per_credit": 1000,
+    "tier_weights": { "sub_1b": 0.05, "7b": 1.0, "13b": 2.0, "30b": 6.5, "70b": 32.0, "100b_plus": 75.0 },
+    "evaluation_grant": { "credits": 5, "interval_seconds": 21600 },
+    "burn_rate_pct": 2.0
+  },
+  "mesh_health": { "score": 65, "label": "degraded", "distribution": {...}, "mean": ..., "p10": ..., "sample": 3 },
+  "directory_health": { "score": ..., "label": ... }
+}
+```
+
+**Field semantics (normative):**
+
+| Field | Notes |
+|-------|-------|
+| `server.active_nodes` | Count of nodes with `last_seen` within the 90s liveness window. |
+| `server.version` | Directory software version (`config/app.php iicp_version`). |
+| `credit_schedule.tier_weights` | **Normative pricing schedule** — credits per 1000 output tokens scale by model size class. Operators and clients MAY key pricing on this. |
+| `credit_schedule.evaluation_grant` | Free-tier allocation mirror of §3.10 (5 credits / 21600s = 6h). |
+| `mesh_health` | ADR-044 node-aggregate (median over active provider nodes + distribution + p10 + mean + sample). `insufficient_sample` when <3 nodes; `unavailable` when empty. |
+| `directory_health` | Directory-infrastructure signal: `0.6·discover_latency + 0.4·conformance` (the signal REACH probes feed). Distinct from `mesh_health`. |
+
+### 3.10 Free-credit allocation (Directory internal)
+
+**Phase**: 3 (ADR-019 credit economy)
+**Status**: Implemented in `CreditService::maybeAllocateFreeCredits()`
+
+The directory grants a small free-credit allocation to bootstrap new nodes into the credit economy.
+
+**Rules (normative):**
+
+- Allocation amount: **5.0 credits** (`FREE_CREDITS_AMOUNT`).
+- Eligibility: the node's credit balance is 0 **AND** either it has no prior free-credit allocation, **OR** at least **6 hours** (`FREE_CREDITS_PERIOD_HOURS`) have elapsed since its last allocation (`free_credit_last_allocation_at`).
+- **RT-02 (credit-survival)**: the `credits` row MUST survive node deletion (no cascade-on-delete). Re-registration with the same `node_id` finds the preserved row and respects the 6-hour gate — deregister/re-register does not reset eligibility.
+- **Known limitation (RT-02b, tracked #380)**: the gate is keyed on `node_id`. A fresh `node_id` per registration bypasses it. Closure requires operator-scoped accounting (ADR-030) and/or an IP-aggregate ceiling. This is acceptable pre-Phase-5D (credits have no exchange value) and MUST be closed before external-operator launch.
+
 ---
 
 ## 5. Error Codes
@@ -511,6 +664,8 @@ The iicp-node exposes Prometheus-compatible metrics at `GET /metrics` in text ex
 | `rate_limited` | 429 | Registration rate limit exceeded |
 | `liveness_failed` | 422 | Endpoint did not respond to health check |
 | `validation_error` | 422 | Required field missing or invalid |
+| `IICP-E034` | 429 | Too many registration attempts from this source IP (10/15min — W-033) |
+| `IICP-E035` | 422 | Non-routable endpoint host (ADR-041 invariant; `RoutableEndpoint` validator, iter-1365 / #325) |
 
 ---
 
@@ -541,9 +696,14 @@ IICP conformance.
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| `POST` | `/v1/credits/earn` | Award credits after validated CIPWorkerReceipt |
-| `POST` | `/v1/credits/spend` | Deduct credits before routing (consumer-side) |
-| `GET`  | `/v1/credits/supply` | Mint telemetry — total supply, burn rate, TTL expiry rate |
+| `POST` | `/v1/credits/award` | Credit a worker after a validated CIPWorkerReceipt (HMAC-SHA256 + `response_hash` verified; IICP-E027 on failure). Conformance DIR-CRED-03. |
+| `GET`  | `/v1/credits/balance` | Current credit balance for the authenticated node. Conformance DIR-CRED-01. |
+| `GET`  | `/v1/credits/transactions` | Recent credit transaction history for the authenticated node. Conformance DIR-CRED-02. |
+| `GET`  | `/v1/credits/quote` | Quote the credit cost of a prospective task (tokens × multiplier). iicp-billing-extension §8 / CIP §2.2. |
+
+Free-tier allocation (5 credits / 6h gate) is automatic on registration — see §3.10. There is
+no separate "spend" endpoint: routing cost is deducted by the coordinator at award/settlement
+time, not via a pre-route debit call.
 
 **Advertise support**: A directory that implements this extension SHOULD return
 `"credits_extension": true` in `GET /api/v1/stats`. Nodes SHOULD check this field before
@@ -563,6 +723,10 @@ Tracking: #302
 | 0.1.1 | 2026-05-15 | Added Changelog section (A6 spec cleanup) |
 | 0.2.0 | 2026-05-17 | §3.4 NODELIST: added `probation`, `completed_tasks_count`, `cip_policy` fields + QoS probation filter table (ADR-023, CIP-D1, spec §11.3) |
 | 0.3.0 | 2026-05-17 | §3.4 Consensus mode discovery note: proxy discovers N workers for consensus; directory unaware of consensus mode; cip_policy.allow_remote_inference filter requirement. |
+| 0.7.0 | 2026-05-26 | §3.1 REGISTER + §3.4 NODELIST: optional `transport_endpoint` field added (`iicp://` / `iicpsec://` scheme; default port 9484). Splits control plane (`endpoint`, HTTP) from data plane (`transport_endpoint`, native binary framing per ADR-040). Directory's HTTP liveness probe targets `endpoint` only; clients SHOULD prefer `transport_endpoint` when present. Back-compat: nodes without `transport_endpoint` continue to behave exactly as v0.6.x. |
+| 0.9.0 | 2026-05-30 | Code↔spec drift closeout (#384): §7 credit endpoints corrected to shipped routes (award/balance/transactions/quote — R4 fix); §3.9b Public Stats schema added (/v1/stats — server/probes/credit_schedule/mesh_health/directory_health); §3.4 NODELIST table + transport_method/nat_type/transport_metadata/address_family/relay_capable/public_key(CX object)/sdk_*/models fields; probation clarified as node-detail-only (R3); §3.7 event-type enum reconciled to snapshot+event-tail live set (R2 — HEARTBEAT/SCORE_UPDATE retired). |
+| 0.8.0 | 2026-05-30 | §3.9 AUDIT_REPORT endpoint documented (was in code + semantics §11.5 but absent from the dir message-type catalogue — code→spec drift, GAPS-022). §3.10 Free-credit allocation rules documented (amount, 6h gate, RT-02 credit-survival, RT-02b known limitation). |
+| 0.7.0 | 2026-05-30 | §3.4 NODELIST: added `health_label` (ADR-044 composed health score label) and `exposure_mode` (ADR-043 network classification) fields. Both `null`-safe for backward compatibility with pre-v1.10.0 directories. |
 | 0.6.1 | 2026-05-20 | §3.3 DISCOVER: `cip_capable` query parameter added — boolean, server-side filter for CIP-Provider nodes (`allow_remote_inference=true`). Existing params `min_reputation`, `max_multiplier`, `min_quality_score` documented in table. CIP coordinators SHOULD pass `cip_capable=true` to avoid client-side filtering (S.12 §5.2). |
 | 0.6.0 | 2026-05-20 | §3.4 NODELIST: `cip_conformance_level` type changed from `string\|null` to `string`; `"CIP-None"` added as explicit non-CIP value (consistent with implementation in RegisterController + NodeScorer). S.12 §5.2 updated to include `CIP-None` in profile table. |
 | 0.5.0 | 2026-05-19 | §3.2 HEARTBEAT PONG: added `reputation_score` field (operator feedback on current standing). §3.7 REPUTATION_UPDATE event: dual-source schemas (`heartbeat_metrics` from HEARTBEAT pipeline, `proxy_telemetry` from SCORE_UPDATE pipeline). §3.7 CREDIT_AWARD event: corrected to actual CIPWorkerReceipt fields (`task_id`, `tokens_used`, `amount`, `new_balance`, `cip_parent_task_id`, `cip_session_key`). |

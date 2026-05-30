@@ -1,0 +1,219 @@
+# IICP Confidentiality Extension (IICP-CX)
+
+**Spec ID**: S.16  
+**Version**: 0.1.0-draft  
+**Date**: 2026-05-29  
+**Status**: Draft — Tier 1 implementation tracked in issue #360  
+**Tracking**: #360 (E2E payload confidentiality), #361 (privacy threat model)  
+**Foundation**: `project/SECURITY.md §Privacy Adversary Model` (PA-1..PA-4),
+`spec/iicp-core.md §8 Security` (SEC-PRIV-04/05/09)
+
+---
+
+## 1. Purpose
+
+IICP-CX defines an optional End-to-End Confidentiality extension for IICP task payloads.
+When enabled, task payloads are encrypted between the client and the inference-executing node
+such that relay nodes, the directory, and any intermediate infrastructure receive only
+ciphertext — they cannot read prompt content, response content, or task context.
+
+This specification directly addresses Privacy Adversary classes PA-2 and PA-3 from
+`project/SECURITY.md`:
+- **PA-2** (relay operator coercion): relay sees ciphertext only
+- **PA-3** (directory operator coercion): directory never sees task payloads (preserved from ADR-001/003)
+
+IICP-CX is designed to be:
+- **Backward-compatible**: nodes that do not support CX continue to function normally
+- **Opt-in per session**: clients negotiate confidentiality capability before sending payloads
+- **Relay-transparent**: the relay forwarding protocol does not need modification
+
+---
+
+## 2. Conformance levels
+
+| Level | Description |
+|-------|-------------|
+| **CX-Consumer** | Client implementation that can generate ephemeral key pairs, discover node public keys, and encrypt task payloads |
+| **CX-Provider** | Node implementation that advertises a public key, maintains the corresponding private key, and can decrypt CX-encrypted payloads |
+| **CX-Relay** | Relay implementation that can forward CX-encrypted task envelopes without modification (opaque forwarding) |
+
+A conformant CX-Relay MUST NOT attempt to decrypt or inspect the `encrypted_body` field.
+This is the primary security property of the relay confidentiality model.
+
+---
+
+## 3. Node Key Advertisement
+
+### 3.1 Registration and NODELIST
+
+Nodes that support CX-Provider MUST include a `public_key` object in their REGISTER
+payload and HEARTBEAT updates:
+
+```json
+"public_key": {
+  "algorithm": "X25519",
+  "encoding": "base64url",
+  "key": "<32-byte X25519 public key, base64url-encoded, no padding>",
+  "key_id": "<sha256 of DER-encoded key, first 8 hex bytes>",
+  "not_after": "<ISO 8601 UTC expiry — SHOULD be ≤ 90 days from registration>",
+  "hybrid_pq": null
+}
+```
+
+`hybrid_pq` is reserved for Kyber-768 post-quantum KEM hybrid (Phase 4+); set to `null` in
+Tier 1 implementations.
+
+### 3.2 Discovery response
+
+The `/v1/discover` response MUST include `public_key` for nodes that advertised one:
+
+```json
+{
+  "node_id": "...",
+  "endpoint": "...",
+  "public_key": { ... },
+  "capabilities": [ ... ]
+}
+```
+
+Nodes without a `public_key` MUST NOT receive CX-encrypted payloads.
+
+### 3.3 Conformance requirements
+
+| ID | MUST/SHOULD | Requirement |
+|----|-------------|-------------|
+| CX-NODE-01 | MUST | CX-Provider nodes MUST rotate their key pair at least every 90 days |
+| CX-NODE-02 | MUST | CX-Provider nodes MUST NOT reuse key pairs across node_id registrations |
+| CX-NODE-03 | SHOULD | CX-Provider nodes SHOULD use ephemeral session sub-keys derived from the long-term key for individual task decryption |
+
+---
+
+## 4. Confidentiality Envelope
+
+When a CX-Consumer sends a task to a CX-Provider, the IICP `payload` field is replaced
+with a confidentiality envelope:
+
+### 4.1 HTTP transport
+
+The task request body wraps the normal `POST /v1/task` payload:
+
+```json
+{
+  "task_id": "...",
+  "intent": "urn:iicp:intent:llm:chat:v1",
+  "iicp_conf": {
+    "version": 1,
+    "recipient_key_id": "<8-hex-byte key_id from node's public_key>",
+    "kem_ciphertext": "<base64url — X25519 ephemeral public key used in HKDF>",
+    "encrypted_body": "<base64url — AES-256-GCM ciphertext of the normal payload JSON>",
+    "nonce": "<base64url — 12-byte random nonce>",
+    "aad": "<base64url — task_id + intent concatenated, UTF-8>",
+    "plaintext_size": 1234
+  }
+}
+```
+
+The `payload` field MUST be absent when `iicp_conf` is present.
+
+### 4.2 IICP TCP transport
+
+For native IICP TCP (port 9484), a new message flag `0x04` (`CONF_ENCRYPTED`) is defined.
+When this flag is set on a CALL message, the CBOR `payload` field contains the
+confidentiality envelope map:
+
+```
+{
+  1: 1,                    ; version
+  2: h'<key_id bytes>',   ; recipient_key_id (8 bytes)
+  3: h'<kem_ct>',         ; kem_ciphertext (32 bytes, ephemeral X25519 pubkey)
+  4: h'<encrypted_body>', ; encrypted payload
+  5: h'<nonce>',          ; 12-byte nonce
+  6: h'<aad>',            ; task_id + intent
+  7: 1234                  ; plaintext_size
+}
+```
+
+---
+
+## 5. Key Exchange Protocol (Tier 1 — X25519 + AES-256-GCM)
+
+**Algorithm**: X25519-HKDF-SHA256 + AES-256-GCM (IETF HPKE, RFC 9180 compatible)
+
+**Client-side (CX-Consumer) steps**:
+
+1. Retrieve node's X25519 public key from `/v1/discover` response
+2. Generate ephemeral X25519 key pair (client_ephem_priv, client_ephem_pub)
+3. Perform ECDH: `shared_secret = X25519(client_ephem_priv, node_pub_key)`
+4. Derive encryption key via HKDF-SHA256:
+   ```
+   info = "IICP-CX-v1" || task_id || intent
+   key_material = HKDF(ikm=shared_secret, salt=nonce, info=info, length=32)
+   ```
+5. Encrypt payload:
+   ```
+   aad = UTF8(task_id + "|" + intent)
+   (ciphertext, tag) = AES-256-GCM(key=key_material, nonce=nonce, plaintext=payload_json, aad=aad)
+   encrypted_body = ciphertext + tag
+   ```
+6. `kem_ciphertext` = base64url(client_ephem_pub)
+
+**Node-side (CX-Provider) decryption steps**:
+
+1. Receive task with `iicp_conf` envelope
+2. Look up private key matching `recipient_key_id`
+3. Recover `client_ephem_pub` from `kem_ciphertext`
+4. Perform ECDH: `shared_secret = X25519(node_priv_key, client_ephem_pub)`
+5. Derive decryption key using the same HKDF derivation as step 4 above
+6. Decrypt: `plaintext = AES-256-GCM-Decrypt(key, nonce, encrypted_body, aad=UTF8(task_id+"|"+intent))`
+7. Process decrypted payload normally
+
+**Security properties**:
+- Forward secrecy: client ephemeral key is single-use; compromise of the node's long-term key does not decrypt past sessions
+- Ciphertext binding: AAD ties the ciphertext to the specific task and intent — prevents ciphertext from being replayed against a different task
+- Relay opacity: relay only sees `kem_ciphertext` (client ephemeral pubkey) and `encrypted_body` — no plaintext
+
+---
+
+## 6. Error Handling
+
+| Code | Condition | HTTP status |
+|------|-----------|-------------|
+| `IICP-E060` | `recipient_key_id` not found for this node | 422 |
+| `IICP-E061` | `iicp_conf.version` not supported | 422 |
+| `IICP-E062` | Decryption failed (wrong key, tampered ciphertext) | 400 |
+| `IICP-E063` | CX-Provider capability advertised but key has expired | 422 |
+
+Nodes that do not support CX MUST return `IICP-E064` when they receive a request
+with `iicp_conf` present. Clients SHOULD fall back to unencrypted payload on this error
+if they have not set `require_e2e = true`.
+
+---
+
+## 7. Session Negotiation (optional)
+
+Clients MAY include an `X-IICP-Require-E2E: 1` HTTP header or equivalent IICP TCP header
+flag to require E2E encryption. If the node does not support CX, it MUST return `IICP-E064`
+rather than accepting the unencrypted payload. This prevents silent downgrade.
+
+---
+
+## 8. Conformance test IDs
+
+| ID | Level | Description |
+|----|-------|-------------|
+| CX-01 | MUST | CX-Provider advertises `public_key` in REGISTER and NODELIST |
+| CX-02 | MUST | CX-Provider decrypts CX envelope and returns correct response |
+| CX-03 | MUST | CX-Relay forwards CX-encrypted task envelope unmodified |
+| CX-04 | MUST | CX-Provider returns IICP-E060 for unknown key_id |
+| CX-05 | MUST | CX-Provider returns IICP-E062 for tampered ciphertext (AES-GCM tag failure) |
+| CX-06 | SHOULD | CX-Consumer rotates ephemeral key on every task |
+| CX-07 | SHOULD | CX-Provider rotates long-term key every 90 days |
+
+---
+
+## 9. Open Questions
+
+1. **Key rotation continuity**: How should clients cache node public keys to avoid a round-trip to `/v1/discover` on every task? Suggest 5-minute TTL with background refresh.
+2. **Response encryption**: Should the node also encrypt its response back to the client? (Phase 2 of this spec.) In Tier 1, only the request payload is encrypted.
+3. **Multi-hop CIP**: In CIP fan-out (#360 follow-up), the originating client encrypts to each CIP sub-node's key individually. The CIP orchestrator sees only the intent routing, not the payloads. Spec coordination needed with `spec/iicp-cooperative-inference.md`.
+4. **Relay worker decrypt**: A relay worker receiving a RELAY_BIND connection on behalf of a CGNAT node — should the relay decrypt on behalf of the node? This would require the node to share its decryption key with the relay, which breaks PA-2. Preferred: relay passes ciphertext through unmodified; CGNAT node decrypts locally via its relay connection.

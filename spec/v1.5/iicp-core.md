@@ -429,6 +429,8 @@ in active use:
 | `IICP-E031` | 502 | Adapter | Relay forwarding to target peer failed — peer unreachable or returned error |
 | `IICP-E032` | 401 | Directory | Invalid or missing proxy_token — `POST /v1/telemetry` requires proxy_token Bearer, not node_token |
 | `IICP-E033` | 503 | Proxy (Client) | No nodes serve this intent — directory was reachable and returned 0 candidates after intent + region + reputation filtering. Distinct from generic "no_available_node" (which conflates this with directory unreachability). Operator next-step: verify intent URN, check `/nodes` page for matching capabilities, or wait for new providers. |
+| `IICP-E034` | 429 | Directory | Too many registration attempts from this source IP within the rate-limit window (10/15min per W-033). Operator next-step: wait `retry_after` seconds or use a different source IP. |
+| `IICP-E035` | 422 | Directory | Non-routable endpoint at `POST /v1/register` — host is localhost, in 127.0.0.0/8, ::1, RFC1918 (10/8, 172.16-31/12, 192.168/16), 169.254/16 link-local, a reserved suffix (`.local`, `.test`, `.example`, `.invalid`, `.lan`, `.internal`), or a bare hostname without TLD (Docker-compose service name). Operator next-step: register with a publicly-routable DNS name or IP; for local dev set `APP_ENV=local` against a local directory (issue #325 Layer 1). |
 
 ---
 
@@ -440,7 +442,11 @@ in active use:
 - Adapter MUST validate `node_token` on every `POST /v1/task` [→ TASK-1]
 - Error responses MUST NOT include stack traces, file paths, or DB structure [→ ERR-2]
 - Task payloads MUST NOT appear in logs [→ SEC-LOG-01]
-- **Privacy**: Implementers and operators MUST inform clients that the inference-executing node receives the full task payload in plaintext, including any user-provided content. IICP provides confidentiality for transit (TLS 1.3) and isolation of the directory from payload content; it does not provide confidentiality against the inference-executing node. [→ SEC-PRIV-01]
+- **Privacy (PA-1..PA-4)**: Implementers and operators MUST inform clients that the inference-executing node receives the full task payload in plaintext, including any user-provided content. IICP provides confidentiality for transit (TLS 1.3) and isolation of the directory from payload content; it does not provide confidentiality against the inference-executing node. [→ SEC-PRIV-01]
+- Relay nodes and directory operators MUST NOT log task payload content beyond the TTL required for rate-limiting. [→ SEC-PRIV-03]
+- Registration `node_id` MUST default to an anonymized UUID not tied to hardware or operator identity. [→ SEC-PRIV-08]
+- All IICP connections MUST use TLS 1.3 or higher with ephemeral key exchange (forward secrecy). [→ SEC-TLS-01, SEC-PRIV-09]
+- **Privacy adversary model** (PA-1..PA-4) and IICP Privacy Tier taxonomy are normative in `project/SECURITY.md §Privacy Adversary Model` and SHALL be considered when implementing any component that handles task routing or node metadata.
 
 ---
 

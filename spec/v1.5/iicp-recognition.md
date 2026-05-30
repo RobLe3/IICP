@@ -1,9 +1,10 @@
 # IICP Operator Recognition Protocol
 
-**Version**: 0.1.0-draft
-**Status**: Draft (skeleton — normative MUST/SHOULD bodies pending PS review of `research/gamification-track/`)
-**Date**: 2026-05-21
-**Tracking**: #267 (research), #269 (ADR-030 Operator Identity & Anti-Sybil — prerequisite)
+**Version**: 0.4.0-draft
+**Status**: Draft — RECOG-* test IDs registered in `spec/conformance-test-suite.md §15`. API surface §7 + anti-gaming §8 normative. §3 Operator Identity composes on ADR-034 Identity Slot. §12 open questions now carry **proposed defaults** with rationale — PS review reduces to confirm/override per question (was "needs full design"). v1.0 unblocks when PS ratifies §12 defaults.
+**Date**: 2026-05-26 (updated from 2026-05-24)
+**Tracking**: #309 (this spec graduation), #267 (research), #269 (ADR-030 — closed 2026-05-26, file exists at Proposed)
+**Foundation**: ADR-034 (Identity Slot), S.15 (`spec/iicp-identity-slot.md`), BC-12 (`project/ddd/BC-12-identity.md`) — operator identity composes on top of the Identity Slot
 **Companion**: `project/gamification.md` (project-level concept), `research/gamification-track/` (rationale, metric mapping, anti-gaming, rollout gates, API surface)
 
 ---
@@ -33,11 +34,34 @@ ADR-013 replicas are operational + replica trust tiers settled (per ADR-030 atte
 ## 3. Operator Identity (normative reference)
 
 This protocol depends on the operator identity layer defined by **ADR-030 (Operator Identity
-& Anti-Sybil Layer)**. All rank and badge state is keyed on `operator_id`, never on `node_id`.
-A single operator with multiple nodes appears once in leaderboards and rank tables.
+& Anti-Sybil Layer)**, which itself sits on top of the **Identity Slot** foundation
+(ADR-034, `spec/iicp-identity-slot.md`, BC-12). All rank and badge state is keyed on
+`operator_id`, never on `node_id`. A single operator with multiple nodes appears once in
+leaderboards and rank tables.
 
-`spec/iicp-operator.md` (forthcoming) will hold the normative operator identity spec; until
-then this document defers to ADR-030 § Decision.
+**Layered identity model** (resolves open question 3 from v0.2.0-draft):
+
+```
+Recognition Protocol (this spec)
+        ↓ keyed on operator_id
+ADR-030 Operator Identity & Anti-Sybil
+        ↓ uses identity primitives from
+ADR-034 / S.15 Identity Slot (Identity URI + Identity Signature, verifier dispatch)
+        ↓ first reference verifier
+did:web verifier (Phase 6 SeedDidResolver / DidResolver / replica_sig_verifier)
+```
+
+This composes — it does NOT absorb. The Identity Slot is general (any signed message);
+operator identity (ADR-030) adds operator-grouping semantics on top (one operator may
+run multiple nodes; sock-puppet detection; attestation tiers). Recognition (this spec)
+adds rank/badge semantics on top of operator identity.
+
+`spec/iicp-operator.md` (forthcoming) will hold the normative operator identity spec,
+specifying how `operator_id` maps to Identity URIs (e.g. `urn:iicp:operator:<hex>` or
+external `did:web:<operator-domain>`) and how the verifier dispatch from S.15 §7 applies
+when a CALL or RESPONSE message carries an operator identity claim. Until that spec
+lands, this document defers to ADR-030 § Decision for `operator_id` semantics and to
+ADR-034 / S.15 for the underlying cryptographic primitives.
 
 ## 4. Ranks
 
@@ -144,9 +168,15 @@ inventory:
 | GET | `/v1/leaderboards/{board_id}` | none | `s-maxage=300` |
 | GET | `/v1/badges` | none | `max-age=86400` |
 | GET | `/v1/seasons/current` | none | `max-age=3600` |
-| POST | `/v1/operator/{handle}/visibility` | operator-signed | no-store |
-| POST | `/v1/operator/{handle}/handle` | operator-signed | no-store |
-| GET | `/v1/operator/{handle}/private_summary` | operator-signed | no-store |
+| POST | `/v1/operator/{handle}/visibility` | operator-signed (S.15 slot) | no-store |
+| POST | `/v1/operator/{handle}/handle` | operator-signed (S.15 slot) | no-store |
+| GET | `/v1/operator/{handle}/private_summary` | operator-signed (S.15 slot) | no-store |
+
+"Operator-signed" means the request body carries the Identity Slot (`identity` +
+`identity_signature` per S.15 §3) with `identity_uri` matching the operator's published
+DID. The directory MUST verify the slot via the configured verifier dispatcher (S.15 §7)
+before accepting the mutation; failure → IICP-IDSLOT-02 (signature invalid) or
+IICP-IDSLOT-04 (identity drift if operator claims different DID than registered).
 
 ## 8. Anti-gaming Hard Rules (normative)
 
@@ -161,7 +191,11 @@ The following MUST be enforced by RECOG-Provider implementations. Sourced from
    count qualifies for any badge with task threshold ≥1000.
 4. **MUST**: Disruption windows are maintainer-annotated post-incident, not operator-claimed.
 5. **MUST**: Operator identity is permanent — laundering an identity (re-registering after
-   flag) does not restore reputation in the recognition system.
+   flag) does not restore reputation in the recognition system. Identity continuity is
+   enforced via ADR-034 / S.15 Identity Slot: the `identity_uri` of an operator is pinned-on-
+   first-use; re-registration with a *different* `identity_uri` creates a new operator
+   (rank-zero, no prior reputation), and re-registration with the *same* `identity_uri`
+   after a flag does NOT clear the flag.
 6. **MUST**: Season badges require minimum genuine activity (≥30d + ≥M tasks) — not just
    registration in the window.
 
@@ -199,8 +233,7 @@ The following test IDs are reserved for `spec/conformance-test-suite.md` §X (Re
 | RECOG-SEAS-02 | Season-exclusive badges cannot be earned after window closes | MUST |
 | RECOG-OPT-01 | Opt-out applied within 5 minutes | MUST |
 
-REACH probes implementing these tests will be added to
-`reach/src/reach/probes/recognition_conformance.py` once implementation is authorized.
+These test IDs are now registered in `spec/conformance-test-suite.md §15` (v4.35.0, iter-976) for cross-spec traceability. REACH probes implementing these tests will be added to `reach/src/reach/probes/recognition_conformance.py` once G1+G6 gates clear.
 
 ## 11. Implementation gates
 
@@ -216,17 +249,122 @@ RECOG-Provider implementation deployed to production until ALL of these gates cl
 - **G7**: Privacy + moderation policy documents committed
 - **G8**: Founding Cohort migration plan committed
 
-## 12. Open questions for PS review
+## 12. Open questions for PS review — with proposed defaults
 
-These mirror the gamification research open questions; resolution required before v1.0:
+These mirror the gamification research open questions. Each now carries a
+**proposed default** with rationale; PS review reduces to confirm or override
+per question. Question 3 already resolved in v0.3.0.
 
-1. Season boundary alignment — H1/H2 Jan-Jun / Jul-Dec? Or Q1+Q2 / Q3+Q4?
-2. Handle moderation authority — maintainer-only? Community moderation queue (post-#268)?
-3. Operator vs Identity Slot (ADR-021) — composed or absorbed?
-4. TC-9b operator-scoped rate limit migration — spec impact?
-5. Tier 2 attestation expiry — re-attest annually? Permanent once verified?
-6. Class of YEAR minimum threshold — ≥7 active days (proposed) or different?
-7. Disruption window annotation policy — who flags? Public visibility of the list?
+### Q1 — Season boundary alignment
+
+**Proposed default**: **H1/H2 (Jan-Jun / Jul-Dec)**.
+
+**Rationale**: Two 6-month seasons match the "Class of YEAR" annual rhythm
+(2 mid-year checkpoints + 1 year-end) and align with most operators' fiscal/
+ops planning cycles. Quarterly seasons would create 4× the leaderboard reset
+ceremony churn for marginal additional motivation surface. Operators already
+report monthly metric checkpoints; H1/H2 cadence keeps it stable.
+
+**To override**: PS confirms quarterly preferred + writes `season_boundaries:
+["Q1","Q2","Q3","Q4"]` into recognition config.
+
+### Q2 — Handle moderation authority
+
+**Proposed default**: **Maintainer-only at launch; community queue post-#268**.
+
+**Rationale**: Phase 5D launches with N=1 maintainer; a community-moderation
+queue requires meaningful moderator pool (≥3 attested operators per ADR-030
+Tier 2) which isn't available pre-public-beta. Maintainer-only is the only
+viable initial state. The community-queue model from #268 activates when the
+mesh has enough attested operators to sustain it (target: 10+ Tier-2 operators).
+
+**To override**: PS confirms maintainer-only is permanent (close #268) OR
+defines an earlier community-queue trigger condition.
+
+### Q4 — TC-9b operator-scoped rate limit migration
+
+**Proposed default**: **Spec impact = NONE for recognition; TC-9b stays
+node-scoped (per existing implementation)**.
+
+**Rationale**: Recognition is keyed on `operator_id` for rank/badge state, but
+the underlying rate limit (TC-9b: 1000 credits/hour) is enforced at the credit
+ledger layer which already operates on `node_id`. An operator with multiple
+nodes effectively gets a multiplied rate budget — that's a credit-economy
+design question (ADR-031 / research/credit-economy/), not a recognition design
+question. Recognition consumes credit events; it does not enforce rate limits.
+
+**To override**: PS confirms a hard cap should be applied at the operator level
+(e.g. 1000 credits/hour PER OPERATOR regardless of node count) — would require
+parallel ADR + credit-economy redesign, OUT OF SCOPE for this spec.
+
+### Q5 — Tier 2 attestation expiry
+
+**Proposed default**: **Annual re-attestation required** (365-day TTL).
+
+**Rationale**: Tier 2 attestation depends on operator-supplied evidence (KYC-
+adjacent or community vouching per ADR-030). Operators change companies, lose
+key control, exit the mesh. A permanent attestation creates stale-trust risk —
+an operator attested in 2026 might be a different person in 2028 with the same
+node identity (key transfer / corporate change). Annual re-attestation forces
+liveness check on the operator identity itself. Cost to operator: ~10 minutes
+once per year.
+
+**To override**: PS confirms permanent-once-verified is acceptable for the
+mesh size (e.g. with ≤100 operators the trust web is small enough to detect
+breaches socially) OR a different TTL (e.g. 2 years, 5 years).
+
+### Q6 — Class of YEAR minimum threshold
+
+**Proposed default**: **≥7 active days within the cohort year** (as
+originally proposed).
+
+**Rationale**: 7-day floor filters out operators who registered + ran one
+single uptime burst then abandoned. It allows part-time / hobbyist operators
+(weekend-only, monthly burst) to qualify. A higher threshold (e.g. 30 days)
+excludes the long tail; a lower threshold (e.g. 1 day) trivializes the
+recognition. 7 is the documented research finding; preserve unless PS has a
+specific counter.
+
+**To override**: PS provides a different threshold (e.g. 14 days for stricter
+filter, 3 days for inclusive cohort).
+
+### Q7 — Disruption window annotation policy
+
+**Proposed default**: **Maintainer-flags; public list visible on
+`/recognition/disruptions` with redacted operator names**.
+
+**Rationale**: Disruptions (network outages, deploy windows, force-majeure
+events) reset operator uptime counters in ways that aren't the operator's
+fault. SOMEONE has to annotate them or operators get penalized for outages
+they didn't cause. Maintainer-flagged is the only viable initial state (N=1
+operator). Public visibility (with redaction) provides accountability for
+why a leaderboard reset happened. Full operator-name visibility opens
+gaming surface (operator submits false disruption claim to evade a
+penalty); redaction balances transparency vs gaming defense.
+
+**To override**: PS confirms full-public-with-operator-names OR
+maintainer-only-private (no public visibility), OR delegates to a community
+moderation queue (composes with Q2).
+
+---
+
+## 12b. Status of v1.0 graduation
+
+When PS confirms/overrides Q1, Q2, Q4-Q7, the spec promotes to v1.0:
+
+| Question | Status |
+|----------|--------|
+| Q1 season boundaries | Proposed default H1/H2 — awaits PS |
+| Q2 moderation authority | Proposed default maintainer-only-launch — awaits PS |
+| Q3 identity composition | ✅ Resolved v0.3.0 |
+| Q4 TC-9b operator-scoped rate limit | Proposed default NONE (out of scope) — awaits PS |
+| Q5 Tier 2 attestation expiry | Proposed default 365-day TTL — awaits PS |
+| Q6 Class of YEAR threshold | Proposed default ≥7 days — awaits PS |
+| Q7 disruption annotation | Proposed default maintainer-flag + redacted-public — awaits PS |
+
+Each confirmation closes one row; full confirmation removes the `-draft`
+suffix and bumps to `v1.0`. The G6 gamification gate prerequisite is then
+satisfied.
 
 ---
 
@@ -234,4 +372,7 @@ These mirror the gamification research open questions; resolution required befor
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4.0-draft | 2026-05-26 | §12 reformatted: every open question (1, 2, 4-7) now carries a **proposed default** with rationale and an explicit "to override" path for PS. New §12b "Status of v1.0 graduation" table tracks per-question PS-confirmation status. v1.0 unblocks when PS confirms/overrides each row (vs previous "needs full design" framing — now ratification-bounded work). Resolves the spec-graduation-path ambiguity from v0.3.0; PS review surface reduces from "design 6 things" to "confirm 6 defaults". |
+| 0.3.0-draft | 2026-05-26 | §3 Operator Identity restructured with layered identity model (Recognition → ADR-030 Operator → ADR-034 Identity Slot → did:web verifier); cross-references S.15 (`spec/iicp-identity-slot.md`) + BC-12. §7 API surface clarifies "operator-signed" means S.15 Identity Slot with verifier dispatch + IICP-IDSLOT-02/04 failure modes. §8 anti-gaming rule 5 (no identity laundering) now cites ADR-034 pin-on-first-use as enforcement mechanism. §12 open question 3 (Operator vs Identity Slot — composed or absorbed?) **resolved**: composed; Identity Slot is foundation. Tracking issue #309 referenced. Resolves 1 of 7 §12 open questions; remaining 6 (1, 2, 4-7) still need PS review before v1.0. |
+| 0.2.0-draft | 2026-05-24 | RECOG-* test IDs registered in `spec/conformance-test-suite.md §15` (v4.35.0, iter-976). §10 note updated to reflect cross-spec registration. Status updated to reflect normative bodies in §4/§5/§6/§8/§9 complete; pending PS ratification of §12 open questions before v1.0. |
 | 0.1.0-draft | 2026-05-21 | Initial skeleton (iter-302). Sections + test IDs + open questions reserved. Normative bodies preview; final language pending PS review of `research/gamification-track/`. |

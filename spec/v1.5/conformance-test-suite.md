@@ -1,7 +1,7 @@
 # IICP Conformance Test Suite
 
-**Version**: 4.32.0  
-**Date**: 2026-05-22  
+**Version**: 4.39.0  
+**Date**: 2026-05-25  
 **Status**: draft  
 **Issue**: #22  
 **Authority**: Protocol Steward + Integration Validator  
@@ -146,6 +146,19 @@ requests MUST return 401. REACH probe live as of 2026-05-21 (spec §T4.1 TEL-AUT
 | Test ID | Requirement | Expected | REACH probe |
 |---------|-------------|---------|-------------|
 | `DIR-TEL-01` | `POST /v1/telemetry` with no auth → 401 | Telemetry ingestion requires proxy_token Bearer; no auth MUST return 401 | `probe_dir_tel_01` |
+
+### 3.3h Public Stats Endpoint Contract (Phase 5 — MUST)
+
+`GET /api/v1/stats` MUST return the T3 compound `mesh_health` metric as an object
+with at least `{score: float in [0,1], label: string, window: string}` (REP1
+ratification, directory v1.9.19+). Consumer dashboards and the website MeshStatusWidget
+depend on this shape. A regression that returns `mesh_health` as a scalar (or
+removes required fields) silently breaks client rendering — caught iter-1337
+when website v1.9.25 shipped `NaN%` to live visitors.
+
+| Test ID | Requirement | Expected | REACH probe |
+|---------|-------------|---------|-------------|
+| `DIR-STATS-01` | `GET /api/v1/stats` — `mesh_health` is object with `{score, label, window}`, `score ∈ [0,1]` | 200, response includes all three keys, score validates as float in range | `probe_dir_stats_01` |
 
 ### 3.4 Rate Limiting (MUST)
 
@@ -340,6 +353,10 @@ Run with the SDK test harness: `iicp-conformance-sdk --sdk python --directory ht
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.39.0 | 2026-05-26 | §11.9 Trust Precedence added per Phase 6 charter P6-4.3: DIR-FED-TRUST-01 (S.13 §3.2) — proxy resolves conflicting node-state per strict precedence Seed > Replica-by-seq > Tier-tiebreaker > Gossip; field-level (not row-level). 14 unit tests in proxy/tests/test_trust_resolver.py + INFO-skip REACH probe (activates when replica deployed); reach run_all 39→40. |
+| 4.38.0 | 2026-05-26 | §11.8 Replica Response Signing added per Phase 6 charter P6-4.2b: DIR-FED-20 (S.13 v0.3.6 §6.5) requires replicas to sign discovery responses with Ed25519 + X-IICP-Replica-Sig header. Proxy verifier helper `proxy/src/proxy/clients/replica_sig_verifier.py` ships with 16 unit tests. New `cryptography>=42` dep added to proxy. |
+| 4.37.0 | 2026-05-26 | §11.7 Trusted-Replicas Registry added per Phase 6 charter P6-3.2: DIR-FED-19 probe (S.13 v0.3.4 §6.4) validates v2-schema `/.well-known/iicp-replicas.json` with required entry fields (replica_id, did, endpoint, trust_tier, registered_at). 5 unit tests added; run_all count 38→39. |
+| 4.36.0 | 2026-05-25 | §11.6 Chain-of-Custody added per Phase 6 charter P6-2.1: DIR-FED-EVENTCHAIN-01 probe (S.13 v0.3.2) verifies the federated event log is append-only — past events MUST NOT mutate across successive `GET /v1/events` calls; mismatched (seq, event_id) tuples or `genesis_hash` drift fail the probe. 4 unit tests added. |
 | 1.7.0 | 2026-05-21 | §3.1–3.3g: Added REACH probe column to all directory conformance sections (traceability parity with §4–7); REACH test mock fix (coroutine warning eliminated) |
 | 0.2.1 | 2026-05-20 | §3.1: Added DIR-REG-08/DIR-REG-09 for advisory capability field MUST NOT constraints (iicp-core.md §2.1 v1.2.4, #118) |
 | 0.2.0 | 2026-05-14 | §3.3b–3.3e: Added Phase 2 mesh bootstrap, credit endpoints auth, CIP conformance, SSRF guard probes; §7: SEC-RN-01/02, SEC-LOG-01 |
@@ -386,12 +403,12 @@ Test mark: `@federated` — not required for Phase 1–5 conformance.
 
 ### 11.1 Event Log Verification (MUST)
 
-| Test ID | Requirement | Spec ref |
-|---------|-------------|---------|
-| `DIR-FED-01` | Replica verifies Ed25519 signature for every event before applying state | S.13 §8 DIR-FED-01 |
-| `DIR-FED-02` | Replica rejects events with non-monotonic `seq` (emits IICP-E014) | S.13 §8 DIR-FED-02 |
-| `DIR-FED-03` | Replica verifies `signer_did` resolves to Genesis Seed DID document | S.13 §8 DIR-FED-03 |
-| `DIR-FED-04` | Replica rejects events without valid Genesis Seed signature | S.13 §8 DIR-FED-04 |
+| Test ID | Requirement | Spec ref | Unit test |
+|---------|-------------|---------|-----------|
+| `DIR-FED-01` | Replica verifies Ed25519 signature for every event before applying state | S.13 §8 DIR-FED-01 | `directory/tests/Feature/ReplicaEventApplierSigVerifyTest::test_invalid_signature_rejects_event` + 6 more (P6-1.3b-iv) |
+| `DIR-FED-02` | Replica rejects events with non-monotonic `seq` (emits IICP-E014) | S.13 §8 DIR-FED-02 | (replica state-mirror tests — P6-1.4) |
+| `DIR-FED-03` | Replica verifies `signer_did` resolves to Genesis Seed DID document | S.13 §8 DIR-FED-03 | `directory/tests/Feature/SeedDidResolverTest::test_extracts_valid_ed25519_public_key` (DID fetch + Ed25519-only key extraction) |
+| `DIR-FED-04` | Replica rejects events without valid Genesis Seed signature | S.13 §8 DIR-FED-04 | `directory/tests/Feature/ReplicaEventApplierSigVerifyTest::test_wrong_pubkey_rejects_event` |
 
 ### 11.2 Client Redirect Handling (MUST)
 
@@ -409,7 +426,56 @@ Test mark: `@federated` — not required for Phase 1–5 conformance.
 | `DIR-FED-09` | `GET /v1/events` returns events with monotonically increasing `seq` values | S.13 §8 DIR-FED-02 (producer side) | `probe_dir_fed_09` — live 2026-05-22 |
 | `DIR-FED-10` | Each event in `GET /v1/events` MUST include `event_id` (UUID-v4), `event_type` (valid enum), `ts_ms` (integer), `signer_did` (string), `payload` (object) | S.13 §3.7 event schema table (6 MUST fields) | `probe_dir_fed_10` — live 2026-05-22 |
 
-## 12. Cooperative Inference Protocol Conformance Tests (S.12)
+### 11.4 Replica Registration Handshake (MUST, Phase 6 — added 2026-05-25, S.13 v0.2.0)
+
+| Test ID | Requirement | Spec ref | REACH probe |
+|---------|-------------|---------|-------------|
+| `DIR-FED-11` | Genesis Seed MUST validate `did` resolves to a DID document with an Ed25519 verification method (IICP-E040/E041 on failure) | S.13 §7.1 + §8 DIR-FED-11 | None yet (endpoint to be built P6-1.2; probe in P6-X) |
+| `DIR-FED-12` | Genesis Seed MUST reject `endpoint` that is non-https or resolves to a private/loopback address (IICP-E043; SSRF parity with /v1/probe) | S.13 §7.1 + §8 DIR-FED-12 | None yet (P6-1.2 endpoint) |
+| `DIR-FED-13` | `POST /v1/replicas/register` MUST be idempotent on `did`: re-registration returns the same `replica_id` with a freshly rotated `replica_token` | S.13 §7.1 + §8 DIR-FED-13 | None yet (P6-1.2 endpoint) |
+| `DIR-FED-14` | Response MUST include `genesis_hash` matching `GET /v1/events` (DIR-FED-07 parity) so replicas can pin-on-first-use | S.13 §7.1 + §8 DIR-FED-14 | None yet (P6-1.2 endpoint) |
+
+### 11.5 Snapshot+Event-Tail Federation (MUST, Phase 6 — added 2026-05-25, S.13 v0.3.0)
+
+Replicas bootstrap via `GET /v1/snapshot` then catch up via `GET /v1/events?since_seq=<snapshot_seq>`. Per ADR-033: ephemeral-by-design directory; HEARTBEAT/SCORE_UPDATE/REPUTATION_UPDATE no longer in federated event log (derivable from canonical row).
+
+| Test ID | Requirement | Spec ref | REACH probe |
+|---------|-------------|---------|-------------|
+| `DIR-FED-15` | `GET /v1/snapshot` MUST return current state with `snapshot_seq` = highest emitted event seq at generation time | S.13 §5.5 + §8 DIR-FED-15 | `SnapshotEndpointTest::test_returns_snapshot_for_authenticated_replica` (verifies snapshot_seq = max event.seq) |
+| `DIR-FED-16` | Federated event log MUST emit ONLY {REGISTER, DEREGISTER, CREDIT_AWARD, REPLICA_REGISTERED, REPUTATION_DECAY} — closed type list | S.13 §5.1 + §8 DIR-FED-16 | Probe extending `probe_dir_fed_10` to assert no HEARTBEAT/SCORE_UPDATE/REPUTATION_UPDATE rows appear within a 5-min sample window |
+| `DIR-FED-17` | Snapshot response `genesis_hash` MUST match `GET /v1/events` (parity with DIR-FED-07) | S.13 §5.5 + §8 DIR-FED-17 | `SnapshotEndpointTest::test_genesis_hash_matches_events_endpoint` |
+
+### 11.6 Chain-of-Custody (MUST, Phase 6 — added 2026-05-25, S.13 v0.3.2)
+
+The federated event log is the trust root replicas pin against. If the seed silently mutates a past event, replicas diverge undetectably until the next genesis_hash check trips — and may never re-pin if the chain is mutated atomically.
+
+| Test ID | Requirement | Spec ref | REACH probe |
+|---------|-------------|---------|-------------|
+| `DIR-FED-EVENTCHAIN-01` | Federated event log MUST be append-only — past events MUST NOT mutate: for any `(seq, event_id)` pair observed in two successive `GET /v1/events` responses, every field (`event_type`, `ts_ms`, `signer_did`, `payload`, `sig`) MUST be byte-identical, and `genesis_hash` MUST match across calls | S.13 §3 + §8 DIR-FED-EVENTCHAIN-01 | `probe_dir_fed_eventchain_01` (`reach/src/reach/probes/directory_conformance.py`) — 4 unit tests cover overlap-identical, mutation-detected, genesis-hash-drift, no-overlap-trivially-pass |
+
+### 11.7 Trusted-Replicas Registry (MUST, Phase 6 — added 2026-05-26, S.13 v0.3.4)
+
+The genesis seed publishes the canonical replica registry at `/.well-known/iicp-replicas.json`. Discovery clients use this to bootstrap-without-seed during outages, ranking replicas by `trust_tier` and region. The registry carries static metadata only — dynamic freshness comes from each replica's `/api/v1/stats`.
+
+| Test ID | Requirement | Spec ref | REACH probe |
+|---------|-------------|---------|-------------|
+| `DIR-FED-19` | Genesis Seed MUST serve a valid v2-schema `/.well-known/iicp-replicas.json` with required entry fields `{replica_id, did, endpoint, trust_tier, registered_at}` | S.13 §6.4 + §8 DIR-FED-19 | `probe_dir_fed_19` (`reach/src/reach/probes/directory_conformance.py`) — 5 unit tests cover empty-registry, valid-entries, wrong-schema-version, missing-required-field, 404 |
+
+### 11.8 Replica Response Signing (MUST, Phase 6 — added 2026-05-26, S.13 v0.3.6)
+
+Replicas sign their discovery responses with Ed25519; proxies verify against the replica's published DID key. Without this, a misconfigured TLS terminator or compromised intermediary could substitute response bytes; verification is end-to-end (signed at replica, verified at proxy) and bypasses all intermediaries.
+
+| Test ID | Requirement | Spec ref | Unit test |
+|---------|-------------|---------|-----------|
+| `DIR-FED-20` | Replicas MUST sign discovery responses with Ed25519 + emit `X-IICP-Replica-Sig`/`-DID`/`-Snapshot-Seq` headers; clients MUST verify against the replica's DID key and reject on failure | S.13 §6.5 + §8 DIR-FED-20 | `proxy/tests/test_replica_sig_verifier.py` — 16 tests cover canonicalize-query (empty/single/sorted/repeated-keys), signing-input (deterministic, method-case-insensitive, query-order-invariant, tamper-changes-hash), verify (valid, tampered-body, wrong-pubkey, wrong-path, wrong-snapshot-seq replay, malformed-sig-hex, malformed-pubkey, server-client-query-order-round-trip). Integration: `proxy/tests/test_directory_sig_verify.py` 6 tests (valid-sig-accepted, missing-sig-rejected, tampered-body-rejected, did-unresolvable-rejected, no-verifier-back-compat, seed-response-skips-verify). Seed-side: `directory/tests/Feature/SignReplicaResponseTest.php` 7 tests (round-trip canonical input verification). |
+
+### 11.9 Trust Precedence (MUST, Phase 6 — added 2026-05-26, S.13 v0.3.1 §3.2)
+
+When proxies/SDKs receive node state from multiple sources within the same query window, they MUST resolve conflicts per the strict precedence Seed > Replica-by-newer-seq > Trust-tier-tiebreaker > Gossip-suggestion-only. Field-level resolution (not row-level).
+
+| Test ID | Requirement | Spec ref | Unit + REACH |
+|---------|-------------|---------|--------------|
+| `DIR-FED-TRUST-01` | Proxy MUST resolve conflicting node-state across seed/replica/gossip per §3.2 strict precedence; field-level (not row-level) | S.13 §3.2 + §8 DIR-FED-TRUST-01 | `proxy/tests/test_trust_resolver.py` — 14 unit tests cover rule 1 (seed beats replica per-field), rule 2 (newer seq + tier tiebreaker), rule 3 (gossip suggestion-only, gossip-only node included), rule 4 (field-level mix, multiple replicas pick winner only). Live: `probe_dir_fed_trust_01` (`reach/src/reach/probes/directory_conformance.py`) — INFO-skip until IICP_REACH_REPLICA_URL set; activates once P6-X.1 deploys a replica. |
 
 **Phase**: 5 (pending ADR-012 Accepted status)  
 **Status**: IDs reserved; implementation deferred until Phase 4 Milestone 1 gate is closed.  
@@ -648,10 +714,122 @@ These tests verify the badge submission, verification, and lifecycle requirement
 
 ---
 
+## 14. End-to-End Mesh Invariant Tests (Phase 5 — research/gamification-track/03-anti-gaming.md)
+
+These test IDs capture emergent mesh properties that can only be verified at the multi-node
+level. They are not MUST assertions about a single implementation component; instead they
+encode invariants that MUST hold across the live system once the mesh is operating correctly.
+
+**Phase**: 5 (operator-diversity features) — IICP-E2E-01 and IICP-E2E-03 require the
+multi-node integration harness (#299). IICP-E2E-04 is covered by proxy unit tests (iter-969).
+
+**Status**: IDs reserved (iter-965, ADR-030 Proposed unblocks scope). IICP-E2E-04 closed
+(iter-969 — proxy unit tests `test_cip_response_hash_mismatch_discards_retries_next` +
+`test_cip_response_hash_missing_discards_node` in `proxy/tests/test_fallback.py`). IICP-E2E-01/03
+deferred until #299 multi-node harness.
+
+**Test mark**: `@pytest.mark.e2e_mesh` — separate from `@pytest.mark.phase5`; requires
+multi-node Docker Compose stack or live production.
+
+### 14.1 Discovery Liveness (MUST — iicp-core.md §3 + ADR-008)
+
+| Test ID | Requirement | Spec ref | Test method |
+|---------|-------------|---------|-------------|
+| `IICP-E2E-01` | Any node that is `active` in the directory MUST appear in `GET /v1/discover` results for a matching intent within 2× the heartbeat interval (120 s) of its last heartbeat. The discover response MUST NOT exclude active nodes whose `score` > 0.0. | iicp-core.md §3, ADR-008 §3 | Multi-node harness (#299): register N nodes, heartbeat all, discover, assert N nodes in response. Currently unimplemented — blocked on #299. |
+
+### 14.2 Credit Integrity (MUST — ADR-012 TC-9, iicp-core.md §9)
+
+| Test ID | Requirement | Spec ref | Test method |
+|---------|-------------|---------|-------------|
+| `IICP-E2E-03` | Within a 24-hour reconciliation window, total credits awarded to all nodes (via `POST /v1/credits/award`) MUST be ≥ total credits debited (via CIP sub-task settlement). The ledger MUST be monotonically non-decreasing — no net credit disappears without a corresponding debit event in the directory event log. | ADR-012 TC-9, iicp-core.md §9.4 | Multi-node CIP harness (#299): run N CIP tasks, audit ledger via `GET /v1/credits/balance` + event log. Currently unimplemented — blocked on #299. |
+
+### 14.3 CIP Receipt Integrity (MUST — TC-9c §10.3, iicp-cooperative-inference.md §10.3)
+
+| Test ID | Requirement | Spec ref | Test method |
+|---------|-------------|---------|-------------|
+| `IICP-E2E-04` | When a CIP worker response includes a `cip_receipt`, the coordinator MUST independently compute the SHA-256 of the canonical result JSON and compare it against `cip_receipt.response_hash`. A mismatch or absent `response_hash` MUST cause the coordinator to discard the response and continue to the next available node (fallback chain proceeds). | iicp-cooperative-inference.md §10.3, TC-9c Phase 5, ADR-012 TC-9 | Unit tests in `proxy/tests/test_fallback.py`: `test_cip_response_hash_mismatch_discards_retries_next` (tampered hash → next node), `test_cip_response_hash_missing_discards_node` (missing field → no_available_node). Adapter coverage: `adapter/tests/test_cip_receipt.py::test_verify_rejects_tampered_response_hash`. |
+
+**Implementation notes**:
+- `_verify_receipt_hash()` in `proxy/src/proxy/routing/fallback.py` implements the coordinator
+  verification: independently computes SHA-256 of canonical result JSON (sorted keys, no whitespace)
+  and compares against `cip_receipt.response_hash`. Discard on mismatch or absent field.
+- Adapter implementation: `compute_response_hash()` in `adapter/src/adapter/services/cip_receipt.py`
+  produces the hash; `verify_worker_receipt()` verifies HMAC binding that includes `response_hash`.
+- IICP-E2E-01 and IICP-E2E-03 require the multi-node harness from #299 (full-stack Docker
+  Compose with ≥2 provider nodes, a proxy, and the live directory).
+- ADR-030 operator identity layer is a prerequisite for testing operator-diversity invariants
+  (W-034 scope); once ADR-030 is Accepted and Tier-2 attestation ships, IICP-E2E-02 (reputation
+  convergence across operators) can be defined and added here.
+
+---
+
+## 15. Operator Recognition Conformance Tests (Phase 5D — spec/iicp-recognition.md)
+
+**Status**: Phase 5D — deferred until G1 (ADR-030 Accepted) + G6 (spec v1.0 + PS ratification).  
+**Spec**: `spec/iicp-recognition.md` v0.1.0-draft.  
+**Tracking**: #309 (spec), #310 (implementation tracker).  
+**REACH probes**: `reach/src/reach/probes/recognition_conformance.py` (not yet created — pending G1+G6).
+
+These test IDs are registered from `spec/iicp-recognition.md §10` for traceability. Implementation and REACH probes activate after ADR-030 Accepted + spec at v1.0.
+
+### 15.1 Profile API
+
+| Test ID | Method | Endpoint | Level | Assertion |
+|---------|--------|----------|-------|-----------|
+| RECOG-PROF-01 | GET | `/v1/operator/{handle}/profile` | MUST | Returns valid profile schema with `rank`, `badges`, `leaderboard_positions` |
+| RECOG-PROF-02 | GET | `/v1/operator/{handle}/profile` (unknown) | MUST | 404 for unknown handle; 410 for opted-out operator |
+
+### 15.2 Leaderboards
+
+| Test ID | Method | Endpoint | Level | Assertion |
+|---------|--------|----------|-------|-----------|
+| RECOG-LEAD-01 | GET | `/v1/leaderboards/{board_id}` | MUST | Returns entries sorted by declared criteria; excludes opted-out operators |
+
+### 15.3 Catalog endpoints
+
+| Test ID | Method | Endpoint | Level | Assertion |
+|---------|--------|----------|-------|-----------|
+| RECOG-BADG-01 | GET | `/v1/badges` | MUST | Returns complete badge catalog with stable IDs and `trigger` fields |
+| RECOG-SEAS-01 | GET | `/v1/seasons/current` | MUST | Returns valid season window with `start`, `end`, `id` |
+
+### 15.4 Operator-authenticated endpoints
+
+| Test ID | Method | Endpoint | Level | Assertion |
+|---------|--------|----------|-------|-----------|
+| RECOG-VIS-01 | POST | `/v1/operator/{handle}/visibility` | MUST | 401 without operator auth; accepts valid operator-signed request |
+| RECOG-HAN-01 | POST | `/v1/operator/{handle}/handle` | MUST | Rejects reserved words and squatting patterns (≥ 3 chars, ASCII-only) |
+| RECOG-PRIV-01 | GET | `/v1/operator/{handle}/private_summary` | MUST | 401 without operator auth; returns full private profile for auth'd operator |
+
+### 15.5 Rank semantics
+
+| Test ID | Level | Assertion |
+|---------|-------|-----------|
+| RECOG-RANK-01 | MUST | Rank earned persists even if trigger condition later fails (ratchet property); Mesh Legend (top-10) recomputed dynamically |
+| RECOG-RANK-02 | MUST | Rank ≥ 4 (CIP Provider) requires Tier 2 attestation per ADR-030 |
+
+### 15.6 Anti-gaming invariants
+
+| Test ID | Level | Assertion |
+|---------|-------|-----------|
+| RECOG-ANTI-01 | MUST | Same operator's nodes do not multiply operator-diversity scores |
+| RECOG-ANTI-02 | MUST | Task badges with threshold ≥ 1000 require ≥ 3 distinct proxy contributors |
+| RECOG-SEAS-02 | MUST | Season-exclusive badges cannot be earned after season window closes |
+
+### 15.7 Privacy
+
+| Test ID | Level | Assertion |
+|---------|-------|-----------|
+| RECOG-OPT-01 | MUST | Opt-out applied within 5 minutes (leaderboard + profile removed); private profile still accessible to operator |
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.35.0 | 2026-05-24 | §15 Operator Recognition Conformance Tests added: 14 RECOG-* test IDs (RECOG-PROF-01/02, RECOG-LEAD-01, RECOG-BADG-01, RECOG-SEAS-01/02, RECOG-VIS-01, RECOG-HAN-01, RECOG-PRIV-01, RECOG-RANK-01/02, RECOG-ANTI-01/02, RECOG-OPT-01). Phase 5D deferred — pending G1 (ADR-030 Accepted) + G6 (spec v1.0 PS ratification). Sourced from `spec/iicp-recognition.md §10`. Closes spec traceability gap in #309. |
+| 4.34.0 | 2026-05-24 | §14.3 corrected: IICP-E2E-04 re-defined from incorrect "discover response_hash" to correct "CIP receipt hash integrity" (TC-9c §10.3). Section renamed from "Routing Diversity" to "CIP Receipt Integrity". Two proxy unit tests added: `test_cip_response_hash_mismatch_discards_retries_next` + `test_cip_response_hash_missing_discards_node`. IICP-E2E-04 **CLOSED** (iter-969). Closes #312. |
+| 4.33.0 | 2026-05-24 | §14 End-to-End Mesh Invariants added: IICP-E2E-01 (discovery liveness), IICP-E2E-03 (credit integrity), IICP-E2E-04 (routing diversity / response_hash). IDs reserved per W-034 scope-expansion (WARDEN-067, iter-965). IICP-E2E-01/03 blocked on #299 multi-node harness. IICP-E2E-04 REACH probe deferred to #312. ADR-030 Proposed unblocked this scope. IICP-E2E-02 (reputation convergence) deferred until ADR-030 Tier-2 attestation ships. |
 | 4.32.0 | 2026-05-22 | §3.1: DIR-REG-08/DIR-REG-09 — annotated directory unit test coverage (`RegisterTest::test_accepts_unrecognised_quantization_value` + `test_accepts_unrecognised_inference_engine_value`). REACH live probe not feasible (would create live nodes); PHP feature tests cover the MUST constraint. |
 | 4.31.0 | 2026-05-22 | §13.5 CIP-BUG-01 fix: `DirectoryClient.discover(cip_capable=True)` MUST send `cip_capable=1` (integer), not `"true"` (string) — Laravel boolean validation rejects string form. CIP-capable filter silently broken since iter-486 (coordinators received all nodes); fixed to `1`/`0` integers. 2 proxy tests updated; proxy test count unchanged at 391. |
 | 4.30.0 | 2026-05-22 | §12.4 task_handler CC refactor: `validate_task_fields()` + `validate_cip_wire_fields()` extracted from `task_handler()` to reduce cyclomatic complexity (Sentrux cc 36→≤30). Existing CIP-V03-RUST/CIP-V04-RUST/CIP-V05-RUST requirements unchanged — moved to helper functions with 15 additional direct unit tests (`validate_task_fields_*` ×8, `validate_cip_wire_fields_*` ×7). `cargo test` 131→146. Quality 7089→7092. |
