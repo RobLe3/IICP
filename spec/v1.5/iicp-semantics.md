@@ -1,6 +1,6 @@
 # IICP Semantics — Routing, QoS, and Node Selection
 
-**Version**: 1.1.0
+**Version**: 1.3.0
 **Date**: 2026-05-18
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
