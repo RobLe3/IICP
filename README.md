@@ -42,6 +42,11 @@ An **intent URN** expresses what you want, not which model or endpoint to call. 
 
 ## Specification Documents
 
+> **Path note**: all documents live under `spec/v1.5/` — that path is a **frozen label**
+> from when the spec was restructured in May 2026 (monolithic v1.4.2 draft → modular
+> sub-protocol family). It does not indicate the current protocol version, which is tracked
+> by the [`spec/v1.5/VERSION`](spec/v1.5/VERSION) file and the changelog below.
+
 ### Core (read these first)
 
 | Document | What it covers | Normative level |

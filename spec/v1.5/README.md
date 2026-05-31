@@ -1,5 +1,12 @@
 # IICP Protocol Specification Index
 
+**Current Protocol Suite version**: see [`VERSION`](./VERSION) — `v1.9.0` as of 2026-05-30.
+
+> **About this directory name**: `spec/v1.5/` is a **frozen path label** from when the
+> monolithic v1.4.2 Internet-Draft was split into modular sub-protocol documents. The path
+> will not change as the suite version advances — only the `VERSION` file and the `CHANGELOG`
+> in the repo root track the current version. Wire compatibility with v1.4.2 is maintained.
+
 This directory contains the normative and informational protocol documents for IICP.
 
 ---
