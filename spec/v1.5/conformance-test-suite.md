@@ -115,7 +115,7 @@ The `?cip_capable=1` filter MUST exclude non-Provider nodes. REACH probes live a
 |---------|-------------|---------|-------------|
 | `DIR-CIP-01` | `GET /v1/discover` — every returned node has `cip_conformance_level` in `['CIP-Provider', 'CIP-None']` | Field present and valid for all nodes (S.12 §5.2 REP1) | `probe_dir_cip_01` |
 | `DIR-CIP-02` | `GET /v1/discover?cip_capable=1` — all returned nodes have `cip_conformance_level = 'CIP-Provider'` | Filter must exclude CIP-None nodes; result may be empty if no CIP nodes registered | `probe_dir_cip_02` |
-| `DIR-CIP-03` | `GET /v1/discover` — every returned node has `reputation_tier` in `['none', 'silver', 'gold', 'platinum']` | Field present and valid for all nodes (S.12 §5.1.1 REP2) | `probe_dir_cip_03` |
+| `DIR-CIP-03` | `GET /v1/discover` — every returned node has `reputation_tier` in `['bronze', 'none', 'silver', 'gold', 'platinum']` | Field present and valid for all nodes (S.12 §5.1.1 REP2); `bronze` is the floor tier (CIP v0.6.9, 2026-05-30); `none` accepted transitionally | `probe_dir_cip_03` |
 
 ### 3.3e External Reachability Probe — SSRF Guard (MUST)
 
@@ -353,6 +353,7 @@ Run with the SDK test harness: `iicp-conformance-sdk --sdk python --directory ht
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.40.0 | 2026-05-31 | §3.3d DIR-CIP-03: valid `reputation_tier` set updated to include `"bronze"` (CIP spec v0.6.9, 2026-05-30 reconciliation). `bronze` is the floor tier for all sub-Silver nodes; `none` retained transitionally. Probe `valid_tiers` updated; PHP NodeScorer `none`→`bronze` for `score < 0.40`; Rust `tier_from_score` floor updated. REACH unit test updated (bronze PASS, `"probation"` used as the invalid-tier test case). |
 | 4.39.0 | 2026-05-26 | §11.9 Trust Precedence added per Phase 6 charter P6-4.3: DIR-FED-TRUST-01 (S.13 §3.2) — proxy resolves conflicting node-state per strict precedence Seed > Replica-by-seq > Tier-tiebreaker > Gossip; field-level (not row-level). 14 unit tests in proxy/tests/test_trust_resolver.py + INFO-skip REACH probe (activates when replica deployed); reach run_all 39→40. |
 | 4.38.0 | 2026-05-26 | §11.8 Replica Response Signing added per Phase 6 charter P6-4.2b: DIR-FED-20 (S.13 v0.3.6 §6.5) requires replicas to sign discovery responses with Ed25519 + X-IICP-Replica-Sig header. Proxy verifier helper `proxy/src/proxy/clients/replica_sig_verifier.py` ships with 16 unit tests. New `cryptography>=42` dep added to proxy. |
 | 4.37.0 | 2026-05-26 | §11.7 Trusted-Replicas Registry added per Phase 6 charter P6-3.2: DIR-FED-19 probe (S.13 v0.3.4 §6.4) validates v2-schema `/.well-known/iicp-replicas.json` with required entry fields (replica_id, did, endpoint, trust_tier, registered_at). 5 unit tests added; run_all count 38→39. |

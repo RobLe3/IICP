@@ -212,7 +212,11 @@ for proxy-side consumers of the discovery response.
 
 ### 3.1 Score computation (directory-side)
 
-Score is computed server-side by the directory using the Phase 3 formula:
+Score is computed server-side by the directory. The directory applies one of two
+weight sets depending on whether a `?model=` parameter is present (ADR-008,
+ADR-012, ADR-021). The proxy MUST NOT re-compute scores; it is filter-only.
+
+#### Phase 3 weights (no `?model=` parameter)
 
 ```
 score = 0.35 × availability_factor
@@ -222,8 +226,26 @@ score = 0.35 × availability_factor
       + 0.10 × reputation_score
 ```
 
-See ARCHITECTURE.md §Node Discovery Scoring for term definitions and phase weight
-schedule.
+#### Phase 5 weights (with `?model=<model_id>` — ADR-012 model-aware routing)
+
+When a model is requested, `W_MODEL` and `W_PRICE` are added and the other weights
+are reduced proportionally so that a model match drives routing for model-specific
+tasks and price becomes a secondary signal.
+
+```
+score = 0.25 × availability_factor
+      + 0.20 × (1 − normalized_load)
+      + 0.15 × capacity_ratio
+      + 0.10 × region_match
+      + 0.10 × reputation_score
+      + 0.10 × model_match        (1.0 if node serves the requested model, else 0.0)
+      + 0.10 × price_score        (normalised inverse of node pricing; 1.0 = cheapest)
+```
+
+`model_match` is 1.0 when the node advertises the requested model in its
+`capabilities.models` list; 0.0 otherwise. Nodes with `model_match = 0.0` are
+**not** excluded from results — they appear lower in the sorted list (proxy may
+still route to them for non-model-specific tasks).
 
 **Hard rule**: The proxy MUST NOT re-compute scores. It is filter-only.
 
@@ -465,6 +487,7 @@ total daily damage to −0.10 regardless of how many distinct reporters particip
 | 1.1.0 | 2026-05-17 | §11 Reputation Update Rules — normative delta table, latency budgets by QoS class, bounded score invariant. Closes #113. |
 | 1.2.0 | 2026-05-17 | §2.1 Added `realtime` QoS level row. §2.2 QoS Admission Control — MUST 429 capacity_exceeded with qos_class+retry_after_ms, MUST proxy node-switch. §2.3 renumbered from §2.2. Closes #119 (spec). |
 | 1.3.0 | 2026-05-30 | §11.2 Per-heartbeat positive delta cap +0.10 MUST (RT-01 security fix, #375). §11.5 Peer audit-report griefing cap — per-reporter 24h rate limit + 2-reporter global cap per target per day MUST (RT-05 security fix, #379). |
+| 1.4.0 | 2026-05-31 | §3.1 Phase 5 model-aware scoring weights documented (ADR-012/ADR-021 normative table — code↔spec gap #384 remaining item). Weights: availability 0.25, load 0.20, capacity 0.15, region 0.10, reputation 0.10, model_match 0.10, price_score 0.10. |
 
 ---
 

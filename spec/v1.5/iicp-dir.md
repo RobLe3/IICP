@@ -263,7 +263,7 @@ GET /v1/discover
 | `pricing.effective_until` | ISO-8601\|null | null = no expiry. |
 | `pricing.attested` | bool | `true` if `declaration_signature` was verified at last registration (ADR-019 §5.1). |
 | `cip_conformance_level` | string | One of `"CIP-None"`, `"CIP-Consumer"`, `"CIP-Provider"`, `"CIP-Full"`. `"CIP-None"` means the node has not opted into any CIP role (equivalent to not declared). Per spec §5.2. |
-| `health_label` | string\|null | ADR-044 composed health label: `"healthy"` (score ≥85), `"degraded"` (≥65), `"impaired"` (≥40), `"critical"` (<40), `"offline"`. Computed from a weighted combination — reachability 0.30, latency 0.25 (50–500 ms curve), task-success 0.25 (70–100% curve), reputation 0.20 (ADR-044). `null` against directories predating v1.10.0. |
+| `health_label` | string\|null | ADR-044 composed health label: `"healthy"` (score ≥0.85), `"degraded"` (≥0.65), `"impaired"` (≥0.40), `"critical"` (<0.40), `"offline"`. Computed from a weighted combination — reachability 0.30, latency 0.25 (50–500 ms curve), task-success 0.25 (70–100% curve), reputation 0.20 (ADR-044). Score is a float in [0.0, 1.0] (normalised from internal 0–100 scale by v1.10.6+). `null` against directories predating v1.10.0. |
 | `exposure_mode` | string\|null | ADR-043 8-category network exposure classification (e.g. `"ipv4_public_direct"`, `"cgnat_upnp"`, `"ipv6_gua"`). `null` if node has not run qualification. |
 | `transport_method` | string\|null | How the node is reachable for the native IICP transport (`"direct"`, `"upnp"`, `"stun"`, `"relay"`, …). Mirrors the REGISTER value (§3.1 / ADR-041). |
 | `nat_type` | string\|null | Detected NAT topology (ADR-041). Advisory; clients MAY prefer `"direct"`/`"full_cone"`. |
@@ -303,7 +303,27 @@ Returns a seed peer list for mesh bootstrapping (Phase 2).
 GET /v1/bootstrap?limit=5
 ```
 
-Response: same structure as NODELIST, limited to `limit` healthy nodes.
+Response: a lightweight peer list — **not** the full NODELIST shape. Only the
+fields needed to dial a peer are included (no scoring weights, reputation fields,
+or capabilities). Default limit: 5; maximum: 50.
+
+```json
+{
+  "peers": [
+    {
+      "node_id":   "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "endpoint":  "https://node1.example.com:8090",
+      "region":    "eu-central",
+      "last_seen": "2026-05-31T16:00:00Z"
+    }
+  ],
+  "count": 1
+}
+```
+
+Liveness filter: only nodes whose `last_seen` is within the directory's stale-node
+window (90 s default) are eligible. Sorted by `last_seen DESC` so cold-starting
+nodes receive the freshest peers first.
 
 ---
 
@@ -623,7 +643,7 @@ A registered node (the *reporter*) submits a peer-divergence finding about a *ta
     "evaluation_grant": { "credits": 5, "interval_seconds": 21600 },
     "burn_rate_pct": 2.0
   },
-  "mesh_health": { "score": 65, "label": "degraded", "distribution": {...}, "mean": ..., "p10": ..., "sample": 3 },
+  "mesh_health": { "score": 0.65, "label": "degraded", "mean": 0.65, "p10": 0.42, "distribution": {"healthy": 1, "degraded": 1, "impaired": 0, "critical": 0, "offline": 0}, "sample": 3, "basis": "active_provider_nodes", "window": "live" },
   "directory_health": { "score": ..., "label": ... }
 }
 ```
@@ -636,7 +656,7 @@ A registered node (the *reporter*) submits a peer-divergence finding about a *ta
 | `server.version` | Directory software version (`config/app.php iicp_version`). |
 | `credit_schedule.tier_weights` | **Normative pricing schedule** — credits per 1000 output tokens scale by model size class. Operators and clients MAY key pricing on this. |
 | `credit_schedule.evaluation_grant` | Free-tier allocation mirror of §3.10 (5 credits / 21600s = 6h). |
-| `mesh_health` | ADR-044 node-aggregate (median over active provider nodes + distribution + p10 + mean + sample). `insufficient_sample` when <3 nodes; `unavailable` when empty. |
+| `mesh_health` | ADR-044 node-aggregate (median over active provider nodes). `score`/`mean`/`p10` are floats in **[0.0, 1.0]** (v1.10.6+; internal computation uses 0–100 scale then normalises). `label` thresholds: `healthy` ≥0.85, `degraded` ≥0.65, `impaired` ≥0.40, `critical` <0.40. `insufficient_sample` when sample <3; `unavailable` (score 0.0) when no active nodes. |
 | `directory_health` | Directory-infrastructure signal: `0.6·discover_latency + 0.4·conformance` (the signal REACH probes feed). Distinct from `mesh_health`. |
 
 ### 3.10 Free-credit allocation (Directory internal)
@@ -666,6 +686,20 @@ The directory grants a small free-credit allocation to bootstrap new nodes into 
 | `validation_error` | 422 | Required field missing or invalid |
 | `IICP-E034` | 429 | Too many registration attempts from this source IP (10/15min — W-033) |
 | `IICP-E035` | 422 | Non-routable endpoint host (ADR-041 invariant; `RoutableEndpoint` validator, iter-1365 / #325) |
+
+### 3.11 Supplementary routes (scope note, #384)
+
+The following routes are present in the reference implementation but **outside the
+normative IICP-DIR message catalogue** — they are either operator/infrastructure
+concerns or live in a separate sub-spec:
+
+| Route | Scope |
+|-------|-------|
+| `GET /metrics` | Prometheus text/plain exposition. Metrics semantics and label names are defined by ADR-014 (OTel/Prometheus) and `iicp-telemetry.md §T5`; not repeated here. |
+| `GET /v1/probe` | External reachability SSRF guard. Defined in `iicp-dir.md §3.3e` + REACH conformance test DIR-PROBE-01/02; operator reference in ADR-022. |
+| `GET /v1/conformance/…`, `GET /v1/badge/{tier}` | Conformance badge pipeline (submit, verify, SVG shield). Defined in S.14 `iicp-recognition.md §10` + `conformance-badges.md`; not duplicated here. |
+| `POST /v1/replicas/register`, `GET /v1/snapshot` | Phase 6 federation handshake and snapshot bootstrap. Defined in S.13 `iicp-federated-directory.md §7.1/§5.5` (ADR-013 gated). |
+| `POST /_deploy/migrate` | Operator-only HMAC-gated database migration endpoint. **Out of protocol scope** — deploy tooling, not part of the IICP wire contract. |
 
 ---
 
@@ -725,6 +759,9 @@ Tracking: #302
 | 0.3.0 | 2026-05-17 | §3.4 Consensus mode discovery note: proxy discovers N workers for consensus; directory unaware of consensus mode; cip_policy.allow_remote_inference filter requirement. |
 | 0.7.0 | 2026-05-26 | §3.1 REGISTER + §3.4 NODELIST: optional `transport_endpoint` field added (`iicp://` / `iicpsec://` scheme; default port 9484). Splits control plane (`endpoint`, HTTP) from data plane (`transport_endpoint`, native binary framing per ADR-040). Directory's HTTP liveness probe targets `endpoint` only; clients SHOULD prefer `transport_endpoint` when present. Back-compat: nodes without `transport_endpoint` continue to behave exactly as v0.6.x. |
 | 0.9.0 | 2026-05-30 | Code↔spec drift closeout (#384): §7 credit endpoints corrected to shipped routes (award/balance/transactions/quote — R4 fix); §3.9b Public Stats schema added (/v1/stats — server/probes/credit_schedule/mesh_health/directory_health); §3.4 NODELIST table + transport_method/nat_type/transport_metadata/address_family/relay_capable/public_key(CX object)/sdk_*/models fields; probation clarified as node-detail-only (R3); §3.7 event-type enum reconciled to snapshot+event-tail live set (R2 — HEARTBEAT/SCORE_UPDATE retired). |
+| 0.9.3 | 2026-05-31 | §3.11 Supplementary routes: scope annotations for /metrics, /v1/probe, /v1/conformance/*, /v1/badge/{tier}, /v1/replicas/register, /v1/snapshot, /_deploy/migrate (closes #384 LOW undocumented-routes items). |
+| 0.9.2 | 2026-05-31 | §3.9b mesh_health: score/mean/p10 documented as float [0.0,1.0] (v1.10.6 wire normalisation); example updated from integer 65 to float 0.65; label thresholds expressed in [0,1]; basis/window fields added. health_label thresholds in §3.4 NODELIST also corrected to [0,1] scale. |
+| 0.9.1 | 2026-05-31 | §3.5 BOOTSTRAP: documented actual response shape `{peers:[{node_id,endpoint,region,last_seen}], count}` — was incorrectly described as "same as NODELIST" (code↔spec drift R5, #384). |
 | 0.8.0 | 2026-05-30 | §3.9 AUDIT_REPORT endpoint documented (was in code + semantics §11.5 but absent from the dir message-type catalogue — code→spec drift, GAPS-022). §3.10 Free-credit allocation rules documented (amount, 6h gate, RT-02 credit-survival, RT-02b known limitation). |
 | 0.7.0 | 2026-05-30 | §3.4 NODELIST: added `health_label` (ADR-044 composed health score label) and `exposure_mode` (ADR-043 network classification) fields. Both `null`-safe for backward compatibility with pre-v1.10.0 directories. |
 | 0.6.1 | 2026-05-20 | §3.3 DISCOVER: `cip_capable` query parameter added — boolean, server-side filter for CIP-Provider nodes (`allow_remote_inference=true`). Existing params `min_reputation`, `max_multiplier`, `min_quality_score` documented in table. CIP coordinators SHOULD pass `cip_capable=true` to avoid client-side filtering (S.12 §5.2). |
