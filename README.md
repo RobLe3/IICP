@@ -42,37 +42,32 @@ An **intent URN** expresses what you want, not which model or endpoint to call. 
 
 ## Specification Documents
 
-> **Path note**: all documents live under `spec/v1.5/` — that path is a **frozen label**
-> from when the spec was restructured in May 2026 (monolithic v1.4.2 draft → modular
-> sub-protocol family). It does not indicate the current protocol version, which is tracked
-> by the [`spec/v1.5/VERSION`](spec/v1.5/VERSION) file and the changelog below.
-
 ### Core (read these first)
 
 | Document | What it covers | Normative level |
 |----------|---------------|-----------------|
-| [iicp-core.md](spec/v1.5/iicp-core.md) | Wire format, 14 message types, required fields, error codes, security minimums | **MUST** |
-| [iicp-semantics.md](spec/v1.5/iicp-semantics.md) | Intent routing, QoS tiers, node scoring, retry policy, circuit breaker | SHOULD / MAY |
-| [iicp-extensions.md](spec/v1.5/iicp-extensions.md) | Billing, reputation, MCP binding, Cooperative Inference, post-quantum | MAY / future |
+| [iicp-core.md](spec/v1.9/iicp-core.md) | Wire format, 14 message types, required fields, error codes, security minimums | **MUST** |
+| [iicp-semantics.md](spec/v1.9/iicp-semantics.md) | Intent routing, QoS tiers, node scoring, retry policy, circuit breaker | SHOULD / MAY |
+| [iicp-extensions.md](spec/v1.9/iicp-extensions.md) | Billing, reputation, MCP binding, Cooperative Inference, post-quantum | MAY / future |
 
 ### Sub-protocols
 
 | Document | What it covers |
 |----------|---------------|
-| [iicp-dir.md](spec/v1.5/iicp-dir.md) | IICP-DIR: directory registration, heartbeat, discovery, peer exchange |
-| [iicp-mcp-binding.md](spec/v1.5/iicp-mcp-binding.md) | MCP ↔ IICP translation rules |
-| [node-capability-format.md](spec/v1.5/node-capability-format.md) | Capability object schema: intents, models, limits, availability |
-| [iicp-billing-extension.md](spec/v1.5/iicp-billing-extension.md) | Credits, billing fields, receipt protocol |
-| [iicp-cbor-wire.md](spec/v1.5/iicp-cbor-wire.md) | Optional CBOR wire encoding (Phase 3, `application/iicp+cbor`) |
+| [iicp-dir.md](spec/v1.9/iicp-dir.md) | IICP-DIR: directory registration, heartbeat, discovery, peer exchange |
+| [iicp-mcp-binding.md](spec/v1.9/iicp-mcp-binding.md) | MCP ↔ IICP translation rules |
+| [node-capability-format.md](spec/v1.9/node-capability-format.md) | Capability object schema: intents, models, limits, availability |
+| [iicp-billing-extension.md](spec/v1.9/iicp-billing-extension.md) | Credits, billing fields, receipt protocol |
+| [iicp-cbor-wire.md](spec/v1.9/iicp-cbor-wire.md) | Optional CBOR wire encoding (Phase 3, `application/iicp+cbor`) |
 
 ### Conformance and governance
 
 | Document | What it covers |
 |----------|---------------|
-| [IICP-core-phase1-profile.md](spec/v1.5/IICP-core-phase1-profile.md) | Phase 1 field subset — the minimum viable implementation |
-| [conformance-test-suite.md](spec/v1.5/conformance-test-suite.md) | 200+ machine-verifiable test IDs (DIR-*, PROXY-*, SEC-*, CIP-*, DIR-FED-*) mapped to REACH probes |
-| [validation-methodology.md](spec/v1.5/validation-methodology.md) | How to validate implementations; performance claim disclosure |
-| [iicp-v1.5-overview.md](spec/v1.5/iicp-v1.5-overview.md) | What changed in v1.5; migration guide from v1.4.2 |
+| [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) | Phase 1 field subset — the minimum viable implementation |
+| [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) | 200+ machine-verifiable test IDs (DIR-*, PROXY-*, SEC-*, CIP-*, DIR-FED-*) mapped to REACH probes |
+| [validation-methodology.md](spec/v1.9/validation-methodology.md) | How to validate implementations; performance claim disclosure |
+| [iicp-v1.5-overview.md](spec/v1.9/iicp-v1.5-overview.md) | What changed in v1.5; migration guide from v1.4.2 |
 
 ### Supporting assets
 
@@ -82,17 +77,17 @@ An **intent URN** expresses what you want, not which model or endpoint to call. 
 | [schemas/nodelist.json](schemas/nodelist.json) | JSON Schema 2020-12 for `NodeListResponse` |
 | [registry/intents.json](registry/intents.json) | Official intent URN registry |
 
-### Previous version
+### Archived
 
 | Path | Contents |
 |------|---------|
-| [spec/v1.4/IICP_draft_1.4.2.txt](spec/v1.4/IICP_draft_1.4.2.txt) | Original monolithic Internet-Draft (archived) |
+| [spec/archived/IICP_draft_1.4.2.txt](spec/archived/IICP_draft_1.4.2.txt) | Original monolithic Internet-Draft (archived) |
 
 ---
 
 ## Quick Start: Implement IICP
 
-Read [IICP-core-phase1-profile.md](spec/v1.5/IICP-core-phase1-profile.md) for the minimum field subset. A Phase 1 node must:
+Read [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) for the minimum field subset. A Phase 1 node must:
 
 1. **Register** — `POST /v1/register` with `{endpoint, region, capabilities[], limits}`
 2. **Heartbeat** — `POST /v1/heartbeat` every 30 s with `{load, active_jobs}`
@@ -147,7 +142,7 @@ score = 0.35 × availability_factor
       + 0.10 × reputation_score
 ```
 
-See [iicp-semantics.md](spec/v1.5/iicp-semantics.md) for full term definitions.
+See [iicp-semantics.md](spec/v1.9/iicp-semantics.md) for full term definitions.
 
 ---
 
@@ -162,7 +157,7 @@ All IICP implementations MUST:
 - Never log or expose `payload` content
 - Return **structured errors only** — no stack traces, no filesystem paths
 
-See [conformance-test-suite.md](spec/v1.5/conformance-test-suite.md) SEC-* test IDs for machine-verifiable checks.
+See [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) SEC-* test IDs for machine-verifiable checks.
 
 ---
 
@@ -228,7 +223,7 @@ The protocol specification in this repository is the authoritative source for bu
 - **Bug reports / clarifications**: Open an issue
 - **New intent URNs**: Open an issue with URN, domain, and example payload
 - **Protocol proposals**: Open an issue tagged `protocol-change`
-- **Conformance tests**: PRs to `spec/v1.5/conformance-test-suite.md` welcome
+- **Conformance tests**: PRs to `spec/v1.9/conformance-test-suite.md` welcome
 
 All normative language follows RFC 2119 / BCP 14.
 

@@ -7,7 +7,7 @@
 ## 1. IICP Protocol Suite Version (public-facing)
 
 **Format**: `MAJOR.MINOR.PATCH` (semver)  
-**Source of truth**: `spec/v1.5/VERSION` in the [`RobLe3/IICP`](https://github.com/RobLe3/IICP) spec repo  
+**Source of truth**: `spec/v1.9/VERSION` in the [`RobLe3/IICP`](https://github.com/RobLe3/IICP) spec repo  
 **Displayed as**: `IICP v1.9.0` or `IICP Protocol v1.9.0`  
 **Changelog**: `CHANGELOG.md` in the IICP spec repo
 
@@ -103,7 +103,7 @@ When making spec changes that warrant a version bump:
 
 ```bash
 # 1. Update the IICP spec repo (via GitHub API or clone)
-#    - Update spec/v1.5/VERSION
+#    - Update spec/v1.9/VERSION
 #    - Add entry to CHANGELOG.md
 
 # 2. Update the sub-spec document version header
