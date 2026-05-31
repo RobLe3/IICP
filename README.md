@@ -65,7 +65,7 @@ An **intent URN** expresses what you want, not which model or endpoint to call. 
 | Document | What it covers |
 |----------|---------------|
 | [IICP-core-phase1-profile.md](spec/v1.5/IICP-core-phase1-profile.md) | Phase 1 field subset — the minimum viable implementation |
-| [conformance-test-suite.md](spec/v1.5/conformance-test-suite.md) | 40 machine-verifiable test IDs (DIR-REG, PROXY-ROUTE, SEC-*, etc.) |
+| [conformance-test-suite.md](spec/v1.5/conformance-test-suite.md) | 200+ machine-verifiable test IDs (DIR-*, PROXY-*, SEC-*, CIP-*, DIR-FED-*) mapped to REACH probes |
 | [validation-methodology.md](spec/v1.5/validation-methodology.md) | How to validate implementations; performance claim disclosure |
 | [iicp-v1.5-overview.md](spec/v1.5/iicp-v1.5-overview.md) | What changed in v1.5; migration guide from v1.4.2 |
 
@@ -165,25 +165,25 @@ See [conformance-test-suite.md](spec/v1.5/conformance-test-suite.md) SEC-* test 
 
 **Phase 5 — Cooperative Inference Protocol (active)**
 
-The [iicp.network](https://iicp.network) directory is live and continuously verified by 37 conformance probes. The reference implementation is in active development — the client and node software are not yet publicly distributed. Public operator onboarding will open once security verification, authentication, and the operator identity system are production-ready.
+The [iicp.network](https://iicp.network) directory is live and continuously verified by 37 conformance probes. The **client SDKs are published** (PyPI / npm / crates.io); the node runtime is still private pending security sign-off. Public operator onboarding will open once security verification, authentication, and the operator identity system are production-ready.
 
 | Feature area | Status | Notes |
 |---|---|---|
 | Core protocol — register / discover / route | ✅ Live | 37 conformance probes green continuously |
 | CIP coordinator (multi-node dispatch) | ✅ Implemented | Credit receipts, response integrity verification |
+| Reputation scoring | ✅ Ratified | Tier structure (§5.1.1) + bootstrap floor (§5.1.2) ratified 2026-05-24 — normative |
+| Published SDKs (Python / TypeScript / Rust) | ✅ Published | `pip install iicp-client` · `npm install @iicp/client` · `cargo add iicp-client` |
 | Rust node runtime (`iicp-node`) | 🟡 Working (private) | Not yet publicly distributed — pending security sign-off |
-| Reputation scoring | 🟡 Spec-complete | REP1/REP2 pending Protocol Steward ratification |
 | Operator identity (anti-Sybil) | 🔴 Design phase | ADR-030 — Ed25519 key pair, multi-node ownership |
-| Published SDKs (Python / TypeScript / Rust) | 🔴 Not yet | PyPI / npm / crates.io publication pending security + auth readiness |
 
-**Estimated progress toward closed beta: ~60%**
+**Estimated progress toward closed beta: ~70%**
 
-The mesh works end-to-end. The remaining gaps before closed beta are:
+The mesh works end-to-end and the client SDKs are publicly installable. The remaining gaps before closed beta are:
 - A portable operator identity system (so node identities survive machine changes)
 - Security and authentication hardening to production standard
-- Published, versioned SDK packages for external operator integration
+- Public release of the node runtime once the above are verified
 
-The client and node software will be publicly released once these are verified and polished. Follow this repo or [iicp.network](https://iicp.network) for announcements.
+Follow this repo or [iicp.network](https://iicp.network) for announcements.
 
 ---
 
@@ -208,7 +208,8 @@ The reference implementation (`RobLe3/iicp.network`) is currently **private** �
 
 | Component | Language | Purpose |
 |-----------|----------|---------|
-| `directory/` | PHP 8.3 + Laravel | Control plane — registration, discovery, scoring |
+| `directory/` | PHP 8.3 + Laravel | Control plane — registration, discovery, scoring (interim, shared-hosting) |
+| `iicp-directory-rs/` | Rust 2021 + axum | Control plane — permanent replacement for the PHP directory (auditable scoring compiled into one binary) |
 | `adapter/` | Python 3.11 + FastAPI | Execution plane — task acceptance, backend dispatch |
 | `proxy/` | Python 3.11 | Client plane — discovery, routing, retry, fallback |
 | `iicp-node/` | Rust 2021 + tokio | High-performance node runtime |
