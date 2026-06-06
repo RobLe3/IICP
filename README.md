@@ -122,6 +122,21 @@ wire format in practice. Bug reports and PRs are welcome on each repository.
 
 ---
 
+## Research
+
+The protocol's normative choices are backed by simulation and analysis. The full research
+record — credit economy & rate calibration, reputation/tier modelling, adversarial robustness
+(FRAME8, REP, MESH), routing/multi-path selection, cryptographic trustworthiness, portable
+operator identity, gamification anti-gaming, NAT traversal, and more — lives under
+[`research/`](research/), indexed in [`research/RESEARCH.md`](research/RESEARCH.md).
+
+These notes are published so the spec's decisions are **externally verifiable**: each major
+parameter (tier weights, credit schedule, decay floors, EMA α, etc.) traces back to a documented
+simulation or analysis. Found a flaw or have a better method? The research is meant to be
+challenged — open an issue.
+
+---
+
 ## Intent URN Registry
 
 Intent URNs identify *what* is being requested, independent of model or backend:
