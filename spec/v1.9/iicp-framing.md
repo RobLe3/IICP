@@ -1,8 +1,8 @@
 # IICP Binary Framing Layer
 
 **Document**: `spec/iicp-framing.md`  
-**Version**: 0.1.0-draft  
-**Date**: 2026-05-20  
+**Version**: 0.1.4-draft  
+**Date**: 2026-06-06  
 **Status**: Draft — NOT YET RATIFIED (see §12)  
 **Authority**: Protocol Steward  
 **Issue**: #231  
@@ -665,6 +665,7 @@ security principle: fail closed, fail cheap, fail loudly (log at warn level).
 | CBOR payload violates field type constraints (§4.16) | Payload parse | Send CLOSE(invalid_payload); close connection | `invalid_payload` |
 | Fragment out-of-order (see §10.3) | Reassembly | Buffer up to 256 fragments; discard after 30s timeout; send CLOSE(fragment_timeout) | `fragment_timeout` |
 | Fragment storm (> 256 pending fragments total) | Reassembly | Send CLOSE(fragment_limit_exceeded); close connection | `fragment_limit_exceeded` |
+| Too many concurrent incomplete reassemblies (> `MAX_INCOMPLETE_FRAMES`=64) OR aggregate reassembly buffer > `MAX_REASSEMBLY_BYTES`=64 MiB (see §10.3, FRAME8/#242) | Reassembly | Send CLOSE(reassembly_limit_exceeded); close connection | `reassembly_limit_exceeded` |
 | CALL payload inflates beyond 32 MiB (§2) | Decompression | Abort decompression; send CLOSE(payload_too_large) | `payload_too_large` |
 
 **Notes:**
@@ -729,10 +730,34 @@ fragmented. Receivers MUST reassemble fragments in order before processing.
 
 ### 10.3 Reassembly constraints
 
+**Per-message** (a single `fragment_id`):
+
 - Maximum fragments per message: 256.
 - Reassembly timeout: 30 seconds from first fragment received. Partial messages that
   exceed this timeout MUST be discarded and a CLOSE sent with reason `protocol_error`.
 - Maximum reassembly buffer: 16 MiB (enforces the frame size limit from §2).
+
+**Per-connection** (aggregate across all concurrently-incomplete messages) — FRAME8 (#242):
+
+The per-message caps above do not by themselves bound a peer that opens many distinct
+`fragment_id` reassemblies at once. This is the adversarial-review memory-amplification
+finding (#242): *"what is the memory factor at 1000 concurrent incomplete frames?"* —
+1000 incomplete messages each just under the 16 MiB per-message cap would be ~16 GiB.
+Two further caps MUST be enforced per connection:
+
+- `MAX_INCOMPLETE_FRAMES` (default **64**) — a receiver MUST NOT hold more than this many
+  distinct incomplete reassemblies (`fragment_id`s) in flight on one connection. A new
+  `fragment_id` that would exceed the limit MUST be rejected with
+  CLOSE(`reassembly_limit_exceeded`) and the connection closed.
+- `MAX_REASSEMBLY_BYTES` (default **64 MiB**) — the receiver MUST bound the total bytes
+  buffered across all in-flight reassemblies on one connection. A fragment that would push
+  the aggregate past this limit MUST be rejected with CLOSE(`reassembly_limit_exceeded`).
+
+These bound worst-case reassembly memory to a fixed `MAX_REASSEMBLY_BYTES` per connection,
+**independent of how an attacker distributes fragments across `fragment_id`s** — so the
+amplification factor at N concurrent incomplete frames is O(1), not O(N). Implementations
+MAY expose both caps as configuration but MUST default to at least the limits above and
+MUST NOT disable them.
 
 ### 10.4 QUIC transport profile
 
@@ -885,8 +910,13 @@ ratification:
   #236 (FRAME5), #237 (FRAME6), #238 (FRAME7) resolved; no open blocking findings
   — FRAME5 closed: §10.4-10.6 (QUIC profile, CBOR constraints) 2026-05-20
   — FRAME7 closed: §13 (interoperability, dual-mode design) 2026-05-20
-- [ ] Port 9484 IANA research (#239) complete; port confirmed or changed
-- [ ] Adversarial review (#242) complete; all persona findings resolved
+- [x] Port 9484 IANA research (#239) complete; port confirmed — direct IANA CSV query
+  verified ports 9480–9490 unassigned (§11.1; closed 2026-05-20).
+- [x] Adversarial review (#242, FRAME8) complete; all persona findings resolved. The
+  reassembly memory-amplification finding ("memory factor at 1000 concurrent incomplete
+  frames") is resolved by the per-connection `MAX_INCOMPLETE_FRAMES` (64) and
+  `MAX_REASSEMBLY_BYTES` (64 MiB) caps added in §10.3, bounding worst-case reassembly
+  memory to O(1) per connection (closed 2026-05-24).
 - [ ] ADR-024 (Signed Message Envelope) ratified; §9.2 and §6.4 verified
 - [ ] CBOR deterministic encoding requirement (§4.1) validated by test suite
 - [ ] HTTP fallback mapping table (§5.2) validated against REACH conformance probes
@@ -1019,4 +1049,5 @@ mechanisms are complementary.
 | 0.1.1-draft | 2026-05-20 | PS | §9.6 malformed frame disposition table (18 cases, normative) — #232. §9.7 version negotiation failure paths (8 cases, normative) — #233. |
 | 0.1.2-draft | 2026-05-20 | PS | v1.4.2 port audit amendments: §4.3 note A-001 (payload_hash superseded by ADR-024 envelope signing); §4.13 note A-002 (routing_metrics intentionally dropped, OBSERVE purpose changed from topology to streaming). Audit report: reports/v142-port-audit.md. Issue #243. |
 | 0.1.3-draft | 2026-05-20 | PS | §11.1 IANA status upgraded from "appears unassigned" to "confirmed IANA-unassigned" — direct IANA CSV query verified zero assignments for ports 9480–9490. Issue #239 closed. |
+| 0.1.4-draft | 2026-06-06 | PS | §10.3 FRAME8 reassembly caps (#242): per-connection `MAX_INCOMPLETE_FRAMES`=64 + `MAX_REASSEMBLY_BYTES`=64 MiB (CLOSE `reassembly_limit_exceeded`, §9.6 row added) — bounds reassembly memory to O(1) per connection, resolving the adversarial-review amplification finding. §12: flipped #239 (IANA, closed 2026-05-20) and #242 (adversarial review, closed 2026-05-24) ratification gates to complete. Header version reconciled to 0.1.4 (it trailed the changelog, which already carried 0.1.1–0.1.3). |
 | 0.1.4-draft | 2026-05-20 | PS | §10.4-10.6 QUIC transport profile — stream mapping (stream-per-request), fragmentation over QUIC (OPTIONAL, QUIC segments natively), CBOR encoding constraints (deterministic encoding for signed messages, no indefinite-length). §13 Interoperability — dual-mode design selected, HTTP↔native translation table, CUSTOM frame gateway behavior, OBSERVE SSE bridge, directory control-plane constraint. Issues #236 #238 closed. |

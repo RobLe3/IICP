@@ -1,7 +1,7 @@
 # S.13 — IICP Federated Directory Protocol
 
-**Version**: 0.3.6 (Draft)  
-**Date**: 2026-05-25  
+**Version**: 0.3.7 (Draft)  
+**Date**: 2026-06-06  
 **Status**: draft  
 **Authority**: Federation Coordinator + Protocol Steward  
 **Linked ADR**: ADR-013 (Federated Control Plane — Vision)  
@@ -38,6 +38,17 @@ did:web:iicp.network  →  Genesis Seed signing key (Ed25519)
 did:web:replica.example.com  →  Replica DID (operator-controlled)
                               →  Replica trust level declared in Genesis Seed's trusted-replicas registry
 ```
+
+> **Ed25519 availability (Normative, DIR-FED-21).** Every directory that emits or verifies
+> signed events (§3.4 event log, the §7.1 replica handshake, DIR-FED-11 DID verification) or
+> verifies operator delegations (iicp-dir §3.1, ADR-045) MUST have a **working Ed25519
+> implementation** and MUST NOT assume the host runtime provides one. A directory MUST ship
+> a portable fallback when the native binding is absent — e.g. a PHP directory MUST depend on
+> a pure-PHP polyfill (`paragonie/sodium_compat`) so signature verification works on hosts
+> without `ext-sodium`. A directory that cannot verify a signature it is required to verify
+> MUST fail closed (reject the event/handshake), never fail open. Rationale: shared-hosting
+> runtimes routinely omit `ext-sodium`; a directory that silently degrades would accept
+> unverifiable events or break operator onboarding (observed in production, 2026-06-06).
 
 **Trust tiers**:
 
@@ -173,9 +184,45 @@ events MUST switch to reading the canonical row via §5.5 snapshot. See
 ADR-033 for the design rationale (ephemeral storage horizon ≤ 3×
 heartbeat window; long-term observability moves to external telemetry).
 
-**Signature input**: `Ed25519Sign(key, SHA256(event_id + ":" + event_type + ":" + seq + ":" + ts_ms + ":" + SHA256_hex(canonical_json(payload))))`
+> **Founder events are NOT federated (cross-note, DIR-FED-16).** The federated event set
+> above is **closed**. The recognition signed events `FOUNDER_LOCKIN` and
+> `FOUNDER_SUCCESSION` (iicp-recognition §5.4) are deliberately **excluded** — they ride a
+> *dedicated, non-federated* signed chain, never the federated `node_events` stream. A
+> replica MUST NOT expect founder events on `GET /v1/events` and MUST NOT derive founder
+> ordinals from federated state; founder recognition is a Genesis-Seed-local authority.
+> This is the S.13 side of the relationship that iicp-recognition §5.4 already references.
+
+**Signature input**: `Ed25519Sign(key, SHA256(event_id + ":" + event_type + ":" + seq + ":" + ts_ms + ":" + SHA256_hex(canonical_json(payload)) + ":" + prev_hash))`
 
 `canonical_json` = RFC 8785 (JSON Canonicalization Scheme) — deterministic, no whitespace variation.
+
+**Hash-chain (`prev_hash`, #458)**: each signed event carries `prev_hash`, a 64-char
+lowercase-hex SHA-256 that binds it to its predecessor so that inserting, deleting, or
+reordering any event is detectable by cascade.
+
+- `prev_hash = SHA256_hex(ascii(P.signature))` where `P` is the signed event with the
+  greatest `seq` strictly less than this event's `seq` (the immediately preceding signed
+  event), and `P.signature` is hashed as its 128-character lowercase-hex ASCII bytes.
+- When no preceding signed event exists (genesis, or the first signed event after a
+  previously-unsigned span), `prev_hash = GENESIS_ROOT`, the fixed constant
+  `SHA256_hex("iicp:dir:event-log:genesis:v1")` =
+  `c44802bedf3e63b5a3f1634c5d19263634f92f26dd15401b09b06dd53a80cf9d`.
+- Chaining on the predecessor's **signature** (a hex string) — rather than on a
+  re-serialized record — keeps `prev_hash` reproducible from the wire on every
+  implementation, sidestepping cross-language number-canonicalization differences
+  (e.g. a whole-number float rendered `5.0` vs `5`).
+- Because each signature is deterministic (RFC 8032) over a message that includes its own
+  `prev_hash`, altering any event changes its signature → changes the successor's
+  `prev_hash` → invalidates every later signature. A party holding any earlier copy of the
+  chain head can therefore detect a post-hoc rewrite even by the key-holding directory.
+- Verifiers MUST recompute `prev_hash` while applying events in `seq` order (seeding from
+  `GENESIS_ROOT`) and MUST reject any event whose `prev_hash` field or signature does not
+  match (DIR-FED-01). Per-event signature verification alone (e.g. a client auditing a
+  filtered subset) still confirms the directory signed that event at that position, but
+  full tamper-evidence requires the in-order continuity check.
+- Back-compat: events written before the `node_events.prev_hash` migration carry a null
+  `prev_hash` and are treated as a legacy un-chained prefix; the chain (re)starts from
+  `GENESIS_ROOT` at the first signed event carrying a non-null `prev_hash`.
 
 ### 5.2 Event Stream API
 
@@ -246,9 +293,25 @@ Replicas MUST consume these payloads to maintain locally consistent node state.
     "credit_cost_multiplier": 1.0,
     "pricing_model": "per_token",
     "attested": false
-  }
+  },
+  "capabilities": [
+    {
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "models": ["llama-3-8b"],
+      "max_tokens": 4096,
+      "input_modalities": ["text"]
+    }
+  ]
 }
 ```
+> **`capabilities` (#438) — REQUIRED for discover replication.** A replica serves
+> `/v1/discover` only for nodes whose capability rows it holds (discover INNER-JOINs
+> `capabilities` on the requested intent). The bootstrap snapshot carries capabilities,
+> but a node registered *after* a replica's snapshot arrives only via this REGISTER
+> event — so the event MUST carry the node's capabilities (discover-relevant fields:
+> `intent`, `models`, `max_tokens`, `input_modalities`). The replica rebuilds the
+> node's capability set from this array (replace-wholesale, idempotent). Without it,
+> post-bootstrap nodes are invisible on replicas.
 
 **HEARTBEAT** — emitted on every heartbeat; includes reputation for CIP-Full routing:
 ```json
@@ -699,6 +762,7 @@ v0.2.0, iter-1347 per Phase 6 charter P6-1.1), then the bootstrap + advertise st
 | DIR-FED-17 | Snapshot response `genesis_hash` MUST match the value returned by `GET /v1/events` (parity with DIR-FED-07) | Genesis Seed |
 | DIR-FED-19 | Genesis Seed MUST serve a valid v2-schema document at `/.well-known/iicp-replicas.json` (per §6.4 trusted-replicas registry). Required entry fields: `replica_id`, `did`, `endpoint`, `trust_tier`, `registered_at`. Discovery clients MAY use this for bootstrap-without-seed; MUST validate every field against the schema before acting on entries. | Genesis Seed |
 | DIR-FED-20 | Replica directories MUST sign every discovery response (`GET /v1/discover`, `/v1/node/{id}`, `/v1/bootstrap`) with their own Ed25519 key and include `X-IICP-Replica-Sig` + `X-IICP-Replica-DID` + `X-IICP-Snapshot-Seq` headers per §6.5. Clients MUST verify the signature against the replica's published DID key before using returned nodes; failure → log IICP-SEC-REPLICA-01 + reject response. Genesis Seed responses are exempt (TLS+DNS trust). | Replica / Client |
+| DIR-FED-21 | A directory that emits/verifies signed events, the replica handshake, or operator delegations MUST have a working Ed25519 implementation and MUST NOT assume the host provides one (§3 Trust Model). PHP directories MUST depend on a pure-PHP polyfill (`paragonie/sodium_compat`) when `ext-sodium` is absent. A directory that cannot verify a required signature MUST fail closed. | Genesis Seed / Replica |
 | DIR-FED-18 | Replicas (`IICP_REPLICA_MODE=true`) MUST 307-redirect every unsafe HTTP method (POST/PUT/PATCH/DELETE) to the configured seed at `IICP_SEED_URL`, preserving path + query. Replicas with missing or non-https `IICP_SEED_URL` MUST refuse writes with `503 IICP-E047 replica_mode_misconfigured`. Reads (GET/HEAD/OPTIONS) and the replica-mirror apply path are unaffected. | Replica |
 | DIR-FED-EVENTCHAIN-01 | Federated event log MUST be append-only — past events MUST NOT mutate: for any (`seq`, `event_id`) pair observed in two successive `GET /v1/events` responses, every field (`event_type`, `ts_ms`, `signer_did`, `payload`, `sig`) MUST be byte-identical, and `genesis_hash` MUST match across calls. Tampering, re-ordering, or tombstoning a past event causes undetectable replica divergence. | Genesis Seed |
 
@@ -721,6 +785,7 @@ v0.2.0, iter-1347 per Phase 6 charter P6-1.1), then the bootstrap + advertise st
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3.7 | 2026-06-06 | §3 DIR-FED-21 (Normative): Ed25519-availability requirement — a directory that emits/verifies signed events, the replica handshake, or operator delegations MUST have a working Ed25519 impl and MUST NOT assume the host provides one; PHP directories MUST ship `paragonie/sodium_compat` when `ext-sodium` is absent; cannot-verify → fail closed (grounded in the 2026-06-06 prod no-ext-sodium incident). §3.4 federated event list: explicit founder-events cross-note — `FOUNDER_LOCKIN`/`FOUNDER_SUCCESSION` (iicp-recognition §5.4) are NOT federated (dedicated non-federated chain; the closed-set DIR-FED-16 side of the relationship recognition.md already references). |
 | 0.3.6 | 2026-05-26 | §6.5 Replica Response Signing (Normative) + §8 DIR-FED-20 added per Phase 6 charter P6-4.2b. Replicas MUST sign discovery responses with Ed25519 (`X-IICP-Replica-Sig` + `X-IICP-Replica-DID` + `X-IICP-Snapshot-Seq` headers); signing input matches §3.4 event log pattern (method:path:query:snapshot_seq:body_hash). Clients MUST verify against replica's published DID key; failure logs IICP-SEC-REPLICA-01. Genesis Seed exempt (TLS+DNS trust). Replicas more than 5min behind seed (`replica_lag_ms`) MUST be treated as untrusted regardless of sig validity. |
 | 0.3.5 | 2026-05-26 | §5.1 + §5.4 + §8 DIR-FED-16: `OPERATOR_OBSERVED` event type added per Phase 6 charter P6-2.2 + W-033 (null/self-reported field manipulation audit trail). Replicas MUST record but MUST NOT mutate state — trust auditor on seed is sole authority. Closed federation type list expands from 5 → 6 types. |
 | 0.3.4 | 2026-05-26 | §6.4 Trusted-Replicas Registry (Normative) + §8 DIR-FED-19 added per Phase 6 charter P6-3.2. Schema v2 for `/.well-known/iicp-replicas.json`: required fields (replica_id, did, endpoint, trust_tier, registered_at) + optional health hints (region_hint, tls_min_version, availability_window, schema_compat). Dynamic state (last_seen_at, event_log_lag_ms) explicitly NOT in registry — clients query `/api/v1/stats` on each replica for freshness. Static metadata only — keeps the file CDN-cacheable so clients can route around the seed during outages. |

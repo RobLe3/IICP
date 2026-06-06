@@ -1,8 +1,9 @@
 # IICP Operator Recognition Protocol
 
-**Version**: 0.4.0-draft
-**Status**: Draft — RECOG-* test IDs registered in `spec/conformance-test-suite.md §15`. API surface §7 + anti-gaming §8 normative. §3 Operator Identity composes on ADR-034 Identity Slot. §12 open questions now carry **proposed defaults** with rationale — PS review reduces to confirm/override per question (was "needs full design"). v1.0 unblocks when PS ratifies §12 defaults.
-**Date**: 2026-05-26 (updated from 2026-05-24)
+**Version**: 0.6.0-draft
+**Status**: Draft — RECOG-* test IDs registered in `spec/conformance-test-suite.md §15`. API surface §7 + anti-gaming §8 normative. §3 Operator Identity composes on ADR-034 Identity Slot. **§5.4 Founder ordinals (time-gated tiers + lock-in + succession) added 2026-06-05 — parameters maintainer-RATIFIED** (Genesis-50/3mo · Founders-500/6mo · Founders-1000/12mo; transfer-with-signed-succession; rules R1–R7 from `research/gamification-track/08`, #461); the two new signed event types (`FOUNDER_LOCKIN`, `FOUNDER_SUCCESSION`) extend ADR-013 §3.4 and depend on the #458 hash-chain (landed). §12 open questions (seasons/handles/attestation) still carry proposed defaults — v1.0 graduation needs PS to ratify those + #310 directory implementation of §5.4.
+**Date**: 2026-06-05 (updated from 2026-05-26)
+**Changelog**: 0.6.0 — §5.4 reconciled to the **shipped** #310 lock-in detector (SPEC_UPDATE_PLAN Unit A, D5-A): keyed on `operator_pubkey` (not DID `identity_uri`); **genuine-served-node** gate (operator_verified + public_reachable + active + available) replaces the demand-scaled task-floor; **#1 reserved + 30-day-gate-exempt**; **GENESIS_MS = 2026-06-06** anchor named; FOUNDER_LOCKIN/SUCCESSION ride a **dedicated non-federated** signed chain (DIR-FED-16) with emission a tracked follow-up; §8 rule 8 + RECOG-FND-01/05/06 aligned; RECOG-FND IDs marked pending in conformance-suite. 0.5.0 — §5.4 Founder ordinals + §8 founder hard rules (8–12) + §10 RECOG-FND-01..06 (#309/#461, ratified tiers). 0.4.0 — §12 proposed defaults.
 **Tracking**: #309 (this spec graduation), #267 (research), #269 (ADR-030 — closed 2026-05-26, file exists at Proposed)
 **Foundation**: ADR-034 (Identity Slot), S.15 (`spec/iicp-identity-slot.md`), BC-12 (`project/ddd/BC-12-identity.md`) — operator identity composes on top of the Identity Slot
 **Companion**: `project/gamification.md` (project-level concept), `research/gamification-track/` (rationale, metric mapping, anti-gaming, rollout gates, API surface)
@@ -38,6 +39,18 @@ This protocol depends on the operator identity layer defined by **ADR-030 (Opera
 (ADR-034, `spec/iicp-identity-slot.md`, BC-12). All rank and badge state is keyed on
 `operator_id`, never on `node_id`. A single operator with multiple nodes appears once in
 leaderboards and rank tables.
+
+**`operator_id` is the operator's ed25519 public key (#464), not an opaque UUID** — i.e. the
+same key the directory verifies and stores as `operator_pubkey` via the ADR-045 delegation. It
+is therefore **cryptographically verifiable** (the operator proves control by signing; identity
+mutations such as a `display_name` rename MUST be operator-signed) and **directory-private**:
+public surfaces (node detail, leaderboards) expose only the public `display_name`, never
+`operator_id`. The operator's `created_at` is self-attested and bound by
+`operator_integrity_hash = SHA256(operator_id ":" created_at)`, which the directory pins on
+first-use for tamper-detection; because a self-claimed `created_at` is backdatable, the
+**directory-observed** timestamp (the `FOUNDER_LOCKIN` event the directory stamps, §5.4) — never
+`created_at` — is authoritative for founder ordinals. `display_name` is the public, mutable
+handle (also the community/leaderboard identity); `contact` is private.
 
 **Layered identity model** (resolves open question 3 from v0.2.0-draft):
 
@@ -139,12 +152,113 @@ Examples:
 within calendar year YYYY.
 **MUST**: Class badges are permanent. Late joiners earn future-year classes; no back-earning.
 
+### 5.4 Founder ordinals (immutable, time-gated) — normative
+
+Founder ordinals are the **immutable legacy** axis: a permanent, signed-log-provable record of
+*who lifted the mesh from the depths*. They are distinct from the mutable ranks (§4) and from
+seasonal/yearly badges (§5.2/§5.3). Design + adversarial review: `research/gamification-track/06`,
+`07`, and `08` (the anti-gaming re-analysis under the ratified tiers, #461). The maintainer ratified
+the parameters below on 2026-06-05.
+
+**5.4.1 Keyed to the cryptographic operator identity, never node_id.** A founder ordinal is bound to the
+operator's **`operator_pubkey`** — the ed25519 operator key (== `operator_id`, #464; §3) that the
+directory verifies via the ADR-045 register delegation — not to any node. (This supersedes the earlier
+DID `identity_uri` framing for founder keying: the shipped lock-in detector keys on `operator_pubkey`,
+which is what reaches the directory.) Nodes are fungible; dev/test churn **MUST** be purged from the
+genesis snapshot and **MUST NOT** count toward any ordinal (§8 rule 1, R3).
+
+**5.4.2 Earned by serving — provisional → locked (as shipped).** An ordinal is **provisional** at first
+appearance and **locks in** when the directory's daily lock-in detector finds the operator has completed:
+- **≥ 30 days** since the directory-observed `first_seen_ms` (heartbeat-challenge-verified healthy
+  operation, ADR-047 / #411) — the *primary* gate; **and**
+- a **genuine served node** — ≥ 1 node bound to this operator that is `operator_verified` (ADR-045
+  delegation), `public_reachable` (#326), `active`, and `available`. This unforgeable "real,
+  publicly-reachable, verified, live node" check is the as-shipped substitute for a raw task count.
+
+This is rule **R1** (`08`): lock-in is uptime-primary so the earliest founders — who by definition face
+the *least* demand — are not locked out by a demand gap they exist to close (caveat N1). A provisional
+slot that never locks in is **reclaimable** and holds no number.
+
+**Founder #1 is reserved** for the maintainer's configured `operator_pubkey` (`iicp_founder_one_pubkey`)
+and is minted **immediately, exempt from the 30-day gate** (founder privilege — the genesis operator
+lifted the mesh from nothing). Ordinals #2…N obey the gate above, assigned in **first-appearance order**
+(`first_seen_ms`).
+
+**GENESIS_MS anchor.** All tier windows (§5.4.3) are measured from the ratified founder-era anchor
+**`GENESIS_MS = 1780704000000` (2026-06-06T00:00:00Z)**. It is **permanent** — changing it would
+re-tier immutable assignments.
+
+**5.4.3 Ordinal assignment + tiers (window measured on lock-in).** The ordinal `N` = the Nth identity
+to **lock in**, ordered by `FOUNDER_LOCKIN` event `seq` (first-REGISTER `seq` breaks ties). Because
+provisional/never-locked registrations hold no number, reclaiming one **renumbers nobody** (caveat N4).
+Tier membership is computed over the **lock-in timestamp**, not registration (rule **R2**) — serving
+cannot be backdated (heartbeat-challenge is live), so a late registrant can never retroactively claim an
+earlier tier.
+
+| Tier | Ordinal range | Time window (on lock-in) | Notes |
+|------|---------------|--------------------------|-------|
+| **Genesis-50** | 1–50 | within **3 months** of genesis | contains the inner pure-ordinal sub-brackets below |
+| **Founders-500** | 51–500 | within **6 months** | |
+| **Founders-1000** | 501–1000 | within **12 months** | final founder close |
+
+Inside Genesis-50, pure-ordinal **sub-brackets** confer finer prestige: **First 10** (1–10), **First 20**
+(11–20), **First 30** (21–30), **First 50** (31–50). **MUST: single-best** — an operator holds **only**
+the tightest bracket they qualify for (operator #5 is *First Ten*, not also First 20 / Genesis-50 /
+Founders-500). Implementation: `bracket = first threshold ≥ N`.
+
+- **MUST**: a tier requires *both* its ordinal cap *and* its lock-in time window.
+- **MUST**: under-fill is valid — if fewer than a tier's cap lock in within its window, the tier is
+  simply smaller (scarcity reflecting reality, not an error).
+- **MUST**: ordinals and tiers, once assigned (locked), are **immutable** — never re-minted, re-numbered,
+  or back-dated.
+
+**5.4.4 Era multiplier — legacy-axis only (R4).** An early-era contribution multiplier MAY weight the
+legacy axis (`rank_score` legacy component / ordinal narrative), but **MUST NOT** gate the *mutable*
+ranks of §4 — a newcomer MUST still be able to reach the top merit rank on current contribution. The
+multiplier **MUST** decay smoothly to ×1.0 on a **published** curve.
+
+**5.4.5 Transferability — provenance immutable, current-holder transferable (R6).** Founder recognition
+splits into:
+- **Immutable provenance**: the signed log records *who earned* each ordinal. The original earner
+  (e.g. genesis operator = founder #1) is recorded **forever** and is never erasable or transferable.
+- **Transferable current-holder**: the current holder MAY transfer an *already-locked* ordinal via an
+  explicit, identity-signed `FOUNDER_SUCCESSION` event (§5.4.6). **MUST**: succession records the full
+  holder **lineage** (genesis earner → … → current) so a buyer is honestly provenanced as
+  "current holder, acquired from <earner>"; **MUST**: succession does **not** reset lock-in and **MUST
+  NOT** re-open a closed tier; wash-transfers are therefore publicly visible, not hidden. A covert
+  off-record private-key sale still passes *control* (inherent to key identity, caveat N-C1) — accepted;
+  the protocol protects *provenance*, not control.
+
+**5.4.6 Signed event types (seed-authoritative).** Two new signed event types, emitted **only by the
+directory** (DIRECTORY-AUTHORITATIVE), each carrying a per-event Ed25519 signature + `prev_hash` chain
+link as §3.4 defines. **They ride a *dedicated, non-federated* signed chain — NOT the federated
+`node_events` stream.** Rationale: the federated event set is closed (S.13 `DIR-FED-16` =
+`{REGISTER, DEREGISTER, CREDIT_AWARD, REPLICA_REGISTERED, REPUTATION_DECAY, OPERATOR_OBSERVED}`), and
+`GET /v1/events` returns all node-events, so emitting founder events there would both violate the closed
+list and leak operator references to every replica. **Implementation status:** the shipped detector
+persists the immutable `ordinal`/`tier`/`badge` to the authoritative `operators` table (which the
+leaderboard serves); the signed-event anchor on the dedicated chain is a **tracked follow-up** (due
+before the first external #2 locks in). Payloads are keyed by `operator_pubkey` (never `node_id`):
+
+| Event | Payload (canonical) | Emitted when |
+|-------|---------------------|--------------|
+| `FOUNDER_LOCKIN` | `{ operator_pubkey, ordinal, tier, badge, locked_at_ms }` | an operator meets the §5.4.2 lock-in conditions (or is the reserved #1); assigns the immutable ordinal |
+| `FOUNDER_SUCCESSION` | `{ ordinal, from_operator_pubkey, to_operator_pubkey, succeeded_at_ms }` | the current holder signs a transfer of an already-locked ordinal |
+
+**5.4.7 Canonicality (R7).** Founder ordinals are canonical **only** against the Genesis Seed's signed,
+externally-anchored event log (the genesis snapshot root is the chain's anchor block, ADR-013 / `06` §8).
+A federated replica **MUST** serve only *derived, verifiable* copies; a replica whose recognition state
+diverges from the genesis chain **MUST** raise an alarm (federation cross-check). The directory computes,
+verifies, persists, and serves ordinals/tiers; a client (`iicp-node badges --verify`) is an **independent
+cross-check**, never the source of truth.
+
 ## 6. Leaderboards
 
 Public views of recognition state. Cacheable, anonymous-read.
 
 | Board ID | Title | Order | Window |
 |----------|-------|-------|--------|
+| `founders` | Founding Cohort | founder ordinal ASC (§5.4) | cumulative |
 | `living_mesh_lords` | Living Mesh Lords | composite rank_score DESC | cumulative |
 | `rising_stars_30d` | Rising Stars | growth in rank_score over last 30d | rolling 30d |
 | `model_diversity_hall` | Model Diversity Hall | distinct models DESC | cumulative |
@@ -156,6 +270,8 @@ Public views of recognition state. Cacheable, anonymous-read.
 **MUST**: Leaderboards exclude operators who have opted out via `POST /v1/operator/{handle}/visibility`.
 **MUST**: Leaderboards exclude operators flagged for sock-puppet violations.
 **MUST**: Cumulative leaderboards persist across seasons; seasonal leaderboards freeze at season close.
+
+**Implementation status (#310/#463):** `GET /v1/leaderboards/founders` is live (directory PHP + Rust parity) — it reads the operator-keyed record and returns `{board_id, title, count, entries:[{place, display_name, ordinal, tier, badge}]}`, never exposing `operator_pubkey`. Boards ordered by the §5 composite `rank_score` (`living_mesh_lords`, `rising_stars_30d`, `most_reliable_60d`) return `404 IICP-E050` until `rank_score` is computed — they are not fabricated. Visibility opt-out exclusion activates when the visibility column/endpoint lands (no operator can opt out yet).
 
 ## 7. API Surface
 
@@ -171,6 +287,17 @@ inventory:
 | POST | `/v1/operator/{handle}/visibility` | operator-signed (S.15 slot) | no-store |
 | POST | `/v1/operator/{handle}/handle` | operator-signed (S.15 slot) | no-store |
 | GET | `/v1/operator/{handle}/private_summary` | operator-signed (S.15 slot) | no-store |
+| POST | `/v1/operator/rename` | operator-signed (ed25519, #460) | no-store |
+
+**`POST /v1/operator/rename`** (#460/#463) — change the public, mutable `display_name` (the
+universal handle on node detail + leaderboard) without re-registering nodes. Body:
+`{ operator_pub, display_name, ts, sig }` where `sig` is the operator's ed25519 signature over
+the canonical bytes `json({display_name, operator_pub, ts})` (alphabetical keys, no whitespace,
+slashes/unicode unescaped). The directory verifies the signature against `operator_pub`
+(== `operator_id`, #464 — proves key-control), rejects a `ts` outside ±300 s (replay), and
+updates the single operator-keyed record (reflected on every node + the leaderboard). The
+immutable `operator_id` and any earned founder ordinal stay bound to the key; only the floating
+`display_name` changes.
 
 "Operator-signed" means the request body carries the Identity Slot (`identity` +
 `identity_signature` per S.15 §3) with `identity_uri` matching the operator's published
@@ -202,6 +329,24 @@ The following MUST be enforced by RECOG-Provider implementations. Sourced from
 Additional MUST from the rank table (§4):
 7. **MUST**: Rank ≥4 (CIP Provider) requires Tier 2 attested operator identity.
 
+Founder-ordinal hard rules (§5.4; sourced from `research/gamification-track/08`, R1–R7):
+8. **MUST** (R1/R2): a founder ordinal (≥#2) locks in only after ≥30 days heartbeat-challenge-verified
+   healthy operation **plus** a **genuine served node** (operator_verified + public_reachable + active +
+   available, §5.4.2); tier membership is computed on the **lock-in timestamp** (never registration), and
+   the ordinal is assigned at lock-in (first-appearance order) so reclaiming a provisional slot renumbers
+   no one. **#1 is the reserved genesis founder** (configured `operator_pubkey`), minted immediately and
+   exempt from the 30-day gate.
+9. **MUST** (R6): a `FOUNDER_SUCCESSION` transfer preserves the immutable provenance lineage, does not
+   reset lock-in, and cannot re-open a closed tier; the original earner is recorded permanently.
+10. **MUST** (R7): founder ordinals are canonical only against the Genesis Seed's signed,
+    externally-anchored hash-chained log (#458); a replica diverging from the genesis chain raises an
+    alarm. Recognition state is directory-computed; a client is an independent cross-check, not the source.
+11. **MUST** (R4): the early-era multiplier weights only the immutable legacy axis and MUST NOT gate the
+    mutable ranks of §4; it decays to ×1.0 on a published curve.
+12. **MUST** (R5): the renewable recognition engines (seasons §5.2, regional/yearly §5.3, the climbable
+    merit ladder §4) MUST be live and visible before the Founders-1000 (12-month) close, so growth has an
+    engine after the founder window shuts.
+
 ## 9. Privacy
 
 **MUST**: Operator handle is chosen at registration, never a real-name binding.
@@ -232,8 +377,17 @@ The following test IDs are reserved for `spec/conformance-test-suite.md` §X (Re
 | RECOG-ANTI-02 | Big-N task badges require ≥3 distinct contributors | MUST |
 | RECOG-SEAS-02 | Season-exclusive badges cannot be earned after window closes | MUST |
 | RECOG-OPT-01 | Opt-out applied within 5 minutes | MUST |
+| RECOG-FND-01 | Founder ordinal #2+ assigned only after ≥30d healthy + a genuine served node (operator_verified + public_reachable + active + available); #1 reserved + gate-exempt; provisional slots hold no number | MUST |
+| RECOG-FND-02 | Tier (Genesis-50/3mo, Founders-500/6mo, Founders-1000/12mo) computed on lock-in timestamp; single-best bracket returned | MUST |
+| RECOG-FND-03 | Ordinals are immutable once locked; reclaiming a provisional slot renumbers no locked founder | MUST |
+| RECOG-FND-04 | `FOUNDER_SUCCESSION` preserves provenance lineage, does not reset lock-in, cannot re-open a closed tier | MUST |
+| RECOG-FND-05 | Founder ordinal keyed to `operator_pubkey` (ed25519 operator_id), never node_id; dev/test identities purged | MUST |
+| RECOG-FND-06 | `FOUNDER_LOCKIN` / `FOUNDER_SUCCESSION` events carry valid Ed25519 sig + `prev_hash` on a dedicated non-federated chain (NOT `node_events`, per DIR-FED-16); emission is a tracked follow-up | MUST |
 
-These test IDs are now registered in `spec/conformance-test-suite.md §15` (v4.35.0, iter-976) for cross-spec traceability. REACH probes implementing these tests will be added to `reach/src/reach/probes/recognition_conformance.py` once G1+G6 gates clear.
+The base RECOG-* IDs are registered in `spec/conformance-test-suite.md §15`; the founder
+**RECOG-FND-01..06** IDs are **pending registration** there (tracked — to be added in the
+conformance-suite update that accompanies this v0.6.0 reconciliation). REACH probes implementing these
+tests will be added to `reach/src/reach/probes/recognition_conformance.py` once G1+G6 gates clear.
 
 ## 11. Implementation gates
 

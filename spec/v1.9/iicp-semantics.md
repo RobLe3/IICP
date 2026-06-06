@@ -1,7 +1,7 @@
 # IICP Semantics — Routing, QoS, and Node Selection
 
-**Version**: 1.3.0
-**Date**: 2026-05-18
+**Version**: 1.5.0
+**Date**: 2026-06-01
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -477,6 +477,57 @@ Rationale: without the global cap, 10 colluding nodes each filing one report (wi
 individual rate windows) can reduce a target from 0.5 → 0.0 in a single day. The cap limits
 total daily damage to −0.10 regardless of how many distinct reporters participate.
 
+### 11.6 Hourly reputation velocity ceiling (RT-01b / #381)
+
+To prevent rapid reputation escalation via burst-registrations or timing attacks, the
+positive reputation gain from a single node MUST be capped at a **per-node hourly window**:
+
+- Maximum positive gain per node per **1-hour rolling window**: **+0.20**
+- The window starts at the first positive event within the hour and resets after 3600 seconds
+- Negative deltas are not windowed and apply in full
+- Implementation: `rep_hourly_gain` and `rep_hourly_window_start` columns on the `nodes` table
+
+Rationale: RT-01 caps per-heartbeat gain at +0.10, but an attacker could send multiple
+heartbeats per hour. The hourly ceiling (+0.20) closes this window — a new node takes at
+minimum 2.5 hours of sustained legitimate traffic to reach 1.0 from the initial 0.5.
+
+Conformance: REP-04 (conformance-test-suite.md §13.6).
+
+### 11.7 Quorum reporter independence (RT-03b / #382)
+
+When computing the quorum for telemetry reports (proxy-observed latency, `POST /v1/telemetry`),
+participating proxy reporters MUST satisfy minimum maturity and reputation gates:
+
+- Reporter node age MUST be **≥ 3 days** since first registration
+- Reporter reputation score MUST be **≥ 0.55**
+- Reports from nodes that do not meet either gate MUST be acknowledged (HTTP 201/202) but
+  MUST NOT count toward the quorum threshold or influence the target node's scoring
+
+Rationale: A Sybil attacker registers many proxy nodes (cost: zero) and uses them to submit
+coordinated telemetry that artificially inflates a single target node's latency score or
+floods the quorum. The age + reputation gate ensures that only established, reputable
+reporters participate in quorum decisions.
+
+Conformance: REP-06 (conformance-test-suite.md §13.6).
+
+### 11.8 Audit-report reporter eligibility (RT-05b / #383)
+
+The per-reporter rate limit in §11.5 can be bypassed by registering new nodes. To prevent
+this, directories MUST verify reporter eligibility before accepting a reputation delta:
+
+- Reporter node age MUST be **≥ 3 days** since first registration
+- Reporter reputation score MUST be **≥ 0.55**
+- Reports from ineligible reporters MUST be acknowledged (HTTP 202) but MUST NOT reduce
+  the target's reputation (same behavior as `delta_suppressed: true`)
+
+This gate applies in addition to the rate-limit and global cap in §11.5, not instead of them.
+
+Rationale: Without this gate, a bypass attacker registers fresh proxy nodes (cost: zero)
+and immediately submits audit reports, evading the per-reporter 24h rate limit entirely.
+The age + reputation gate closes this registration-bypass vector.
+
+Conformance: REP-07 (conformance-test-suite.md §13.6).
+
 ---
 
 ## Changelog
@@ -487,6 +538,7 @@ total daily damage to −0.10 regardless of how many distinct reporters particip
 | 1.1.0 | 2026-05-17 | §11 Reputation Update Rules — normative delta table, latency budgets by QoS class, bounded score invariant. Closes #113. |
 | 1.2.0 | 2026-05-17 | §2.1 Added `realtime` QoS level row. §2.2 QoS Admission Control — MUST 429 capacity_exceeded with qos_class+retry_after_ms, MUST proxy node-switch. §2.3 renumbered from §2.2. Closes #119 (spec). |
 | 1.3.0 | 2026-05-30 | §11.2 Per-heartbeat positive delta cap +0.10 MUST (RT-01 security fix, #375). §11.5 Peer audit-report griefing cap — per-reporter 24h rate limit + 2-reporter global cap per target per day MUST (RT-05 security fix, #379). |
+| 1.5.0 | 2026-06-01 | §11.6 Hourly reputation velocity ceiling (RT-01b, MAX_HOURLY_GAIN=+0.20, 1h rolling window, REP-04). §11.7 Quorum reporter independence (RT-03b, age≥3d + rep≥0.55 gate, REP-06). §11.8 Audit-report reporter eligibility (RT-05b, same age+rep gate, REP-07). These three bypass-prevention rules close the gaps that §11.2 (RT-01 per-heartbeat cap) and §11.5 (RT-05 griefing cap) left exploitable via re-registration or burst-register attacks. |
 | 1.4.0 | 2026-05-31 | §3.1 Phase 5 model-aware scoring weights documented (ADR-012/ADR-021 normative table — code↔spec gap #384 remaining item). Weights: availability 0.25, load 0.20, capacity 0.15, region 0.10, reputation 0.10, model_match 0.10, price_score 0.10. |
 
 ---

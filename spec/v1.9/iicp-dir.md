@@ -1,7 +1,7 @@
 # IICP-DIR — Directory Sub-Protocol Specification
 
-**Version**: 0.9.0  
-**Date**: 2026-05-30  
+**Version**: 0.10.3  
+**Date**: 2026-06-03  
 **Status**: draft  
 **Issue**: #14  
 **Authority**: Protocol Steward  
@@ -47,7 +47,8 @@ Registers a node's identity, capabilities, and resource limits.
     {
       "intent": "urn:iicp:intent:llm:chat:v1",
       "models": ["llama3", "mistral"],
-      "max_tokens": 8192
+      "max_tokens": 8192,
+      "input_modalities": ["text"]
     }
   ],
   "limits": {
@@ -56,12 +57,36 @@ Registers a node's identity, capabilities, and resource limits.
   },
   "availability": [
     { "start": "00:00", "end": "08:00", "share": 0.8 }
-  ]
+  ],
+  "operator_delegation": {
+    "node_id": "uuid-v4",
+    "operator_pub": "<base64 ed25519 pubkey>",
+    "not_after": 1893456000,
+    "sig": "<base64 ed25519 signature>"
+  }
 }
 ```
 
 **Required fields**: `endpoint`, `region`, `capabilities[].intent`, `limits.max_concurrent`  
-**Optional**: `node_id` (directory assigns if absent), `availability`, `limits.tokens_per_min`, `transport_endpoint`
+**Optional**: `node_id` (directory assigns if absent), `availability`, `limits.tokens_per_min`, `transport_endpoint`, `capabilities[].input_modalities`, `operator_delegation`
+
+**`input_modalities` (v1.10.0, ADR-046 — multimodal)**: an OPTIONAL array on each capability object
+declaring the input modalities that capability accepts; one of `text`, `image`, `audio`, `video`.
+Defaults to `["text"]` when absent (back-compatible). A vision-language model advertises
+`["text","image"]`. Vision (image-in) is a **modality of chat**, NOT a separate intent — a node MAY
+register multiple capability objects with the same `intent` but different `input_modalities` (e.g. a
+text-only chat capability and an image-capable chat capability). The directory stores the set and
+exposes it on discover (§3.4); clients filter on it via `?modality=` (§3.3).
+
+**`operator_delegation` (v1.10.0, ADR-045 Phase A — verifiable operator identity)**: an OPTIONAL
+ed25519 token binding this node to a fleet operator. Fields: `node_id` (MUST equal the registering
+node's id), `operator_pub` (base64 32-byte ed25519 public key), `not_after` (unix seconds; short-TTL
+is the revocation baseline), `sig` (base64 ed25519 signature over the canonical bytes
+`{"node_id":…,"not_after":…,"operator_pub":…}` — key-sorted, no whitespace, unescaped slashes). The
+directory verifies it OFFLINE against the operator public key (no phone-home) and, on success, records
+the verified `operator_pubkey` + trust tier (`did_key` self-asserted in Phase A; `did_web`
+domain-verified in Phase B). An invalid delegation leaves the node operator-unverified but does NOT
+reject the registration (no false binding is possible without the operator's signature). [→ DIR-OPID-01]
 
 **Dual-endpoint model (v1.5.0, optional — default to HTTP-only)**:
 
@@ -78,6 +103,7 @@ Rules:
 - The directory MUST NOT perform an HTTP probe against `transport_endpoint` — its liveness is implied by `endpoint`'s `/iicp/health` response (Phase 5.x scope; native-protocol dial-back is Phase 6).
 - Clients SHOULD prefer `transport_endpoint` when issuing task CALLs. When absent or unreachable, clients fall back to `endpoint` (HTTP transport per spec §3.3).
 - Both endpoints MUST resolve to the same node (operator MUST NOT advertise a `transport_endpoint` belonging to a different host).
+- `endpoint` and `transport_endpoint` MAY share the same host:port: a node MAY multiplex the HTTP control plane and the native binary transport on one listener via first-byte protocol detection (the IICP frame magic `IICP` distinguishes a native connection from an HTTP request line). Single-port operation lets a CGNAT node serve both planes through one pinhole, so the native transport is reachable exactly when `endpoint` is (#457; the reference SDKs default to this).
 
 Example with both endpoints:
 
@@ -142,7 +168,16 @@ Directory MUST accept registrations without these fields (back-compat with Phase
 
 ### 3.2 HEARTBEAT (Node → Directory)
 
-Periodic liveness signal. Absence for > 90 seconds marks the node inactive.
+Periodic liveness signal. Absence for > 90 seconds marks the node inactive (dormant).
+
+A heartbeat received from a previously-dormant node MUST fully restore it: the directory
+sets `status = active`, clears `dormant_since`, and — unless the heartbeat explicitly
+carries `available: false` — restores `available = true`. The `available` field is
+OPTIONAL in the heartbeat body; when absent the directory MUST default it to `true` (a
+heartbeating node is, by definition, alive and serving). A node therefore auto-recovers
+into discover within one heartbeat cycle after a transient gap (e.g. host sleep), with no
+re-registration required. (v1.10.17 — corrects a directory regression where a resumed
+heartbeat left `available = false`, hiding a live node from discover indefinitely.)
 
 ```json
 {
@@ -155,7 +190,8 @@ Periodic liveness signal. Absence for > 90 seconds marks the node inactive.
     "tasks_success": 42,
     "tasks_failed": 1,
     "avg_latency_ms": 320.0
-  }
+  },
+  "challenge_response": "<hex HMAC-SHA256 of the prior response's challenge>"
 }
 ```
 
@@ -164,10 +200,18 @@ Authorization: `Bearer <node_token>` header REQUIRED.
 **Response (PONG)**:
 
 ```json
-{ "ok": true, "next_heartbeat_ms": 30000, "reputation_score": 0.82 }
+{ "ok": true, "next_heartbeat_ms": 30000, "reputation_score": 0.82, "challenge": "<hex nonce>" }
 ```
 
 `reputation_score` — the node's current reputation [0.0, 1.0] as stored in the directory. Allows operators to observe their reputation on every heartbeat cycle. Default 0.5 for nodes with no history.
+
+**Liveness challenge-response (v1.10.0, ADR-047 Part A — cryptographic liveness without dial-back)**:
+The directory issues a fresh `challenge` nonce in each PONG. On the next HEARTBEAT the node SHOULD return
+`challenge_response = lowercase-hex HMAC-SHA256(node_hmac_key, challenge)` using its ADR-019
+`node_hmac_key`. A match upgrades "holds a node_token" to "controls the HMAC key" (anti-replay /
+anti-token-theft) and is recorded as a verified-liveness timestamp — established WITHOUT any dial-back,
+so it works for CGNAT/IPv6 nodes the directory cannot reach. OPTIONAL + back-compatible: absent
+`challenge_response` simply leaves liveness cryptographically-unverified. [→ DIR-HB-LIVE-01]
 
 **Timing rules**:
 - Node SHOULD send every 30 seconds.
@@ -197,6 +241,7 @@ GET /v1/discover
 | `max_multiplier` | MAY | Float; exclude nodes whose `credit_cost_multiplier` exceeds value |
 | `min_quality_score` | MAY | Float [0.0–1.0]; alias for minimum scoring threshold (ADR-019) |
 | `cip_capable` | MAY | Boolean; if `true`, directory MUST return only nodes with `allow_remote_inference=true` (i.e. `cip_conformance_level` ≠ `CIP-None`). CIP coordinators SHOULD pass `cip_capable=true` to avoid client-side filtering (S.12 §5.2). |
+| `modality` | MAY | One of `text`/`image`/`audio`/`video` (v1.10.0, ADR-046); if set, directory MUST return only nodes whose capability for the requested `intent` accepts that input modality (e.g. `?modality=image` → vision-capable nodes). |
 
 ---
 
@@ -265,6 +310,9 @@ GET /v1/discover
 | `cip_conformance_level` | string | One of `"CIP-None"`, `"CIP-Consumer"`, `"CIP-Provider"`, `"CIP-Full"`. `"CIP-None"` means the node has not opted into any CIP role (equivalent to not declared). Per spec §5.2. |
 | `health_label` | string\|null | ADR-044 composed health label: `"healthy"` (score ≥0.85), `"degraded"` (≥0.65), `"impaired"` (≥0.40), `"critical"` (<0.40), `"offline"`. Computed from a weighted combination — reachability 0.30, latency 0.25 (50–500 ms curve), task-success 0.25 (70–100% curve), reputation 0.20 (ADR-044). Score is a float in [0.0, 1.0] (normalised from internal 0–100 scale by v1.10.6+). `null` against directories predating v1.10.0. |
 | `exposure_mode` | string\|null | ADR-043 8-category network exposure classification (e.g. `"ipv4_public_direct"`, `"cgnat_upnp"`, `"ipv6_gua"`). `null` if node has not run qualification. |
+| `reachability_tier` | string | v1.10.0, ADR-047: `"direct"` (dial-back-verified) or `"relay"` (heartbeating with a routable surface but not directly dial-back-verified — reachable via relay; e.g. CGNAT/IPv6 where the directory has no egress). Default discover returns `direct`+`relay`; a heartbeating node is never hidden purely for lacking dial-back. Clients SHOULD prefer `direct` and fall back to `relay`. |
+| `input_modalities` | array | v1.10.0, ADR-046: union of input modalities the node's capabilities for this intent accept (`["text"]` default; `["text","image"]` for vision). Lets clients confirm multimodal support without a second round-trip; see `?modality=` (§3.3). |
+| `backend` | string\|null | Detected backend server flavor the node runs — one of `ollama`/`lmstudio`/`vllm`/`llamacpp`/`anthropic`/`custom`. Self-attested at REGISTER (the SDK auto-detects it by fingerprinting the backend's endpoints/headers); informational (operator/consumer visibility), not used for routing. `null` if unreported. Also accepted as an optional REGISTER field (§3.1). |
 | `transport_method` | string\|null | How the node is reachable for the native IICP transport (`"direct"`, `"upnp"`, `"stun"`, `"relay"`, …). Mirrors the REGISTER value (§3.1 / ADR-041). |
 | `nat_type` | string\|null | Detected NAT topology (ADR-041). Advisory; clients MAY prefer `"direct"`/`"full_cone"`. |
 | `transport_metadata` | object\|null | Transport-specific detail (relay endpoint, candidate list). Shape per ADR-041; opaque to clients that only use `endpoint`. |
@@ -273,6 +321,7 @@ GET /v1/discover
 | `public_key` | object\|null | IICP-CX confidentiality key (iicp-confidentiality §3.2): `{algorithm, encoding, key, key_id, not_after, hybrid_pq}`. Present when the node advertises E2E payload encryption support. `null` = node accepts plaintext only. Clients MUST use this to encrypt payloads when `X-IICP-Require-E2E` is set. |
 | `sdk_language` / `sdk_version` | string\|null | Advisory provenance of the serving node's SDK (#338). Informational only. |
 | `models` / `quantization` / `inference_engine` | array\|string\|null | Advisory capability detail (iicp-core §2.1). The directory MUST NOT reject unrecognized values. |
+| `operator_display_name` | string\|null | v0.10.3, #463: the operator's public `display_name`, resolved from the operator record by `operator_pubkey` for nodes bound via a verified ADR-045 delegation (§3.1). `null` when the node is not operator-bound. The `operator_pubkey` itself is directory-private and is **never** served; only the human-readable display_name appears. Surfaced in `/v1/discover` and node-detail so consumers see who operates a node. |
 
 **`probation` (clarification, R3)**: `probation` is computed server-side and used to *filter* discover results (probation nodes are excluded from `?qos=interactive`/`realtime`), but the discover NODELIST does **not** include a `probation` field per node. The full `probation` boolean is surfaced only by `GET /v1/node/{id}` (node-detail). Clients needing the flag query node-detail.
 
@@ -423,10 +472,23 @@ The event log enables a replica directory to maintain a consistent, cryptographi
 > **Snapshot + event-tail model (db-D4prime / S.13 v0.3.0, reconciled 2026-05-30)**: high-frequency
 > operational events are NOT logged — replicas read current reputation/load from the node snapshot
 > (`nodes.*` columns), not from a per-heartbeat event stream. **Live federated event types**:
-> `REGISTER`, `DEREGISTER`, `AUDIT_REPORT`, `CREDIT_AWARD`, `REPUTATION_DECAY`, and
-> `REPUTATION_UPDATE` **only** for the `heartbeat_metrics` source (adapter-reported task outcomes).
+> `REGISTER`, `DEREGISTER`, `AUDIT_REPORT`, `CREDIT_AWARD`, `REPUTATION_DECAY`,
+> `REPUTATION_UPDATE` **only** for the `heartbeat_metrics` source (adapter-reported task outcomes),
+> and `REACHABILITY_DEMOTE` / `REACHABILITY_RESTORE` (#413, see below).
 > `HEARTBEAT` and `SCORE_UPDATE` events are NOT emitted (the directory updates the snapshot instead).
 > Earlier drafts listed `HEARTBEAT`/`SCORE_UPDATE` in the enum; they are retired from the live set.
+
+> **`REACHABILITY_DEMOTE` / `REACHABILITY_RESTORE` (#413)** — the directory MUST emit a
+> transition event whenever a node's `public_reachable` flag flips, because that flag is the
+> single switch governing whether the node appears in default `/v1/discover` and `active_nodes`.
+> A node "vanishing" from discover is otherwise invisible in the audit trail. Emitted at the two
+> natural edges only (transition, never per-probe, to avoid flooding; flap-bounded by the
+> never-downgrade-on-a-single-failure confirm-probe rule): `REACHABILITY_DEMOTE` when a dial-back
+> re-probe fails (directory-side liveness sweep), `REACHABILITY_RESTORE` when an active probe
+> re-confirms a previously-demoted node. Payload: `{ from: bool, to: bool, reason:
+> "probe_success"|"probe_non_2xx"|"probe_connect_failed", endpoint: string, transport_method?:
+> string, probe_source: "node_lifecycle"|"directory_active_probe", latency_ms?: number }`.
+> Additive to the signed chain; consumers that don't recognise the type ignore it.
 
 #### Event Envelope
 
@@ -659,6 +721,50 @@ A registered node (the *reporter*) submits a peer-divergence finding about a *ta
 | `mesh_health` | ADR-044 node-aggregate (median over active provider nodes). `score`/`mean`/`p10` are floats in **[0.0, 1.0]** (v1.10.6+; internal computation uses 0–100 scale then normalises). `label` thresholds: `healthy` ≥0.85, `degraded` ≥0.65, `impaired` ≥0.40, `critical` <0.40. `insufficient_sample` when sample <3; `unavailable` (score 0.0) when no active nodes. |
 | `directory_health` | Directory-infrastructure signal: `0.6·discover_latency + 0.4·conformance` (the signal REACH probes feed). Distinct from `mesh_health`. |
 
+### 3.9c Directory-initiated node probing (Directory internal, Phase 5)
+
+**Phase**: 5 (active reachability, #373 Phase B)  
+**Status**: Implemented — `iicp:probe-nodes` PHP command + `run_probe_nodes_loop` Rust background task  
+**Conformance ID**: DIR-PROBE-NODE-01 (conformance-test-suite.md §3.3i)
+
+Directories SHOULD actively probe the endpoint of each registered node to verify
+reachability independently of the node's self-attested `public_reachable` flag. This is
+distinct from the client-initiated SSRF probe (`GET /v1/probe`, §3.11) — it is initiated
+by the directory itself on a periodic schedule.
+
+**Probe mechanics**:
+- Fires every **300 seconds** (5 minutes) over all available (non-dormant) nodes
+- Probe method: **TCP connect** to the `endpoint` host/port with a **5-second timeout**
+- **SSRF guard**: RFC1918 ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16), loopback (127.0.0.0/8), and link-local (169.254.0.0/16) are rejected without attempting connection
+- Probe result recorded in `iicp_telemetry_probes` with `test_id = "DIR-PROBE-NODE-01"` and the probed `node_id`
+- `probe_token_id` is NULL for directory-initiated probes (no operator probe token involved)
+
+**Effect on node health**:
+
+When `GET /v1/node/{id}` returns the node's `health.components.reachability`, the
+directory SHOULD prefer an **independently observed** signal from a recent probe (within
+10 minutes) over the node's self-attested value:
+
+```json
+"health": {
+  "components": {
+    "reachability": {
+      "score": 0.9,
+      "observed": true,
+      "last_probe_at": "2026-06-01T06:00:00Z",
+      "test_id": "DIR-PROBE-NODE-01"
+    }
+  }
+}
+```
+
+When no recent directory probe exists, `observed: false` and the self-attested
+`public_reachable` value is used as the fallback.
+
+**Activation condition**: Requires directory origin to have IP-level reachability to the
+node's endpoint. On IPv4-only hosting (e.g. shared web space), probes to DS-Lite or IPv6
+endpoints will fail. Full activation requires IPv4 + IPv6 egress (e.g. VPS-level hosting).
+
 ### 3.10 Free-credit allocation (Directory internal)
 
 **Phase**: 3 (ADR-019 credit economy)
@@ -686,6 +792,7 @@ The directory grants a small free-credit allocation to bootstrap new nodes into 
 | `validation_error` | 422 | Required field missing or invalid |
 | `IICP-E034` | 429 | Too many registration attempts from this source IP (10/15min — W-033) |
 | `IICP-E035` | 422 | Non-routable endpoint host (ADR-041 invariant; `RoutableEndpoint` validator, iter-1365 / #325) |
+| `IICP-E049` | 403 | Re-registration with a changed `cx_public_key` requires a valid `current_node_token` proving ownership. **Normative (MUST)**: if a re-registration request supplies a `cx_public_key` that differs from the stored value, the directory MUST verify that `current_node_token` bcrypt-matches the stored token hash. Failure → 403 IICP-E049. This gate prevents unauthenticated key-substitution attacks. (RT-6-1, #390, iter-1807) |
 
 ### 3.11 Supplementary routes (scope note, #384)
 
@@ -733,6 +840,7 @@ IICP conformance.
 | `POST` | `/v1/credits/award` | Credit a worker after a validated CIPWorkerReceipt (HMAC-SHA256 + `response_hash` verified; IICP-E027 on failure). Conformance DIR-CRED-03. |
 | `GET`  | `/v1/credits/balance` | Current credit balance for the authenticated node. Conformance DIR-CRED-01. |
 | `GET`  | `/v1/credits/transactions` | Recent credit transaction history for the authenticated node. Conformance DIR-CRED-02. |
+| `GET`  | `/v1/credits/summary` | Lifetime credit summary for the authenticated node: `total_earned` (sum of `credit` rows), `total_spent` (sum of `debit` rows), `balance`, `tx_count`, and a `reconciles` boolean. `reconciles` is an integrity invariant — `true` iff `balance == total_earned − total_spent` (4-decimal precision); a tampered or inconsistent ledger MUST surface as `false`. Conformance DIR-CRED-04. |
 | `GET`  | `/v1/credits/quote` | Quote the credit cost of a prospective task (tokens × multiplier). iicp-billing-extension §8 / CIP §2.2. |
 
 Free-tier allocation (5 credits / 6h gate) is automatic on registration — see §3.10. There is
@@ -758,6 +866,7 @@ Tracking: #302
 | 0.2.0 | 2026-05-17 | §3.4 NODELIST: added `probation`, `completed_tasks_count`, `cip_policy` fields + QoS probation filter table (ADR-023, CIP-D1, spec §11.3) |
 | 0.3.0 | 2026-05-17 | §3.4 Consensus mode discovery note: proxy discovers N workers for consensus; directory unaware of consensus mode; cip_policy.allow_remote_inference filter requirement. |
 | 0.7.0 | 2026-05-26 | §3.1 REGISTER + §3.4 NODELIST: optional `transport_endpoint` field added (`iicp://` / `iicpsec://` scheme; default port 9484). Splits control plane (`endpoint`, HTTP) from data plane (`transport_endpoint`, native binary framing per ADR-040). Directory's HTTP liveness probe targets `endpoint` only; clients SHOULD prefer `transport_endpoint` when present. Back-compat: nodes without `transport_endpoint` continue to behave exactly as v0.6.x. |
+| 0.9.4 | 2026-06-01 | §3.9c Directory-initiated node probing added (Phase 5 #373 Phase B): DIR-PROBE-NODE-01, TCP probe every 300s, SSRF-guarded, 5s timeout, results in iicp_telemetry_probes. NodeHealthService reachability uses independently observed signal when recent probe exists (observed: true). Activation requires IPv4+IPv6 egress. References conformance-test-suite.md §3.3i. |
 | 0.9.0 | 2026-05-30 | Code↔spec drift closeout (#384): §7 credit endpoints corrected to shipped routes (award/balance/transactions/quote — R4 fix); §3.9b Public Stats schema added (/v1/stats — server/probes/credit_schedule/mesh_health/directory_health); §3.4 NODELIST table + transport_method/nat_type/transport_metadata/address_family/relay_capable/public_key(CX object)/sdk_*/models fields; probation clarified as node-detail-only (R3); §3.7 event-type enum reconciled to snapshot+event-tail live set (R2 — HEARTBEAT/SCORE_UPDATE retired). |
 | 0.9.3 | 2026-05-31 | §3.11 Supplementary routes: scope annotations for /metrics, /v1/probe, /v1/conformance/*, /v1/badge/{tier}, /v1/replicas/register, /v1/snapshot, /_deploy/migrate (closes #384 LOW undocumented-routes items). |
 | 0.9.2 | 2026-05-31 | §3.9b mesh_health: score/mean/p10 documented as float [0.0,1.0] (v1.10.6 wire normalisation); example updated from integer 65 to float 0.65; label thresholds expressed in [0,1]; basis/window fields added. health_label thresholds in §3.4 NODELIST also corrected to [0,1] scale. |
@@ -768,6 +877,9 @@ Tracking: #302
 | 0.6.0 | 2026-05-20 | §3.4 NODELIST: `cip_conformance_level` type changed from `string\|null` to `string`; `"CIP-None"` added as explicit non-CIP value (consistent with implementation in RegisterController + NodeScorer). S.12 §5.2 updated to include `CIP-None` in profile table. |
 | 0.5.0 | 2026-05-19 | §3.2 HEARTBEAT PONG: added `reputation_score` field (operator feedback on current standing). §3.7 REPUTATION_UPDATE event: dual-source schemas (`heartbeat_metrics` from HEARTBEAT pipeline, `proxy_telemetry` from SCORE_UPDATE pipeline). §3.7 CREDIT_AWARD event: corrected to actual CIPWorkerReceipt fields (`task_id`, `tokens_used`, `amount`, `new_balance`, `cip_parent_task_id`, `cip_session_key`). |
 | 0.4.0 | 2026-05-17 | §3.4 NODELIST: added ADR-019 `pricing` block (credit_cost_multiplier, pricing_model, currency, effective_from, effective_until, attested); `cip_conformance_level` field (CIP-Consumer/Provider/Full per S.12 §5.2); `cip_policy.pricing_credits_per_1000` DEPRECATED in favor of pricing.credit_cost_multiplier. |
+| 0.10.2 | 2026-06-05 | IICP-DIR-EXT-CREDITS: added `GET /v1/credits/summary` (DIR-CRED-04) — lifetime `total_earned`/`total_spent`/`balance`/`tx_count` for the authenticated node plus a `reconciles` integrity invariant (`balance == earned − spent`, MUST be `false` for a tampered/inconsistent ledger). Additive/back-compatible; powers the `iicp-node credits` command (#456). Shipped in PHP + Rust directories (parity #385). |
+| 0.10.1 | 2026-06-03 | §3.2 HEARTBEAT: documented dormant-node auto-restore — a heartbeat from a previously-dormant node MUST set `status=active`, clear `dormant_since`, and default `available=true` unless the body carries `available:false` (corrects a directory regression where a resumed heartbeat left `available=false`, hiding a live node from discover forever; dir v1.10.17). §3.4/§3.7 event log: added `REACHABILITY_DEMOTE` / `REACHABILITY_RESTORE` to the live federated event-type set with payload schema (#413 — the `public_reachable` transition that makes a node vanish from discover is now in the signed, federatable audit trail; emitted transition-only at the demote/promote edges). Both additive/back-compatible. |
+| 0.10.0 | 2026-06-03 | Four shipped additions (dir v1.10.14): §3.1 REGISTER `capabilities[].input_modalities` (ADR-046 vision/multimodal — `["text"]` default; image-in is a chat modality, not a new intent) + optional `operator_delegation` ed25519 token (ADR-045 Phase A — offline-verified operator→node binding, `did_key`/`did_web` trust tiers); §3.2 HEARTBEAT challenge-response (ADR-047 Part A — `challenge` nonce in PONG, `challenge_response`=HMAC-SHA256(node_hmac_key,nonce) — cryptographic liveness without dial-back, for CGNAT/IPv6); §3.3 QUERY `?modality=` filter; §3.4 NODELIST `reachability_tier` (`direct`/`relay` — relay-tier nodes no longer hidden, ADR-047) + `input_modalities`. All additive/back-compatible. Protocol Suite MINOR bump (→ v1.10.0) is the separate maintainer-ratified release step (VERSIONING.md Current + /spec page, per check_spec_versions.py). |
 
 ---
 

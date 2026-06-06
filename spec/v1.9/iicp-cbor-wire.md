@@ -1,7 +1,7 @@
 # IICP CBOR Wire Format
 
-**Version**: 0.1.0
-**Date**: 2026-05-15
+**Version**: 0.1.1
+**Date**: 2026-06-06
 **Status**: draft
 **Issue**: #35 (S.11 — CBOR wire format reference)
 **Authority**: Protocol Steward
@@ -132,7 +132,7 @@ CBOR field map (string keys, deterministic order):
 |-------|-----------|------------|
 | `timeout_ms` | unsigned integer | 100–300 000 inclusive |
 | `max_tokens` | unsigned integer | ≥ 1; OPTIONAL |
-| `qos` | text string | `interactive` \| `batch` \| `best-effort`; OPTIONAL |
+| `qos` | text string | `realtime` \| `interactive` \| `batch` \| `best-effort`; OPTIONAL (aligned with iicp-core §3.1 `constraints.qos`) |
 
 #### 4.1.2 TaskAuth
 
@@ -248,4 +248,5 @@ request was CBOR MUST be `application/iicp+cbor`.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.1 | 2026-06-06 | §4.1.1 TaskConstraints `qos`: added `realtime` to the enum to align with iicp-core §3.1 `constraints.qos` (`realtime`/`interactive`/`batch`/`best-effort`); the CBOR encoding was missing the realtime tier added to core in v1.2.0. |
 | 0.1.0 | 2026-05-15 | Initial draft — S.11 Phase 3 CBOR reference |

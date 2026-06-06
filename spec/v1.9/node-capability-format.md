@@ -1,6 +1,6 @@
 # IICP Node Capability Format
 
-**Version**: 0.1.0  
+**Version**: 0.1.1  
 **Date**: 2026-05-14  
 **Status**: draft  
 **Issue**: #19  
@@ -43,6 +43,10 @@ All additional fields are capability-type-specific (§3–§7).
 
 For nodes serving language model inference.
 
+> **Cross-ref (v0.1.1):** two register-time fields are specced normatively in `iicp-dir.md §3.1`, not
+> duplicated here: `capabilities[].input_modalities` (`["text"]` default, `["text","image"]` for vision;
+> ADR-046) and the top-level `operator_delegation` object (ed25519 operator→node binding; ADR-045 Phase A).
+
 ```json
 {
   "intent": "urn:iicp:intent:llm:chat:v1",
@@ -79,6 +83,51 @@ For nodes serving language model inference.
   "batch_size": 32
 }
 ```
+
+**Audio transcription (speech-to-text, #414)**:
+
+```json
+{
+  "intent": "urn:iicp:intent:audio:transcribe:v1",
+  "models": ["whisper-large-v3"],
+  "inference_engine": "whisper.cpp",
+  "hardware": "metal"
+}
+```
+
+The CALL payload carries the audio as base64 (`audio`) plus optional `language` /
+`response_format` / `prompt`; the node posts it as a multipart file upload to the
+backend's OpenAI-dialect `/v1/audio/transcriptions` endpoint (Whisper-class backends).
+See `registry/intents.json` for the authoritative payload schema.
+
+**Text-to-speech (#414)**:
+
+```json
+{
+  "intent": "urn:iicp:intent:audio:speech:v1",
+  "models": ["tts-1"],
+  "inference_engine": "espeak-ng"
+}
+```
+
+The CALL payload carries the text to synthesize (`input`) plus optional `voice` /
+`response_format` / `speed`; the node posts JSON to the backend's OpenAI-dialect
+`/v1/audio/speech` endpoint and base64-encodes the returned binary audio into
+`result.audio` (with `content_type` + `format`). See `registry/intents.json`.
+
+**Content moderation (#414)**:
+
+```json
+{
+  "intent": "urn:iicp:intent:safety:moderate:v1",
+  "models": ["toxic-bert"]
+}
+```
+
+The CALL payload carries the text to moderate (`input`, string or array); the node
+posts JSON to the backend's OpenAI-dialect `/v1/moderations` endpoint and returns the
+`{results: [{flagged, categories, category_scores}]}` verbatim. `model` is OPTIONAL
+(the backend supplies a fixed moderation model). See `registry/intents.json`.
 
 ---
 

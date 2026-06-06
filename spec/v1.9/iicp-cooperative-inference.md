@@ -1,7 +1,7 @@
 # S.12 — IICP Cooperative Inference Protocol (CIP)
 
 **Status**: Draft (active — normative text in §2–§7, §10; §4 wire format normative per 0.4.0-draft)  
-**Version**: 0.6.9  
+**Version**: 0.6.10  
 **Phase**: 5 (Cooperative Inference)  
 **Authors**: Protocol Steward  
 **Linked ADR**: ADR-012 (Phase 5 CIP Scoring Formula), ADR-019 (Declarative Node Pricing)  
@@ -470,6 +470,16 @@ worker_credits[i] = worker_tokens[i] × 1.0
 
 All credit reports include `cip_parent_task_id` for auditability.
 
+**Rate parity — no CIP premium.** CIP tasks are priced on the **same** schedule as
+standard routed tasks: `routing_cost = ceil(output_tokens/1000) × tier_weight ×
+credit_cost_multiplier` (iicp-billing-extension §10.1/§10.2). There is **no CIP-specific
+rate premium** (#305). The `× 1.0` worker rate and `× 0.05` coordination fee above are the
+*split* of that cost, not a surcharge — CIP's HMAC/settlement overhead is protocol cost,
+not routing cost. A premium would break the credit-neutrality invariant and reward faking
+CIP compliance; CIP providers compete on reputation, not price. (An operator MAY still set
+a higher `credit_cost_multiplier` per ADR-019 as market positioning — node-declared, not a
+protocol CIP differential.)
+
 **Normative requirements — Credit Accounting:**
 
 - Every Worker MUST report its actual token usage in `metrics.tokens_used` in the RESPONSE, accurate to within 5% of the model's reported token count. Estimates MUST NOT be substituted for actual counts when actual counts are available from the inference backend.
@@ -646,6 +656,7 @@ Colluding nodes can inflate credit balances by routing tasks between coordinatin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6.10 | 2026-06-06 | §7 Credit Accounting: added **rate-parity** clause — CIP tasks price on the same schedule as standard routing (no CIP premium, #305); the ×1.0 worker / ×0.05 coordinator rates are the *split* of `routing_cost`, not a surcharge. Cross-refs iicp-billing-extension §10.1–§10.3 (credit schedule + economy fold). |
 | 0.6.9 | 2026-05-30 | §5.1.1 reputation_tier enum reconciled (#384): floor tier is `bronze` (matches shipped NodeScorer + the tier table); `none` retired. |
 | 0.6.8 | 2026-05-24 | §5.1.1 Tier Structure: RATIFIED — tier thresholds (Silver ≥ 0.40, Gold ≥ 0.65, Platinum ≥ 0.85), identity-age gate (≥ 720h), decay floor (R_floor = 0.30), general reputation update rules. §5.1.2 Bootstrap Traffic Floor: RATIFIED — floor rule normative. PENDING markers removed from both sections. Evidence: REP1/REP2/REP5/REP6 research tracks, #168 #171 #172 closed. Implementation: directory v1.9.19 (ReputationDecayCommand DECAY_FLOOR=0.30, NodeScorer tier thresholds). |
 | 0.6.7 | 2026-05-20 | §10.6 Credit Award Rate Limiting: normative per-node hourly cap (1 000 credits/hour, configurable). Directory MUST enforce before nonce lock (rejected awards MUST NOT consume nonce). Counter increments only on successful award. Error: IICP-E027. Closes TC-9b directory-level spec gap. |

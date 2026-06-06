@@ -1,7 +1,7 @@
 # IICP Conformance Test Suite
 
-**Version**: 4.39.0  
-**Date**: 2026-05-25  
+**Version**: 4.43.0  
+**Date**: 2026-06-01  
 **Status**: draft  
 **Issue**: #22  
 **Authority**: Protocol Steward + Integration Validator  
@@ -159,6 +159,22 @@ when website v1.9.25 shipped `NaN%` to live visitors.
 | Test ID | Requirement | Expected | REACH probe |
 |---------|-------------|---------|-------------|
 | `DIR-STATS-01` | `GET /api/v1/stats` — `mesh_health` is object with `{score, label, window}`, `score ∈ [0,1]` | 200, response includes all three keys, score validates as float in range | `probe_dir_stats_01` |
+
+### 3.3i Active Per-Node Reachability Probing (Phase 5 — SHOULD)
+
+Directory MUST probe registered nodes' endpoints autonomously (not relying solely on
+self-attested `public_reachable`). Probes fire every 5 minutes, are SSRF-guarded (RFC1918/
+loopback rejected), use a 5-second TCP timeout, and record results in `iicp_telemetry_probes`
+with `test_id = "DIR-PROBE-NODE-01"`. Once a directory probe is recorded, `GET /v1/node/{id}`
+health response SHOULD reflect the independently observed `reachability` with `observed: true`.
+
+Note: This conformance test activates post-VPS when origin IPv6 egress is available to probe
+DS-Lite/IPv6 nodes. Pre-VPS: probe rows exist but may all be `passed=false` (non-routable
+network). After VPS: at least one `passed=true` row expected within 10 minutes.
+
+| Test ID | Requirement | Expected | REACH probe |
+|---------|-------------|---------|-------------|
+| `DIR-PROBE-NODE-01` | Directory records probed nodes in `iicp_telemetry_probes` with `test_id='DIR-PROBE-NODE-01'` | Probe row exists for at least one registered node within 10 min of registration | Unit tests: `ProbeNodesCommandTest` (PHP), `run_probe_nodes_loop` (Rust). REACH probe: post-VPS only (not yet live — requires `IICP_REACH_NODE_PROBE=true` env flag). |
 
 ### 3.4 Rate Limiting (MUST)
 
@@ -353,6 +369,8 @@ Run with the SDK test harness: `iicp-conformance-sdk --sdk python --directory ht
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.42.0 | 2026-06-01 | §3.3i DIR-PROBE-NODE-01 added: active per-node reachability probing (#373 Phase B). Directory autonomously probes registered node endpoints (TCP/HTTP, SSRF-guarded, 5s timeout, 5-min interval). Records `test_id='DIR-PROBE-NODE-01'` in iicp_telemetry_probes. NodeHealthService uses independently observed signal when recent probe exists. PHP: `ProbeNodesCommandTest` 7 tests; Rust: `run_probe_nodes_loop`. REACH probe: post-VPS only (IICP_REACH_NODE_PROBE flag). |
+| 4.41.0 | 2026-06-01 | §13.6 REP-04..07 added: security hardening bypass mitigations (#380-383, 2026-06-01). REP-04: per-node hourly velocity ceiling (RT-01b, MAX_HOURLY_GAIN=0.20). REP-05: IP-level free credit gate (RT-02b). REP-06: Sybil quorum reporter independence — min age 3d + rep ≥0.55 (RT-03b). REP-07: audit-report reporter eligibility — same age+reputation gate (RT-05b). Tests added to CreditHarvestRegressionTest, ReputationServiceTest, ProxyTelemetryTest, AuditReportTest. |
 | 4.40.0 | 2026-05-31 | §3.3d DIR-CIP-03: valid `reputation_tier` set updated to include `"bronze"` (CIP spec v0.6.9, 2026-05-30 reconciliation). `bronze` is the floor tier for all sub-Silver nodes; `none` retained transitionally. Probe `valid_tiers` updated; PHP NodeScorer `none`→`bronze` for `score < 0.40`; Rust `tier_from_score` floor updated. REACH unit test updated (bronze PASS, `"probation"` used as the invalid-tier test case). |
 | 4.39.0 | 2026-05-26 | §11.9 Trust Precedence added per Phase 6 charter P6-4.3: DIR-FED-TRUST-01 (S.13 §3.2) — proxy resolves conflicting node-state per strict precedence Seed > Replica-by-seq > Tier-tiebreaker > Gossip; field-level (not row-level). 14 unit tests in proxy/tests/test_trust_resolver.py + INFO-skip REACH probe (activates when replica deployed); reach run_all 39→40. |
 | 4.38.0 | 2026-05-26 | §11.8 Replica Response Signing added per Phase 6 charter P6-4.2b: DIR-FED-20 (S.13 v0.3.6 §6.5) requires replicas to sign discovery responses with Ed25519 + X-IICP-Replica-Sig header. Proxy verifier helper `proxy/src/proxy/clients/replica_sig_verifier.py` ships with 16 unit tests. New `cryptography>=42` dep added to proxy. |
@@ -650,15 +668,19 @@ These tests verify §4.1/§4.2 normative field validation. All MUST trigger `IIC
 
 ### 13.6 Reputation Update Rules (Phase 5 — MUST)
 
-These tests verify §11 normative delta rules. Implementations MUST pass REP-01..03.
+These tests verify §11 normative delta rules. Implementations MUST pass REP-01..07.
 
 | Test ID | Requirement | Spec ref | Test file |
 |---------|-------------|----------|-----------|
 | `REP-01` | Successful task within latency budget increases `reputation_score` | §11.2, §11.4 | `directory/tests/Feature/ReputationServiceTest.php` |
 | `REP-02` | Failed task decreases `reputation_score` | §11.2, §11.4 | `directory/tests/Feature/ReputationServiceTest.php` |
 | `REP-03` | `reputation_score` never falls below 0.0 or exceeds 1.0 | §11.4 | `directory/tests/Feature/ReputationServiceTest.php` |
+| `REP-04` | Per-node hourly reputation gain MUST NOT exceed MAX_HOURLY_GAIN (0.20) regardless of heartbeat frequency (RT-01b, #381) | §11.2 | `directory/tests/Feature/ReputationServiceTest.php::test_rt01b_hourly_velocity_ceiling_caps_gain` |
+| `REP-05` | Free credit allocation MUST be gated per source IP — per-node_id gate alone is insufficient (RT-02b, #380) | §6.5 | `directory/tests/Feature/CreditHarvestRegressionTest.php::test_new_node_id_from_same_ip_is_blocked_by_ip_gate` |
+| `REP-06` | Proxy reporters for Sybil latency-EMA quorum MUST be ≥3 days old with reputation ≥0.55 — fresh nodes do not satisfy the quorum gate (RT-03b, #382) | §T4.3 | `directory/tests/Feature/ProxyTelemetryTest.php::test_rt03b_fresh_proxy_nodes_do_not_count_toward_quorum` |
+| `REP-07` | Audit-report reporters MUST be ≥3 days old with reputation ≥0.55 for their report to carry a reputation delta — fresh reporter rotation is blocked (RT-05b, #383) | §7 | `directory/tests/Feature/AuditReportTest.php::test_rt05b_fresh_reporter_delta_suppressed` |
 
-**Implementation**: `directory/app/Services/ReputationService.php` (iter 30, closes #113)
+**Implementation**: `directory/app/Services/ReputationService.php` (iter 30, closes #113). Security hardening REP-04..07 added 2026-06-01 (iter-1736, #380-383).
 
 ### 13.5 Metrics Semantic Correctness (SHOULD)
 
@@ -822,12 +844,24 @@ These test IDs are registered from `spec/iicp-recognition.md §10` for traceabil
 |---------|-------|-----------|
 | RECOG-OPT-01 | MUST | Opt-out applied within 5 minutes (leaderboard + profile removed); private profile still accessible to operator |
 
+### 15.8 Founder ordinals (spec/iicp-recognition.md §5.4)
+
+| Test ID | Level | Assertion |
+|---------|-------|-----------|
+| RECOG-FND-01 | MUST | Founder ordinal #2+ assigned only after ≥30d healthy + a genuine served node (operator_verified + public_reachable + active + available); #1 reserved + gate-exempt; provisional slots hold no number |
+| RECOG-FND-02 | MUST | Tier (Genesis-50/3mo, Founders-500/6mo, Founders-1000/12mo, from GENESIS_MS) computed on lock-in timestamp; single-best bracket returned |
+| RECOG-FND-03 | MUST | Ordinals are immutable once locked; reclaiming a provisional slot renumbers no locked founder |
+| RECOG-FND-04 | MUST | `FOUNDER_SUCCESSION` preserves provenance lineage, does not reset lock-in, cannot re-open a closed tier |
+| RECOG-FND-05 | MUST | Founder ordinal keyed to `operator_pubkey` (ed25519 operator_id), never node_id; dev/test identities purged |
+| RECOG-FND-06 | MUST | `FOUNDER_LOCKIN` / `FOUNDER_SUCCESSION` events carry valid Ed25519 sig + `prev_hash` on a dedicated non-federated chain (NOT `node_events`, per DIR-FED-16); emission is a tracked follow-up |
+
 ---
 
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.43.0 | 2026-06-06 | §15.8 Founder ordinals — register RECOG-FND-01..06 (claimed registered in iicp-recognition §10 but absent here). Reconciled to the shipped #310 detector + iicp-recognition v0.6.0 (operator_pubkey keying, genuine-served-node gate, #1 reserved/gate-exempt, GENESIS_MS, founder events on a dedicated non-federated chain). SPEC_UPDATE_PLAN Unit A tail. |
 | 4.35.0 | 2026-05-24 | §15 Operator Recognition Conformance Tests added: 14 RECOG-* test IDs (RECOG-PROF-01/02, RECOG-LEAD-01, RECOG-BADG-01, RECOG-SEAS-01/02, RECOG-VIS-01, RECOG-HAN-01, RECOG-PRIV-01, RECOG-RANK-01/02, RECOG-ANTI-01/02, RECOG-OPT-01). Phase 5D deferred — pending G1 (ADR-030 Accepted) + G6 (spec v1.0 PS ratification). Sourced from `spec/iicp-recognition.md §10`. Closes spec traceability gap in #309. |
 | 4.34.0 | 2026-05-24 | §14.3 corrected: IICP-E2E-04 re-defined from incorrect "discover response_hash" to correct "CIP receipt hash integrity" (TC-9c §10.3). Section renamed from "Routing Diversity" to "CIP Receipt Integrity". Two proxy unit tests added: `test_cip_response_hash_mismatch_discards_retries_next` + `test_cip_response_hash_missing_discards_node`. IICP-E2E-04 **CLOSED** (iter-969). Closes #312. |
 | 4.33.0 | 2026-05-24 | §14 End-to-End Mesh Invariants added: IICP-E2E-01 (discovery liveness), IICP-E2E-03 (credit integrity), IICP-E2E-04 (routing diversity / response_hash). IDs reserved per W-034 scope-expansion (WARDEN-067, iter-965). IICP-E2E-01/03 blocked on #299 multi-node harness. IICP-E2E-04 REACH probe deferred to #312. ADR-030 Proposed unblocked this scope. IICP-E2E-02 (reputation convergence) deferred until ADR-030 Tier-2 attestation ships. |

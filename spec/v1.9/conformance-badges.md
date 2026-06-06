@@ -1,7 +1,7 @@
 # S.14 — IICP Conformance Badge System
 
-**Version**: 0.1.0 (Draft)  
-**Date**: 2026-05-15  
+**Version**: 0.1.1 (Draft)  
+**Date**: 2026-06-06  
 **Status**: draft  
 **Authority**: Protocol Steward + Developer Advocate  
 **Linked ADR**: ADR-016 (SDK Interface Contract); ADR-010 (scoring formula)  
@@ -208,6 +208,7 @@ Returns all active badges for a subject DID. Used by the public node registry.
 | BADGE-04 | Badge SVG endpoint MUST reflect current expiry status in real time | Genesis Seed |
 | BADGE-05 | Self-attested badges MUST be labeled as such in all public displays | Registry / Dashboard |
 | BADGE-06 | Test results URL in attestation record MUST remain accessible for 90 days | Operator |
+| BADGE-07 | The Genesis Seed (and any issuer/verifier of badge attestations) MUST have a working Ed25519 implementation and MUST NOT assume the host runtime provides one; a PHP issuer MUST depend on a pure-PHP polyfill (`paragonie/sodium_compat`) when `ext-sodium` is absent. An issuer that cannot sign, or a verifier that cannot verify, MUST fail closed (no unsigned or unverifiable badge is valid). Mirrors S.13 DIR-FED-21. | Genesis Seed / Verifier |
 
 ---
 
@@ -227,4 +228,5 @@ Returns all active badges for a subject DID. Used by the public node registry.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.1 | 2026-06-06 | §8 BADGE-07 added: badge issuers/verifiers MUST have a working Ed25519 impl (PHP MUST ship `paragonie/sodium_compat` when `ext-sodium` is absent); fail closed on inability to sign/verify. Mirrors S.13 DIR-FED-21 (2026-06-06 prod no-ext-sodium incident). |
 | 0.1.0 | 2026-05-15 | Initial draft — badge tiers, attestation record, lifecycle, conformance API, 6 MUST requirements (BADGE-01–06) |

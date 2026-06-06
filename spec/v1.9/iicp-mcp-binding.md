@@ -1,7 +1,7 @@
 # IICP-MCP Binding Specification
 
-**Version**: 0.1.0  
-**Date**: 2026-05-14  
+**Version**: 0.1.2  
+**Date**: 2026-06-06  
 **Status**: draft  
 **Issue**: #15  
 **Authority**: Protocol Steward  
@@ -175,6 +175,15 @@ details MUST NOT be exposed to untrusted callers.
 | Bidirectional MCP↔IICP node | Phase 3 |
 | MCP server discovery via IICP-DIR | Phase 3 |
 
+> **Reserved-status note (v0.1.2).** In Phase 1 the `urn:iicp:intent:mcp:tools/call:v1`
+> URN is **registry-reserved only** — no MCP↔IICP translation is active yet (it begins in
+> Phase 2). A Phase-1 directory MUST accept the reserved URN appearing in a node's
+> `capabilities` array (and index it for discovery per node-capability-format §7) **without**
+> implementing any translation, and MUST NOT reject a registration solely because it carries
+> the MCP intent. Clients MUST NOT assume an MCP-advertising node performs tool execution
+> until the Phase-2 binding ships. This mirrors the node-capability-format §4 MCP Tool
+> Execution Capability, which is likewise additive and ignored by non-MCP nodes.
+
 ---
 
 ## Changelog
@@ -183,6 +192,7 @@ details MUST NOT be exposed to untrusted callers.
 |---------|------|--------|
 | 0.1.0 | 2026-05-14 | Initial draft — MCP tool-call to IICP CALL translation, SUB_PROTOCOL binding, Phase 1 REST form; closes issue #15 |
 | 0.1.1 | 2026-05-15 | Added Changelog section (A6 spec cleanup) |
+| 0.1.2 | 2026-06-06 | §7: added reserved-status note — the MCP intent URN is registry-reserved in Phase 1; directories MUST accept it in capability arrays without implementing translation, MUST NOT reject on it; clients MUST NOT assume tool execution until the Phase-2 binding ships. Header reconciled to 0.1.2 (it trailed the changelog at 0.1.1). |
 
 ---
 

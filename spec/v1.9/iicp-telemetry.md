@@ -1,6 +1,6 @@
 # IICP Telemetry Spec
 
-**Version**: 1.0-draft  
+**Version**: 1.1-draft  
 **Status**: Draft — under review (see #185)  
 **Scope**: `POST /v1/telemetry` endpoint — proxy-observed latency reporting and trust model  
 **Linked ADRs**: ADR-012 (reputation weight W_REP), ADR-023 (reputation delta rules)  
@@ -97,10 +97,11 @@ a rolling 7-day window.
   (frozen, not zeroed). The report is still recorded for future quorum counting.
 - If `distinct_proxies >= 3`: the EMA update MUST be applied:
   `new_observed = α × latency_ms_observed + (1-α) × prev_observed_latency_ms`
-  where α = 0.1 (EMA smoothing factor — **PENDING**: this value is a design
-  candidate from ADR-012 and has not yet been validated against live production
-  data. RESA track RS3 will confirm or revise. Implementations MUST support a
-  configurable α in [0.05, 0.3]; the default of 0.1 applies until revised).
+  where **α = 0.1** (EMA smoothing factor — **RATIFIED**). RESA track RS3 validated the
+  trust model at α = 0.1 (8 scenarios × 3 seeds × 200 steps; 0% false-positive rate, 100%
+  detection of inflating minorities — see §T4.3), confirming the ADR-012 design candidate.
+  α = 0.1 is the ratified default; implementations MUST still support a configurable α in
+  [0.05, 0.3] for operator tuning.
 - The first report for a node (no prior `observed_latency_ms`) that meets quorum
   MUST set `observed_latency_ms = latency_ms_observed` (no smoothing on first write).
 
@@ -188,4 +189,5 @@ verify that the Sybil quorum gate is operating correctly without re-querying the
 | Version | Date | Changes |
 |---------|------|---------|
 | 0.3.0 | 2026-05-30 | §4 SCORE_UPDATE reconciled to snapshot model (R1, #384): MUST downgraded to 'update reputation snapshot'; discrete SCORE_UPDATE event now OPTIONAL/not-emitted under db-D4prime. |
+| 1.1-draft | 2026-06-06 | §T4.2: ratified EMA smoothing factor **α = 0.1** — removed PENDING marker; RS3 simulation (§T4.3) validated the trust model at α = 0.1 (0% FP, 100% inflating-minority detection). Configurable range [0.05, 0.3] retained for operator tuning. |
 | 1.0-draft | 2026-05-18 | Initial — §T4 Telemetry Trust Model (proxy_token auth + Sybil quorum gate). Derived from #114 implementation. Tracked in #185. |

@@ -1,9 +1,13 @@
 # IICP Confidentiality Extension (IICP-CX)
 
 **Spec ID**: S.16  
-**Version**: 0.1.0-draft  
-**Date**: 2026-05-29  
-**Status**: Draft — Tier 1 implementation tracked in issue #360  
+**Version**: 0.1.1-draft  
+**Date**: 2026-06-06  
+**Status**: Draft — **Tier 1 partially implemented** (CX-Provider decrypt path + directory cx_public_key
+storage live). Reconciled to the shipped wire 2026-06-06: the CX key is `cx_public_key` at REGISTER and
+is exposed as `public_key` in discover/NODELIST (§3.2 — the directory maps cx_public_key→public_key);
+shipped error codes are `IICP-E050` (collapsed decrypt/no-support) + `IICP-E049` (cx_public_key update
+auth) — see §6 implementation status. Full E060–E064 model is the Tier-2 target. (#360)  
 **Tracking**: #360 (E2E payload confidentiality), #361 (privacy threat model)  
 **Foundation**: `project/SECURITY.md §Privacy Adversary Model` (PA-1..PA-4),
 `spec/iicp-core.md §8 Security` (SEC-PRIV-04/05/09)
@@ -46,11 +50,11 @@ This is the primary security property of the relay confidentiality model.
 
 ### 3.1 Registration and NODELIST
 
-Nodes that support CX-Provider MUST include a `public_key` object in their REGISTER
+Nodes that support CX-Provider MUST include a `cx_public_key` object in their REGISTER
 payload and HEARTBEAT updates:
 
 ```json
-"public_key": {
+"cx_public_key": {
   "algorithm": "X25519",
   "encoding": "base64url",
   "key": "<32-byte X25519 public key, base64url-encoded, no padding>",
@@ -65,18 +69,21 @@ Tier 1 implementations.
 
 ### 3.2 Discovery response
 
-The `/v1/discover` response MUST include `public_key` for nodes that advertised one:
+The `/v1/discover` (and NODELIST) response exposes the registered key under the field name
+**`public_key`** — the directory maps the node's registered `cx_public_key` (§3.1) onto the response
+`public_key` field (`null` when the node advertised no CX key). I.e. the field is `cx_public_key` on
+the way **in** (REGISTER) and `public_key` on the way **out** (discover/NODELIST):
 
 ```json
 {
   "node_id": "...",
   "endpoint": "...",
-  "public_key": { ... },
+  "public_key": { ... },   // the node's registered cx_public_key object, or null
   "capabilities": [ ... ]
 }
 ```
 
-Nodes without a `public_key` MUST NOT receive CX-encrypted payloads.
+Nodes without a `cx_public_key` MUST NOT receive CX-encrypted payloads.
 
 ### 3.3 Conformance requirements
 
@@ -103,7 +110,7 @@ The task request body wraps the normal `POST /v1/task` payload:
   "intent": "urn:iicp:intent:llm:chat:v1",
   "iicp_conf": {
     "version": 1,
-    "recipient_key_id": "<8-hex-byte key_id from node's public_key>",
+    "recipient_key_id": "<8-hex-byte key_id from the node's public_key in discover (§3.2)>",
     "kem_ciphertext": "<base64url — X25519 ephemeral public key used in HKDF>",
     "encrypted_body": "<base64url — AES-256-GCM ciphertext of the normal payload JSON>",
     "nonce": "<base64url — 12-byte random nonce>",
@@ -187,6 +194,18 @@ Nodes that do not support CX MUST return `IICP-E064` when they receive a request
 with `iicp_conf` present. Clients SHOULD fall back to unencrypted payload on this error
 if they have not set `require_e2e = true`.
 
+**Implementation status (Tier-1, as shipped — normative for current conformance).** The full
+`IICP-E060..E064` set above is the *target* error model. The shipped Tier-1 implementation is coarser:
+- the CX-Provider adapter returns **`IICP-E050`** (422) for **both** decryption failure (target E062)
+  **and** a request bearing `iicp_conf` to a node with `cx_enabled = false` (target E064) —
+  i.e. E050 currently collapses E062 + E064 (`adapter/src/adapter/handlers/task.py`);
+- the directory returns **`IICP-E049`** (422) when a `cx_public_key` update is presented without a valid
+  `current_node_token` (register-time key-update auth — a code with no equivalent in the target set).
+
+The granular `IICP-E060` (unknown key_id), `IICP-E061` (version), and `IICP-E063` (expired key) are
+**not yet emitted**. Until Tier-2, a conformant CX-Provider MUST emit `IICP-E050` on the collapsed
+decrypt/no-support condition; CX-04/CX-05 (§8) reference the target codes and are Tier-2 gated.
+
 ---
 
 ## 7. Session Negotiation (optional)
@@ -201,7 +220,7 @@ rather than accepting the unencrypted payload. This prevents silent downgrade.
 
 | ID | Level | Description |
 |----|-------|-------------|
-| CX-01 | MUST | CX-Provider advertises `public_key` in REGISTER and NODELIST |
+| CX-01 | MUST | CX-Provider advertises its CX key — `cx_public_key` at REGISTER, exposed as `public_key` in NODELIST/discover (§3.2) |
 | CX-02 | MUST | CX-Provider decrypts CX envelope and returns correct response |
 | CX-03 | MUST | CX-Relay forwards CX-encrypted task envelope unmodified |
 | CX-04 | MUST | CX-Provider returns IICP-E060 for unknown key_id |

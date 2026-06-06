@@ -1,7 +1,7 @@
 # IICP Extensions — Billing, Reputation, and Sub-Protocol Bindings
 
-**Version**: 1.0.0
-**Date**: 2026-05-15
+**Version**: 1.0.1
+**Date**: 2026-06-06
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -127,10 +127,13 @@ The directory MAY include pricing in discovery responses when billing is enabled
 
 ### 2.1 Reputation score
 
-Each node accumulates a reputation score ∈ [0, 1] maintained by the directory.
+Each node accumulates a reputation score ∈ [0, 1] maintained by the directory. **The normative model is
+`iicp-semantics.md §11`** — the additive per-event delta with the RT security caps (RT-01/05), which is
+what the directory actually computes (`NodeScorer`/`ReputationService`). The formula below is
+*illustrative only* and is superseded by §11:
 
 ```
-reputation_score = EMA(success_rate × latency_consistency)
+reputation_score = EMA(success_rate × latency_consistency)   // illustrative — authoritative model: iicp-semantics §11
 ```
 
 Where:
@@ -200,7 +203,7 @@ for the original specification.
 
 ## 4. Cooperative Inference Profile (Phase 5)
 
-Full specification: deferred to `spec/iicp-cip.md` (issue #23).
+Full specification: `spec/iicp-cooperative-inference.md` (S.12) — the CIP spec, live.
 
 ### 4.1 Overview
 
@@ -249,13 +252,15 @@ peers, regardless of policy configuration:
 
 These are enforced at the provider policy gate in the adapter/node, not by convention.
 
-### 4.4 New intent URNs for CIP
+### 4.4 Intent URNs for CIP
 
-| URN | Description |
-|-----|-------------|
-| `urn:iicp:intent:cip:inference:v1` | Generic CIP inference request |
-| `urn:iicp:intent:cip:embed:v1` | CIP embedding/vectorisation |
-| `urn:iicp:intent:cip:rerank:v1` | CIP result reranking |
+CIP is a **cooperative-execution mode over the standard registered intents** — it does **not** define a
+separate `cip:*` URN namespace. CIP workers advertise and serve the canonical `urn:iicp:intent:llm:*`
+intents in `registry/intents.json` (`llm:chat:v1`, `llm:completion:v1`, `llm:embedding:v1`,
+`llm:rerank:v1`, `llm:summarize:v1`, …); CIP-specific behaviour rides the `cip_policy` /
+`cip_conformance_level` fields (S.12), not a distinct intent. (The earlier
+`urn:iicp:intent:cip:inference/embed/rerank:v1` URNs were never registered and are superseded:
+`cip:inference`→`llm:chat`/`llm:completion`, `cip:embed`→`llm:embedding`, `cip:rerank`→`llm:rerank`.)
 
 ---
 
