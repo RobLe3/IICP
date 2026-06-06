@@ -106,6 +106,22 @@ Read [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) for th
 
 ---
 
+## Client SDKs
+
+Three official client SDKs implement the consumer side of the protocol (discovery,
+routing, retry, fallback, CIP consumer). All are open-source and published:
+
+| Language | Install | Package registry | Source repository |
+|----------|---------|------------------|-------------------|
+| Python | `pip install iicp-client` | [PyPI: iicp-client](https://pypi.org/project/iicp-client/) | [github.com/RobLe3/iicp-client-python](https://github.com/RobLe3/iicp-client-python) |
+| TypeScript | `npm install @iicp/client` | [npm: @iicp/client](https://www.npmjs.com/package/@iicp/client) | [github.com/RobLe3/iicp-client-typescript](https://github.com/RobLe3/iicp-client-typescript) |
+| Rust | `cargo add iicp-client` | [crates.io: iicp-client](https://crates.io/crates/iicp-client) | [github.com/RobLe3/iicp-client-rust](https://github.com/RobLe3/iicp-client-rust) |
+
+The SDKs are conformant reference clients — a good starting point for understanding the
+wire format in practice. Bug reports and PRs are welcome on each repository.
+
+---
+
 ## Intent URN Registry
 
 Intent URNs identify *what* is being requested, independent of model or backend:
@@ -172,7 +188,7 @@ The [iicp.network](https://iicp.network) directory is live and continuously veri
 | Core protocol — register / discover / route | ✅ Live | 37 conformance probes green continuously |
 | CIP coordinator (multi-node dispatch) | ✅ Implemented | Credit receipts, response integrity verification |
 | Reputation scoring | ✅ Ratified | Tier structure (§5.1.1) + bootstrap floor (§5.1.2) ratified 2026-05-24 — normative |
-| Published SDKs (Python / TypeScript / Rust) | ✅ Published | `pip install iicp-client` · `npm install @iicp/client` · `cargo add iicp-client` |
+| Published SDKs (Python / TypeScript / Rust) | ✅ Published | [iicp-client-python](https://github.com/RobLe3/iicp-client-python) · [iicp-client-typescript](https://github.com/RobLe3/iicp-client-typescript) · [iicp-client-rust](https://github.com/RobLe3/iicp-client-rust) — see [Client SDKs](#client-sdks) |
 | Rust node runtime (`iicp-node`) | 🟡 Working (private) | Not yet publicly distributed — pending security sign-off |
 | Operator identity (Ed25519 delegation) | 🟢 Phase A live | ADR-045 — operators sign a delegation binding their Ed25519 key to each node; the directory verifies + resolves a public `operator_display_name` in discovery. `operator_pubkey` is directory-private, never served. |
 | Founder recognition | 🟢 Live | Time-gated founder ordinals (iicp-recognition §5.4) — #1 reserved for the maintainer, #2..N earned by genuine served nodes; dedicated non-federated signed chain |
