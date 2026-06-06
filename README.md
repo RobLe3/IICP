@@ -5,7 +5,7 @@
 *Building the HTTP for the Age of Generative AI*
 
 **Current version**: v1.9.0  
-**Reference implementation**: [iicp.network](https://github.com/RobLe3/iicp.network)  
+**Reference implementation**: [iicp.network](https://iicp.network)  
 **Status**: Active development — Phase 5 (Cooperative Inference Protocol)
 
 ---
@@ -174,7 +174,8 @@ The [iicp.network](https://iicp.network) directory is live and continuously veri
 | Reputation scoring | ✅ Ratified | Tier structure (§5.1.1) + bootstrap floor (§5.1.2) ratified 2026-05-24 — normative |
 | Published SDKs (Python / TypeScript / Rust) | ✅ Published | `pip install iicp-client` · `npm install @iicp/client` · `cargo add iicp-client` |
 | Rust node runtime (`iicp-node`) | 🟡 Working (private) | Not yet publicly distributed — pending security sign-off |
-| Operator identity (anti-Sybil) | 🔴 Design phase | ADR-030 — Ed25519 key pair, multi-node ownership |
+| Operator identity (Ed25519 delegation) | 🟢 Phase A live | ADR-045 — operators sign a delegation binding their Ed25519 key to each node; the directory verifies + resolves a public `operator_display_name` in discovery. `operator_pubkey` is directory-private, never served. |
+| Founder recognition | 🟢 Live | Time-gated founder ordinals (iicp-recognition §5.4) — #1 reserved for the maintainer, #2..N earned by genuine served nodes; dedicated non-federated signed chain |
 
 **Estimated progress toward closed beta: ~70%**
 
