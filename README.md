@@ -196,11 +196,11 @@ See [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) SEC-* test 
 
 **Phase 5 — Cooperative Inference Protocol (active)**
 
-The [iicp.network](https://iicp.network) directory is live and continuously verified by 37 conformance probes. The **client SDKs are published** (PyPI / npm / crates.io); the node runtime is still private pending security sign-off. Public operator onboarding will open once security verification, authentication, and the operator identity system are production-ready.
+The [iicp.network](https://iicp.network) directory is live and continuously verified by 45 conformance probes. The **client SDKs are published** (PyPI / npm / crates.io) — each includes the full `iicp-node` provider runtime, so anyone can join the mesh today (`iicp-node init` + `iicp-node serve`). Operator onboarding is open: the operator identity system (ed25519, ADR-045 delegations), heartbeat challenge-response liveness, and the founder recognition program are live in production.
 
 | Feature area | Status | Notes |
 |---|---|---|
-| Core protocol — register / discover / route | ✅ Live | 37 conformance probes green continuously |
+| Core protocol — register / discover / route | ✅ Live | 45 conformance probes green continuously |
 | CIP coordinator (multi-node dispatch) | ✅ Implemented | Credit receipts, response integrity verification |
 | Reputation scoring | ✅ Ratified | Tier structure (§5.1.1) + bootstrap floor (§5.1.2) ratified 2026-05-24 — normative |
 | Published SDKs (Python / TypeScript / Rust) | ✅ Published | [iicp-client-python](https://github.com/RobLe3/iicp-client-python) · [iicp-client-typescript](https://github.com/RobLe3/iicp-client-typescript) · [iicp-client-rust](https://github.com/RobLe3/iicp-client-rust) — see [Client SDKs](#client-sdks) |
