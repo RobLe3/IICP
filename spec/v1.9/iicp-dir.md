@@ -1,7 +1,7 @@
 # IICP-DIR — Directory Sub-Protocol Specification
 
-**Version**: 0.10.3  
-**Date**: 2026-06-03  
+**Version**: 0.11.0  
+**Date**: 2026-06-10  
 **Status**: draft  
 **Issue**: #14  
 **Authority**: Protocol Steward  
@@ -308,7 +308,7 @@ GET /v1/discover
 | `pricing.effective_until` | ISO-8601\|null | null = no expiry. |
 | `pricing.attested` | bool | `true` if `declaration_signature` was verified at last registration (ADR-019 §5.1). |
 | `cip_conformance_level` | string | One of `"CIP-None"`, `"CIP-Consumer"`, `"CIP-Provider"`, `"CIP-Full"`. `"CIP-None"` means the node has not opted into any CIP role (equivalent to not declared). Per spec §5.2. |
-| `health_label` | string\|null | ADR-044 composed health label: `"healthy"` (score ≥0.85), `"degraded"` (≥0.65), `"impaired"` (≥0.40), `"critical"` (<0.40), `"offline"`. Computed from a weighted combination — reachability 0.30, latency 0.25 (50–500 ms curve), task-success 0.25 (70–100% curve), reputation 0.20 (ADR-044). Score is a float in [0.0, 1.0] (normalised from internal 0–100 scale by v1.10.6+). `null` against directories predating v1.10.0. |
+| `health_label` | string\|null | ADR-044 composed health label: `"healthy"` (score ≥0.85), `"degraded"` (≥0.65), `"impaired"` (≥0.40), `"critical"` (<0.40), `"offline"`. Computed from endpoint-liveness signals only — reachability 0.70, latency 0.30 (50–500 ms curve). Reputation and task-success were removed in #492 (ADR-044 amendment) — health reflects operational liveness, not earned history. Score is a float in [0.0, 1.0] (normalised from internal 0–100 scale by v1.10.6+). `null` against directories predating v1.10.0. |
 | `exposure_mode` | string\|null | ADR-043 8-category network exposure classification (e.g. `"ipv4_public_direct"`, `"cgnat_upnp"`, `"ipv6_gua"`). `null` if node has not run qualification. |
 | `reachability_tier` | string | v1.10.0, ADR-047: `"direct"` (dial-back-verified) or `"relay"` (heartbeating with a routable surface but not directly dial-back-verified — reachable via relay; e.g. CGNAT/IPv6 where the directory has no egress). Default discover returns `direct`+`relay`; a heartbeating node is never hidden purely for lacking dial-back. Clients SHOULD prefer `direct` and fall back to `relay`. |
 | `input_modalities` | array | v1.10.0, ADR-046: union of input modalities the node's capabilities for this intent accept (`["text"]` default; `["text","image"]` for vision). Lets clients confirm multimodal support without a second round-trip; see `?modality=` (§3.3). |
@@ -386,8 +386,7 @@ Peer gossip — exchange known peer lists between nodes to bootstrap mesh connec
 
 ```
 POST /v1/peers
-Authorization: Bearer <node_token>
-X-IICP-Signature: <hmac-sha256-hex>
+X-IICP-Signature: <ed25519-signature-hex>
 Content-Type: application/json
 ```
 
@@ -397,6 +396,18 @@ Content-Type: application/json
 | `known_peers` | string[] | MUST | List of `node_id` UUIDs the sender already knows |
 | `timestamp_ms` | integer | MUST | Unix epoch milliseconds — used for replay detection |
 | `ttl_s` | integer | SHOULD | Sender's suggested peer cache TTL; receiver MAY ignore |
+
+> **Errata v1.5.1 (auth model corrected).** Earlier drafts required
+> `Authorization: Bearer <node_token>` plus an HMAC-SHA256 of the body *keyed with
+> node_token*. That design was broken twice over: (1) the receiving peer never
+> possesses the sender's `node_token` (the directory stores only a bcrypt hash —
+> DIR-REG-07 — and offers no introspection), so the HMAC was unverifiable as
+> specified; (2) sending `node_token` to an arbitrary peer hands the sender's
+> directory credential to a potentially malicious node. The corrected model below
+> uses the sender's ed25519 `cx_public_key` — already registered with the directory
+> and served on node detail / discover — so any receiver can verify offline, and no
+> directory credential ever leaves its owner. **`node_token` MUST NOT be sent to
+> peers under any circumstances.**
 
 #### Response (200 OK)
 
@@ -420,10 +431,21 @@ Returns an empty `new_peers` array when the receiver has no peers unknown to the
 
 #### MUST requirements [→ DIR-HB-05]
 
-- Receiver MUST validate `Authorization: Bearer <node_token>` on every PEER_EXCHANGE request. Invalid or absent token → 401.
-- Receiver MUST verify `X-IICP-Signature` (HMAC-SHA256 of request body keyed with node_token). Invalid signature → 403.
-- Receiver MUST reject replayed signatures: if the same HMAC has been seen within the last 5 minutes → 409. [→ SEC-NONCE-01]
+- `X-IICP-Signature` MUST be the hex-encoded ed25519 detached signature of the raw request
+  body bytes, produced with the secret key whose public half the sender registered as
+  `cx_public_key`. Receiver MUST verify it against the sender's `cx_public_key`, resolved
+  from the receiver's peer cache or from directory node detail (`GET /v1/node/{sender_id}`,
+  `public_key` field). Invalid or unverifiable signature → 403.
+- Sender MUST NOT include `Authorization: Bearer <node_token>` — the directory credential
+  never travels to peers. Receiver MUST ignore any Authorization header on this endpoint
+  (it carries no trust).
+- A sender without a registered `cx_public_key` cannot participate in signed gossip;
+  receivers MUST reject unsigned requests from unknown senders → 403.
+- Receiver MUST reject replayed signatures: if the same signature value has been seen
+  within the last 5 minutes → 409. [→ SEC-NONCE-01]
 - `timestamp_ms` MUST be within ±60 seconds of receiver's wall clock. Stale request → 422.
+  (`timestamp_ms` is inside the signed body, so replaying with a fresh timestamp breaks
+  the signature.)
 
 #### SHOULD requirements
 
@@ -877,6 +899,9 @@ Tracking: #302
 | 0.6.0 | 2026-05-20 | §3.4 NODELIST: `cip_conformance_level` type changed from `string\|null` to `string`; `"CIP-None"` added as explicit non-CIP value (consistent with implementation in RegisterController + NodeScorer). S.12 §5.2 updated to include `CIP-None` in profile table. |
 | 0.5.0 | 2026-05-19 | §3.2 HEARTBEAT PONG: added `reputation_score` field (operator feedback on current standing). §3.7 REPUTATION_UPDATE event: dual-source schemas (`heartbeat_metrics` from HEARTBEAT pipeline, `proxy_telemetry` from SCORE_UPDATE pipeline). §3.7 CREDIT_AWARD event: corrected to actual CIPWorkerReceipt fields (`task_id`, `tokens_used`, `amount`, `new_balance`, `cip_parent_task_id`, `cip_session_key`). |
 | 0.4.0 | 2026-05-17 | §3.4 NODELIST: added ADR-019 `pricing` block (credit_cost_multiplier, pricing_model, currency, effective_from, effective_until, attested); `cip_conformance_level` field (CIP-Consumer/Provider/Full per S.12 §5.2); `cip_policy.pricing_credits_per_1000` DEPRECATED in favor of pricing.credit_cost_multiplier. |
+| 0.10.4 | 2026-06-09 | §3.4 NODELIST `health_label`: updated formula — reachability 0.70, latency 0.30; removed task-success (0.25) and reputation (0.20). Health now reflects operational liveness only (#492 / ADR-044 amendment). New nodes with no task history score 85 ("healthy") rather than 65 ("degraded"). Shipped in PHP + Rust directories. |
+| 0.10.3 | 2026-06-07 | §3.4 NODELIST: added `operator_display_name` (#463 / ADR-045 Phase A) — the operator's public `display_name`, resolved by `operator_pubkey` for delegation-bound nodes; `null` when not operator-bound. `operator_pubkey` itself is directory-private; only display_name is served. Additive/back-compatible. |
+| 0.11.0 | 2026-06-10 | **§3.6 PEER_EXCHANGE auth model corrected** (external security review, #495): the HMAC-keyed-with-node_token + Bearer-node_token design was unverifiable (receiver never has the sender's token; directory stores bcrypt only) and leaked the directory credential to peers. Replaced with ed25519 detached signature over the raw body using the sender's registered `cx_public_key` (resolvable via peer cache or `GET /v1/node/{id}`); `node_token` MUST NOT travel to peers; Authorization header carries no trust on this endpoint. Replay rules preserved (signature-replay 409 + ±60s timestamp inside the signed body). Phase 2+ surface — no Phase 1 conformance impact; adapter gossip implementation update tracked in #495. |
 | 0.10.2 | 2026-06-05 | IICP-DIR-EXT-CREDITS: added `GET /v1/credits/summary` (DIR-CRED-04) — lifetime `total_earned`/`total_spent`/`balance`/`tx_count` for the authenticated node plus a `reconciles` integrity invariant (`balance == earned − spent`, MUST be `false` for a tampered/inconsistent ledger). Additive/back-compatible; powers the `iicp-node credits` command (#456). Shipped in PHP + Rust directories (parity #385). |
 | 0.10.1 | 2026-06-03 | §3.2 HEARTBEAT: documented dormant-node auto-restore — a heartbeat from a previously-dormant node MUST set `status=active`, clear `dormant_since`, and default `available=true` unless the body carries `available:false` (corrects a directory regression where a resumed heartbeat left `available=false`, hiding a live node from discover forever; dir v1.10.17). §3.4/§3.7 event log: added `REACHABILITY_DEMOTE` / `REACHABILITY_RESTORE` to the live federated event-type set with payload schema (#413 — the `public_reachable` transition that makes a node vanish from discover is now in the signed, federatable audit trail; emitted transition-only at the demote/promote edges). Both additive/back-compatible. |
 | 0.10.0 | 2026-06-03 | Four shipped additions (dir v1.10.14): §3.1 REGISTER `capabilities[].input_modalities` (ADR-046 vision/multimodal — `["text"]` default; image-in is a chat modality, not a new intent) + optional `operator_delegation` ed25519 token (ADR-045 Phase A — offline-verified operator→node binding, `did_key`/`did_web` trust tiers); §3.2 HEARTBEAT challenge-response (ADR-047 Part A — `challenge` nonce in PONG, `challenge_response`=HMAC-SHA256(node_hmac_key,nonce) — cryptographic liveness without dial-back, for CGNAT/IPv6); §3.3 QUERY `?modality=` filter; §3.4 NODELIST `reachability_tier` (`direct`/`relay` — relay-tier nodes no longer hidden, ADR-047) + `input_modalities`. All additive/back-compatible. Protocol Suite MINOR bump (→ v1.10.0) is the separate maintainer-ratified release step (VERSIONING.md Current + /spec page, per check_spec_versions.py). |

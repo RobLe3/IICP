@@ -1,7 +1,7 @@
 # IICP Binary Framing Layer
 
 **Document**: `spec/iicp-framing.md`  
-**Version**: 0.1.4-draft  
+**Version**: 0.1.5-draft  
 **Date**: 2026-06-06  
 **Status**: Draft — NOT YET RATIFIED (see §12)  
 **Authority**: Protocol Steward  
@@ -876,6 +876,23 @@ QUIC-sharing approach.
 a strong rationale), 4994, 7878. All rejected in favor of 9484 which was already in use
 in the reference implementation at the time of this decision.
 
+**Port-band convention (informative)**: the confirmed-unassigned block 9480–9490 is
+used by convention so a single host can run the full stack without collisions. (Wording
+note: unassigned ports cannot be *reserved* by anyone — this is a project deployment
+default, nothing more, until the RFC 6335 registration path above completes.)
+
+| Ports | Role | Allocation |
+|-------|------|------------|
+| 9480–9483 | Local client-side services (e.g. the OpenAI/Ollama/Anthropic-compat **proxy** on 9483, its CIP-PL1 model-provider plugin on 9482) | grow **downward** from 9483 |
+| **9484** | Canonical IICP node wire port (this section) | fixed |
+| 9485–9490+ | Additional node instances on the same host | grow **upward** from 9484 (auto-increment) |
+
+This is a deployment convention, not a wire-format requirement: the 9484 node port is the
+only normative port in this spec (§11.1 above). The proxy's listen port is a local 127.0.0.1
+compat surface (not IICP wire traffic) and defaults to 9483 purely to avoid both the node
+auto-increment range and the common Ollama default (11434); it is freely overridable. See
+ADR-049 and `proxy/` (iicp-proxy ≥ 0.2.0).
+
 ### 11.2 Media types
 
 IICP registers the following media types (registration pending):
@@ -1049,5 +1066,6 @@ mechanisms are complementary.
 | 0.1.1-draft | 2026-05-20 | PS | §9.6 malformed frame disposition table (18 cases, normative) — #232. §9.7 version negotiation failure paths (8 cases, normative) — #233. |
 | 0.1.2-draft | 2026-05-20 | PS | v1.4.2 port audit amendments: §4.3 note A-001 (payload_hash superseded by ADR-024 envelope signing); §4.13 note A-002 (routing_metrics intentionally dropped, OBSERVE purpose changed from topology to streaming). Audit report: reports/v142-port-audit.md. Issue #243. |
 | 0.1.3-draft | 2026-05-20 | PS | §11.1 IANA status upgraded from "appears unassigned" to "confirmed IANA-unassigned" — direct IANA CSV query verified zero assignments for ports 9480–9490. Issue #239 closed. |
+| 0.1.5-draft | 2026-06-07 | PS | §11.1 reserved-band partition (informative): 9480–9483 local proxy band (proxy 9483 / plugin 9482, grow down), 9484 node port, 9485–9490+ node auto-increment (grow up). Documents the proxy port standardization (11434→9483). ADR-049 / #475. |
 | 0.1.4-draft | 2026-06-06 | PS | §10.3 FRAME8 reassembly caps (#242): per-connection `MAX_INCOMPLETE_FRAMES`=64 + `MAX_REASSEMBLY_BYTES`=64 MiB (CLOSE `reassembly_limit_exceeded`, §9.6 row added) — bounds reassembly memory to O(1) per connection, resolving the adversarial-review amplification finding. §12: flipped #239 (IANA, closed 2026-05-20) and #242 (adversarial review, closed 2026-05-24) ratification gates to complete. Header version reconciled to 0.1.4 (it trailed the changelog, which already carried 0.1.1–0.1.3). |
 | 0.1.4-draft | 2026-05-20 | PS | §10.4-10.6 QUIC transport profile — stream mapping (stream-per-request), fragmentation over QUIC (OPTIONAL, QUIC segments natively), CBOR encoding constraints (deterministic encoding for signed messages, no indefinite-length). §13 Interoperability — dual-mode design selected, HTTP↔native translation table, CUSTOM frame gateway behavior, OBSERVE SSE bridge, directory control-plane constraint. Issues #236 #238 closed. |

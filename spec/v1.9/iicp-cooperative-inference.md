@@ -1,7 +1,7 @@
 # S.12 — IICP Cooperative Inference Protocol (CIP)
 
 **Status**: Draft (active — normative text in §2–§7, §10; §4 wire format normative per 0.4.0-draft)  
-**Version**: 0.6.10  
+**Version**: 0.6.11  
 **Phase**: 5 (Cooperative Inference)  
 **Authors**: Protocol Steward  
 **Linked ADR**: ADR-012 (Phase 5 CIP Scoring Formula), ADR-019 (Declarative Node Pricing)  
@@ -594,9 +594,17 @@ This section defines MUST NOT constraints that apply to all CIP roles regardless
 
 The HMAC-SHA256 signature MUST be computed over the following canonical message (UTF-8 encoded, colon-delimited fields):
 
+**Without `querying_node_id`** (legacy, backwards-compatible):
 ```
 {task_id}:{tokens_used}:{cip_parent_task_id}:{cip_session_key}:{nonce}:{response_hash}
 ```
+
+**With `querying_node_id`** (v0.7.50+, preferred — required for credit spending):
+```
+{task_id}:{tokens_used}:{cip_parent_task_id}:{cip_session_key}:{nonce}:{response_hash}:{querying_node_id}
+```
+
+The directory determines which form to reconstruct based on whether `querying_node_id` is present and non-empty in the receipt body. Implementations MUST NOT include a `querying_node_id` in the canonical message unless it is also present in the receipt body — mixing the extended canonical with a missing body field is a signature mismatch.
 
 Where:
 - `task_id`: The Worker's sub-task UUID (not the parent coordinator task UUID)
@@ -605,6 +613,7 @@ Where:
 - `cip_session_key`: The session key received from the Coordinator (see §10.4), or `""` if absent
 - `nonce`: The `receipt_nonce` value (hex-encoded, ≥ 32 hex characters = 128 bits)
 - `response_hash`: SHA-256 hex digest (64 lowercase hex characters) of the canonical JSON encoding of the task `result` field — `sha256(json.dumps(result, sort_keys=True, separators=(',', ':')).encode('utf-8')).hexdigest()`. For a null/empty result, use SHA-256 of zero bytes (`e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`).
+- `querying_node_id` (optional): The `node_id` of the consumer node that dispatched the original task, forwarded from the task body `source_node_id` field. Including this field in the HMAC canonical message is REQUIRED when `querying_node_id` is present in the receipt body — it prevents a malicious serving node from fabricating or substituting a foreign `querying_node_id` to drain that operator's credit balance (TC-9e).
 
 **`response_hash` requirement (Phase 5)**: The Worker MUST include `response_hash` in every `CIPWorkerReceipt`. A receipt without `response_hash` MUST be rejected by the Coordinator (hash check fails) and by the directory (returns `IICP-E027`). The Coordinator MUST verify `compute_response_hash(received_result) == receipt.response_hash` BEFORE returning the response to the end client AND BEFORE submitting the credit award. Hash mismatch MUST result in the Coordinator discarding the response and trying the next eligible Worker.
 
@@ -614,10 +623,12 @@ Where:
 
 **Directory verification (IICP-E027)**: To validate a CIPWorkerReceipt, the directory MUST:
 1. Look up the Worker's registered `node_hmac_key` by `worker_id` from the receipt. If the node has no `node_hmac_key` provisioned, the directory MUST return `IICP-E027` (422 Unprocessable Entity) with message `"Node HMAC key not provisioned"`. The node MUST re-register to obtain a fresh key.
-2. Reconstruct the canonical message from the receipt's `task_id`, `tokens_used`, `cip_parent_task_id`, `cip_session_key`, `nonce`, and `response_hash` fields using the format above.
+2. Reconstruct the canonical message from the receipt's `task_id`, `tokens_used`, `cip_parent_task_id`, `cip_session_key`, `nonce`, `response_hash`, and — if `querying_node_id` is present and non-empty in the receipt body — `querying_node_id` appended as the 7th colon-delimited field.
 3. Compute `HMAC-SHA256(node_hmac_key, canonical_message)` and compare with `receipt.signature` using constant-time comparison.
 4. If `response_hash` is absent or not a valid 64-character lowercase hex string: return `IICP-E027` (422) with message `"CIPWorkerReceipt missing response_hash"`.
 5. If the signature is absent, malformed, or does not match: return `IICP-E027` (422 Unprocessable Entity). The directory MUST NOT credit the Worker in this case.
+
+**Credit debit after award**: After successfully crediting the Worker (step 5 passed), the directory SHOULD attempt to debit the querying node when `querying_node_id` is present. This debit is **best-effort**: if the querying node has insufficient balance, the Worker's award MUST still proceed and the directory MUST log a `CREDIT_SPEND_INSUFFICIENT` event. The `amount` debited MUST equal the `amount` awarded to the Worker. The response SHOULD include a `spent` field (float, credits debited from querying node) and a `spend_reason` field (string, set to `"insufficient_balance"` when the debit was attempted but rejected by an insufficient-balance guard).
 
 **Credit amount ceiling (anti-inflation, TC-9c)**: The directory MUST reject any credit award request where `amount` exceeds the authorized ceiling:
 
@@ -656,6 +667,7 @@ Colluding nodes can inflate credit balances by routing tasks between coordinatin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6.11 | 2026-06-09 | §10.3 HMAC canonical message: extended form `{…}:{response_hash}:{querying_node_id}` when `querying_node_id` is present in receipt body — REQUIRED to prevent a malicious serving node from substituting a foreign `querying_node_id` to drain foreign operator balances (TC-9e, #490). Backwards-compatible: receipts without `querying_node_id` use the 6-field form. §10.3 Credit debit: after awarding the Worker, directory SHOULD best-effort debit the querying node by the same amount; `CREDIT_SPEND_INSUFFICIENT` logged on failure; response includes `spent` + `spend_reason`. Implementation: directory v1.10.25, all 3 SDKs v0.7.50. |
 | 0.6.10 | 2026-06-06 | §7 Credit Accounting: added **rate-parity** clause — CIP tasks price on the same schedule as standard routing (no CIP premium, #305); the ×1.0 worker / ×0.05 coordinator rates are the *split* of `routing_cost`, not a surcharge. Cross-refs iicp-billing-extension §10.1–§10.3 (credit schedule + economy fold). |
 | 0.6.9 | 2026-05-30 | §5.1.1 reputation_tier enum reconciled (#384): floor tier is `bronze` (matches shipped NodeScorer + the tier table); `none` retired. |
 | 0.6.8 | 2026-05-24 | §5.1.1 Tier Structure: RATIFIED — tier thresholds (Silver ≥ 0.40, Gold ≥ 0.65, Platinum ≥ 0.85), identity-age gate (≥ 720h), decay floor (R_floor = 0.30), general reputation update rules. §5.1.2 Bootstrap Traffic Floor: RATIFIED — floor rule normative. PENDING markers removed from both sections. Evidence: REP1/REP2/REP5/REP6 research tracks, #168 #171 #172 closed. Implementation: directory v1.9.19 (ReputationDecayCommand DECAY_FLOOR=0.30, NodeScorer tier thresholds). |

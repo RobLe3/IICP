@@ -1,6 +1,6 @@
 # IICP Operator Recognition Protocol
 
-**Version**: 0.6.0-draft
+**Version**: 0.6.2-draft
 **Status**: Draft — RECOG-* test IDs registered in `spec/conformance-test-suite.md §15`. API surface §7 + anti-gaming §8 normative. §3 Operator Identity composes on ADR-034 Identity Slot. **§5.4 Founder ordinals (time-gated tiers + lock-in + succession) added 2026-06-05 — parameters maintainer-RATIFIED** (Genesis-50/3mo · Founders-500/6mo · Founders-1000/12mo; transfer-with-signed-succession; rules R1–R7 from `research/gamification-track/08`, #461); the two new signed event types (`FOUNDER_LOCKIN`, `FOUNDER_SUCCESSION`) extend ADR-013 §3.4 and depend on the #458 hash-chain (landed). §12 open questions (seasons/handles/attestation) still carry proposed defaults — v1.0 graduation needs PS to ratify those + #310 directory implementation of §5.4.
 **Date**: 2026-06-05 (updated from 2026-05-26)
 **Changelog**: 0.6.0 — §5.4 reconciled to the **shipped** #310 lock-in detector (SPEC_UPDATE_PLAN Unit A, D5-A): keyed on `operator_pubkey` (not DID `identity_uri`); **genuine-served-node** gate (operator_verified + public_reachable + active + available) replaces the demand-scaled task-floor; **#1 reserved + 30-day-gate-exempt**; **GENESIS_MS = 2026-06-06** anchor named; FOUNDER_LOCKIN/SUCCESSION ride a **dedicated non-federated** signed chain (DIR-FED-16) with emission a tracked follow-up; §8 rule 8 + RECOG-FND-01/05/06 aligned; RECOG-FND IDs marked pending in conformance-suite. 0.5.0 — §5.4 Founder ordinals + §8 founder hard rules (8–12) + §10 RECOG-FND-01..06 (#309/#461, ratified tiers). 0.4.0 — §12 proposed defaults.
@@ -87,11 +87,11 @@ trigger computed from data the directory collects.
 |------|-------|----------------------------------------|------------------|
 | 0 | Node Initiate | First successful `POST /v1/register` | `node_events.event_type='REGISTER'` |
 | 1 | Mesh Serf | ≥7 days of HEARTBEAT events with success rate ≥ 95% | rolling 7d HEARTBEAT aggregation |
-| 2 | Local Daemon | ≥30 days continuous uptime AND ≥1 declared model passing DIR-TRUST-01 | uptime calc + DIR-TRUST-01 result |
+| 2 | Local Daemon | ≥30 days **cumulative** verified uptime AND ≥1 declared model passing DIR-TRUST-01 | EVICT/REACTIVATE session pairs (#508) + DIR-TRUST-01 result |
 | 3 | Intent Weaver | `reputation.completed_tasks_count ≥ 1000` AND ≥3 distinct proxy contributors | reputation + task_events (post G5) |
 | 4 | CIP Provider | `cip_conformance_level = 'CIP-Provider'` AND attested operator (Tier 2 per ADR-030) | discover response + operators.attestation_status |
 | 5 | REACH Herald | Probed reachable from ≥3 distinct REACH probe origins over 30d rolling | REACH multi-region (G3 dependency) |
-| 6 | Mesh Guardian | ≥90 days uptime AND ≥99% heartbeat success AND continuous DIR-TRUST-01 pass | combined check |
+| 6 | Mesh Guardian | ≥90 days **cumulative** verified uptime AND ≥99% heartbeat success AND continuous DIR-TRUST-01 pass | combined check (uptime from #508 session pairs) |
 | 7 | Forge Baron | `completed_tasks_count ≥ 10000` AND ≥5 distinct models AND ≥3 contributors | reputation + capabilities |
 | 8 | Mesh Legend | Top-10 globally by composite rank_score (§5) | hourly leaderboard recompute |
 | Zero Kelvin | Permanent founder title | Manual assignment by Genesis Seed maintainer | n/a |
@@ -99,6 +99,12 @@ trigger computed from data the directory collects.
 **MUST**: Rank ≥4 (CIP Provider) requires Tier 2 attestation (per ADR-030).
 **MUST**: Rank ≥3 (Intent Weaver) requires ≥3 distinct proxy contributors (anti-collusion).
 **MUST**: Rank ≥2 (Local Daemon) requires DIR-TRUST-01 pass (anti-fake-backend).
+**MUST**: Uptime-duration gates (Tiers 1/2/6) are **cumulative**, not continuous: verified online
+time is summed across sessions from the signed EVICT/REACTIVATE event pairs (#508,
+`iicp-federated-directory.md` §5.1 uptime tracking events). Downtime never resets accumulated
+uptime — it simply does not count. This is deliberate: home-hardware operators (reboots, sleep,
+OS updates) accumulate rank progress at the same per-online-hour rate as cloud operators.
+Heartbeat-success-rate components (Tier 1 ≥95%, Tier 6 ≥99%) are measured over online time only.
 
 ### 4.2 Rank advancement
 
@@ -178,6 +184,21 @@ appearance and **locks in** when the directory's daily lock-in detector finds th
 This is rule **R1** (`08`): lock-in is uptime-primary so the earliest founders — who by definition face
 the *least* demand — are not locked out by a demand gap they exist to close (caveat N1). A provisional
 slot that never locks in is **reclaimable** and holds no number.
+
+**No-reset semantics (normative, as shipped).** The 30-day gate is **calendar-anchored**: it measures
+elapsed time since the pinned `first_seen_ms` (`now_ms − first_seen_ms ≥ 30d`), which is set once at
+the operator's first registration and **never reset** — not by re-registration, dormancy, reboots, or
+outages. The "genuine served node" condition is evaluated by the daily lock-in scan over a **trailing
+24-hour window**, not at the scan instant: a node qualifies if it is currently active+available OR its
+authenticated `last_seen` falls within the 24 hours before the scan (so a node that sleeps or reboots
+at the scan hour — e.g. nightly Windows updates — still counts as serving, provided it heartbeat at any
+point that day). An operator whose nodes were offline for the entire window is simply re-evaluated at
+the next daily scan, with no penalty and no clock restart. Consequence for self-hosters (home hardware,
+Windows/WSL2, sleep/update cycles): downtime **cannot** delay lock-in by more than the downtime itself
+plus at most one scan interval. Tier membership (§5.4.3) is computed on the lock-in timestamp against
+generous windows (3/6/12 months), so scan-day slippage does not move an operator across tier boundaries
+in practice. Implementations MUST NOT impose a continuous-uptime or uptime-percentage requirement on
+founder lock-in.
 
 **Founder #1 is reserved** for the maintainer's configured `operator_pubkey` (`iicp_founder_one_pubkey`)
 and is minted **immediately, exempt from the 30-day gate** (founder privilege — the genesis operator
@@ -273,6 +294,19 @@ Public views of recognition state. Cacheable, anonymous-read.
 
 **Implementation status (#310/#463):** `GET /v1/leaderboards/founders` is live (directory PHP + Rust parity) — it reads the operator-keyed record and returns `{board_id, title, count, entries:[{place, display_name, ordinal, tier, badge}]}`, never exposing `operator_pubkey`. Boards ordered by the §5 composite `rank_score` (`living_mesh_lords`, `rising_stars_30d`, `most_reliable_60d`) return `404 IICP-E050` until `rank_score` is computed — they are not fabricated. Visibility opt-out exclusion activates when the visibility column/endpoint lands (no operator can opt out yet).
 
+**Provisional founders — `pending` section (0.6.2, additive).** The founders board response
+additionally carries `pending: [{display_name, projected_ordinal, days_remaining, provisional: true}]` —
+the §5.4.2 *provisional* state made publicly visible. Inclusion requires a **genuine served node**
+(same unforgeable gate as lock-in: `operator_verified` + `public_reachable` + active/available or seen
+within the trailing 24h), so registering an identity without serving (name-squatting) does NOT appear.
+Ordering is first-appearance (`first_seen_ms`); `days_remaining = ceil((30d − elapsed)/1d)`, with `0`
+meaning "eligible at the next daily scan". **Normative constraints**: `projected_ordinal` is an
+ESTIMATE and MUST be presented as provisional (ordinals are assigned only at lock-in, §5.4.3 — the
+projection shifts if a predecessor drops out or a lapsed predecessor returns); a `pending` entry
+confers no rights, is never recorded to the signed chain, and MUST NOT be treated as an assigned
+ordinal by any consumer. Purpose: recognition-before-lock-in and a visible race for the next low
+ordinal (maintainer directive 2026-06-10).
+
 ## 7. API Surface
 
 See `research/gamification-track/05-api-surface.md` for full endpoint specifications. Brief
@@ -330,12 +364,13 @@ Additional MUST from the rank table (§4):
 7. **MUST**: Rank ≥4 (CIP Provider) requires Tier 2 attested operator identity.
 
 Founder-ordinal hard rules (§5.4; sourced from `research/gamification-track/08`, R1–R7):
-8. **MUST** (R1/R2): a founder ordinal (≥#2) locks in only after ≥30 days heartbeat-challenge-verified
-   healthy operation **plus** a **genuine served node** (operator_verified + public_reachable + active +
-   available, §5.4.2); tier membership is computed on the **lock-in timestamp** (never registration), and
-   the ordinal is assigned at lock-in (first-appearance order) so reclaiming a provisional slot renumbers
-   no one. **#1 is the reserved genesis founder** (configured `operator_pubkey`), minted immediately and
-   exempt from the 30-day gate.
+8. **MUST** (R1/R2): a founder ordinal (≥#2) locks in only after ≥30 **calendar** days since the pinned
+   `first_seen_ms` (no-reset semantics, §5.4.2 — the clock never restarts on outage/re-registration)
+   **plus** a **genuine served node** at the daily scan (operator_verified + public_reachable + active +
+   available, §5.4.2 — a point-in-time check, NOT a continuity requirement); tier membership is computed
+   on the **lock-in timestamp** (never registration), and the ordinal is assigned at lock-in
+   (first-appearance order) so reclaiming a provisional slot renumbers no one. **#1 is the reserved
+   genesis founder** (configured `operator_pubkey`), minted immediately and exempt from the 30-day gate.
 9. **MUST** (R6): a `FOUNDER_SUCCESSION` transfer preserves the immutable provenance lineage, does not
    reset lock-in, and cannot re-open a closed tier; the original earner is recorded permanently.
 10. **MUST** (R7): founder ordinals are canonical only against the Genesis Seed's signed,
@@ -526,6 +561,8 @@ satisfied.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6.2-draft | 2026-06-10 | §6 founders board: additive `pending` section — provisional operators (genuine served node, no ordinal) with projected_ordinal (estimate, never authoritative), days_remaining, first-appearance order; anti-squat gate; never on the signed chain. Recognition-before-lock-in + visible ordinal race (maintainer directive). PHP+Rust+website shipped. |
+| 0.6.1-draft | 2026-06-10 | **Self-hoster fairness clarifications** (external operator feedback): §5.4.2 gains explicit **no-reset semantics** — the 30-day founder gate is calendar-anchored to the pinned `first_seen_ms` (never resets on outage/reboot/re-registration) and the genuine-served-node condition is a point-in-time daily-scan check, never a continuity or uptime-% requirement (matches the shipped PHP+Rust detector). §8 rule 8 reworded to match. §4.1 Tiers 2/6 uptime gates changed from "continuous" to **cumulative** verified uptime, sourced from the #508 EVICT/REACTIVATE signed session pairs; new §4.1 MUST: downtime never resets accumulated uptime. Aligns spec text with the as-shipped implementation so cloud and home-hardware operators accrue recognition at the same per-online-hour rate. |
 | 0.4.0-draft | 2026-05-26 | §12 reformatted: every open question (1, 2, 4-7) now carries a **proposed default** with rationale and an explicit "to override" path for PS. New §12b "Status of v1.0 graduation" table tracks per-question PS-confirmation status. v1.0 unblocks when PS confirms/overrides each row (vs previous "needs full design" framing — now ratification-bounded work). Resolves the spec-graduation-path ambiguity from v0.3.0; PS review surface reduces from "design 6 things" to "confirm 6 defaults". |
 | 0.3.0-draft | 2026-05-26 | §3 Operator Identity restructured with layered identity model (Recognition → ADR-030 Operator → ADR-034 Identity Slot → did:web verifier); cross-references S.15 (`spec/iicp-identity-slot.md`) + BC-12. §7 API surface clarifies "operator-signed" means S.15 Identity Slot with verifier dispatch + IICP-IDSLOT-02/04 failure modes. §8 anti-gaming rule 5 (no identity laundering) now cites ADR-034 pin-on-first-use as enforcement mechanism. §12 open question 3 (Operator vs Identity Slot — composed or absorbed?) **resolved**: composed; Identity Slot is foundation. Tracking issue #309 referenced. Resolves 1 of 7 §12 open questions; remaining 6 (1, 2, 4-7) still need PS review before v1.0. |
 | 0.2.0-draft | 2026-05-24 | RECOG-* test IDs registered in `spec/conformance-test-suite.md §15` (v4.35.0, iter-976). §10 note updated to reflect cross-spec registration. Status updated to reflect normative bodies in §4/§5/§6/§8/§9 complete; pending PS ratification of §12 open questions before v1.0. |

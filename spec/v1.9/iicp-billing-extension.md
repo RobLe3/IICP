@@ -1,6 +1,6 @@
 # IICP Billing Extension
 
-**Version**: 0.4.0  
+**Version**: 0.4.1  
 **Date**: 2026-06-06  
 **Status**: draft  
 **Issue**: #20, #141 (ADR-019), #145, #305 (rate calibration), #316 (retention)  
@@ -333,8 +333,17 @@ tokens_per_credit = 1000
 `tier_weight` is the **destination** node's declared model-size tier (§10.2).
 `credit_cost_multiplier` is the destination's ADR-019 per-node pricing multiplier
 (default 1.0). The proxy MUST compute `routing_cost` and verify
-`consumer_balance ≥ routing_cost` **before** dispatching; if the balance is insufficient
-it MUST return `IICP-E036` (InsufficientCredits, §6) to the originating client.
+`consumer_balance ≥ routing_cost` **before** dispatching to a remote node. If the balance
+is insufficient, the proxy MUST NOT silently dispatch an unaffordable task; instead it
+MUST, in order:
+
+1. **Fall back to local execution** if the consumer has a local provider for the intent
+   (local-first) — remote dispatch is skipped, the task runs locally, no error is returned;
+2. otherwise **return `IICP-E036`** (InsufficientCredits, §6) to the originating client.
+
+(Rationale, decision B-A: local-first is the better UX — a consumer with a local model
+should keep working when it can't afford remote inference — while a consumer with no local
+fallback gets an explicit, actionable `IICP-E036` rather than a silent failure.)
 
 ### 10.2 Tier-weight schedule
 
@@ -465,6 +474,7 @@ scheduled nightly and complementary to the live 2% burn.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.4.1 | 2026-06-06 | §10.1 insufficient-balance behavior (decision B-A): the proxy MUST fall back to LOCAL execution when a local provider exists, else return `IICP-E036` — never silently dispatch an unaffordable task. (Was an unconditional "MUST return IICP-E036"; reconciled with the proxy's local-first design.) Implemented in proxy `decide_dispatch` Gate 2c. |
 | 0.4.0 | 2026-06-06 | §10 Credit Schedule & Economy folded in (#305, credit-economy/09): routing-cost formula, Scheme-C tier-weight schedule (`sub_1b` 0.05 … `100b_plus` 75.0), `tokens_per_credit=1000`, **CIP = no rate premium** (mirrors iicp-cooperative-inference §7), evaluation grant, anti-inflation sinks (90d TTL primary + 2% burn secondary, burn governance-activated month 13+, capped 5%). §11 Ledger Retention (ADR-035): `tx_type` taxonomy {earn,spend,bootstrap,expire,burn} with PHP `type`+`reason` encoding note, `expires_at` hot tier + `credit_summary_monthly` cold tier, idempotent TTL expiry sweep. §6: **`IICP-E036` InsufficientCredits** assigned (resolves the research E028 collision; E028 stays invalid-CIP-field). §2 unit definition references the published schedule. |
 | 0.3.0 | 2026-05-17 | ADR-019 integration (#141, #145): §3 CALL billing block — `max_multiplier` + `min_quality_score` added; `priority` deprecated in favor of `min_quality_score`. §5 NODELIST — `pricing` declaration block replaces `price_per_1k_tokens` (new fields: `credit_cost_multiplier`, `attested`, `declaration_signature`; legacy billing block preserved). §5.1 pricing declaration at REGISTER/HEARTBEAT with HMAC-SHA256 signature. §7 award request — `multiplier_applied` field added (dispatch-time multiplier lock). Closes #145. |
 | 0.2.0 | 2026-05-17 | §8 Credit Quote Flow: GET /v1/credits/quote endpoint contract, QuoteResponse schema, normative MUST rules (60s expiry, quote_id traceability, Gate 2 enforcement); closes #72 |

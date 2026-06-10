@@ -1,7 +1,7 @@
 # IICP Core — Wire Format and Mandatory Requirements
 
-**Version**: 1.2.6
-**Date**: 2026-06-06
+**Version**: 1.2.8
+**Date**: 2026-06-10
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -188,6 +188,20 @@ Content-Type: `application/json`
 | `payload` | object | Intent-specific; passed through to inference backend |
 | `constraints.timeout_ms` | integer | MUST be > 0; adapter MUST abort execution if exceeded [→ TASK-4] |
 | `auth.node_token` | string | Adapter MUST validate on every request [→ TASK-1] |
+
+> **Errata v1.5.1 (TASK-1 scope clarified).** The adapter validates `auth.node_token` by
+> **equality against its own token** — the one the directory returned to it at registration.
+> The directory stores only a bcrypt hash (DIR-REG-07) and offers no introspection endpoint,
+> so no third party can validate this token, and the adapter never could validate anyone
+> else's. Consequence (normative): in Phase 1, `node_token` on `POST /v1/task` is an
+> **operator capability credential** — only callers the node operator has explicitly given
+> the token to (the operator's own proxy, a trusted consumer) are authorized. It is NOT a
+> mechanism for arbitrary discovered consumers to submit tasks. Open-mesh consumer
+> authorization is a Phase 2 surface: directory-issued, offline-verifiable consumer tokens
+> (signed by the directory's published key so adapters verify without callback) — tracked
+> in the repository as the successor to this errata. Until then, implementations MUST NOT
+> document or imply that any discover-result consumer can submit tasks without an
+> operator-granted credential.
 
 **Optional fields**
 
@@ -431,7 +445,7 @@ in active use:
 | `IICP-E031` | 502 | Adapter | Relay forwarding to target peer failed — peer unreachable or returned error |
 | `IICP-E032` | 401 | Directory | Invalid or missing proxy_token — `POST /v1/telemetry` requires proxy_token Bearer, not node_token |
 | `IICP-E033` | 503 | Proxy (Client) | No nodes serve this intent — directory was reachable and returned 0 candidates after intent + region + reputation filtering. Distinct from generic "no_available_node" (which conflates this with directory unreachability). Operator next-step: verify intent URN, check `/nodes` page for matching capabilities, or wait for new providers. |
-| `IICP-E034` | 429 | Directory | Too many registration attempts from this source IP within the rate-limit window (10/15min per W-033). Operator next-step: wait `retry_after` seconds or use a different source IP. |
+| `IICP-E034` | 429 | Directory | Too many registration attempts from this source IP within the rate-limit window (**60 per 60s** per source IP, W-033; response carries `retry_after`). Operator next-step: wait `retry_after` seconds or use a different source IP. |
 | `IICP-E036` | 402 | Proxy (Client) | InsufficientCredits — consumer S-Credit balance below the computed routing cost (`ceil(output_tokens/1000) × tier_weight × multiplier`). The proxy MUST run this pre-check before dispatch. See iicp-billing-extension §6/§10.1. (Distinct from `IICP-E028` = invalid CIP field value; the credit-economy research originally drafted this under E028 — collision resolved here.) |
 | `IICP-E035` | 422 | Directory | Non-routable endpoint at `POST /v1/register` — host is localhost, in 127.0.0.0/8, ::1, RFC1918 (10/8, 172.16-31/12, 192.168/16), 169.254/16 link-local, a reserved suffix (`.local`, `.test`, `.example`, `.invalid`, `.lan`, `.internal`), or a bare hostname without TLD (Docker-compose service name). Operator next-step: register with a publicly-routable DNS name or IP; for local dev set `APP_ENV=local` against a local directory (issue #325 Layer 1). |
 
@@ -558,6 +572,8 @@ advertise it in registered `endpoint` URLs when no other port is specified.
 | 1.0.0 | 2026-05-15 | Initial draft — extracted from IICP_draft_1.4.2.txt and IICP-core-phase1-profile.md as part of S.5 spec split |
 | 1.1.0 | 2026-05-15 | Added §11 Implicit Address Learning (DIR-ADDR-01..07) and default port 9484 |
 | 1.2.0 | 2026-05-17 | §3.1: added constraints.consensus optional field; added realtime to constraints.qos values. §3.3: Consensus Mode — majority_of_3, majority_of_5, first_completed; no_consensus 502; N× credit cost; outlier −0.15 reputation. §7: no_consensus error code; capacity_exceeded note (qos_class+retry_after_ms). Closes #120 (spec). |
+| 1.2.7 | 2026-06-06 | §7: corrected the `IICP-E034` rate-limit description — was "10/15min", reconciled to the **shipped** behavior **60 per 60s per source IP** (PHP RegisterController REGISTER_RATE_LIMIT=60 / REGISTER_RATE_TTL=60; Rust dir parity 289bc0e3). Spec-vs-shipped drift fix (ALIGN). |
+| 1.2.8 | 2026-06-10 | **TASK-1 scope errata** (external security review, #496): §3.1 clarifies that `auth.node_token` is validated by the adapter by equality against its OWN token — an operator capability credential, NOT a mechanism for arbitrary discovered consumers (directory stores bcrypt only, no introspection). Open-mesh consumer authorization is normatively deferred to Phase 2 directory-issued offline-verifiable tokens. Implementations MUST NOT imply discover-result consumers can submit tasks without an operator-granted credential. |
 | 1.2.6 | 2026-06-06 | §7: registered `IICP-E036` (Proxy 402 — InsufficientCredits, consumer balance below computed routing cost). Resolves the credit-economy research E028 collision: E028 stays *invalid CIP field value*; InsufficientCredits is the distinct E036. See iicp-billing-extension §6/§10.1. (Header version reconciled to 1.2.6 — it trailed the changelog, which already carried 1.2.3–1.2.5.) |
 | 1.2.5 | 2026-05-21 | §7: added IICP-E033 (Proxy 503 — no nodes serve this intent, distinct from "no_available_node" runtime-failure code). Actionable next-step text included (verify intent URN / check /nodes / wait for providers). Closes WQ-030 friction #3 from iter-318 happy-path audit. |
 | 1.2.4 | 2026-05-20 | §2.1: added optional `capabilities[].quantization` and `capabilities[].inference_engine` advisory fields. Enables output fingerprinting (#118) and per-engine trust scoring. Directory MUST NOT reject unrecognised values. |

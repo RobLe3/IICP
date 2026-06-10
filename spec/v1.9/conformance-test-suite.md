@@ -1,7 +1,7 @@
 # IICP Conformance Test Suite
 
-**Version**: 4.43.0  
-**Date**: 2026-06-01  
+**Version**: 4.44.0  
+**Date**: 2026-06-09  
 **Status**: draft  
 **Issue**: #22  
 **Authority**: Protocol Steward + Integration Validator  
@@ -188,6 +188,17 @@ network). After VPS: at least one `passed=true` row expected within 10 minutes.
 |---------|-------------|---------|-------------|
 | `DIR-NODE-01` | `GET /v1/node/{id}` for registered node → 200 | Node object with capabilities | `probe_dir_node_01` |
 | `DIR-NODE-02` | `GET /v1/node/{unknown}` → 404 | `error.code = "not_found"` | `probe_dir_node_02` |
+
+### 3.5b Per-Node Health Vector (ADR-044 / #492 — SHOULD)
+
+`GET /api/v1/node/{id}` MUST include a `health` block reflecting endpoint liveness. Per ADR-044 amendment (#492) the formula is liveness-only: W_REACHABILITY=0.70, W_LATENCY=0.30. Reputation and task-success are intentionally absent — health is not earned, it is observed.
+
+| Test ID | Requirement | Expected | Implementation |
+|---------|-------------|---------|----------------|
+| `DIR-NODE-HEALTH-01` | Node-detail `health` block present with `score`, `label`, `observed`, `components`, `evaluated_at` | All 5 keys present; `score ∈ [0,100]` int; `label ∈ {healthy,degraded,impaired,critical,offline}` | PHP: `NodeDetailHealthTest::test_node_detail_includes_health_block`; Rust: `health.rs::score_node_all_perfect` |
+| `DIR-NODE-HEALTH-02` | Health components MUST be `{liveness, reachability, latency}` only — no `success_rate` or `reputation` (#492) | `components` object has exactly those 3 keys | PHP: `NodeDetailHealthTest::test_node_detail_includes_health_block` assertJsonStructure; Rust: `health.rs::components_match_score` |
+| `DIR-NODE-HEALTH-03` | New reachable node with no task history MUST show `label = "healthy"` (score ≥85) | `health.label = "healthy"` — old formula would yield 65 ("degraded") | PHP: `NodeDetailHealthTest::test_new_reachable_node_with_no_task_history_shows_healthy`; Rust: `health.rs::new_reachable_node_with_no_task_history_is_healthy` |
+| `DIR-NODE-HEALTH-04` | Offline node (heartbeat > 90s) MUST return `label = "offline"`, `score = 0` | `health.score = 0`, `health.label = "offline"` | PHP: `NodeDetailHealthTest::test_offline_node_detail_reports_offline_health` |
 
 ### 3.6 Proxy Telemetry — OUTLIER_WEIGHT (SHOULD)
 
@@ -861,6 +872,7 @@ These test IDs are registered from `spec/iicp-recognition.md §10` for traceabil
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.44.0 | 2026-06-09 | §3.5b Per-Node Health Vector (ADR-044 / #492): DIR-NODE-HEALTH-01..04 registered. Formula W_REACHABILITY=0.70 + W_LATENCY=0.30; success_rate + reputation absent. Key test: DIR-NODE-HEALTH-03 — new reachable node with no task history MUST score ≥85 ("healthy"). PHP: `NodeDetailHealthTest` (3 tests); Rust: `health.rs` (27 tests including `new_reachable_node_with_no_task_history_is_healthy`). |
 | 4.43.0 | 2026-06-06 | §15.8 Founder ordinals — register RECOG-FND-01..06 (claimed registered in iicp-recognition §10 but absent here). Reconciled to the shipped #310 detector + iicp-recognition v0.6.0 (operator_pubkey keying, genuine-served-node gate, #1 reserved/gate-exempt, GENESIS_MS, founder events on a dedicated non-federated chain). SPEC_UPDATE_PLAN Unit A tail. |
 | 4.35.0 | 2026-05-24 | §15 Operator Recognition Conformance Tests added: 14 RECOG-* test IDs (RECOG-PROF-01/02, RECOG-LEAD-01, RECOG-BADG-01, RECOG-SEAS-01/02, RECOG-VIS-01, RECOG-HAN-01, RECOG-PRIV-01, RECOG-RANK-01/02, RECOG-ANTI-01/02, RECOG-OPT-01). Phase 5D deferred — pending G1 (ADR-030 Accepted) + G6 (spec v1.0 PS ratification). Sourced from `spec/iicp-recognition.md §10`. Closes spec traceability gap in #309. |
 | 4.34.0 | 2026-05-24 | §14.3 corrected: IICP-E2E-04 re-defined from incorrect "discover response_hash" to correct "CIP receipt hash integrity" (TC-9c §10.3). Section renamed from "Routing Diversity" to "CIP Receipt Integrity". Two proxy unit tests added: `test_cip_response_hash_mismatch_discards_retries_next` + `test_cip_response_hash_missing_discards_node`. IICP-E2E-04 **CLOSED** (iter-969). Closes #312. |

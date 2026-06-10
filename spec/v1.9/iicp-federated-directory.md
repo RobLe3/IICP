@@ -192,6 +192,21 @@ heartbeat window; long-term observability moves to external telemetry).
 > ordinals from federated state; founder recognition is a Genesis-Seed-local authority.
 > This is the S.13 side of the relationship that iicp-recognition §5.4 already references.
 
+**Uptime tracking events (local, non-federated)**: the following event types are written to
+`node_events` by the Genesis Seed for local uptime accounting but MUST NOT appear in the
+`GET /v1/events` federated stream. Replicas self-maintain node liveness via their own
+`expire_stale()` sweep and MUST NOT depend on receiving these:
+
+| Event type | Emitter | Trigger | Payload |
+|---|---|---|---|
+| `EVICT` | `LivenessMonitor` | node transitions active→dormant (heartbeat expiry) | `reason`, `last_seen_ms`, `dormant_since_ms` |
+| `REACTIVATE` | `HeartbeatController` | dormant node sends a heartbeat (dormant→active revival) | `dormant_since_ms`, `dormancy_duration_seconds` |
+
+These events make cumulative node uptime computable from the signed hash-chain rather than
+approximated from `nodes.last_seen`. The signed chain makes them tamper-evident and suitable
+as the basis for merit-based badge assignment (iicp-recognition §X). When a seed is replaced
+by a Rust directory, the same two event types MUST be emitted at equivalent lifecycle points.
+
 **Signature input**: `Ed25519Sign(key, SHA256(event_id + ":" + event_type + ":" + seq + ":" + ts_ms + ":" + SHA256_hex(canonical_json(payload)) + ":" + prev_hash))`
 
 `canonical_json` = RFC 8785 (JSON Canonicalization Scheme) — deterministic, no whitespace variation.
