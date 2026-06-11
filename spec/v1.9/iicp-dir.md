@@ -1,6 +1,6 @@
 # IICP-DIR — Directory Sub-Protocol Specification
 
-**Version**: 0.11.0  
+**Version**: 1.1.0  
 **Date**: 2026-06-10  
 **Status**: draft  
 **Issue**: #14  
@@ -816,6 +816,69 @@ The directory grants a small free-credit allocation to bootstrap new nodes into 
 | `IICP-E035` | 422 | Non-routable endpoint host (ADR-041 invariant; `RoutableEndpoint` validator, iter-1365 / #325) |
 | `IICP-E049` | 403 | Re-registration with a changed `cx_public_key` requires a valid `current_node_token` proving ownership. **Normative (MUST)**: if a re-registration request supplies a `cx_public_key` that differs from the stored value, the directory MUST verify that `current_node_token` bcrypt-matches the stored token hash. Failure → 403 IICP-E049. This gate prevents unauthenticated key-substitution attacks. (RT-6-1, #390, iter-1807) |
 
+### 3.12 Consumer Token Issuance (Phase 2, #496)
+
+**Phase**: 2  
+**Status**: Implemented (PHP directory v1.10.32, iicp-client v0.7.52)
+
+The directory acts as a trusted issuer of short-lived consumer tokens that allow a proxy
+(caller) to authenticate to a provider (adapter/node) without sharing its `node_token`.
+
+**Token format**: `<base64url_payload>.<sig_hex>`  
+where the payload is a JSON object and the signature is Ed25519 over
+`b"iicp:consumer-token:v1\n" + base64url_payload_bytes`.
+
+**Payload fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `v` | integer | Version — always `1` |
+| `iss` | string | Issuer — the directory's domain |
+| `sub` | string | Subject — caller node_id |
+| `aud` | string | Audience — target node_id |
+| `intent` | string | Intent URN (or `"*"` for any intent) |
+| `iat` | integer | Issued-at (Unix seconds) |
+| `exp` | integer | Expiry (Unix seconds; `iat + 300` by default) |
+
+**Endpoints:**
+
+`GET /api/v1/directory-key` — Returns the directory's Ed25519 public key. No auth required.
+
+Response (200):
+```json
+{ "public_key": "<64-char hex>", "algorithm": "ed25519" }
+```
+
+Returns `503` when the genesis key is not configured on the directory.
+
+`POST /api/v1/consumer-token` — Issues a consumer token. Requires `Authorization: Bearer <node_token>` (JWT form, identifies the caller).
+
+Request body:
+```json
+{ "target_node_id": "<uuid>", "intent": "urn:iicp:intent:..." }
+```
+
+Response (201):
+```json
+{ "token": "<b64url>.<sig_hex>", "expires_at": <unix_s>, "caller_node_id": "...", "target_node_id": "...", "intent": "..." }
+```
+
+Error responses: `401` when caller auth missing, `503` when genesis key not configured, `404` when `target_node_id` is not registered.
+
+**Provider validation (normative):**
+
+A provider (adapter or node) MUST accept `X-IICP-Consumer-Token: <token>` on `POST /v1/task` as an alternative to `body.auth.node_token` when:
+- The signature is valid (Ed25519 over domain+payload using the directory's public key).
+- `exp` is in the future (providers MAY allow a 10-second grace).
+- `aud` matches the provider's own `node_id`.
+- `intent` matches the task's intent or is `"*"`.
+
+The provider obtains the directory public key from `GET /api/v1/directory-key` during registration and caches it. If the key is unavailable, the provider MUST fall back to `auth.node_token` validation only.
+
+**Rate limiting**: `GET /api/v1/directory-key`: 30 req/min. `POST /api/v1/consumer-token`: 60 req/min (per authenticated node).
+
+---
+
 ### 3.11 Supplementary routes (scope note, #384)
 
 The following routes are present in the reference implementation but **outside the
@@ -879,6 +942,60 @@ Tracking: #302
 
 ---
 
+### IICP-DIR-EXT-ATTEST: Signed Compliance Attestation
+
+Lets external verifiers confirm a directory's conformance state with ONE signed JSON fetch
+instead of re-running a probe suite — the fast path for federation bootstrap and third-party
+audits (#508). A directory that omits this extension is fully IICP-DIR conformant.
+
+**Endpoint (unauthenticated, rate-limited):**
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` | `/v1/compliance-attestation` | Signed snapshot of the most recent conformance probe run. Conformance DIR-COMPLIANCE-ATTEST-01 (SHOULD). |
+
+**Response document** (all fields REQUIRED):
+
+```json
+{
+  "endpoint": "https://iicp.network",
+  "spec_version": "iicp-dir v1.0.0",
+  "purpose": "compliance-attestation",
+  "probe_run_id": "<uuid of the attested REACH run>",
+  "probe_run_at": "<ISO8601>",
+  "passed_probes": ["DIR-AUTH-01", "DIR-DISC-01", "..."],
+  "failed_probes": [],
+  "generated_at": "<ISO8601>",
+  "valid_until": "<ISO8601 — generated_at + 900s>",
+  "attestation_hash": "<sha256 hex of the canonical document>",
+  "signature": "<ed25519 detached signature, hex>",
+  "signer_did": "did:web:<directory-host>"
+}
+```
+
+**Verification rule**: strip `attestation_hash`, `signature`, and `signer_did`; canonicalize
+the remaining document (key-sorted, no whitespace, `JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES`
+— the same rule as event-log payloads, S.13 §3.4); then check
+`attestation_hash == SHA256_hex(canonical)` and verify `signature` over `SHA256(canonical)`
+(binary) against the Ed25519 key published at `/.well-known/did.json`
+`verificationMethod[0].publicKeyJwk.x`. Verifiers MUST reject an attestation past
+`valid_until` and SHOULD reject one whose `purpose != "compliance-attestation"`
+(cross-protocol replay guard — the event log signs with the same key).
+
+**Trust model**: self-attestation is a fast-path supplement, never the sole verifier —
+independent probes (REACH) keep running out-of-band, so a directory falsely attesting
+compliance is still caught. Verifiers bootstrapping trust SHOULD spot-check a random
+subset of attested probes directly.
+
+**Failure modes**: `503 attestation_unavailable` when the directory has no signing key
+(fail-closed — an unsigned attestation is unverifiable); `503 no_probe_data` before the
+first conformance run is recorded.
+
+Signing key: the genesis Ed25519 key (S.13 §3.4) — one trust root per directory.
+Tracking: #508
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
@@ -889,6 +1006,7 @@ Tracking: #302
 | 0.3.0 | 2026-05-17 | §3.4 Consensus mode discovery note: proxy discovers N workers for consensus; directory unaware of consensus mode; cip_policy.allow_remote_inference filter requirement. |
 | 0.7.0 | 2026-05-26 | §3.1 REGISTER + §3.4 NODELIST: optional `transport_endpoint` field added (`iicp://` / `iicpsec://` scheme; default port 9484). Splits control plane (`endpoint`, HTTP) from data plane (`transport_endpoint`, native binary framing per ADR-040). Directory's HTTP liveness probe targets `endpoint` only; clients SHOULD prefer `transport_endpoint` when present. Back-compat: nodes without `transport_endpoint` continue to behave exactly as v0.6.x. |
 | 0.9.4 | 2026-06-01 | §3.9c Directory-initiated node probing added (Phase 5 #373 Phase B): DIR-PROBE-NODE-01, TCP probe every 300s, SSRF-guarded, 5s timeout, results in iicp_telemetry_probes. NodeHealthService reachability uses independently observed signal when recent probe exists (observed: true). Activation requires IPv4+IPv6 egress. References conformance-test-suite.md §3.3i. |
+| 1.0.0 | 2026-06-10 | §3.12 Consumer Token Issuance added (Phase 2, #496): `GET /api/v1/directory-key` + `POST /api/v1/consumer-token` endpoints; Ed25519-signed short-lived tokens (`b64url_payload.sig_hex`, 300s TTL); `X-IICP-Consumer-Token` header accepted as alternative to `auth.node_token` on `POST /v1/task`. Implemented across PHP directory (v1.10.32), Python adapter, Python proxy, TypeScript client, Rust iicp-client, Rust iicp-node. |
 | 0.9.0 | 2026-05-30 | Code↔spec drift closeout (#384): §7 credit endpoints corrected to shipped routes (award/balance/transactions/quote — R4 fix); §3.9b Public Stats schema added (/v1/stats — server/probes/credit_schedule/mesh_health/directory_health); §3.4 NODELIST table + transport_method/nat_type/transport_metadata/address_family/relay_capable/public_key(CX object)/sdk_*/models fields; probation clarified as node-detail-only (R3); §3.7 event-type enum reconciled to snapshot+event-tail live set (R2 — HEARTBEAT/SCORE_UPDATE retired). |
 | 0.9.3 | 2026-05-31 | §3.11 Supplementary routes: scope annotations for /metrics, /v1/probe, /v1/conformance/*, /v1/badge/{tier}, /v1/replicas/register, /v1/snapshot, /_deploy/migrate (closes #384 LOW undocumented-routes items). |
 | 0.9.2 | 2026-05-31 | §3.9b mesh_health: score/mean/p10 documented as float [0.0,1.0] (v1.10.6 wire normalisation); example updated from integer 65 to float 0.65; label thresholds expressed in [0,1]; basis/window fields added. health_label thresholds in §3.4 NODELIST also corrected to [0,1] scale. |
@@ -905,6 +1023,7 @@ Tracking: #302
 | 0.10.2 | 2026-06-05 | IICP-DIR-EXT-CREDITS: added `GET /v1/credits/summary` (DIR-CRED-04) — lifetime `total_earned`/`total_spent`/`balance`/`tx_count` for the authenticated node plus a `reconciles` integrity invariant (`balance == earned − spent`, MUST be `false` for a tampered/inconsistent ledger). Additive/back-compatible; powers the `iicp-node credits` command (#456). Shipped in PHP + Rust directories (parity #385). |
 | 0.10.1 | 2026-06-03 | §3.2 HEARTBEAT: documented dormant-node auto-restore — a heartbeat from a previously-dormant node MUST set `status=active`, clear `dormant_since`, and default `available=true` unless the body carries `available:false` (corrects a directory regression where a resumed heartbeat left `available=false`, hiding a live node from discover forever; dir v1.10.17). §3.4/§3.7 event log: added `REACHABILITY_DEMOTE` / `REACHABILITY_RESTORE` to the live federated event-type set with payload schema (#413 — the `public_reachable` transition that makes a node vanish from discover is now in the signed, federatable audit trail; emitted transition-only at the demote/promote edges). Both additive/back-compatible. |
 | 0.10.0 | 2026-06-03 | Four shipped additions (dir v1.10.14): §3.1 REGISTER `capabilities[].input_modalities` (ADR-046 vision/multimodal — `["text"]` default; image-in is a chat modality, not a new intent) + optional `operator_delegation` ed25519 token (ADR-045 Phase A — offline-verified operator→node binding, `did_key`/`did_web` trust tiers); §3.2 HEARTBEAT challenge-response (ADR-047 Part A — `challenge` nonce in PONG, `challenge_response`=HMAC-SHA256(node_hmac_key,nonce) — cryptographic liveness without dial-back, for CGNAT/IPv6); §3.3 QUERY `?modality=` filter; §3.4 NODELIST `reachability_tier` (`direct`/`relay` — relay-tier nodes no longer hidden, ADR-047) + `input_modalities`. All additive/back-compatible. Protocol Suite MINOR bump (→ v1.10.0) is the separate maintainer-ratified release step (VERSIONING.md Current + /spec page, per check_spec_versions.py). |
+| 1.1.0 | 2026-06-11 | IICP-DIR-EXT-ATTEST optional extension — `GET /v1/compliance-attestation` signed compliance snapshot (#508); DIR-COMPLIANCE-ATTEST-01 (SHOULD) |
 
 ---
 

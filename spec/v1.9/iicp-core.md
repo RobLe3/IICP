@@ -1,6 +1,6 @@
 # IICP Core — Wire Format and Mandatory Requirements
 
-**Version**: 1.2.8
+**Version**: 1.3.0
 **Date**: 2026-06-10
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
@@ -127,7 +127,7 @@ Content-Type: `application/json`
 
 | Field | Type | Constraint |
 |-------|------|-----------|
-| `endpoint` | string (URL) | HTTPS only; MUST be validated by directory liveness check before token issued [→ DIR-REG-04] |
+| `endpoint` | string (URL) | Routable URL for the node's control plane (health probe, heartbeat, HTTP fallback transport). HTTPS MUST be used for Phase 1 deployments; http:// is accepted for Phase 3+ native-transport nodes advertising the control plane directly on port 9484 (IPv6-direct tier, where iicp-native framing provides its own integrity). MUST be validated by directory liveness check [→ DIR-REG-04]. See iicp-dir.md §3.1 for full transport/scheme matrix. |
 | `region` | string | IANA-style tag (e.g., `us-west`, `eu-central`); max 64 chars |
 | `capabilities` | array | MUST contain at least one capability object |
 | `capabilities[].intent` | string | Standard: `urn:iicp:intent:<domain>:<action>:v<N>`; Custom: `urn:iicp:intent:x.<vendor>:<action>:v<N>` — see `iicp-semantics.md §1.1` |
@@ -187,7 +187,7 @@ Content-Type: `application/json`
 | `intent` | string (URN) | MUST match a capability intent registered at the adapter |
 | `payload` | object | Intent-specific; passed through to inference backend |
 | `constraints.timeout_ms` | integer | MUST be > 0; adapter MUST abort execution if exceeded [→ TASK-4] |
-| `auth.node_token` | string | Adapter MUST validate on every request [→ TASK-1] |
+| `auth.node_token` | string | Adapter MUST validate on every request [→ TASK-1]; OR replaced by `X-IICP-Consumer-Token` header (Phase 2, see errata v1.5.2 below) |
 
 > **Errata v1.5.1 (TASK-1 scope clarified).** The adapter validates `auth.node_token` by
 > **equality against its own token** — the one the directory returned to it at registration.
@@ -202,6 +202,17 @@ Content-Type: `application/json`
 > in the repository as the successor to this errata. Until then, implementations MUST NOT
 > document or imply that any discover-result consumer can submit tasks without an
 > operator-granted credential.
+
+> **Errata v1.5.2 (TASK-1 Phase-2 consumer token, #496).** As of iicp-dir.md v1.0.0 §3.12,
+> the directory issues short-lived Ed25519-signed consumer tokens. An adapter or node
+> MUST accept the `X-IICP-Consumer-Token: <token>` request header as an **alternative** to
+> `body.auth.node_token` on `POST /v1/task`. When the header is present and valid — signature
+> verified offline against the directory's published key (`GET /api/v1/directory-key`),
+> `aud` matches own `node_id`, `intent` matches or is `"*"`, and `exp` not elapsed (10s
+> grace) — the adapter MUST authorize the request without checking `auth.node_token`.
+> Adapters that have not fetched the directory public key MUST fall back to
+> `auth.node_token` validation. This is backward-compatible: Phase-1 callers without
+> a consumer token are unaffected.
 
 **Optional fields**
 
@@ -453,7 +464,7 @@ in active use:
 
 ## 8. Security Requirements (Phase 1 minimum)
 
-- TLS 1.3 MUST be enforced on all endpoints [→ SEC-TLS-01]
+- TLS 1.3 MUST be enforced on all endpoints [→ SEC-TLS-01]. Exception: Phase 3+ nodes registering an http:// `endpoint` on port 9484 (IPv6-direct, native IICP transport tier) — such nodes SHOULD use `iicpsec://` for their `transport_endpoint` and are exempt from the HTTPS requirement only for the control-plane port-9484 listener where iicp-native framing provides its own integrity.
 - `POST /v1/register` rate limit: 10/min per IP MUST be enforced [→ DIR-RL-01]
 - `node_token`: 32+ bytes cryptographically random, stored bcrypt-hashed, returned once [→ DIR-REG-05, DIR-REG-07]
 - Adapter MUST validate `node_token` on every `POST /v1/task` [→ TASK-1]
@@ -462,7 +473,7 @@ in active use:
 - **Privacy (PA-1..PA-4)**: Implementers and operators MUST inform clients that the inference-executing node receives the full task payload in plaintext, including any user-provided content. IICP provides confidentiality for transit (TLS 1.3) and isolation of the directory from payload content; it does not provide confidentiality against the inference-executing node. [→ SEC-PRIV-01]
 - Relay nodes and directory operators MUST NOT log task payload content beyond the TTL required for rate-limiting. [→ SEC-PRIV-03]
 - Registration `node_id` MUST default to an anonymized UUID not tied to hardware or operator identity. [→ SEC-PRIV-08]
-- All IICP connections MUST use TLS 1.3 or higher with ephemeral key exchange (forward secrecy). [→ SEC-TLS-01, SEC-PRIV-09]
+- All IICP connections MUST use TLS 1.3 or higher with ephemeral key exchange (forward secrecy). [→ SEC-TLS-01, SEC-PRIV-09]. Same Phase 3+ port-9484 exception applies as above.
 - **Privacy adversary model** (PA-1..PA-4) and IICP Privacy Tier taxonomy are normative in `project/SECURITY.md §Privacy Adversary Model` and SHALL be considered when implementing any component that handles task routing or node metadata.
 
 ---
@@ -573,6 +584,8 @@ advertise it in registered `endpoint` URLs when no other port is specified.
 | 1.1.0 | 2026-05-15 | Added §11 Implicit Address Learning (DIR-ADDR-01..07) and default port 9484 |
 | 1.2.0 | 2026-05-17 | §3.1: added constraints.consensus optional field; added realtime to constraints.qos values. §3.3: Consensus Mode — majority_of_3, majority_of_5, first_completed; no_consensus 502; N× credit cost; outlier −0.15 reputation. §7: no_consensus error code; capacity_exceeded note (qos_class+retry_after_ms). Closes #120 (spec). |
 | 1.2.7 | 2026-06-06 | §7: corrected the `IICP-E034` rate-limit description — was "10/15min", reconciled to the **shipped** behavior **60 per 60s per source IP** (PHP RegisterController REGISTER_RATE_LIMIT=60 / REGISTER_RATE_TTL=60; Rust dir parity 289bc0e3). Spec-vs-shipped drift fix (ALIGN). |
+| 1.3.0 | 2026-06-10 | **#500 — http:// endpoint reconciliation:** §2.1 `endpoint` constraint updated — http:// accepted for Phase 3+ native-transport nodes on port 9484 (IPv6-direct tier); HTTPS remains MUST for Phase 1. §8 SEC-TLS-01 / SEC-PRIV-09 — Phase 3+ port-9484 exception added (`iicpsec://` SHOULD for data plane). Closes observed divergence between live directory (which already accepts http://) and Phase 1 spec language. iicp-dir.md §3.1 transport matrix remains authoritative per-field reference. |
+| 1.2.9 | 2026-06-10 | **Errata v1.5.2 (TASK-1 Phase-2 consumer token, #496):** §3.1 TASK-1 row updated — `X-IICP-Consumer-Token` header accepted as Phase-2 alternative to `auth.node_token`; full verification rules in errata note. Implementations across Python adapter, Python proxy, TypeScript client, Rust iicp-client, Rust iicp-node. iicp-dir.md §3.12 defines the issuance protocol. |
 | 1.2.8 | 2026-06-10 | **TASK-1 scope errata** (external security review, #496): §3.1 clarifies that `auth.node_token` is validated by the adapter by equality against its OWN token — an operator capability credential, NOT a mechanism for arbitrary discovered consumers (directory stores bcrypt only, no introspection). Open-mesh consumer authorization is normatively deferred to Phase 2 directory-issued offline-verifiable tokens. Implementations MUST NOT imply discover-result consumers can submit tasks without an operator-granted credential. |
 | 1.2.6 | 2026-06-06 | §7: registered `IICP-E036` (Proxy 402 — InsufficientCredits, consumer balance below computed routing cost). Resolves the credit-economy research E028 collision: E028 stays *invalid CIP field value*; InsufficientCredits is the distinct E036. See iicp-billing-extension §6/§10.1. (Header version reconciled to 1.2.6 — it trailed the changelog, which already carried 1.2.3–1.2.5.) |
 | 1.2.5 | 2026-05-21 | §7: added IICP-E033 (Proxy 503 — no nodes serve this intent, distinct from "no_available_node" runtime-failure code). Actionable next-step text included (verify intent URN / check /nodes / wait for providers). Closes WQ-030 friction #3 from iter-318 happy-path audit. |

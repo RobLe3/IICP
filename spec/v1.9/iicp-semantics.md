@@ -1,7 +1,7 @@
 # IICP Semantics — Routing, QoS, and Node Selection
 
-**Version**: 1.5.0
-**Date**: 2026-06-01
+**Version**: 1.6.0
+**Date**: 2026-06-10
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -530,6 +530,99 @@ Conformance: REP-07 (conformance-test-suite.md §13.6).
 
 ---
 
+## 12. Sybil-Resistance and Reputation Integrity
+
+This section consolidates the normative anti-sybil mitigations scattered across §11, the
+recognition spec, and the security model. It provides a single threat model, a table of
+enumerated mitigations with conformance IDs, an attack verification analysis, and an honest
+gap table covering what is **not** yet mitigated. Cross-reference: `project/SECURITY.md` §TC-9,
+`spec/iicp-recognition.md` §8.
+
+### 12.1 Threat model
+
+The reputation and discovery system faces Sybil attacks — adversaries registering multiple
+identities to farm eligibility gates, manipulate peer telemetry, or exhaust credits.
+
+| Threat ID | Description | Primary target |
+|-----------|-------------|----------------|
+| T-SYB-01 | **Mass registration**: register N nodes from one IP to multiply the reputation pool | Badge thresholds, discover priority |
+| T-SYB-02 | **Heartbeat velocity exploit**: rapid heartbeat spam to inflate self-reported reputation | Discover routing weight |
+| T-SYB-03 | **Coordinated quorum poisoning**: use sybil nodes to dominate telemetry quorum for a target | Node latency scoring |
+| T-SYB-04 | **Reporter bypass via re-registration**: create fresh nodes to evade per-reporter rate limits | Reputation audit pipeline |
+| T-SYB-05 | **Credit laundering**: self-award credits between attacker-controlled nodes | CIP settlement |
+| T-SYB-06 | **Identity laundering**: re-register after a reputation flag to start with a clean slate | Reputation continuity |
+| T-SYB-07 | **Badge farming via sybil proxies**: satisfy task-count badge thresholds using controlled proxy nodes | Gamification tiers |
+
+### 12.2 Enumerated mitigations
+
+Implementations MUST enforce all mitigations listed as MUST. SHOULD mitigations are recommended
+but directory-grade conformance is NOT broken by their absence.
+
+| Mitigation ID | Threat(s) | Rule (MUST) | Detail | Conformance |
+|---------------|-----------|-------------|--------|-------------|
+| SYB-01 | T-SYB-01 | MUST | Registration rate-limit: directory MUST reject REGISTER after 60 requests/min from the same source IP with HTTP 429 (`registration_rate_limit_exceeded`). | — |
+| SYB-02 | T-SYB-01 | MUST | New nodes start at reputation 0.5 (not 0.0 and not 1.0). | — |
+| SYB-03 | T-SYB-02 | MUST | Per-heartbeat positive delta cap: +0.10 maximum per heartbeat (RT-01, §11.2). | REP-01–03 |
+| SYB-04 | T-SYB-02 | MUST | Hourly reputation velocity ceiling: +0.20 maximum per 1-hour rolling window regardless of heartbeat frequency (RT-01b, §11.6). | REP-04 |
+| SYB-05 | T-SYB-03 | MUST | Quorum reporter independence: proxy reporters that do not satisfy age ≥ 3 days AND reputation ≥ 0.55 MUST be acknowledged but MUST NOT count toward quorum (RT-03b, §11.7). | REP-06 |
+| SYB-06 | T-SYB-04 | MUST | Per-reporter audit rate limit: ≤1 audit report per reporter per 24h per target, AND ≤2 distinct reporters per target per day counted toward score (RT-05, §11.5). | REP-03 |
+| SYB-07 | T-SYB-04 | MUST | Audit-report reporter eligibility: reporter MUST satisfy age ≥ 3 days AND reputation ≥ 0.55; ineligible reports acknowledged (HTTP 202) but MUST NOT reduce the target score (RT-05b, §11.8). | REP-07 |
+| SYB-08 | T-SYB-05 | MUST | Credit laundering rate limit: ≤1,000 credits awarded per `node_id` per hour; excess MUST be rejected with HTTP 429 (TC-9b, `project/SECURITY.md §TC-9b`). | — |
+| SYB-09 | T-SYB-06 | MUST | Identity permanence: operator `identity_uri` is pinned on first-use (ADR-034); re-registration with a different `identity_uri` creates a new zero-reputation operator; re-registration with the same `identity_uri` after a flag does NOT clear the flag (`spec/iicp-recognition.md §8` rule 5). | RECOG-AG-05 |
+| SYB-10 | T-SYB-07 | MUST | Badge task-count collusion barrier: task counts toward badge thresholds with a `≥1,000` task requirement MUST require ≥3 distinct proxy `node_id` contributors (`spec/iicp-recognition.md §8` rule 3). | RECOG-AG-03 |
+| SYB-11 | T-SYB-07 | MUST | Multi-node operator diversity isolation: same operator's multiple nodes MUST NOT multiply operator-diversity scores (Country Pioneer, Diversity Champion, Founding Cohort) (`spec/iicp-recognition.md §8` rule 1). | RECOG-AG-01 |
+
+### 12.3 Attack verification: free-registration burst with perfect self-reported metrics
+
+**Attacker profile**: single-IP operator, no existing reputation, no operator identity, goal is
+to reach discover-routing weight ≥ 0.7 on a sybil node as quickly as possible.
+
+**Step 1 — Registration burst**
+
+At 60 registrations/min (SYB-01), the attacker can register 3,600 nodes/hour from a single IP.
+Each node starts at reputation 0.5 (SYB-02). The registration burst alone does not produce
+usable nodes — no age or reputation threshold is met at `t = 0`.
+
+**Step 2 — Heartbeat inflation (perfect self-reported metrics)**
+
+The attacker sends heartbeats at maximum permitted frequency. Due to SYB-04 (RT-01b,
+MAX_HOURLY_GAIN = +0.20), the velocity ceiling is absolute regardless of heartbeat count:
+
+| Target score | Delta required | Minimum real time |
+|-------------|----------------|-------------------|
+| 0.55 (reporter eligible) | +0.05 | ~15 min |
+| 0.70 (moderate routing preference) | +0.20 | ~1 h |
+| 1.00 (maximum) | +0.50 | ~2.5 h |
+
+The per-heartbeat cap (SYB-03, RT-01) closes the trivial single-heartbeat shortcut.
+The hourly ceiling (SYB-04, RT-01b) closes the multi-heartbeat burst shortcut.
+
+**Step 3 — Quorum and audit-report influence**
+
+Reporter eligibility gates (SYB-05, SYB-07) impose a hard **3-day age requirement** before any
+sybil node's telemetry or audit reports count toward peer scoring. This gate binds before the
+reputation ceiling and cannot be bypassed by heartbeat inflation.
+
+**Verdict**: a single-IP burst registration achieves **no usable reputation influence for the
+first 3 days**, and self-reported reputation is bounded at +0.20/hour thereafter. Perfect
+self-reported metrics accelerate the journey to 1.0 but cannot defeat the age gate. The attack
+surface shrinks to the patient Sybil variant (see Gap G-03 below).
+
+### 12.4 Honest gap table
+
+The following attacks are **not fully mitigated** by the rules in §12.2. Each entry names the
+residual risk, its current partial mitigation (if any), and the intended remediation path.
+
+| Gap ID | Description | Partial mitigation | Remediation path |
+|--------|-------------|-------------------|------------------|
+| G-01 | **Unverified task metrics**: heartbeat fields (`tasks_total`, `avg_latency_ms`) are self-reported by the adapter; an attacker can fabricate high performance metrics without serving real traffic | SYB-04 velocity ceiling bounds reputation gain rate; SYB-03 per-heartbeat cap bounds single-shot inflation | CIP signed task receipts (Phase 5, #396): receipts are proxy-attested and directory-verified, replacing self-reported fields as the scoring input |
+| G-02 | **Multi-IP registration**: SYB-01 rate limit is per source IP; an operator with diverse IP space (residential proxies, large NAT pools, multiple VPSes) can register many nodes across different IPs without triggering the per-IP limit | SYB-09 identity permanence partially limits cross-node reputation laundering when operator identity is linked | Operator challenge-response liveness (#411): directory-initiated verification anchors node identity to a reachable endpoint; IPv6 GUA auto-registration (#416) further anchors to a network-visible address |
+| G-03 | **Patient Sybil**: attacker pre-registers a fleet, waits 3 days for the age gate to clear, then has a cohort of "established" reporters capable of coordinated slow-burn audit manipulation on many targets | SYB-06 global 2-reporter cap per target per day limits per-node damage per target; SYB-07 age gate prevents immediate deployment | Full mitigation requires operator identity verification (ADR-030 Tier 1+) so that a single operator cannot control ≥3 "distinct" reporter nodes anonymously |
+| G-04 | **Sybil proxy collusion for badge farming**: SYB-10 requires ≥3 distinct proxy `node_id` values, but a sybil operator controlling ≥3 proxy nodes satisfies this structurally; the rule blocks accidental self-contribution but does not block deliberate multi-node operators | SYB-11 blocks operator-diversity badge multiplication | Full mitigation requires cross-node operator identity linkage (ADR-030 + ADR-034): once operators can declare that multiple nodes share an operator identity, "distinct" can be interpreted as distinct operators rather than distinct node IDs |
+| G-05 | **Reputation laundering via deregistration + re-registration**: a node with low reputation can deregister and re-register to reset its score to 0.5; this is a net benefit when reputation drops below 0.5 | SYB-09 blocks identity laundering when `identity_uri` is linked; without operator identity, node_id churn is undetectable | Full mitigation is gated on operator identity deployment (ADR-030); until then, the age gate (SYB-05, SYB-07) ensures freshly registered nodes cannot immediately participate in quorum or audit, limiting the value of the reset |
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
@@ -540,6 +633,7 @@ Conformance: REP-07 (conformance-test-suite.md §13.6).
 | 1.3.0 | 2026-05-30 | §11.2 Per-heartbeat positive delta cap +0.10 MUST (RT-01 security fix, #375). §11.5 Peer audit-report griefing cap — per-reporter 24h rate limit + 2-reporter global cap per target per day MUST (RT-05 security fix, #379). |
 | 1.5.0 | 2026-06-01 | §11.6 Hourly reputation velocity ceiling (RT-01b, MAX_HOURLY_GAIN=+0.20, 1h rolling window, REP-04). §11.7 Quorum reporter independence (RT-03b, age≥3d + rep≥0.55 gate, REP-06). §11.8 Audit-report reporter eligibility (RT-05b, same age+rep gate, REP-07). These three bypass-prevention rules close the gaps that §11.2 (RT-01 per-heartbeat cap) and §11.5 (RT-05 griefing cap) left exploitable via re-registration or burst-register attacks. |
 | 1.4.0 | 2026-05-31 | §3.1 Phase 5 model-aware scoring weights documented (ADR-012/ADR-021 normative table — code↔spec gap #384 remaining item). Weights: availability 0.25, load 0.20, capacity 0.15, region 0.10, reputation 0.10, model_match 0.10, price_score 0.10. |
+| 1.6.0 | 2026-06-10 | §12 Sybil-Resistance and Reputation Integrity — consolidated threat model (T-SYB-01..07), enumerated mitigations table (SYB-01..11 with conformance IDs), attack verification for free-registration burst + perfect self-reported metrics, and honest gap table (G-01..05). Closes #499. |
 
 ---
 
