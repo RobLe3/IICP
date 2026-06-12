@@ -108,7 +108,7 @@ Read [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) for th
 
 ## Client SDKs
 
-Three official client SDKs (current release: **v0.7.56**, full feature parity) implement
+Three official client SDKs (current release: **v0.7.57**, full feature parity) implement
 both sides of the protocol — the consumer (discovery, routing, retry, fallback, CIP
 consumer) and the provider (`iicp-node` runtime with backend auto-detection, NAT
 escalation, relay worker/server modes, and a built-in MCP gateway). All are open-source
@@ -212,19 +212,19 @@ See [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) SEC-* test 
 
 **Phase 5 — Cooperative Inference Protocol (active)** · *last updated 2026-06-12*
 
-The [iicp.network](https://iicp.network) directory is live and continuously verified by 48 conformance probes. The **client SDKs are published at v0.7.56** (PyPI / npm / crates.io) — each includes the full `iicp-node` provider runtime, so anyone can join the mesh today (`iicp-node init` + `iicp-node serve`). Operator onboarding is open: the operator identity system (ed25519, ADR-045 delegations), heartbeat challenge-response liveness, and the founder recognition program are live in production. The first external (non-maintainer) operator joined the mesh on 2026-06-07.
+The [iicp.network](https://iicp.network) directory is live and continuously verified by 48 conformance probes. The **client SDKs are published at v0.7.57** (PyPI / npm / crates.io) — each includes the full `iicp-node` provider runtime, so anyone can join the mesh today (`iicp-node init` + `iicp-node serve`). Operator onboarding is open: the operator identity system (ed25519, ADR-045 delegations), heartbeat challenge-response liveness, and the founder recognition program are live in production. The first external (non-maintainer) operator joined the mesh on 2026-06-07.
 
 | Feature area | Status | Notes |
 |---|---|---|
 | Core protocol — register / discover / route | ✅ Live | 48 conformance probes green continuously |
 | CIP coordinator (multi-node dispatch) | ✅ Implemented | Credit receipts, response integrity verification |
 | Reputation scoring | ✅ Ratified | Tier structure (§5.1.1) + bootstrap floor (§5.1.2) ratified 2026-05-24 — normative |
-| Published SDKs (Python / TypeScript / Rust) | ✅ Published v0.7.56 | Full feature parity across all three — see [Client SDKs](#client-sdks) |
+| Published SDKs (Python / TypeScript / Rust) | ✅ Published v0.7.57 | Full feature parity across all three — see [Client SDKs](#client-sdks) |
 | Node runtime (`iicp-node`) | ✅ Published | Ships inside every SDK (`pip install iicp-client` → `iicp-node serve`) |
 | Relay transport for unreachable workers | ✅ Shipped (v0.7.56) | HTTP long-poll worker transport — browsers and CGNAT operators bind outbound to a relay-capable node; consumers route through path-scoped relay endpoints with zero client changes |
 | **Browser node** (WebGPU, zero install) | ✅ Live | [iicp.network/browser-node](https://iicp.network/browser-node) — runs a real model in the browser via WebLLM, queries the live mesh as an IICP consumer (with a wire-level connection console), and can serve into the mesh via a relay. First **directory-listed browser node** verified end-to-end on 2026-06-12 |
 | Browser-consumable nodes (CORS) | ✅ Shipped (v0.7.56) | Every node endpoint answers CORS preflights — any https-exposed node can serve web-page consumers directly |
-| Automatic NAT escalation incl. Quick Tunnel | 🟢 Python shipped | Ladder: direct → UPnP → IPv6 → relay auto-election → zero-account Cloudflare Quick Tunnel (auto setup/supervision/teardown); TypeScript + Rust ports in progress |
+| Automatic NAT escalation incl. Quick Tunnel | ✅ Shipped (v0.7.57, all 3 flavours) | Ladder: direct → UPnP → IPv6 → relay auto-election → zero-account Cloudflare Quick Tunnel (automatic setup/supervision/teardown). A node behind CGNAT becomes publicly reachable with at most one `brew install cloudflared` — no router config |
 | Signed event log + compliance attestation | ✅ Live | Every registration/heartbeat/eviction in a cryptographically signed log (federation bootstrap source); signed compliance attestation endpoint |
 | Federation (Phase 6 groundwork) | 🟢 FED-READY-1 proven | Rust replica directory bootstraps from the PHP seed via snapshot + signed event tail |
 | Operator identity (Ed25519 delegation) | 🟢 Phase A live | ADR-045 — operators sign a delegation binding their Ed25519 key to each node; the directory verifies + resolves a public `operator_display_name` in discovery. `operator_pubkey` is directory-private, never served. |
