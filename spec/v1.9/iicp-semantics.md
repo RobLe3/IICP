@@ -1,7 +1,7 @@
 # IICP Semantics — Routing, QoS, and Node Selection
 
-**Version**: 1.6.0
-**Date**: 2026-06-10
+**Version**: 1.6.1
+**Date**: 2026-06-12
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -560,7 +560,7 @@ but directory-grade conformance is NOT broken by their absence.
 
 | Mitigation ID | Threat(s) | Rule (MUST) | Detail | Conformance |
 |---------------|-----------|-------------|--------|-------------|
-| SYB-01 | T-SYB-01 | MUST | Registration rate-limit: directory MUST reject REGISTER after 60 requests/min from the same source IP with HTTP 429 (`registration_rate_limit_exceeded`). | — |
+| SYB-01 | T-SYB-01 | MUST | Registration rate-limit: directory MUST reject REGISTER after 60 requests/min from the same source IP with HTTP 429 (`IICP-E034` — see iicp-core.md §7 for error catalog). | — |
 | SYB-02 | T-SYB-01 | MUST | New nodes start at reputation 0.5 (not 0.0 and not 1.0). | — |
 | SYB-03 | T-SYB-02 | MUST | Per-heartbeat positive delta cap: +0.10 maximum per heartbeat (RT-01, §11.2). | REP-01–03 |
 | SYB-04 | T-SYB-02 | MUST | Hourly reputation velocity ceiling: +0.20 maximum per 1-hour rolling window regardless of heartbeat frequency (RT-01b, §11.6). | REP-04 |
@@ -633,6 +633,7 @@ residual risk, its current partial mitigation (if any), and the intended remedia
 | 1.3.0 | 2026-05-30 | §11.2 Per-heartbeat positive delta cap +0.10 MUST (RT-01 security fix, #375). §11.5 Peer audit-report griefing cap — per-reporter 24h rate limit + 2-reporter global cap per target per day MUST (RT-05 security fix, #379). |
 | 1.5.0 | 2026-06-01 | §11.6 Hourly reputation velocity ceiling (RT-01b, MAX_HOURLY_GAIN=+0.20, 1h rolling window, REP-04). §11.7 Quorum reporter independence (RT-03b, age≥3d + rep≥0.55 gate, REP-06). §11.8 Audit-report reporter eligibility (RT-05b, same age+rep gate, REP-07). These three bypass-prevention rules close the gaps that §11.2 (RT-01 per-heartbeat cap) and §11.5 (RT-05 griefing cap) left exploitable via re-registration or burst-register attacks. |
 | 1.4.0 | 2026-05-31 | §3.1 Phase 5 model-aware scoring weights documented (ADR-012/ADR-021 normative table — code↔spec gap #384 remaining item). Weights: availability 0.25, load 0.20, capacity 0.15, region 0.10, reputation 0.10, model_match 0.10, price_score 0.10. |
+| 1.6.1 | 2026-06-12 | SYB-01 error code corrected: `registration_rate_limit_exceeded` → `IICP-E034` (per iicp-core.md §7 error catalog; spec-vs-spec inconsistency fix). |
 | 1.6.0 | 2026-06-10 | §12 Sybil-Resistance and Reputation Integrity — consolidated threat model (T-SYB-01..07), enumerated mitigations table (SYB-01..11 with conformance IDs), attack verification for free-registration burst + perfect self-reported metrics, and honest gap table (G-01..05). Closes #499. |
 
 ---

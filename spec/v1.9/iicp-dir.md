@@ -812,7 +812,7 @@ The directory grants a small free-credit allocation to bootstrap new nodes into 
 | `rate_limited` | 429 | Registration rate limit exceeded |
 | `liveness_failed` | 422 | Endpoint did not respond to health check |
 | `validation_error` | 422 | Required field missing or invalid |
-| `IICP-E034` | 429 | Too many registration attempts from this source IP (10/15min — W-033) |
+| `IICP-E034` | 429 | Too many registration attempts from this source IP (60/min per source IP — see iicp-core.md §7) |
 | `IICP-E035` | 422 | Non-routable endpoint host (ADR-041 invariant; `RoutableEndpoint` validator, iter-1365 / #325) |
 | `IICP-E049` | 403 | Re-registration with a changed `cx_public_key` requires a valid `current_node_token` proving ownership. **Normative (MUST)**: if a re-registration request supplies a `cx_public_key` that differs from the stored value, the directory MUST verify that `current_node_token` bcrypt-matches the stored token hash. Failure → 403 IICP-E049. This gate prevents unauthenticated key-substitution attacks. (RT-6-1, #390, iter-1807) |
 
