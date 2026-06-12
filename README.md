@@ -108,8 +108,11 @@ Read [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) for th
 
 ## Client SDKs
 
-Three official client SDKs implement the consumer side of the protocol (discovery,
-routing, retry, fallback, CIP consumer). All are open-source and published:
+Three official client SDKs (current release: **v0.7.56**, full feature parity) implement
+both sides of the protocol — the consumer (discovery, routing, retry, fallback, CIP
+consumer) and the provider (`iicp-node` runtime with backend auto-detection, NAT
+escalation, relay worker/server modes, and a built-in MCP gateway). All are open-source
+and published:
 
 | Language | Install | Package registry | Source repository |
 |----------|---------|------------------|-------------------|
@@ -117,8 +120,21 @@ routing, retry, fallback, CIP consumer). All are open-source and published:
 | TypeScript | `npm install @iicp/client` | [npm: @iicp/client](https://www.npmjs.com/package/@iicp/client) | [github.com/RobLe3/iicp-client-typescript](https://github.com/RobLe3/iicp-client-typescript) |
 | Rust | `cargo add iicp-client` | [crates.io: iicp-client](https://crates.io/crates/iicp-client) | [github.com/RobLe3/iicp-client-rust](https://github.com/RobLe3/iicp-client-rust) |
 
+**No install at all?** [iicp.network/browser-node](https://iicp.network/browser-node)
+runs a real model in your browser (WebGPU) and queries the live mesh as an IICP
+consumer — with a connection console that shows every discover/dispatch wire step.
+
 The SDKs are conformant reference clients — a good starting point for understanding the
 wire format in practice. Bug reports and PRs are welcome on each repository.
+
+### Reachability: the automatic NAT ladder
+
+A provider node should become reachable without router surgery. The SDKs escalate
+automatically: **direct** endpoint → **UPnP** pinhole → **IPv6** GUA → **relay**
+auto-election from the directory (outbound bind; `transport_method=turn_relay`) →
+**Quick Tunnel** (zero-account `cloudflared`; `transport_method=external_tunnel`) —
+each rung tried only when the previous fails, each surfaced honestly in the node's
+`exposure_mode` so discovery and scoring can see how a node is reached.
 
 ---
 
@@ -194,26 +210,32 @@ See [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) SEC-* test 
 
 ## Development Status
 
-**Phase 5 — Cooperative Inference Protocol (active)**
+**Phase 5 — Cooperative Inference Protocol (active)** · *last updated 2026-06-12*
 
-The [iicp.network](https://iicp.network) directory is live and continuously verified by 45 conformance probes. The **client SDKs are published** (PyPI / npm / crates.io) — each includes the full `iicp-node` provider runtime, so anyone can join the mesh today (`iicp-node init` + `iicp-node serve`). Operator onboarding is open: the operator identity system (ed25519, ADR-045 delegations), heartbeat challenge-response liveness, and the founder recognition program are live in production.
+The [iicp.network](https://iicp.network) directory is live and continuously verified by 48 conformance probes. The **client SDKs are published at v0.7.56** (PyPI / npm / crates.io) — each includes the full `iicp-node` provider runtime, so anyone can join the mesh today (`iicp-node init` + `iicp-node serve`). Operator onboarding is open: the operator identity system (ed25519, ADR-045 delegations), heartbeat challenge-response liveness, and the founder recognition program are live in production. The first external (non-maintainer) operator joined the mesh on 2026-06-07.
 
 | Feature area | Status | Notes |
 |---|---|---|
-| Core protocol — register / discover / route | ✅ Live | 45 conformance probes green continuously |
+| Core protocol — register / discover / route | ✅ Live | 48 conformance probes green continuously |
 | CIP coordinator (multi-node dispatch) | ✅ Implemented | Credit receipts, response integrity verification |
 | Reputation scoring | ✅ Ratified | Tier structure (§5.1.1) + bootstrap floor (§5.1.2) ratified 2026-05-24 — normative |
-| Published SDKs (Python / TypeScript / Rust) | ✅ Published | [iicp-client-python](https://github.com/RobLe3/iicp-client-python) · [iicp-client-typescript](https://github.com/RobLe3/iicp-client-typescript) · [iicp-client-rust](https://github.com/RobLe3/iicp-client-rust) — see [Client SDKs](#client-sdks) |
-| Rust node runtime (`iicp-node`) | 🟡 Working (private) | Not yet publicly distributed — pending security sign-off |
+| Published SDKs (Python / TypeScript / Rust) | ✅ Published v0.7.56 | Full feature parity across all three — see [Client SDKs](#client-sdks) |
+| Node runtime (`iicp-node`) | ✅ Published | Ships inside every SDK (`pip install iicp-client` → `iicp-node serve`) |
+| Relay transport for unreachable workers | ✅ Shipped (v0.7.56) | HTTP long-poll worker transport — browsers and CGNAT operators bind outbound to a relay-capable node; consumers route through path-scoped relay endpoints with zero client changes |
+| **Browser node** (WebGPU, zero install) | ✅ Live | [iicp.network/browser-node](https://iicp.network/browser-node) — runs a real model in the browser via WebLLM, queries the live mesh as an IICP consumer (with a wire-level connection console), and can serve into the mesh via a relay. First **directory-listed browser node** verified end-to-end on 2026-06-12 |
+| Browser-consumable nodes (CORS) | ✅ Shipped (v0.7.56) | Every node endpoint answers CORS preflights — any https-exposed node can serve web-page consumers directly |
+| Automatic NAT escalation incl. Quick Tunnel | 🟢 Python shipped | Ladder: direct → UPnP → IPv6 → relay auto-election → zero-account Cloudflare Quick Tunnel (auto setup/supervision/teardown); TypeScript + Rust ports in progress |
+| Signed event log + compliance attestation | ✅ Live | Every registration/heartbeat/eviction in a cryptographically signed log (federation bootstrap source); signed compliance attestation endpoint |
+| Federation (Phase 6 groundwork) | 🟢 FED-READY-1 proven | Rust replica directory bootstraps from the PHP seed via snapshot + signed event tail |
 | Operator identity (Ed25519 delegation) | 🟢 Phase A live | ADR-045 — operators sign a delegation binding their Ed25519 key to each node; the directory verifies + resolves a public `operator_display_name` in discovery. `operator_pubkey` is directory-private, never served. |
 | Founder recognition | 🟢 Live | Time-gated founder ordinals (iicp-recognition §5.4) — #1 reserved for the maintainer, #2..N earned by genuine served nodes; dedicated non-federated signed chain |
 
-**Estimated progress toward closed beta: ~70%**
+**Estimated progress toward closed beta: ~80%**
 
-The mesh works end-to-end and the client SDKs are publicly installable. The remaining gaps before closed beta are:
-- A portable operator identity system (so node identities survive machine changes)
+The mesh works end-to-end, the SDKs are publicly installable with full three-language parity, and a browser tab can both consume the mesh and (via relay) serve into it. The remaining gaps before closed beta are:
+- A standing public relay (the transport is built and verified; one reachable host activates browser/CGNAT serving for everyone)
+- A portable operator identity wallet (so node identities survive machine changes)
 - Security and authentication hardening to production standard
-- Public release of the node runtime once the above are verified
 
 Follow this repo or [iicp.network](https://iicp.network) for announcements.
 
