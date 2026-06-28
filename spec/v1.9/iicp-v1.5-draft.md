@@ -2,11 +2,18 @@
 
 **Version**: 1.5.0-draft
 **Date**: 2026-05-15
-**Status**: draft
+**Status**: historical draft — superseded by the split Protocol Suite (`iicp-core.md`, `iicp-dir.md`, `iicp-semantics.md`, and supporting specs)
 **Issue**: #18 (S.6)
 **Authority**: Protocol Steward
 **Supersedes**: IICP_draft_1.4.2.txt
 **Relation**: iicp-core.md, iicp-semantics.md, iicp-extensions.md
+
+---
+
+> **Historical notice (2026-06-28):** This file is kept for traceability only.
+> Do not use it as current normative text. The active specification is the
+> split Protocol Suite indexed in [`README.md`](./README.md), with current
+> sub-spec versions checked by `scripts/check_spec_versions.py`.
 
 ---
 
