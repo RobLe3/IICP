@@ -16,9 +16,10 @@ Start here when you are new to the protocol. Each document builds on the previou
 | 2 | [`iicp-dir.md`](./iicp-dir.md) | Directory sub-protocol — register, heartbeat, discover, probe endpoints; node token auth; observed-IP recording. |
 | 3 | [`iicp-semantics.md`](./iicp-semantics.md) | Routing semantics, QoS, node selection, intent URN grammar (including `x.<vendor>` custom namespace). |
 | 4 | [`IICP-core-phase1-profile.md`](./IICP-core-phase1-profile.md) | Accepted Phase 1 conformance baseline — the minimal implementation contract. |
-| 5 | [`iicp-cooperative-inference.md`](./iicp-cooperative-inference.md) | CIP — multi-node cooperative inference (Phase 5). Coordinator/worker roles, HMAC receipt, credit flow, conformance levels. |
-| 6 | [`iicp-federated-directory.md`](./iicp-federated-directory.md) | Federated control plane — Genesis Seed, replica sync, Ed25519 event log (Phase 6). |
-| 7 | [`iicp-framing.md`](./iicp-framing.md) | Binary framing layer (draft) — 11-byte frame header, CBOR schemas, version negotiation, HTTP fallback. NOT YET RATIFIED. |
+| 5 | [`iicp-confidentiality.md`](./iicp-confidentiality.md) | IICP-CX — key advertisement, payload encryption, keyless-node refusal, relay opacity, and Tier-2 confidentiality targets. |
+| 6 | [`iicp-cooperative-inference.md`](./iicp-cooperative-inference.md) | CIP — multi-node cooperative inference (Phase 5). Coordinator/worker roles, HMAC receipt, credit flow, conformance levels. |
+| 7 | [`iicp-federated-directory.md`](./iicp-federated-directory.md) | Federated control plane — Genesis Seed, replica sync, Ed25519 event log (Phase 6). |
+| 8 | [`iicp-framing.md`](./iicp-framing.md) | Binary framing layer (draft) — 11-byte frame header, CBOR schemas, version negotiation, HTTP fallback. NOT YET RATIFIED. |
 
 ---
 
@@ -31,6 +32,7 @@ Start here when you are new to the protocol. Each document builds on the previou
 | [`iicp-telemetry.md`](./iicp-telemetry.md) | Telemetry trust model — proxy token auth, sybil quorum, outlier weighting | ADR-012, ADR-023 |
 | [`iicp-mcp-binding.md`](./iicp-mcp-binding.md) | IICP↔MCP protocol bridge binding | ADR-007, ADR-009 |
 | [`iicp-cbor-wire.md`](./iicp-cbor-wire.md) | CBOR wire format reference (Phase 4+) | — |
+| [`iicp-identity-slot.md`](./iicp-identity-slot.md) | Directory-anchored operator identity slot and DID binding | ADR-030, ADR-034 |
 | [`node-capability-format.md`](./node-capability-format.md) | Node capability envelope schema | ADR-007 |
 | [`iicp-recognition.md`](./iicp-recognition.md) | Operator recognition / gamification (draft skeleton — PS review pending) | ADR-030 |
 
@@ -61,6 +63,7 @@ Which ADR is authoritative for a given spec section:
 | `iicp-dir.md` | OTel trace spans | ADR-014 |
 | `iicp-dir.md` | Declarative pricing | ADR-019 |
 | `iicp-semantics.md` | Node selection, client scoring | ADR-008, ADR-024 |
+| `iicp-confidentiality.md` | Payload confidentiality and CX keys | ADR-001, ADR-003, privacy-first track (#360) |
 | `iicp-cooperative-inference.md` | CIP scoring, reputation | ADR-012, ADR-026 |
 | `iicp-cooperative-inference.md` | Credit substrate | ADR-019 |
 | `iicp-federated-directory.md` | Federated control plane | ADR-013 |

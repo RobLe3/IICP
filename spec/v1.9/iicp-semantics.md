@@ -1,7 +1,7 @@
 # IICP Semantics — Routing, QoS, and Node Selection
 
-**Version**: 1.6.1
-**Date**: 2026-06-12
+**Version**: 1.6.2
+**Date**: 2026-06-28
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -326,6 +326,35 @@ Task results are not retried at the result-delivery level. The `task_id` idempot
 guard in the adapter ensures repeated CALL requests for the same `task_id` return
 the cached result without re-executing the inference backend.
 
+### 6.4 Public reachability fallback (provider SDK → mesh)
+
+Provider SDKs MAY auto-escalate from a local or private listener to a public
+reachability method when direct routability is not verified (for example because
+the node is behind private IPv4, IPv6 without a verified pinhole, CGNAT, or a
+closed firewall). This does not weaken the directory's routability invariant:
+the directory still accepts only verified public endpoints for public discovery.
+
+Recommended provider reachability ladder:
+
+1. Operator-supplied `IICP_PUBLIC_ENDPOINT` or another verified direct public endpoint.
+2. NAT-derived direct route after evidence shows it is reachable.
+3. Accountless external tunnel temporary HTTPS endpoint.
+4. Configured or auto-elected relay.
+5. Local-only serving, or no public registration, with honest operator guidance.
+
+Accountless external-tunnel creation is a scarce shared-provider operation. SDKs
+SHOULD implement the guardrails in `iicp-dir.md §3.1`: host-wide create spacing
+(120s default), host-wide create lease (45s default), and persistent provider
+rate-limit cooldown (900s default after HTTP 429 or Cloudflare 1015-class
+evidence). A pacing, lease, or cooldown hit is a trigger to try the next safe
+reachability method; it is not permission to retry tunnel creation in a loop.
+
+If no direct route, tunnel, or relay is verified, a provider MUST NOT claim public
+reachability merely because it is listening locally. It MAY continue to serve
+local tasks and heartbeat as unavailable/local-only where the implementation
+supports that state, but public discovery SHOULD prefer route honesty over
+optimistic advertisement.
+
 ---
 
 ## 7. Circuit Breaker
@@ -445,6 +474,25 @@ positive_delta = min(max(0.0, Σ(per_task_delta)), 0.10)
 negative_delta = min(0.0, Σ(per_task_delta))
 new_score = clamp(old_score + positive_delta + negative_delta, 0.0, 1.0)
 ```
+
+**Counters are advisory (RT-01b, #525)**: any per-node task counters an
+implementation keeps for display (e.g. `completed_tasks_count`, `lifetime_jobs`)
+are derived from self-reported heartbeat metrics and are therefore **advisory** —
+they MUST NOT gate routing, tier eligibility, or recognition on their own.
+Because they are throughput tallies (not bounded [0,1] scores), they are not
+rate-capped like the score; instead an implementation SHOULD clamp the
+**per-heartbeat** success contribution to a realistic single-node throughput
+ceiling (so the tally cannot be driven toward the heartbeat validation maximum)
+while never rejecting a legitimate bursty heartbeat. Load-bearing signals MUST
+use directory-observed facts (reachability, liveness, operator verification) or
+verified economic events (below).
+
+**Receipt-derived reputation (optional profile, #525)**: a directory MAY operate
+a stronger profile in which reputation deltas are applied only from **verified
+`/credits/award` receipts** (signed, counterparty-bearing, self-query-excluded —
+see `iicp-cooperative-inference.md` §10.3) rather than from self-reported
+heartbeat metrics, which then become advisory telemetry only. Adopting this
+profile is a §6.1 (iicp-dir) capability migration, not a silent change.
 
 ### 11.3 Initial value and probation
 
@@ -627,6 +675,7 @@ residual risk, its current partial mitigation (if any), and the intended remedia
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6.2 | 2026-06-28 | §6.4 adds provider public-reachability fallback semantics for SDK 0.7.75: direct route → accountless external tunnel → relay → local-only, with tunnel pacing/cooldown treated as a fallback trigger rather than a retry loop. |
 | 1.0.0 | 2026-05-15 | Initial draft — extracted from ARCHITECTURE.md, RELIABILITY.md, and prior spec work as part of S.5 spec split |
 | 1.1.0 | 2026-05-17 | §11 Reputation Update Rules — normative delta table, latency budgets by QoS class, bounded score invariant. Closes #113. |
 | 1.2.0 | 2026-05-17 | §2.1 Added `realtime` QoS level row. §2.2 QoS Admission Control — MUST 429 capacity_exceeded with qos_class+retry_after_ms, MUST proxy node-switch. §2.3 renumbered from §2.2. Closes #119 (spec). |

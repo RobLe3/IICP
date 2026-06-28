@@ -2,10 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://iicp.network/spec/schemas/nodelist.json",
   "title": "NodeListResponse",
-  "description": "Response to GET /v1/discover. Returns nodes pre-scored and pre-sorted by the directory. See spec/iicp-dir.md §2.3 and project/ARCHITECTURE.md §Discovery.",
+  "description": "Response to GET /v1/discover. Returns nodes pre-scored and pre-sorted by the directory. See spec/iicp-dir.md §3.4 and iicp-semantics.md §3.",
   "type": "object",
   "required": ["nodes"],
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "nodes": {
       "type": "array",
@@ -13,13 +13,23 @@
       "items": {
         "$ref": "#/$defs/NodeSummary"
       }
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of nodes in this response."
+    },
+    "query_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Directory query latency in milliseconds, when reported."
     }
   },
   "$defs": {
     "NodeSummary": {
       "type": "object",
       "required": ["node_id", "endpoint", "score", "available"],
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "node_id": {
           "type": "string",
@@ -29,7 +39,7 @@
         "endpoint": {
           "type": "string",
           "format": "uri",
-          "description": "HTTPS base URL for submitting tasks to this node."
+          "description": "Routable base URL for submitting tasks to this node. HTTPS is preferred and required for browser consumers from the HTTPS website; native/node consumers may receive routable http:// endpoints where allowed by iicp-core.md §8 and iicp-dir.md §3.1."
         },
         "score": {
           "type": "number",
@@ -46,9 +56,134 @@
           "type": "boolean",
           "description": "True if node is within its availability window AND last_seen within 90 seconds."
         },
+        "cx_public_key": {
+          "description": "Canonical IICP-CX X25519 public key for encrypting task payloads to this node. Null means the node has not advertised CX support.",
+          "anyOf": [
+            { "$ref": "#/$defs/CxPublicKey" },
+            { "type": "null" }
+          ]
+        },
+        "public_key": {
+          "description": "Deprecated compatibility alias for cx_public_key during the SDK adoption window. New consumers should read cx_public_key first.",
+          "deprecated": true,
+          "anyOf": [
+            { "$ref": "#/$defs/CxPublicKey" },
+            { "type": "null" }
+          ]
+        },
+        "sdk_status": {
+          "type": "string",
+          "enum": ["current", "downlevel", "unknown"],
+          "description": "Directory-computed SDK posture against the current baseline."
+        },
+        "sdk_baseline_version": {
+          "type": "string",
+          "description": "SDK version baseline used for sdk_status."
+        },
+        "upgrade_required": {
+          "type": "boolean",
+          "description": "True when sdk_status is downlevel or unknown."
+        },
+        "key_ready": {
+          "type": "boolean",
+          "description": "True when cx_public_key is present."
+        },
+        "privacy_routing_status": {
+          "type": "string",
+          "enum": ["key_ready", "transitional"],
+          "description": "Whether the node is fully CX-ready or still transitional/plaintext-capable only."
+        },
+        "auto_update": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": ["boolean", "null"] },
+            "interval_s": { "type": ["integer", "null"], "minimum": 300 },
+            "latest_seen": { "type": ["string", "null"] },
+            "last_checked_at": { "type": ["string", "null"], "format": "date-time" },
+            "error_class": { "type": ["string", "null"] },
+            "evidence": { "type": "string", "enum": ["unknown", "self_reported"] }
+          }
+        },
         "region": {
           "type": "string",
           "description": "Region declared by the node at registration (e.g. eu-central). Optional."
+        },
+        "transport_method": {
+          "type": ["string", "null"],
+          "enum": ["direct", "upnp_mapped", "stun_hole_punch", "turn_relay", "external_tunnel", "webrtc_datachannel", null],
+          "description": "Reachability method mirrored from REGISTER. external_tunnel may be a named/operator-managed tunnel or an accountless temporary tunnel."
+        },
+        "transport_candidates": {
+          "type": ["array", "null"],
+          "items": { "type": "object", "additionalProperties": true },
+          "description": "ICE-style candidate list when advertised by the node."
+        },
+        "relay_endpoint": {
+          "type": ["string", "null"],
+          "format": "uri",
+          "description": "Relay endpoint when transport_method=turn_relay."
+        },
+        "nat_type": {
+          "type": ["string", "null"],
+          "description": "Detected NAT topology, advisory only."
+        },
+        "reachability_tier": {
+          "type": ["string", "null"],
+          "enum": ["direct", "relay", null],
+          "description": "Directory routing tier: direct when dial-back/routability evidence exists, relay when reachable through a relay surface."
+        },
+        "routing_hint": {
+          "type": ["string", "null"],
+          "description": "Directory/client-facing route preference hint, if emitted."
+        },
+        "browser_usable": {
+          "type": ["boolean", "null"],
+          "description": "True when the endpoint/relay path is usable from HTTPS browser consumers."
+        },
+        "route_evidence": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "Evidence labels supporting route usability, such as directory_observed or directory_probe."
+        },
+        "input_modalities": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "Capability input modalities accepted for this node/intent; [\"text\"] is the default."
+        },
+        "backend": {
+          "type": ["string", "null"],
+          "description": "Self-attested backend family such as ollama, lmstudio, vllm, llamacpp, anthropic or custom."
+        },
+        "health_label": {
+          "type": ["string", "null"],
+          "enum": ["healthy", "degraded", "impaired", "critical", "offline", null],
+          "description": "Directory-computed endpoint-liveness health label."
+        },
+        "exposure_mode": {
+          "type": ["string", "null"],
+          "description": "ADR-043 network exposure classification when present."
+        },
+        "public_reachable": {
+          "type": ["boolean", "null"],
+          "description": "Directory-observed public reachability flag when present."
+        },
+        "sdk_language": {
+          "type": ["string", "null"]
+        },
+        "sdk_version": {
+          "type": ["string", "null"]
+        },
+        "models": {
+          "type": ["array", "null"],
+          "items": { "type": "string" },
+          "description": "Advisory model names surfaced by the directory."
+        },
+        "quantization": {
+          "type": ["string", "null"]
+        },
+        "inference_engine": {
+          "type": ["string", "null"]
         },
         "capabilities": {
           "type": "array",
@@ -56,10 +191,11 @@
           "items": {
             "type": "object",
             "required": ["intent"],
+            "additionalProperties": true,
             "properties": {
               "intent": {
                 "type": "string",
-                "pattern": "^urn:iicp:intent:[a-z0-9_-]+:[a-z0-9_-]+:v[0-9]+$"
+                "pattern": "^urn:iicp:intent:(x\\.[a-z0-9_.-]+|[a-z0-9_-]+):[a-z0-9_-]+:v[0-9]+$"
               },
               "models": {
                 "type": "array",
@@ -68,6 +204,25 @@
             }
           }
         }
+      }
+    },
+    "CxPublicKey": {
+      "type": "object",
+      "required": ["algorithm", "encoding", "key", "key_id"],
+      "additionalProperties": true,
+      "properties": {
+        "algorithm": { "type": "string", "const": "X25519" },
+        "encoding": { "type": "string", "const": "base64url" },
+        "key": {
+          "type": "string",
+          "description": "32-byte X25519 public key, base64url-encoded without padding."
+        },
+        "key_id": { "type": "string" },
+        "not_after": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "hybrid_pq": {}
       }
     }
   },

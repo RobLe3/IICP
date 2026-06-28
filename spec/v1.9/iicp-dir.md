@@ -1,10 +1,10 @@
 # IICP-DIR — Directory Sub-Protocol Specification
 
-**Version**: 1.1.0  
-**Date**: 2026-06-10  
-**Status**: draft  
-**Issue**: #14  
-**Authority**: Protocol Steward  
+**Version**: 1.1.4
+**Date**: 2026-06-28
+**Status**: draft
+**Issue**: #14
+**Authority**: Protocol Steward
 **Relation**: ADR-009, SPEC_ANALYSIS.md GAP-1
 
 ---
@@ -67,7 +67,7 @@ Registers a node's identity, capabilities, and resource limits.
 }
 ```
 
-**Required fields**: `endpoint`, `region`, `capabilities[].intent`, `limits.max_concurrent`  
+**Required fields**: `endpoint`, `region`, `capabilities[].intent`, `limits.max_concurrent`
 **Optional**: `node_id` (directory assigns if absent), `availability`, `limits.tokens_per_min`, `transport_endpoint`, `capabilities[].input_modalities`, `operator_delegation`
 
 **`input_modalities` (v1.10.0, ADR-046 — multimodal)**: an OPTIONAL array on each capability object
@@ -136,13 +136,87 @@ When only `endpoint` is set, the directory and clients behave exactly as in v1.4
 
 | Field | Type | Meaning |
 |-------|------|---------|
-| `transport_method` | enum | `direct \| upnp_mapped \| stun_hole_punch \| turn_relay \| external_tunnel` |
+| `transport_method` | enum | `direct \| upnp_mapped \| stun_hole_punch \| turn_relay \| external_tunnel \| webrtc_datachannel` |
 | `transport_candidates[]` | array | ICE-style candidates (RFC 8445 §5.1.2.1 priority); clients pick highest-priority working candidate |
 | `transport_candidates[].type` | enum | `host \| srflx \| relay` |
 | `relay_endpoint` | string\|null | Set only when `transport_method=turn_relay` |
 | `nat_type` | string\|null | Observability only (`full_cone`, `restricted_cone`, `port_restricted`, `symmetric`, `unknown`) |
 
 Directory MUST accept registrations without these fields (back-compat with Phase 1-5 nodes). When present, the directory stores them and surfaces them in NODELIST responses.
+
+REGISTER MAY also carry the optional updater-evidence fields listed in §3.2
+(`auto_update_enabled`, `auto_update_interval_s`, `sdk_latest_seen`,
+`sdk_update_last_checked_at`, `sdk_update_error_class`). They are advisory and do
+not replace directory-computed SDK-baseline enforcement.
+
+**External tunnel operational guardrails (v1.1.4, SDK 0.7.75):**
+`transport_method=external_tunnel` covers operator-provided public tunnels
+(Cloudflare Tunnel, ngrok, or equivalent) that expose the node's HTTP transport
+as a routable HTTPS `endpoint`. The directory treats a verified external-tunnel
+endpoint like any other public endpoint: it MUST still run the normal liveness
+and routability checks, and it MUST NOT depend on vendor-specific tunnel APIs or
+vendor state.
+
+Accountless or ephemeral external tunnels are an onboarding fallback, not a
+durable production reachability guarantee. Provider SDKs SHOULD apply local
+creation back-pressure before creating such tunnels so multiple node services on
+one host do not hit provider rate limits or enter a create/crash/create loop:
+
+| Guardrail | Recommended default | Purpose |
+|-----------|---------------------|---------|
+| Host-wide create spacing | 120 seconds | Avoid repeated accountless tunnel creation by several local services. |
+| Host-wide create lease | 45 seconds | Let one local node attempt creation while peers wait or fall back. |
+| Provider rate-limit cooldown | 900 seconds after HTTP 429 or Cloudflare 1015-class rate-limit evidence | Let the provider-side limit recover before another accountless attempt. |
+
+While the spacing gate, creation lease, or provider cooldown is active, SDKs MUST
+NOT spin in a tight tunnel-create retry loop. They SHOULD use the last safe
+reachability method that is still valid (existing verified public endpoint,
+configured/named tunnel, configured or auto-elected relay), or serve local-only /
+skip public registration with honest operator guidance. SDKs MUST NOT advertise
+an unverified public `endpoint` merely because a local port is listening.
+
+Persistent production reachability SHOULD use an operator-supplied
+`IICP_PUBLIC_ENDPOINT` or a named/authenticated tunnel where available. SDKs MAY
+expose implementation-specific environment controls for the guardrails; the
+official SDKs use `IICP_TUNNEL_CREATE_MIN_INTERVAL_S`,
+`IICP_TUNNEL_CREATE_LEASE_S`, `IICP_TUNNEL_RATE_LIMIT_COOLDOWN_S`,
+`IICP_TUNNEL_CREATE_STATE_FILE`, `IICP_TUNNEL_CREATE_LOCK_FILE`, and
+`IICP_TUNNEL_RATE_LIMIT_STATE_FILE`. These names are not wire fields; equivalent
+behaviour is sufficient for conformance.
+
+**Browser WebRTC transport advertisement (draft, #523):** a browser provider MAY set
+`transport_method=webrtc_datachannel` and include a `transport_metadata.webrtc` object that
+advertises how consumers should attempt browser-native self-addressing. This is a data-plane
+transport advertisement, not a task relay through the directory. The object shape is:
+
+```json
+{
+  "transport_method": "webrtc_datachannel",
+  "transport_metadata": {
+    "webrtc": {
+      "signaling_directory": "https://iicp.network",
+      "mailbox_id": "node-id-or-opaque-handle",
+      "expires_at": "2026-06-21T14:30:00Z",
+      "ice_servers": [{"urls": ["stun:stun.l.google.com:19302"]}],
+      "datachannel_protocol": "iicp-task-v1",
+      "relay_fallback": true
+    }
+  }
+}
+```
+
+Rules:
+- `mailbox_id` MUST identify only a short-lived signaling mailbox (§3.13); it is not a
+  payload endpoint and MUST NOT authorize task execution by itself.
+- `expires_at` MUST be present and SHOULD be no more than 10 minutes after advertisement.
+  Consumers MUST treat expired handles as absent.
+- `ice_servers` MAY contain STUN entries. TURN entries are reserved for a later relay-like
+  fallback and MUST NOT be required for the first browser-WebRTC profile.
+- The DataChannel subprotocol string for task framing is `iicp-task-v1`. Task CALL/RESPONSE
+  envelopes carried on the DataChannel are the same IICP task envelopes used by HTTP/relay
+  transports; IICP-CX confidentiality rules still apply when required.
+- Clients SHOULD attempt WebRTC only while the mailbox is live; on ICE timeout/failure they
+  MAY fall back to the relay transport (§7) when the node advertises a safe relay path.
 
 **Endpoint routability invariant (`RoutableEndpoint`, iter-1365 / IICP-E035)**: in `APP_ENV in (production, staging)`, the directory MUST reject endpoints whose host is `localhost`, in `127.0.0.0/8`, `::1`, `RFC1918` ranges, `169.254.0.0/16` link-local, a reserved suffix (`.local`, `.test`, `.example`, `.invalid`, `.lan`, `.internal`), or a bare hostname without TLD. `APP_ENV in (local, testing)` bypasses this check for dev workflows. [→ ADR-041 invariant + #325]
 
@@ -191,7 +265,12 @@ heartbeat left `available = false`, hiding a live node from discover indefinitel
     "tasks_failed": 1,
     "avg_latency_ms": 320.0
   },
-  "challenge_response": "<hex HMAC-SHA256 of the prior response's challenge>"
+  "challenge_response": "<hex HMAC-SHA256 of the prior response's challenge>",
+  "auto_update_enabled": true,
+  "auto_update_interval_s": 3600,
+  "sdk_latest_seen": "0.7.75",
+  "sdk_update_last_checked_at": "2026-06-25T08:40:00Z",
+  "sdk_update_error_class": null
 }
 ```
 
@@ -212,6 +291,13 @@ The directory issues a fresh `challenge` nonce in each PONG. On the next HEARTBE
 anti-token-theft) and is recorded as a verified-liveness timestamp — established WITHOUT any dial-back,
 so it works for CGNAT/IPv6 nodes the directory cannot reach. OPTIONAL + back-compatible: absent
 `challenge_response` simply leaves liveness cryptographically-unverified. [→ DIR-HB-LIVE-01]
+
+**Updater evidence (optional, advisory)**:
+SDKs MAY include `auto_update_enabled`, `auto_update_interval_s`, `sdk_latest_seen`,
+`sdk_update_last_checked_at`, and `sdk_update_error_class` on REGISTER and HEARTBEAT.
+The directory stores these for operator/debug visibility, but MUST compute
+`sdk_status`/`upgrade_required` from the actual reported `sdk_version`, not from the
+updater's self-report.
 
 **Timing rules**:
 - Node SHOULD send every 30 seconds.
@@ -308,27 +394,32 @@ GET /v1/discover
 | `pricing.effective_until` | ISO-8601\|null | null = no expiry. |
 | `pricing.attested` | bool | `true` if `declaration_signature` was verified at last registration (ADR-019 §5.1). |
 | `cip_conformance_level` | string | One of `"CIP-None"`, `"CIP-Consumer"`, `"CIP-Provider"`, `"CIP-Full"`. `"CIP-None"` means the node has not opted into any CIP role (equivalent to not declared). Per spec §5.2. |
-| `health_label` | string\|null | ADR-044 composed health label: `"healthy"` (score ≥0.85), `"degraded"` (≥0.65), `"impaired"` (≥0.40), `"critical"` (<0.40), `"offline"`. Computed from endpoint-liveness signals only — reachability 0.70, latency 0.30 (50–500 ms curve). Reputation and task-success were removed in #492 (ADR-044 amendment) — health reflects operational liveness, not earned history. Score is a float in [0.0, 1.0] (normalised from internal 0–100 scale by v1.10.6+). `null` against directories predating v1.10.0. |
+| `health_label` | string\|null | ADR-044 composed health label: `"healthy"` (score ≥0.85), `"degraded"` (≥0.65), `"impaired"` (≥0.40), `"critical"` (<0.40), `"offline"`. Computed from endpoint-liveness signals only — reachability 0.70, latency 0.30 (50–500 ms curve). Reputation and task-success were removed in #492 (ADR-044 amendment) — health reflects operational liveness, not earned history. Score is a float in [0.0, 1.0] (normalised from internal 0–100 scale by v1.10.6+). A reachable node with no latency evidence is capped below `"healthy"` until latency evidence arrives; consumers SHOULD treat the additive `health.confidence`/`evidence_level` fields on node detail/registry profile as the proof-strength signal. `null` against directories predating v1.10.0. |
 | `exposure_mode` | string\|null | ADR-043 8-category network exposure classification (e.g. `"ipv4_public_direct"`, `"cgnat_upnp"`, `"ipv6_gua"`). `null` if node has not run qualification. |
 | `reachability_tier` | string | v1.10.0, ADR-047: `"direct"` (dial-back-verified) or `"relay"` (heartbeating with a routable surface but not directly dial-back-verified — reachable via relay; e.g. CGNAT/IPv6 where the directory has no egress). Default discover returns `direct`+`relay`; a heartbeating node is never hidden purely for lacking dial-back. Clients SHOULD prefer `direct` and fall back to `relay`. |
 | `input_modalities` | array | v1.10.0, ADR-046: union of input modalities the node's capabilities for this intent accept (`["text"]` default; `["text","image"]` for vision). Lets clients confirm multimodal support without a second round-trip; see `?modality=` (§3.3). |
 | `backend` | string\|null | Detected backend server flavor the node runs — one of `ollama`/`lmstudio`/`vllm`/`llamacpp`/`anthropic`/`custom`. Self-attested at REGISTER (the SDK auto-detects it by fingerprinting the backend's endpoints/headers); informational (operator/consumer visibility), not used for routing. `null` if unreported. Also accepted as an optional REGISTER field (§3.1). |
-| `transport_method` | string\|null | How the node is reachable for the native IICP transport (`"direct"`, `"upnp"`, `"stun"`, `"relay"`, …). Mirrors the REGISTER value (§3.1 / ADR-041). |
+| `transport_method` | string\|null | How the node is reachable for the native IICP transport (`"direct"`, `"upnp_mapped"`, `"stun_hole_punch"`, `"turn_relay"`, `"external_tunnel"`, `"webrtc_datachannel"`, …). Mirrors the REGISTER value (§3.1 / ADR-041). `external_tunnel` may be an operator-managed stable tunnel or an accountless temporary tunnel; clients treat it as an endpoint reachability shape, not as a guarantee about provider durability. |
 | `nat_type` | string\|null | Detected NAT topology (ADR-041). Advisory; clients MAY prefer `"direct"`/`"full_cone"`. |
 | `transport_metadata` | object\|null | Transport-specific detail (relay endpoint, candidate list). Shape per ADR-041; opaque to clients that only use `endpoint`. |
 | `address_family` | string\|null | `"ipv4"`, `"ipv6"`, or `"dual"` (maintainer directive 2026-05-27). Lets IPv6-only clients filter. |
 | `relay_capable` | boolean | `true` if the node can act as a relay for NAT-bound peers (Tier-3 reachability). |
-| `public_key` | object\|null | IICP-CX confidentiality key (iicp-confidentiality §3.2): `{algorithm, encoding, key, key_id, not_after, hybrid_pq}`. Present when the node advertises E2E payload encryption support. `null` = node accepts plaintext only. Clients MUST use this to encrypt payloads when `X-IICP-Require-E2E` is set. |
+| `cx_public_key` | object\|null | Canonical IICP-CX confidentiality key (iicp-confidentiality §3.2): `{algorithm, encoding, key, key_id, not_after, hybrid_pq}`. Present when the node advertises E2E payload encryption support. `null` = node accepts plaintext only. Clients MUST use this to encrypt payloads when `X-IICP-Require-E2E` is set. |
+| `public_key` | object\|null | **Deprecated compatibility alias for `cx_public_key`** in discover/NODELIST during the 2026-06-21 SDK adoption window. New normative text and new consumers SHOULD use `cx_public_key` first and treat this field only as a fallback alias to avoid confusing the CX X25519 key with gossip/DID/directory public keys. |
 | `sdk_language` / `sdk_version` | string\|null | Advisory provenance of the serving node's SDK (#338). Informational only. |
+| `sdk_status` / `sdk_baseline_version` / `upgrade_required` | string/string/boolean | Directory-computed SDK-baseline posture. `sdk_status` is `"current"`, `"downlevel"`, or `"unknown"` against the directory's current baseline. Downlevel/unknown nodes remain visible during transition but are demoted and SHOULD NOT be preferred for privacy-sensitive routing. |
+| `key_ready` / `privacy_routing_status` | boolean/string | `key_ready=true` when the node advertises canonical `cx_public_key`. `privacy_routing_status` is `"key_ready"` or `"transitional"`; transitional nodes can serve legacy/plaintext paths but MUST NOT be treated as fully CX-ready. |
+| `auto_update` | object | Optional self-reported updater evidence: `{enabled, interval_s, latest_seen, last_checked_at, error_class, evidence}`. Advisory only; the directory still computes routing/compliance from observed `sdk_version` and `cx_public_key`. |
 | `models` / `quantization` / `inference_engine` | array\|string\|null | Advisory capability detail (iicp-core §2.1). The directory MUST NOT reject unrecognized values. |
 | `operator_display_name` | string\|null | v0.10.3, #463: the operator's public `display_name`, resolved from the operator record by `operator_pubkey` for nodes bound via a verified ADR-045 delegation (§3.1). `null` when the node is not operator-bound. The `operator_pubkey` itself is directory-private and is **never** served; only the human-readable display_name appears. Surfaced in `/v1/discover` and node-detail so consumers see who operates a node. |
+| `operator_fingerprint` | string\|null | v1.1.1, #525: a short public fingerprint derived from the verified operator key, surfaced only alongside `operator_display_name`. It lets clients disambiguate look-alike names without exposing the directory-private `operator_pubkey`. `null` when the node is not operator-bound or no display name is set. |
 
 **`probation` (clarification, R3)**: `probation` is computed server-side and used to *filter* discover results (probation nodes are excluded from `?qos=interactive`/`realtime`), but the discover NODELIST does **not** include a `probation` field per node. The full `probation` boolean is surfaced only by `GET /v1/node/{id}` (node-detail). Clients needing the flag query node-detail.
 
 Only nodes with `available = true` AND `last_seen` within 90s are returned.
 Score computed per ADR-008. Nodes with score < 0.1 are excluded.
 
-**Consensus mode discovery** (Phase 5E — `constraints.consensus` ≠ `none`):  
+**Consensus mode discovery** (Phase 5E — `constraints.consensus` ≠ `none`):
 When a proxy uses consensus mode (iicp-core.md §3.3), it MUST discover N workers
 via N separate `/v1/discover` requests (or one request with `limit=N`). The proxy
 MUST filter for `cip_policy.allow_remote_inference = true` on all N selected workers.
@@ -404,8 +495,8 @@ Content-Type: application/json
 > DIR-REG-07 — and offers no introspection), so the HMAC was unverifiable as
 > specified; (2) sending `node_token` to an arbitrary peer hands the sender's
 > directory credential to a potentially malicious node. The corrected model below
-> uses the sender's ed25519 `cx_public_key` — already registered with the directory
-> and served on node detail / discover — so any receiver can verify offline, and no
+> uses the sender's Ed25519 gossip `public_key` — already registered with the directory
+> and served on node detail / peer cache — so any receiver can verify offline, and no
 > directory credential ever leaves its owner. **`node_token` MUST NOT be sent to
 > peers under any circumstances.**
 
@@ -432,14 +523,15 @@ Returns an empty `new_peers` array when the receiver has no peers unknown to the
 #### MUST requirements [→ DIR-HB-05]
 
 - `X-IICP-Signature` MUST be the hex-encoded ed25519 detached signature of the raw request
-  body bytes, produced with the secret key whose public half the sender registered as
-  `cx_public_key`. Receiver MUST verify it against the sender's `cx_public_key`, resolved
-  from the receiver's peer cache or from directory node detail (`GET /v1/node/{sender_id}`,
-  `public_key` field). Invalid or unverifiable signature → 403.
+  body bytes, produced with the secret key whose public half the sender registered as the
+  gossip signing `public_key` (stored internally as `gossip_public_key`). Receiver MUST verify
+  it against that Ed25519 gossip key, resolved from the receiver's peer cache or from directory
+  node detail (`GET /v1/node/{sender_id}`, `public_key` field). This is distinct from the
+  IICP-CX X25519 `cx_public_key`. Invalid or unverifiable signature → 403.
 - Sender MUST NOT include `Authorization: Bearer <node_token>` — the directory credential
   never travels to peers. Receiver MUST ignore any Authorization header on this endpoint
   (it carries no trust).
-- A sender without a registered `cx_public_key` cannot participate in signed gossip;
+- A sender without a registered gossip `public_key` cannot participate in signed gossip;
   receivers MUST reject unsigned requests from unknown senders → 403.
 - Receiver MUST reject replayed signatures: if the same signature value has been seen
   within the last 5 minutes → 409. [→ SEC-NONCE-01]
@@ -464,9 +556,9 @@ Upon receiving `new_peers`, the receiver SHOULD:
 
 | Code | HTTP | Meaning |
 |------|------|---------|
-| `unauthorized` | 401 | Missing or invalid `node_token` |
-| `forbidden` | 403 | Invalid HMAC signature |
-| `conflict` | 409 | Replayed HMAC nonce |
+| `unauthorized` | 401 | Missing sender identity or missing `X-IICP-Signature` |
+| `forbidden` | 403 | Invalid or unverifiable Ed25519 gossip signature |
+| `conflict` | 409 | Replayed Ed25519 signature within the replay window |
 | `validation_error` | 422 | Missing required field or stale `timestamp_ms` |
 | `rate_limited` | 429 | Gossip rate exceeded (> 1 per 30s to this peer) |
 
@@ -485,8 +577,8 @@ Upon receiving `new_peers`, the receiver SHOULD:
 
 ### 3.7 EVENT_LOG (Directory → Replica) — Phase 6
 
-**Phase**: 6 (Federated Control Plane — ADR-013)  
-**Status**: Spec draft — not implemented  
+**Phase**: 6 (Federated Control Plane — ADR-013)
+**Status**: Spec draft — not implemented
 **Normative reference**: `spec/iicp-federated-directory.md` (S.13) — full protocol spec including trust model, DID document structure, replica sync lifecycle, redirect semantics, and 8 conformance requirements (DIR-FED-01–08). This section is the wire schema reference; S.13 is the authoritative normative text.
 
 The event log enables a replica directory to maintain a consistent, cryptographically verifiable view of the Genesis Seed's state without a shared database. Replicas consume events via `GET /v1/events` and replay them on top of a periodic snapshot to reconstruct current state.
@@ -501,9 +593,10 @@ The event log enables a replica directory to maintain a consistent, cryptographi
 > Earlier drafts listed `HEARTBEAT`/`SCORE_UPDATE` in the enum; they are retired from the live set.
 
 > **`REACHABILITY_DEMOTE` / `REACHABILITY_RESTORE` (#413)** — the directory MUST emit a
-> transition event whenever a node's `public_reachable` flag flips, because that flag is the
-> single switch governing whether the node appears in default `/v1/discover` and `active_nodes`.
-> A node "vanishing" from discover is otherwise invisible in the audit trail. Emitted at the two
+> transition event whenever a node's direct `public_reachable` flag flips. That flag is one
+> route-eligibility signal, not the only discovery switch: relay-tier nodes may remain visible
+> when `reachability_tier="relay"` and route evidence supports the relay path (§3.4/§7).
+> A direct-route demotion that changes discoverability is otherwise invisible in the audit trail. Emitted at the two
 > natural edges only (transition, never per-probe, to avoid flooding; flap-bounded by the
 > never-downgrade-on-a-single-failure confirm-probe rule): `REACHABILITY_DEMOTE` when a dial-back
 > re-probe fails (directory-side liveness sweep), `REACHABILITY_RESTORE` when an active probe
@@ -665,7 +758,7 @@ Clients and proxies MUST follow `307` transparently and update their directory c
 
 ### 3.8 METRICS (iicp-node → Scraper) — Phase 4
 
-**Phase**: 4 (Rust Node Runtime)  
+**Phase**: 4 (Rust Node Runtime)
 **Status**: Implemented in `iicp-node/src/telemetry/mod.rs`
 
 The iicp-node exposes Prometheus-compatible metrics at `GET /metrics` in text exposition format (MIME: `text/plain; version=0.0.4`). This endpoint is public (no auth required) to allow Prometheus scraping.
@@ -742,11 +835,12 @@ A registered node (the *reporter*) submits a peer-divergence finding about a *ta
 | `credit_schedule.evaluation_grant` | Free-tier allocation mirror of §3.10 (5 credits / 21600s = 6h). |
 | `mesh_health` | ADR-044 node-aggregate (median over active provider nodes). `score`/`mean`/`p10` are floats in **[0.0, 1.0]** (v1.10.6+; internal computation uses 0–100 scale then normalises). `label` thresholds: `healthy` ≥0.85, `degraded` ≥0.65, `impaired` ≥0.40, `critical` <0.40. `insufficient_sample` when sample <3; `unavailable` (score 0.0) when no active nodes. |
 | `directory_health` | Directory-infrastructure signal: `0.6·discover_latency + 0.4·conformance` (the signal REACH probes feed). Distinct from `mesh_health`. |
+| `sdk_adoption` | **Adoption telemetry (#531)** for the §6.1 capability-migration framework: `total_active` (count of active nodes), `by_language` (`{rust,python,typescript,browser,unknown}` → count), `by_version` (`sdk_version` → count, descending). Self-reported provenance (advisory), but the objective input that gates adoption-thresholded hard-enforcement stages. SHOULD be exposed per DIR-MIG-01. |
 
 ### 3.9c Directory-initiated node probing (Directory internal, Phase 5)
 
-**Phase**: 5 (active reachability, #373 Phase B)  
-**Status**: Implemented — `iicp:probe-nodes` PHP command + `run_probe_nodes_loop` Rust background task  
+**Phase**: 5 (active reachability, #373 Phase B)
+**Status**: Implemented — `iicp:probe-nodes` PHP command + `run_probe_nodes_loop` Rust background task
 **Conformance ID**: DIR-PROBE-NODE-01 (conformance-test-suite.md §3.3i)
 
 Directories SHOULD actively probe the endpoint of each registered node to verify
@@ -815,16 +909,17 @@ The directory grants a small free-credit allocation to bootstrap new nodes into 
 | `IICP-E034` | 429 | Too many registration attempts from this source IP (60/min per source IP — see iicp-core.md §7) |
 | `IICP-E035` | 422 | Non-routable endpoint host (ADR-041 invariant; `RoutableEndpoint` validator, iter-1365 / #325) |
 | `IICP-E049` | 403 | Re-registration with a changed `cx_public_key` requires a valid `current_node_token` proving ownership. **Normative (MUST)**: if a re-registration request supplies a `cx_public_key` that differs from the stored value, the directory MUST verify that `current_node_token` bcrypt-matches the stored token hash. Failure → 403 IICP-E049. This gate prevents unauthenticated key-substitution attacks. (RT-6-1, #390, iter-1807) |
+| `IICP-E050` | 403 | Re-registration that changes a **routing-critical field** (`endpoint`, `transport_endpoint`, `relay_endpoint`) requires proof that the caller controls the existing `node_id`. **Normative (MUST)**: if a re-registration request changes any routing-critical field from the stored value, the directory MUST accept the change only if **either** (a) `current_node_token` bcrypt-matches the stored token hash (**ownership proof**), **or** (b) the node's previously-stored endpoint is **verified absent** — a directory liveness probe `GET {stored_endpoint}/iicp/health` fails within the registration liveness budget (**old-endpoint absence**, the legitimate-rotation path: a rotating tunnel/CGNAT node's prior URL is already dead). If neither holds (old endpoint still answers AND no valid `current_node_token`), the directory MUST reject with 403 IICP-E050. This extends the RT-6-1 ownership pattern (IICP-E049) to routing fields, preventing unauthenticated endpoint-substitution (node-traffic hijack) while preserving token-less re-registration for genuine endpoint rotation. **Hardening (E′, MUST once adoption-gated per §6.1)**: for nodes that have an `operator_pubkey` or `cx_public_key` on record (**secured nodes**), the directory MUST require path (a) — `current_node_token` — regardless of old-endpoint liveness, so a secured node cannot be hijacked by an attacker who first disables its old endpoint. (RT-6-2, #529, #522) |
 
 ### 3.12 Consumer Token Issuance (Phase 2, #496)
 
-**Phase**: 2  
+**Phase**: 2
 **Status**: Implemented (PHP directory v1.10.32, iicp-client v0.7.52)
 
 The directory acts as a trusted issuer of short-lived consumer tokens that allow a proxy
 (caller) to authenticate to a provider (adapter/node) without sharing its `node_token`.
 
-**Token format**: `<base64url_payload>.<sig_hex>`  
+**Token format**: `<base64url_payload>.<sig_hex>`
 where the payload is a JSON object and the signature is Ed25519 over
 `b"iicp:consumer-token:v1\n" + base64url_payload_bytes`.
 
@@ -879,6 +974,105 @@ The provider obtains the directory public key from `GET /api/v1/directory-key` d
 
 ---
 
+### 3.13 WebRTC Signaling Mailbox (Directory control plane, draft, #523)
+
+A browser tab cannot bind a public socket or spawn an external tunnel process. For browser
+providers, the directory MAY provide a short-lived **signaling mailbox** so a consumer and
+a browser provider can exchange WebRTC setup metadata (SDP offer/answer and ICE candidates).
+The mailbox is control-plane only. It MUST NOT carry task CALL payloads, model prompts, tool
+inputs, files, or task results. Once WebRTC establishes a DataChannel, task framing flows
+peer-to-peer over that channel.
+
+This section defines the API contract before implementation; directories MAY omit it and
+remain conformant with the base IICP-DIR profile.
+
+#### 3.13.1 Resources
+
+| Method | Path | Auth | Purpose |
+|--------|------|------|---------|
+| `POST` | `/v1/signal/mailboxes` | node token | Provider creates or refreshes its own mailbox and receives `mailbox_id`, `expires_at`, and posting/polling URLs. |
+| `POST` | `/v1/signal/mailboxes/{mailbox_id}/messages` | consumer token or node token | Sender posts one SDP/ICE signaling message addressed to the mailbox owner. |
+| `GET` | `/v1/signal/mailboxes/{mailbox_id}/messages?after=<cursor>` | node token for provider mailbox owner; consumer token/node token for caller-owned reply mailbox | Long-poll (≤25 s) for messages after the cursor. |
+| `DELETE` | `/v1/signal/mailboxes/{mailbox_id}` | mailbox owner node token | Owner explicitly closes the mailbox. |
+
+A consumer that cannot receive messages directly MAY create an ephemeral **reply mailbox** using
+the same resource model. Reply mailboxes MUST have the same or shorter TTL and MUST be scoped to
+the initiating handshake.
+
+#### 3.13.2 Message envelope
+
+```json
+{
+  "message_id": "uuid-v4",
+  "type": "offer",
+  "from": "consumer-or-node-id",
+  "to": "provider-node-id",
+  "reply_mailbox_id": "optional-opaque-id",
+  "session_id": "uuid-v4",
+  "body": {"sdp": "..."},
+  "created_at": "2026-06-21T14:00:00Z",
+  "expires_at": "2026-06-21T14:02:00Z"
+}
+```
+
+`type` MUST be one of `offer`, `answer`, `ice_candidate`, `end_of_candidates`, `close`,
+or `error`. `body` MUST contain only WebRTC signaling metadata. The directory MAY validate
+message shape and size but MUST NOT interpret SDP semantics beyond abuse controls.
+
+#### 3.13.3 TTL, size, auth and abuse controls
+
+- Mailbox TTL: REQUIRED, maximum 10 minutes; RECOMMENDED default 120 seconds. A refresh
+  requires the owner node token and MUST NOT extend a single mailbox beyond 30 minutes total.
+- Message TTL: REQUIRED, maximum 120 seconds; expired messages MUST NOT be returned.
+- Size cap: each message body MUST be capped (RECOMMENDED ≤ 64 KiB after JSON encoding);
+  oversize messages return `413 IICP-E053`.
+- Rate limits: directories MUST rate-limit mailbox creation, message posting and polling per
+  source IP, mailbox and authenticated principal. Recommended initial ceilings: 30 creates/hour
+  per node, 120 posts/minute per mailbox, and 30 concurrent long-polls per mailbox.
+- Auth: provider mailbox create/refresh/delete MUST require the provider's node token. Posting
+  to a provider mailbox MUST require either a short-lived consumer token (§3.12) or a node token;
+  anonymous public posting is non-conformant. Polling a provider mailbox MUST require its owner
+  node token.
+- Cleanup: directory implementations MUST delete expired mailboxes/messages opportunistically
+  and SHOULD run a periodic cleanup job.
+
+#### 3.13.4 Privacy, routing and fallback semantics
+
+SDP and ICE can reveal network metadata (candidate IPs, ports and user-agent/network hints).
+Clients and UI SHOULD say this plainly. Signaling metadata is still control-plane metadata;
+task payloads MUST remain off-directory. A directory that observes task content through this
+mailbox is non-conformant.
+
+WebRTC is best-effort. Consumers SHOULD attempt it only for live `webrtc_datachannel` metadata,
+SHOULD bound ICE setup time (RECOMMENDED 8–15 seconds), and MAY fall back to relay (§7) when the
+node advertises a relay path and relay trust/confidentiality policy allows it. TURN fallback is
+reserved for a later profile because it reintroduces relay trust, cost and privacy concerns.
+
+### 3.14 Operational timers profile (reference defaults)
+
+These defaults are gathered here to reduce implementation drift. A deployment MAY
+tune them, but SHOULD keep public behaviour compatible unless a sub-spec says
+otherwise.
+
+| Area | Default / range | Source / note |
+|------|-----------------|---------------|
+| Provider heartbeat interval | 30 seconds | Directory PONG `next_heartbeat_ms=30000` reference default. |
+| Directory stale-node window | 90 seconds | Nodes older than this are excluded from default discover/active-node counts unless a relay-tier policy explicitly keeps them routable. |
+| Directory node probe interval | 300 seconds | Active endpoint probe cadence (`DIR-PROBE-NODE-01`). |
+| Directory node probe timeout | 5 seconds | Probe connect/HTTP timeout. |
+| Relay long-poll maximum | ≤25 seconds | HTTP relay `pull` upper bound. |
+| Relay session liveness | 90 seconds | Bound session alive while native connection is held or HTTP-poll worker has pulled within this window. |
+| WebRTC ICE attempt | 8–15 seconds | Consumer setup bound before fallback. |
+| WebRTC mailbox default TTL | 120 seconds | Mailbox/messages are short-lived control-plane metadata. |
+| WebRTC mailbox maximum TTL | 10 minutes | Advertised handles SHOULD NOT live longer without renewal. |
+| SDK updater check interval | 3600 seconds | Current official SDK default for unattended update checks; minimum accepted value is 300 seconds. |
+| Accountless external-tunnel create spacing | 120 seconds | Host-wide SDK back-pressure default (§3.1). |
+| Accountless external-tunnel create lease | 45 seconds | Host-wide SDK serialization default (§3.1). |
+| Accountless external-tunnel provider cooldown | 900 seconds | Persistent cooldown after 429 / Cloudflare 1015-class evidence (§3.1). |
+| External-tunnel health probe interval | 30 seconds | Reference SDK tunnel monitor cadence. |
+| External-tunnel rebuild threshold | 2 failed health probes | Reference SDK treats repeated failed probes as twilight/recovery before rebuilding. |
+| External-tunnel dead retry backoff | 30–300 seconds | Reference SDK bounded retry/backoff range; supervised services may exit/restart according to `IICP_TUNNEL_DEAD_POLICY`. |
+
 ### 3.11 Supplementary routes (scope note, #384)
 
 The following routes are present in the reference implementation but **outside the
@@ -902,12 +1096,133 @@ concerns or live in a separate sub-spec:
 - node_token MUST be 32+ bytes cryptographically random. [→ DIR-REG-05]
 - node_token MUST be stored hashed (bcrypt) by the directory. [→ DIR-REG-07]
 - HEARTBEAT MUST validate node_token on every request. [→ DIR-HB-02]
-- PEER_EXCHANGE MUST validate node_token on every request. [→ DIR-HB-05, Phase 2]
-- PEER_EXCHANGE SHOULD include `X-IICP-Signature` (HMAC-SHA256) for replay protection.
+- PEER_EXCHANGE MUST NOT use or transmit node_token credentials. It MUST validate
+  `X-IICP-Signature` as an Ed25519 detached signature from the sender's registered
+  gossip public key, and MUST apply timestamp/replay checks. [→ DIR-HB-05, Phase 2]
+
+### 6.1 Capability Migration Framework (normative)
+
+This section is **normative** (RFC 2119). It governs how any behaviour change
+that affects clients is rolled out, so a security or protocol upgrade can never
+fracture the running mesh by requiring a capability before clients can provide
+it.
+
+**Core rule (MUST)**: a directory **MUST NOT require** a client capability
+before clients can provide it. Every client-affecting change MUST pass through
+five stages, in order:
+
+1. **Spec-normative** — the new rule is written here (or in the relevant
+   sub-spec) before any enforcing code ships.
+2. **Additive client capability** — clients gain the capability (a new field,
+   signature, or behaviour) in a **published, backwards-compatible** release.
+   The directory MUST accept requests both with and without it (accept-but-do-
+   not-require).
+3. **Measured adoption** — the directory measures real-world uptake via the
+   recorded `sdk_version` of active nodes (see below). Adoption is **measured,
+   not assumed**.
+4. **Soft-enforce** — the directory **uses the capability when present** but
+   MUST NOT reject a request for lacking it.
+5. **Hard-enforce** — the directory **requires** the capability. This stage
+   MUST be gated on a published **adoption threshold** (RECOMMENDED: ≥ 90% of
+   active nodes on a version that provides it, sustained ≥ 14 days), MUST
+   provide a **grace window**, and MUST reject non-compliant requests with a
+   distinct, documented upgrade error (`IICP-Exxx`, message naming the required
+   capability and minimum version).
+
+**Adoption measurement (SHOULD)**: a directory SHOULD expose the `sdk_version`
+(and `sdk_language`) distribution of active nodes (e.g. in the Public Stats
+endpoint or an operator-only endpoint) so the Stage-3 threshold can be
+evaluated objectively.
+
+**Deprecation/grace pattern (MUST for removals)**: removing or tightening an
+existing behaviour MUST follow the same ladder in reverse — announce in the
+changelog, soft-deprecate (warn, still accept), then hard-remove only after the
+adoption threshold + grace window, with a documented error.
+
+**Conformance**: a hard-enforcement change that ships without a preceding
+additive-capability release and a measured adoption gate is **non-conformant**
+with this framework. [→ DIR-MIG-01]
 
 ---
 
-## 7. Optional Extensions
+## 7. Relay Transport (normative)
+
+The relay-as-last-resort transport (ADR-041 Tier-3, #341/#450) lets a worker
+behind CGNAT/symmetric-NAT serve tasks without inbound reachability: it holds an
+**outbound** session to a `relay_capable` node, which forwards tasks to it and
+returns results. The directory advertises relay capability and reachability
+(`relay_capable`, `reachability_tier`, `transport_method=turn_relay`, §3.1/§3.4)
+and, under §7.4, mediates relay-bind authorization. The relay endpoints below
+are served by the **relay node**, not the directory.
+
+"Last resort" is a policy boundary, not an ordering mandate for every SDK
+startup path. §7 defines the relay contract once relay routing is chosen. The
+reference SDK reachability policy in §3.1/`iicp-semantics.md §6.4` may try a
+safe external tunnel before auto-electing a relay, unless tunnel fallback is
+disabled or an operator explicitly configures relay-first behaviour.
+
+### 7.1 Transports
+
+A relay MUST offer at least one of:
+- **Native TCP** (`RELAY_BIND`/`RELAY_ACK` over the IICP framing, §iicp-framing) —
+  the worker connects out and is pushed `CALL` frames.
+- **HTTP long-poll** (browser/runtime workers, #450): `POST /v1/relay/bind`,
+  `GET /v1/relay/pull` (long-poll ≤ 25 s), `POST /v1/relay/result`,
+  `POST /v1/relay/unbind`. Consumers reach the worker through the relay via the
+  path-scoped `/v1/relay-for/{worker_id}/...` prefix.
+
+### 7.2 Session liveness & non-displacement (normative)
+
+- A bound session is **alive** while the worker holds its TCP connection (native)
+  or has pulled within the liveness window (HTTP-poll, RECOMMENDED 90 s).
+- An **alive** bound `worker_id` MUST NOT be displaced by a new bind for the same
+  `worker_id` (`409`/`RELAY_ACK error`). A **dead** session MAY be displaced.
+  [→ DIR-RELAY-01, #510 interim-C]
+
+### 7.3 Session caps (normative)
+
+A relay MUST bound its concurrent sessions (RECOMMENDED default 256). A bind that
+would exceed the cap MUST be rejected (`503 IICP-E039` / `RELAY_ACK error`); a
+**rebind of an already-bound `worker_id` is exempt**. Relays SHOULD additionally
+rate-limit binds per source IP. This caps a bind-flood memory-exhaustion DoS.
+[→ DIR-RELAY-02, F5, shipped 0.7.58]
+
+### 7.4 Bind authorization — bind ticket (normative, adoption-gated per §6.1)
+
+`RELAY_BIND` is otherwise unauthenticated: an attacker who learns a `worker_id`
+could bind it when the real worker drops and intercept its tasks. To close this:
+
+- A worker MUST obtain a short-lived **bind ticket** from the directory
+  (`POST /v1/relay/ticket`, authenticated with the worker's `node_token`),
+  scoped to its `node_id`, with a short TTL and a relay-audience claim, signed by
+  the directory.
+- The worker presents the ticket in `RELAY_BIND` / `POST /v1/relay/bind`. The
+  relay MUST verify the directory signature, the audience, the TTL, and that the
+  ticket's `node_id` equals the `worker_id` being bound, before admitting the
+  session. [→ DIR-RELAY-03, F1, #510]
+- Migration: the bind ticket follows §6.1 — additive in the SDKs first, soft
+  (relay accepts ticketed and legacy binds), then hard (ticket required) once the
+  adoption threshold is met.
+
+### 7.5 Relay-path confidentiality (normative intent)
+
+A relay forwards task payloads and can therefore read them. Where confidentiality
+matters, workers and consumers SHOULD use end-to-end payload confidentiality
+(IICP-CX, `iicp-confidentiality.md`) over the relay path so the relay handles only
+ciphertext; a relay then affects **availability**, not confidentiality. Relays
+MUST NOT log plaintext task payloads. [→ DIR-RELAY-04, F3]
+
+### 7.6 Trust for auto-discovered relays (normative)
+
+A consumer or browser worker that **auto-selects** a relay from `/v1/discover`
+MUST NOT bind a relay whose `reputation_score` is below a floor (RECOMMENDED 0.1,
+i.e. actively-demoted), SHOULD prefer non-probationary, higher-reputation relays,
+and SHOULD surface the chosen relay's `node_id`/reputation to the operator (the
+relay can see forwarded tasks absent §7.5). [→ DIR-RELAY-05, F3, shipped 1.9.144]
+
+---
+
+## 8. Optional Extensions
 
 Optional extensions are directory-layer additions that conformant directories MAY implement.
 A directory that omits these extensions is fully IICP-DIR conformant (ADR-031).
@@ -936,8 +1251,8 @@ time, not via a pre-route debit call.
 `"credits_extension": true` in `GET /api/v1/stats`. Nodes SHOULD check this field before
 calling credit endpoints.
 
-Full design: `research/credit-economy/09-scalability-safety-implementation-plan.md`  
-Governing ADR: ADR-031  
+Full design: `research/credit-economy/09-scalability-safety-implementation-plan.md`
+Governing ADR: ADR-031
 Tracking: #302
 
 ---
@@ -1000,6 +1315,10 @@ Tracking: #508
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1.4 | 2026-06-28 | §3.1 documents accountless external-tunnel guardrails shipped in SDK 0.7.75: host-wide create spacing (120s), creation lease (45s), persistent provider-rate-limit cooldown (900s), and fallback to prior safe reachability methods instead of spinning or advertising unverified routes. §3.4 reconciles transport_method enum wording, §3.6/§6 remove stale peer-exchange node-token/HMAC wording, §3.14 centralizes operational timer defaults, and §3.2 refreshes the updater-evidence example to SDK 0.7.75. |
+| 1.1.3 | 2026-06-25 | §3.4 adds SDK-baseline/key-readiness demotion fields and optional `auto_update` evidence; health text now caps no-latency nodes below `"healthy"` until latency evidence exists. |
+| 1.1.2 | 2026-06-21 | §3.4 clarifies IICP-CX discovery naming after the key-alias hotfix: `cx_public_key` is the canonical CX X25519 key; `public_key` is a deprecated compatibility alias in discover/NODELIST and remains a separate Ed25519 gossip key in node-detail/peer-exchange contexts. |
+| 1.1.1 | 2026-06-21 | Draft §3.13 WebRTC signaling mailbox contract for browser self-addressing (#523): short-lived SDP/ICE control-plane mailbox, transport metadata shape (`webrtc_datachannel`), TTL/auth/size/rate-limit requirements, task-payload-off-directory invariant, and conservative relay fallback semantics. §3.4 also documents `operator_fingerprint` for display-name disambiguation (#525). |
 | 0.1.0 | 2026-05-14 | Initial draft — fills SPEC_ANALYSIS.md GAP-1; REGISTER, HEARTBEAT, QUERY, NODELIST, BOOTSTRAP, PEER_EXCHANGE message types |
 | 0.1.1 | 2026-05-15 | Added Changelog section (A6 spec cleanup) |
 | 0.2.0 | 2026-05-17 | §3.4 NODELIST: added `probation`, `completed_tasks_count`, `cip_policy` fields + QoS probation filter table (ADR-023, CIP-D1, spec §11.3) |
@@ -1007,7 +1326,7 @@ Tracking: #508
 | 0.7.0 | 2026-05-26 | §3.1 REGISTER + §3.4 NODELIST: optional `transport_endpoint` field added (`iicp://` / `iicpsec://` scheme; default port 9484). Splits control plane (`endpoint`, HTTP) from data plane (`transport_endpoint`, native binary framing per ADR-040). Directory's HTTP liveness probe targets `endpoint` only; clients SHOULD prefer `transport_endpoint` when present. Back-compat: nodes without `transport_endpoint` continue to behave exactly as v0.6.x. |
 | 0.9.4 | 2026-06-01 | §3.9c Directory-initiated node probing added (Phase 5 #373 Phase B): DIR-PROBE-NODE-01, TCP probe every 300s, SSRF-guarded, 5s timeout, results in iicp_telemetry_probes. NodeHealthService reachability uses independently observed signal when recent probe exists (observed: true). Activation requires IPv4+IPv6 egress. References conformance-test-suite.md §3.3i. |
 | 1.0.0 | 2026-06-10 | §3.12 Consumer Token Issuance added (Phase 2, #496): `GET /api/v1/directory-key` + `POST /api/v1/consumer-token` endpoints; Ed25519-signed short-lived tokens (`b64url_payload.sig_hex`, 300s TTL); `X-IICP-Consumer-Token` header accepted as alternative to `auth.node_token` on `POST /v1/task`. Implemented across PHP directory (v1.10.32), Python adapter, Python proxy, TypeScript client, Rust iicp-client, Rust iicp-node. |
-| 0.9.0 | 2026-05-30 | Code↔spec drift closeout (#384): §7 credit endpoints corrected to shipped routes (award/balance/transactions/quote — R4 fix); §3.9b Public Stats schema added (/v1/stats — server/probes/credit_schedule/mesh_health/directory_health); §3.4 NODELIST table + transport_method/nat_type/transport_metadata/address_family/relay_capable/public_key(CX object)/sdk_*/models fields; probation clarified as node-detail-only (R3); §3.7 event-type enum reconciled to snapshot+event-tail live set (R2 — HEARTBEAT/SCORE_UPDATE retired). |
+| 0.9.0 | 2026-05-30 | Code↔spec drift closeout (#384): §7 credit endpoints corrected to shipped routes (award/balance/transactions/quote — R4 fix); §3.9b Public Stats schema added (/v1/stats — server/probes/credit_schedule/mesh_health/directory_health); §3.4 NODELIST table + transport_method/nat_type/transport_metadata/address_family/relay_capable/public_key(CX object; now deprecated alias for canonical `cx_public_key`)/sdk_*/models fields; probation clarified as node-detail-only (R3); §3.7 event-type enum reconciled to snapshot+event-tail live set (R2 — HEARTBEAT/SCORE_UPDATE retired). |
 | 0.9.3 | 2026-05-31 | §3.11 Supplementary routes: scope annotations for /metrics, /v1/probe, /v1/conformance/*, /v1/badge/{tier}, /v1/replicas/register, /v1/snapshot, /_deploy/migrate (closes #384 LOW undocumented-routes items). |
 | 0.9.2 | 2026-05-31 | §3.9b mesh_health: score/mean/p10 documented as float [0.0,1.0] (v1.10.6 wire normalisation); example updated from integer 65 to float 0.65; label thresholds expressed in [0,1]; basis/window fields added. health_label thresholds in §3.4 NODELIST also corrected to [0,1] scale. |
 | 0.9.1 | 2026-05-31 | §3.5 BOOTSTRAP: documented actual response shape `{peers:[{node_id,endpoint,region,last_seen}], count}` — was incorrectly described as "same as NODELIST" (code↔spec drift R5, #384). |
@@ -1019,7 +1338,7 @@ Tracking: #508
 | 0.4.0 | 2026-05-17 | §3.4 NODELIST: added ADR-019 `pricing` block (credit_cost_multiplier, pricing_model, currency, effective_from, effective_until, attested); `cip_conformance_level` field (CIP-Consumer/Provider/Full per S.12 §5.2); `cip_policy.pricing_credits_per_1000` DEPRECATED in favor of pricing.credit_cost_multiplier. |
 | 0.10.4 | 2026-06-09 | §3.4 NODELIST `health_label`: updated formula — reachability 0.70, latency 0.30; removed task-success (0.25) and reputation (0.20). Health now reflects operational liveness only (#492 / ADR-044 amendment). New nodes with no task history score 85 ("healthy") rather than 65 ("degraded"). Shipped in PHP + Rust directories. |
 | 0.10.3 | 2026-06-07 | §3.4 NODELIST: added `operator_display_name` (#463 / ADR-045 Phase A) — the operator's public `display_name`, resolved by `operator_pubkey` for delegation-bound nodes; `null` when not operator-bound. `operator_pubkey` itself is directory-private; only display_name is served. Additive/back-compatible. |
-| 0.11.0 | 2026-06-10 | **§3.6 PEER_EXCHANGE auth model corrected** (external security review, #495): the HMAC-keyed-with-node_token + Bearer-node_token design was unverifiable (receiver never has the sender's token; directory stores bcrypt only) and leaked the directory credential to peers. Replaced with ed25519 detached signature over the raw body using the sender's registered `cx_public_key` (resolvable via peer cache or `GET /v1/node/{id}`); `node_token` MUST NOT travel to peers; Authorization header carries no trust on this endpoint. Replay rules preserved (signature-replay 409 + ±60s timestamp inside the signed body). Phase 2+ surface — no Phase 1 conformance impact; adapter gossip implementation update tracked in #495. |
+| 0.11.0 | 2026-06-10 | **§3.6 PEER_EXCHANGE auth model corrected** (external security review, #495): the HMAC-keyed-with-node_token + Bearer-node_token design was unverifiable (receiver never has the sender's token; directory stores bcrypt only) and leaked the directory credential to peers. Replaced with ed25519 detached signature over the raw body using the sender's registered gossip `public_key` (resolvable via peer cache or `GET /v1/node/{id}`); `node_token` MUST NOT travel to peers; Authorization header carries no trust on this endpoint. Replay rules preserved (signature-replay 409 + ±60s timestamp inside the signed body). Phase 2+ surface — no Phase 1 conformance impact; adapter gossip implementation update tracked in #495. |
 | 0.10.2 | 2026-06-05 | IICP-DIR-EXT-CREDITS: added `GET /v1/credits/summary` (DIR-CRED-04) — lifetime `total_earned`/`total_spent`/`balance`/`tx_count` for the authenticated node plus a `reconciles` integrity invariant (`balance == earned − spent`, MUST be `false` for a tampered/inconsistent ledger). Additive/back-compatible; powers the `iicp-node credits` command (#456). Shipped in PHP + Rust directories (parity #385). |
 | 0.10.1 | 2026-06-03 | §3.2 HEARTBEAT: documented dormant-node auto-restore — a heartbeat from a previously-dormant node MUST set `status=active`, clear `dormant_since`, and default `available=true` unless the body carries `available:false` (corrects a directory regression where a resumed heartbeat left `available=false`, hiding a live node from discover forever; dir v1.10.17). §3.4/§3.7 event log: added `REACHABILITY_DEMOTE` / `REACHABILITY_RESTORE` to the live federated event-type set with payload schema (#413 — the `public_reachable` transition that makes a node vanish from discover is now in the signed, federatable audit trail; emitted transition-only at the demote/promote edges). Both additive/back-compatible. |
 | 0.10.0 | 2026-06-03 | Four shipped additions (dir v1.10.14): §3.1 REGISTER `capabilities[].input_modalities` (ADR-046 vision/multimodal — `["text"]` default; image-in is a chat modality, not a new intent) + optional `operator_delegation` ed25519 token (ADR-045 Phase A — offline-verified operator→node binding, `did_key`/`did_web` trust tiers); §3.2 HEARTBEAT challenge-response (ADR-047 Part A — `challenge` nonce in PONG, `challenge_response`=HMAC-SHA256(node_hmac_key,nonce) — cryptographic liveness without dial-back, for CGNAT/IPv6); §3.3 QUERY `?modality=` filter; §3.4 NODELIST `reachability_tier` (`direct`/`relay` — relay-tier nodes no longer hidden, ADR-047) + `input_modalities`. All additive/back-compatible. Protocol Suite MINOR bump (→ v1.10.0) is the separate maintainer-ratified release step (VERSIONING.md Current + /spec page, per check_spec_versions.py). |

@@ -1,10 +1,10 @@
 # IICP Conformance Test Suite
 
-**Version**: 4.44.0  
-**Date**: 2026-06-09  
-**Status**: draft  
-**Issue**: #22  
-**Authority**: Protocol Steward + Integration Validator  
+**Version**: 4.45.0
+**Date**: 2026-06-28
+**Status**: draft
+**Issue**: #22
+**Authority**: Protocol Steward + Integration Validator
 **Relation**: IICP-core-phase1-profile.md, IICP-DIR §3, ADR-008
 
 ---
@@ -70,7 +70,7 @@ docker compose up -d   # brings up directory + adapter + database
 | `DIR-HB-02` | `POST /v1/heartbeat` with invalid token → 401 | Body contains `error.code = "unauthorized"` | `probe_dir_hb_02` |
 | `DIR-HB-03` | `POST /v1/heartbeat` for unknown node_id → 404 | Body contains `error.code = "not_found"` | — (requires unknown node) |
 | `DIR-HB-04` | Node not seen for > 90s excluded from discover | Poll discover after 90s silence | — (90s timing test) |
-| `DIR-HB-05` | `POST /v1/peers` (PEER_EXCHANGE) with invalid token → 401 | `@phase2` — not required for Phase 1 conformance | → DIR-PEER-01 |
+| `DIR-HB-05` | `POST /v1/peers` (PEER_EXCHANGE) without a valid Ed25519 gossip signature → 401/403 | `@phase2` — not required for Phase 1 conformance | → DIR-PEER-01 |
 
 ### 3.3 Discovery (MUST)
 
@@ -94,7 +94,7 @@ docker compose up -d   # brings up directory + adapter + database
 |---------|-------------|---------|-------------|
 | `DIR-BS-01` | `GET /v1/bootstrap` → 200 with `peers[]` array | Body contains `peers` key (may be empty if no known peers) | `probe_dir_bs_01` |
 | `DIR-BS-02` | All bootstrap peers have `last_seen` within the 90s staleness window | Stale peers must not appear in bootstrap response | `probe_dir_bs_02` |
-| `DIR-PEER-01` | `POST /v1/peers` with no auth → 401 | HMAC-based peer exchange requires node token | `probe_dir_peer_01` |
+| `DIR-PEER-01` | `POST /v1/peers` with no `X-IICP-Signature` / sender identity → 401 | Peer exchange uses Ed25519 gossip signatures; node_token MUST NOT be sent to peers | `probe_dir_peer_01` |
 
 ### 3.3c Credit Endpoints Auth Boundary (Phase 3 — MUST)
 
@@ -176,6 +176,20 @@ network). After VPS: at least one `passed=true` row expected within 10 minutes.
 |---------|-------------|---------|-------------|
 | `DIR-PROBE-NODE-01` | Directory records probed nodes in `iicp_telemetry_probes` with `test_id='DIR-PROBE-NODE-01'` | Probe row exists for at least one registered node within 10 min of registration | Unit tests: `ProbeNodesCommandTest` (PHP), `run_probe_nodes_loop` (Rust). REACH probe: post-VPS only (not yet live — requires `IICP_REACH_NODE_PROBE=true` env flag). |
 
+### 3.3j WebRTC Signaling Mailbox (draft, SHOULD, #523)
+
+These tests apply only to directories that implement the optional WebRTC signaling mailbox
+from `iicp-dir.md §3.13`. The mailbox carries SDP/ICE control-plane metadata only; task
+payloads MUST remain off-directory.
+
+| Test ID | Requirement | Expected | Implementation |
+|---------|-------------|---------|----------------|
+| `DIR-SIGNAL-01` | Provider mailbox create requires node-token auth | Missing/invalid auth returns 401; valid owner token returns `mailbox_id` + `expires_at` | Future PHP/Rust directory tests |
+| `DIR-SIGNAL-02` | Message size and type are bounded | Oversize message returns `413 IICP-E053`; unknown `type` returns 422 | Future PHP/Rust directory tests |
+| `DIR-SIGNAL-03` | Expired mailboxes/messages are not returned | Poll after TTL returns empty/404; cleanup removes expired records | Future PHP/Rust directory tests |
+| `DIR-SIGNAL-04` | Mailbox never accepts task payload message types | `CALL`, `RESPONSE`, prompt/file/tool payload fields are rejected with 422 | Future PHP/Rust directory tests |
+| `DIR-SIGNAL-05` | Discover metadata for `webrtc_datachannel` includes live `mailbox_id`, `expires_at`, and `datachannel_protocol` | Consumers can decide whether to attempt WebRTC without a second metadata fetch | Future discover contract tests |
+
 ### 3.4 Rate Limiting (MUST)
 
 | Test ID | Requirement | Expected |
@@ -191,12 +205,12 @@ network). After VPS: at least one `passed=true` row expected within 10 minutes.
 
 ### 3.5b Per-Node Health Vector (ADR-044 / #492 — SHOULD)
 
-`GET /api/v1/node/{id}` MUST include a `health` block reflecting endpoint liveness. Per ADR-044 amendment (#492) the formula is liveness-only: W_REACHABILITY=0.70, W_LATENCY=0.30. Reputation and task-success are intentionally absent — health is not earned, it is observed.
+`GET /api/v1/node/{id}` MUST include a `health` block reflecting endpoint liveness. Per ADR-044 amendment (#492) the formula is liveness-only: W_REACHABILITY=0.70, W_LATENCY=0.30. Reputation and task-success are intentionally absent — health is not earned, it is observed. Additive v2 evidence fields (`confidence`, `evidence_level`, `latency_ms_basis`) clarify whether a healthy-looking score is independently measured or merely reachable but not yet performance-measured.
 
 | Test ID | Requirement | Expected | Implementation |
 |---------|-------------|---------|----------------|
-| `DIR-NODE-HEALTH-01` | Node-detail `health` block present with `score`, `label`, `observed`, `components`, `evaluated_at` | All 5 keys present; `score ∈ [0,100]` int; `label ∈ {healthy,degraded,impaired,critical,offline}` | PHP: `NodeDetailHealthTest::test_node_detail_includes_health_block`; Rust: `health.rs::score_node_all_perfect` |
-| `DIR-NODE-HEALTH-02` | Health components MUST be `{liveness, reachability, latency}` only — no `success_rate` or `reputation` (#492) | `components` object has exactly those 3 keys | PHP: `NodeDetailHealthTest::test_node_detail_includes_health_block` assertJsonStructure; Rust: `health.rs::components_match_score` |
+| `DIR-NODE-HEALTH-01` | Node-detail `health` block present with `score`, `label`, `observed`, `confidence`, `evidence_level`, `latency_ms_basis`, `components`, `evaluated_at` | Required legacy keys plus additive evidence keys present; `score ∈ [0,100]` int; `label ∈ {healthy,degraded,impaired,critical,offline}` | PHP: `NodeDetailHealthTest::test_node_detail_includes_health_block`; Rust: `health.rs::score_node_all_perfect` |
+| `DIR-NODE-HEALTH-02` | Health components MUST include `{liveness, reachability, latency}` and MUST NOT include old `success_rate` or `reputation` (#492) | Additive components such as `uptime`, `stability`, `freshness` are allowed; no reputation/task-success health inputs | PHP: `NodeDetailHealthTest::test_node_detail_includes_health_block` assertJsonStructure; Rust: `health.rs::components_match_score` |
 | `DIR-NODE-HEALTH-03` | New reachable node with no task history MUST show `label = "healthy"` (score ≥85) | `health.label = "healthy"` — old formula would yield 65 ("degraded") | PHP: `NodeDetailHealthTest::test_new_reachable_node_with_no_task_history_shows_healthy`; Rust: `health.rs::new_reachable_node_with_no_task_history_is_healthy` |
 | `DIR-NODE-HEALTH-04` | Offline node (heartbeat > 90s) MUST return `label = "offline"`, `score = 0` | `health.score = 0`, `health.label = "offline"` | PHP: `NodeDetailHealthTest::test_offline_node_detail_reports_offline_health` |
 
@@ -323,7 +337,7 @@ runtime (transient network or node issue).
 | `SEC-AUTH-01` | Task endpoint rejects missing auth → 401 | `error.code = "unauthorized"` | `adapter/tests/test_task.py::test_task_rejects_missing_token` |
 | `SEC-AUTH-02` | Task endpoint rejects wrong token → 401 | Constant-time comparison (verified by code review) | `adapter/tests/test_task.py::test_task_rejects_invalid_token` |
 | `SEC-TLS-01` | All directory connections over TLS 1.3 | Verified via `openssl s_client` in production | `reach/src/reach/probes/directory_conformance.py::probe_tls_version` |
-| `SEC-NONCE-01` | Duplicate HMAC signature on peers endpoint → 429 | Replay detected and rejected (implementation: `StatusCode::TOO_MANY_REQUESTS`) | `adapter/tests/test_nonce_replay.py::test_duplicate_nonce_rejected` |
+| `SEC-NONCE-01` | Duplicate Ed25519 gossip signature on peers endpoint → 409 | Replay detected and rejected within the peer replay window | `adapter/tests/test_nonce_replay.py::test_duplicate_nonce_rejected` |
 | `SEC-LEAK-01` | No stack trace in any error response | Automated scan: `grep -r "Traceback\|at line"` | `reach/src/reach/probes/directory_conformance.py::probe_no_stack_trace` |
 | `SEC-LEAK-02` | No internal file paths in any response body | Automated scan: `grep -r "/home/\|/Users/"` | `reach/src/reach/probes/directory_conformance.py::probe_no_path_leak` |
 | `SEC-RN-01` | Rust node rejects empty `auth.node_token` → 401 | Validates `validate_token` never enters open-mode | `iicp-node/tests/` (Rust integration tests) |
@@ -380,6 +394,8 @@ Run with the SDK test harness: `iicp-conformance-sdk --sdk python --directory ht
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.45.0 | 2026-06-28 | §10.4 adds SDK-NODE-03..05 for SDK 0.7.75 external-tunnel guardrails: persistent provider-rate-limit cooldown, host-wide creation pacing/lease, and fallback to safe reachability methods rather than tunnel-create loops or unverified endpoint advertisement. §3.2/§3.3b/§7 reconcile peer-exchange conformance rows with Ed25519 gossip signatures instead of node-token/HMAC auth. |
+| 4.44.0 | 2026-06-21 | §3.3j DIR-SIGNAL-01..05 draft SHOULD tests added for optional WebRTC signaling mailbox (#523): auth, TTL/cleanup, size/type caps, no task payloads, and discover metadata shape. |
 | 4.42.0 | 2026-06-01 | §3.3i DIR-PROBE-NODE-01 added: active per-node reachability probing (#373 Phase B). Directory autonomously probes registered node endpoints (TCP/HTTP, SSRF-guarded, 5s timeout, 5-min interval). Records `test_id='DIR-PROBE-NODE-01'` in iicp_telemetry_probes. NodeHealthService uses independently observed signal when recent probe exists. PHP: `ProbeNodesCommandTest` 7 tests; Rust: `run_probe_nodes_loop`. REACH probe: post-VPS only (IICP_REACH_NODE_PROBE flag). |
 | 4.41.0 | 2026-06-01 | §13.6 REP-04..07 added: security hardening bypass mitigations (#380-383, 2026-06-01). REP-04: per-node hourly velocity ceiling (RT-01b, MAX_HOURLY_GAIN=0.20). REP-05: IP-level free credit gate (RT-02b). REP-06: Sybil quorum reporter independence — min age 3d + rep ≥0.55 (RT-03b). REP-07: audit-report reporter eligibility — same age+reputation gate (RT-05b). Tests added to CreditHarvestRegressionTest, ReputationServiceTest, ProxyTelemetryTest, AuditReportTest. |
 | 4.40.0 | 2026-05-31 | §3.3d DIR-CIP-03: valid `reputation_tier` set updated to include `"bronze"` (CIP spec v0.6.9, 2026-05-30 reconciliation). `bronze` is the floor tier for all sub-Silver nodes; `none` retained transitionally. Probe `valid_tiers` updated; PHP NodeScorer `none`→`bronze` for `score < 0.40`; Rust `tier_from_score` floor updated. REACH unit test updated (bronze PASS, `"probation"` used as the invalid-tier test case). |
@@ -422,6 +438,9 @@ Run with the SDK test harness: `iicp-conformance-sdk --sdk python --directory ht
 |---------|-------------|---------|
 | `SDK-NODE-01` | `node.start()` auto-registers with directory and sends first heartbeat within 35s | ADR-016 §2 |
 | `SDK-NODE-02` | `node.on_task(handler)` receives `TaskRequest` + `TaskContext`; result returned to directory | ADR-016 §2 |
+| `SDK-NODE-03` | Provider SDK persists accountless external-tunnel rate-limit cooldown across process restarts and refuses immediate tunnel recreation while cooldown is active | iicp-dir §3.1; iicp-semantics §6.4 |
+| `SDK-NODE-04` | Provider SDK paces and serializes accountless external-tunnel creation across local services on the same host | iicp-dir §3.1 |
+| `SDK-NODE-05` | Provider SDK falls back to the next safe reachability method instead of spinning on tunnel creation or advertising an unverified public route | iicp-semantics §6.4 |
 
 ---
 
@@ -507,8 +526,8 @@ When proxies/SDKs receive node state from multiple sources within the same query
 |---------|-------------|---------|--------------|
 | `DIR-FED-TRUST-01` | Proxy MUST resolve conflicting node-state across seed/replica/gossip per §3.2 strict precedence; field-level (not row-level) | S.13 §3.2 + §8 DIR-FED-TRUST-01 | `proxy/tests/test_trust_resolver.py` — 14 unit tests cover rule 1 (seed beats replica per-field), rule 2 (newer seq + tier tiebreaker), rule 3 (gossip suggestion-only, gossip-only node included), rule 4 (field-level mix, multiple replicas pick winner only). Live: `probe_dir_fed_trust_01` (`reach/src/reach/probes/directory_conformance.py`) — INFO-skip until IICP_REACH_REPLICA_URL set; activates once P6-X.1 deploys a replica. |
 
-**Phase**: 5 (pending ADR-012 Accepted status)  
-**Status**: IDs reserved; implementation deferred until Phase 4 Milestone 1 gate is closed.  
+**Phase**: 5 (pending ADR-012 Accepted status)
+**Status**: IDs reserved; implementation deferred until Phase 4 Milestone 1 gate is closed.
 **Test mark**: `@pytest.mark.phase5` — skipped in Phase 1–4 conformance runs.
 
 ### 12.1 Coordinator Behavior (MUST)
@@ -799,9 +818,9 @@ multi-node Docker Compose stack or live production.
 
 ## 15. Operator Recognition Conformance Tests (Phase 5D — spec/iicp-recognition.md)
 
-**Status**: Phase 5D — deferred until G1 (ADR-030 Accepted) + G6 (spec v1.0 + PS ratification).  
-**Spec**: `spec/iicp-recognition.md` v0.1.0-draft.  
-**Tracking**: #309 (spec), #310 (implementation tracker).  
+**Status**: Phase 5D — deferred until G1 (ADR-030 Accepted) + G6 (spec v1.0 + PS ratification).
+**Spec**: `spec/iicp-recognition.md` v0.1.0-draft.
+**Tracking**: #309 (spec), #310 (implementation tracker).
 **REACH probes**: `reach/src/reach/probes/recognition_conformance.py` (not yet created — pending G1+G6).
 
 These test IDs are registered from `spec/iicp-recognition.md §10` for traceability. Implementation and REACH probes activate after ADR-030 Accepted + spec at v1.0.
@@ -872,6 +891,7 @@ These test IDs are registered from `spec/iicp-recognition.md §10` for traceabil
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.45.0 | 2026-06-28 | §10.4 adds SDK-NODE-03..05 for SDK 0.7.75 external-tunnel guardrails: persistent provider-rate-limit cooldown, host-wide creation pacing/lease, and fallback to safe reachability methods rather than tunnel-create loops or unverified endpoint advertisement. §3.2/§3.3b/§7 reconcile peer-exchange conformance rows with Ed25519 gossip signatures instead of node-token/HMAC auth. |
 | 4.44.0 | 2026-06-09 | §3.5b Per-Node Health Vector (ADR-044 / #492): DIR-NODE-HEALTH-01..04 registered. Formula W_REACHABILITY=0.70 + W_LATENCY=0.30; success_rate + reputation absent. Key test: DIR-NODE-HEALTH-03 — new reachable node with no task history MUST score ≥85 ("healthy"). PHP: `NodeDetailHealthTest` (3 tests); Rust: `health.rs` (27 tests including `new_reachable_node_with_no_task_history_is_healthy`). |
 | 4.43.0 | 2026-06-06 | §15.8 Founder ordinals — register RECOG-FND-01..06 (claimed registered in iicp-recognition §10 but absent here). Reconciled to the shipped #310 detector + iicp-recognition v0.6.0 (operator_pubkey keying, genuine-served-node gate, #1 reserved/gate-exempt, GENESIS_MS, founder events on a dedicated non-federated chain). SPEC_UPDATE_PLAN Unit A tail. |
 | 4.35.0 | 2026-05-24 | §15 Operator Recognition Conformance Tests added: 14 RECOG-* test IDs (RECOG-PROF-01/02, RECOG-LEAD-01, RECOG-BADG-01, RECOG-SEAS-01/02, RECOG-VIS-01, RECOG-HAN-01, RECOG-PRIV-01, RECOG-RANK-01/02, RECOG-ANTI-01/02, RECOG-OPT-01). Phase 5D deferred — pending G1 (ADR-030 Accepted) + G6 (spec v1.0 PS ratification). Sourced from `spec/iicp-recognition.md §10`. Closes spec traceability gap in #309. |
@@ -959,7 +979,7 @@ These test IDs are registered from `spec/iicp-recognition.md §10` for traceabil
 **Protocol Steward**: Suite covers IICP-DIR §3, ADR-008, and Phase 1 conformance
 profile. All MUST tests are verifiable against the current Docker Compose stack.
 40/40 Phase 1 spec IDs + 8 observability MUST IDs labeled (v0.5.0).
-Closes GitHub issue #22 (draft). ✓  
+Closes GitHub issue #22 (draft). ✓
 **Integration Validator**: Test IDs mapped to integration test files in
 `tests/integration/`. All existing tests updated to carry `@conformance` mark.
 v0.4.0: 40/40 spec IDs verified. v0.5.0: METRICS-01..05 verified in unit tests

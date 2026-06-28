@@ -1,7 +1,7 @@
 # IICP Core — Wire Format and Mandatory Requirements
 
-**Version**: 1.3.0
-**Date**: 2026-06-10
+**Version**: 1.3.1
+**Date**: 2026-06-28
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -214,6 +214,15 @@ Content-Type: `application/json`
 > `auth.node_token` validation. This is backward-compatible: Phase-1 callers without
 > a consumer token are unaffected.
 
+> **Per-origin rate-limit (SHOULD, #524 / F4).** Because nodes answer CORS
+> preflights for any origin (so browser consumers can reach them), a malicious
+> web page could script a visitor's browser into a high-volume `POST /v1/task`
+> proxy (confused-deputy / SSRF-via-visitor). A node SHOULD rate-limit
+> `POST /v1/task` per request `Origin` (and per source IP for non-browser
+> callers), returning `429` when exceeded. This caps unconsented proxy abuse
+> while preserving open-mesh task dispatch; it is policy hardening, not an
+> authorization change.
+
 **Optional fields**
 
 | Field | Type | Notes |
@@ -403,7 +412,18 @@ abandoned; it was phased. All implementations SHOULD register on port 9484 to bu
 network effect needed for standardisation.
 
 All components MUST validate TLS certificates on outbound connections.
-Plaintext HTTP connections to IICP endpoints MUST be rejected.
+
+**Endpoint scheme matrix (reconciled with IICP-DIR v1.1.4):**
+
+| Surface | Scheme rule |
+|---------|-------------|
+| Directory control plane (`/v1/register`, `/v1/discover`, `/v1/heartbeat`, etc.) | HTTPS/TLS 1.3 MUST. |
+| Node task/control endpoint advertised as `endpoint` | HTTPS is preferred. Routable `http://` MAY be accepted for native/node consumers only when the directory's liveness and routability checks pass and the deployment profile permits it (see iicp-dir.md §3.1). |
+| Browser consumers from `https://iicp.network` | HTTPS, browser-safe relay, or WebRTC path only; a public `http://` node endpoint is not browser-usable from the HTTPS site because browsers block mixed active content. |
+| Native data plane | `iicp://` or `iicpsec://` per `transport_endpoint`; `iicpsec://` SHOULD be preferred where available. |
+
+Plaintext HTTP to the directory MUST be rejected. Plaintext HTTP node endpoints
+are route evidence, not browser usability or confidentiality evidence.
 
 ---
 
@@ -580,6 +600,7 @@ advertise it in registered `endpoint` URLs when no other port is specified.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3.1 | 2026-06-28 | §8 replaces the stale blanket "plaintext HTTP rejected" wording with an endpoint scheme matrix: directory control plane is HTTPS/TLS-only; node task endpoints may be routable `http://` for native consumers where IICP-DIR permits and probes them; browser consumers require HTTPS/relay/WebRTC-safe paths; native data plane uses `iicp://`/`iicpsec://`. |
 | 1.0.0 | 2026-05-15 | Initial draft — extracted from IICP_draft_1.4.2.txt and IICP-core-phase1-profile.md as part of S.5 spec split |
 | 1.1.0 | 2026-05-15 | Added §11 Implicit Address Learning (DIR-ADDR-01..07) and default port 9484 |
 | 1.2.0 | 2026-05-17 | §3.1: added constraints.consensus optional field; added realtime to constraints.qos values. §3.3: Consensus Mode — majority_of_3, majority_of_5, first_completed; no_consensus 502; N× credit cost; outlier −0.15 reputation. §7: no_consensus error code; capacity_exceeded note (qos_class+retry_after_ms). Closes #120 (spec). |
