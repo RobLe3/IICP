@@ -2,11 +2,22 @@
 
 **Maintained by**: RESA loop (`project/resa-loop-prompt.md`), SPEC loop, and FORGE-5 ADOPTION sub-loop  
 **State file**: `project/RESA_STATE.json` (RESA tracks); WORK_QUEUE.json (ADOPTION-driven tracks)  
-**Last updated**: 2026-05-21 (FORGE-5 iter-370 — inbound-adapters track added)
+**Last updated**: 2026-06-29 (operational evidence checkpoint added)
 
 > **Simulation-vs-live status (updated iter93)**: REP findings (F1–F16) and R1–R7 design findings derive from discrete-event simulation (Python harness, bounded network sizes 100–10,000). RS6 Phase 2 (iter93) added actual Ollama inference validation (phi3:mini vs qwen2.5:0.5b, 90 calls) — the quality-feedback loop is now partially cross-validated against real inference. Treat REP equilibrium findings as directional until REP6 full pilot completes. R4/R5/R6 routing findings are validated at simulation scale; real-pool behaviour to be confirmed by RS6 Phase 3.
 
 > **ADOPTION research status (added iter-301, 2026-05-21)**: GAMIFICATION + COMMUNITY-PLATFORM research tracks added to address ADOPTION binding constraint (W-016 / FC-001 — no confirmed external operators, D7 score corrected from 91 to ~60). These tracks are FORGE-5 ADOPTION sub-loop deliverables, distinct from RESA simulation tracks. Both research tracks have completed all design deliverables (5/5 each); implementation gated on #260 public-launch + ADR-030 operator identity layer.
+
+> **Operational evidence checkpoint (2026-06-29)**: the reference implementation
+> now distinguishes live observation, controlled validation, simulation and
+> future research in public claims. Current live evidence shows discovery,
+> best-effort routing, reputation observation gates, relay-capable nodes and
+> keyed payload encryption where nodes publish keys. Remaining claims are still
+> gated by incomplete live key coverage, stable production relay infrastructure,
+> signed IPv6 reachability evidence, verified reputation receipts,
+> browser/WebRTC signaling design, and Phase 6 security readiness. The public
+> summary lives at <https://iicp.network/research>; spec wording is captured in
+> `spec/v1.9/validation-methodology.md` §7.
 
 This document consolidates all research outcomes, datasets, test cases, and design
 insights across the active research tracks. It is the primary reference for
@@ -24,6 +35,7 @@ spec writers, ADR authors, and implementation teams.
 | **GAMIFICATION** — Operator Recognition (Nerd Legacy) | #267, #269 (ADR-030) | **Research COMPLETE 5/5** (iter-294..300) | Awaiting PS review + #260 public-launch gate + ADR-030 Accepted before implementation |
 | **COMMUNITY-PLATFORM** — Forum / BBS choice | #268 | **Research COMPLETE 5/5** (iter-301) | Lemmy recommended; awaiting maintainer sign-off |
 | **INBOUND-ADAPTERS** — LLM API compat layer | #273 | **Research COMPLETE 1/1** (iter-370) | Priority matrix done: Ollama-compat Phase A, Anthropic-compat Phase B; implementation issues to be filed |
+| **OPER-EVIDENCE** — live implementation evidence discipline | Reference implementation | **Active** | Separate live, validated, simulated and future claims; see validation methodology §7 |
 
 **RESA composite**: **92.36/90.0 CONVERGED** (iter93, 2026-05-18). R-GATE-1 OPEN.
 
