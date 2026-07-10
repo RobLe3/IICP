@@ -1,7 +1,7 @@
 # S.12 — IICP Cooperative Inference Protocol (CIP)
 
 **Status**: Draft (active — normative text in §2–§7, §10; §4 wire format normative per 0.4.0-draft)  
-**Version**: 0.6.11  
+**Version**: 0.6.12
 **Phase**: 5 (Cooperative Inference)  
 **Authors**: Protocol Steward  
 **Linked ADR**: ADR-012 (Phase 5 CIP Scoring Formula), ADR-019 (Declarative Node Pricing)  
@@ -84,7 +84,7 @@ A consumer proxy enables CIP by setting `cooperative_inference.enabled = true` i
 
 - A consumer MUST NOT dispatch CIP sub-tasks to remote workers unless `cooperative_inference.enabled = true` in the active proxy configuration.
 - A consumer MUST evaluate the estimated credit cost before dispatching any CIP sub-task. If `estimated_credits > max_credits_per_task`, the consumer MUST fall back to local execution and MUST NOT dispatch to remote workers.
-- A consumer SHOULD call `GET /v1/credits/quote` before dispatching any CIP sub-task. The directory response includes `consumer_balance` (caller's current balance) and `balance_sufficient` (boolean: `consumer_balance ≥ estimated_credits`). If `balance_sufficient = false`, the consumer MUST fall back to local execution.
+- A consumer SHOULD call `GET /v1/credits/quote` before dispatching any CIP sub-task. The directory response includes `consumer_balance` (caller's node-local balance), `effective_balance`, `balance_scope` (`"node"` or `"operator_wallet"`), optional `operator_wallet_balance`, and `balance_sufficient` (boolean: `effective_balance ≥ estimated_credits`). If `balance_sufficient = false`, the consumer MUST fall back to local execution.
 - A consumer MUST NOT dispatch a task to remote workers when:
   - The task has `constraints.sensitivity = "high"` AND `privacy.send_sensitive_prompts = false` (the default). The consumer MUST execute locally in this case.
   - The consumer has no reachable workers with `policy.allow_remote_inference = true` in the current discovery cache.
@@ -669,6 +669,7 @@ Colluding nodes can inflate credit balances by routing tasks between coordinatin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6.12 | 2026-06-30 | Credit quote/debit alignment with operator wallet: quote responses include `effective_balance`, `balance_scope` and optional `operator_wallet_balance`; `balance_sufficient` is computed against the effective balance. Award settlement debits operator-bound consumers from their pooled wallet while preserving per-node ledger rows. |
 | 0.6.11 | 2026-06-09 | §10.3 HMAC canonical message: extended form `{…}:{response_hash}:{querying_node_id}` when `querying_node_id` is present in receipt body — REQUIRED to prevent a malicious serving node from substituting a foreign `querying_node_id` to drain foreign operator balances (TC-9e, #490). Backwards-compatible: receipts without `querying_node_id` use the 6-field form. §10.3 Credit debit: after awarding the Worker, directory SHOULD best-effort debit the querying node by the same amount; `CREDIT_SPEND_INSUFFICIENT` logged on failure; response includes `spent` + `spend_reason`. Implementation: directory v1.10.25, all 3 SDKs v0.7.50. |
 | 0.6.10 | 2026-06-06 | §7 Credit Accounting: added **rate-parity** clause — CIP tasks price on the same schedule as standard routing (no CIP premium, #305); the ×1.0 worker / ×0.05 coordinator rates are the *split* of `routing_cost`, not a surcharge. Cross-refs iicp-billing-extension §10.1–§10.3 (credit schedule + economy fold). |
 | 0.6.9 | 2026-05-30 | §5.1.1 reputation_tier enum reconciled (#384): floor tier is `bronze` (matches shipped NodeScorer + the tier table); `none` retired. |

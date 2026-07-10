@@ -1,7 +1,7 @@
 # IICP Semantics — Routing, QoS, and Node Selection
 
-**Version**: 1.6.2
-**Date**: 2026-06-28
+**Version**: 1.6.3
+**Date**: 2026-07-02
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -114,14 +114,39 @@ registered that exact custom URN.
 Partial matching (prefix match or version wildcard) is NOT supported in Phase 1.
 Phase 2 MAY introduce version-range matching (e.g., `v1.*`).
 
-### 1.3 Intent routing priority
+### 1.3 Prohibited-practice intent guardrails
+
+IICP implementations MUST NOT route intents that structurally request prohibited
+AI practices. This is a compliance-readiness safety floor, not a complete legal
+classifier and not a substitute for operator due diligence. Official clients
+SHOULD refuse such intents locally before directory discovery so that no prompt,
+task body, or destination request is sent to the directory or to a remote node.
+
+At minimum, official clients MUST reject intent URNs whose domain/action names
+plainly map to these prohibited or unsupported families:
+
+- social scoring;
+- individual criminal-risk prediction;
+- workplace or education emotion recognition;
+- biometric categorisation of protected traits;
+- untargeted facial-image scraping for recognition databases;
+- real-time remote biometric identification;
+- non-consensual sexual deepfake or child sexual abuse content generation.
+
+The interoperable refusal code for this local guardrail is `IICP-POLICY-001`.
+The error is terminal for that request and clients SHOULD NOT retry it against
+other nodes. Direct model prompts under otherwise ordinary intents still require
+application-level policy review; the intent guardrail only blocks clear intent
+URN families before routing.
+
+### 1.4 Intent routing priority
 
 When a proxy receives multiple nodes for an intent, it SHOULD prefer nodes in
 the order returned by the directory (score-descending). The proxy SHOULD NOT
 re-score nodes unless implementing Phase 5 Cooperative Inference Profile
 local-cost weighting.
 
-### 1.4 Intent URN modifiers
+### 1.5 Intent URN modifiers
 
 Modifiers extend a base intent URN with additional behavioural requirements. A modifier
 is appended to the versioned intent using a `+modifier` suffix:
@@ -675,6 +700,7 @@ residual risk, its current partial mitigation (if any), and the intended remedia
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.6.3 | 2026-07-02 | §1.3 adds compliance-readiness prohibited-practice intent guardrails for official clients: clear prohibited intent URNs are refused locally before discovery/routing with `IICP-POLICY-001`; this prevents prompt/task leakage for structurally unsupported use cases without claiming full legal classification. |
 | 1.6.2 | 2026-06-28 | §6.4 adds provider public-reachability fallback semantics for SDK 0.7.75: direct route → accountless external tunnel → relay → local-only, with tunnel pacing/cooldown treated as a fallback trigger rather than a retry loop. |
 | 1.0.0 | 2026-05-15 | Initial draft — extracted from ARCHITECTURE.md, RELIABILITY.md, and prior spec work as part of S.5 spec split |
 | 1.1.0 | 2026-05-17 | §11 Reputation Update Rules — normative delta table, latency budgets by QoS class, bounded score invariant. Closes #113. |

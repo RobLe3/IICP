@@ -46,6 +46,10 @@ Start here when you are new to the protocol. Each document builds on the previou
 | [`conformance-badges.md`](./conformance-badges.md) | Self-attested conformance badge system (S.14) |
 | [`validation-methodology.md`](./validation-methodology.md) | How conformance is measured; k6 latency targets; REACH probe descriptions |
 
+Machine-readable policy fixtures shared by implementations live one level above this versioned
+suite: [`intent-risk-taxonomy.json`](../intent-risk-taxonomy.json) and
+[`mcp-tool-risk-taxonomy.json`](../mcp-tool-risk-taxonomy.json).
+
 ---
 
 ## Spec-to-ADR cross-reference
@@ -71,7 +75,8 @@ Which ADR is authoritative for a given spec section:
 | `iicp-framing.md` | Binary framing, CBOR | ADR-002 (Phase 1+), ADR-024 |
 | `iicp-billing-extension.md` | Pricing declaration | ADR-019 |
 
-For the full ADR list, see [`project/decisions/README.md`](../project/decisions/README.md).
+For implementation ADRs and their current evidence, see the
+[reference repository decision index](https://github.com/RobLe3/iicp.network/tree/main/project/decisions).
 
 ---
 

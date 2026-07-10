@@ -1,5 +1,17 @@
 # IICP Changelog
 
+## Unreleased — reference synchronization 2026-07-10
+
+The v1.9 working set has been synchronized from the reference repository without changing the
+Protocol Suite version. It includes authenticated dispatch-route contracts, signed node-policy
+manifests, operator-wallet credit semantics, relay-bind hardening, updated compliance methodology,
+and the completed `cx_public_key` naming cutover. The directory now emits only canonical
+`cx_public_key`; maintained clients may retain the retired CX `public_key` read fallback for one
+further compatibility release. Node-detail `public_key` remains the distinct Ed25519 gossip key.
+
+Machine-readable intent-risk and MCP-tool-risk taxonomies are now included so independent
+implementations can reproduce policy gates rather than relying on website prose.
+
 ## v1.9.0 — 2026-05-30
 
 ### Summary

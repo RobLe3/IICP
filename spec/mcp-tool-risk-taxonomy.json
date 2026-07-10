@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/spec/mcp-tool-risk-taxonomy.json",
+  "version": 1,
+  "default_class": "benign_read",
+  "dangerous_classes": [
+    "shell_exec", "data_read", "file_read", "file_write", "network_fetch",
+    "browser_control", "credential_access", "system_control", "physical_world", "regulated_decision"
+  ],
+  "risk_keywords": {
+    "shell_exec": ["bash", "shell", "exec", "run_command", "command", "eval", "python_exec"],
+    "data_read": ["read_document", "query_database", "list_resource", "dataset_read", "record_lookup"],
+    "file_read": ["read_file", "list_dir", "cat", "open_file", "file_read", "list_files"],
+    "file_write": ["write_file", "delete_file", "remove_file", "edit_file", "save_file", "mkdir", "rmdir"],
+    "network_fetch": ["fetch", "crawl", "http", "web_request", "search_web", "url"],
+    "browser_control": ["browser", "computer_use", "click", "type", "screenshot", "navigate"],
+    "credential_access": ["secret", "credential", "token", "ssh_key", "wallet", "password"],
+    "system_control": ["systemctl", "launchctl", "service_restart", "install_package", "firewall", "reboot", "shutdown"],
+    "physical_world": ["robot", "drone", "actuator", "iot_control", "medical_device", "industrial_control"],
+    "regulated_decision": ["credit_score", "hire", "employment", "benefit_eligibility", "diagnose", "triage_patient"]
+  },
+  "dangerous_policy_requirements": [
+    "explicit_operator_opt_in", "authz_policy", "sandbox_profile", "redacted_audit"
+  ],
+  "safe_sandbox_profiles": ["1", "true", "strict", "container", "sandbox"]
+}

@@ -23,7 +23,10 @@ Agent A  ──CALL──▶  IICP Node B  ──▶  LLM Backend
           no payload passes through)
 ```
 
-The directory (`iicp.network`) is **bootstrap and discovery only**. Task payloads route directly between nodes, peer-to-peer. No central party can see, throttle, or monetise your AI traffic.
+The directory (`iicp.network`) is **bootstrap and discovery only** and does not receive task
+payloads. Tasks route to the selected execution node, whose operator can read the work it executes.
+Current IICP-CX clients encrypt requests across the network and relays when a provider advertises
+`cx_public_key`; this is transport confidentiality, not executor-blind inference or anonymity.
 
 ### The core idea
 
@@ -76,6 +79,8 @@ An **intent URN** expresses what you want, not which model or endpoint to call. 
 | [schemas/task.json](schemas/task.json) | JSON Schema 2020-12 for `IicpTask` |
 | [schemas/nodelist.json](schemas/nodelist.json) | JSON Schema 2020-12 for `NodeListResponse` |
 | [registry/intents.json](registry/intents.json) | Official intent URN registry |
+| [spec/intent-risk-taxonomy.json](spec/intent-risk-taxonomy.json) | Shared prohibited/high-risk/transparency/minimal intent classification fixture |
+| [spec/mcp-tool-risk-taxonomy.json](spec/mcp-tool-risk-taxonomy.json) | Shared MCP tool-risk and default-gating fixture |
 
 ### Archived
 
@@ -108,7 +113,7 @@ Read [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) for th
 
 ## Client SDKs
 
-Three official client SDKs (current release: **v0.7.75**, full feature parity) implement
+Three official client SDKs (current release: **v0.7.85**) implement
 both sides of the protocol — the consumer (discovery, routing, retry, fallback, CIP
 consumer) and the provider (`iicp-node` runtime with backend auto-detection, NAT
 escalation, relay worker/server modes, and a built-in MCP gateway). All are open-source

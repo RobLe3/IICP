@@ -126,8 +126,8 @@ Current research clarifications:
 6. Federation and Phase 6 claims MUST remain gated until Phase 5 security,
    relay, reachability, SDK adoption and privacy evidence are stable.
 
-The public reference page at <https://iicp.network/research> summarizes these
-distinctions for non-specialist and expert readers.
+The public `/research` page should summarize these distinctions in plain
+language and link detailed reports for expert readers.
 
 ---
 

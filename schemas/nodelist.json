@@ -23,23 +23,58 @@
       "type": "integer",
       "minimum": 0,
       "description": "Directory query latency in milliseconds, when reported."
+    },
+    "relay_available": {
+      "type": "boolean",
+      "description": "True when at least one returned candidate advertises relay capability."
+    },
+    "view": {
+      "type": "string",
+      "enum": ["dispatch", "public"],
+      "description": "dispatch is route-bearing task-submission data; public is a presentation-safe redacted projection."
+    },
+    "data_class": {
+      "type": "string",
+      "enum": ["route_dispatch", "public_presentation"],
+      "description": "Machine-readable classification of whether route fields are present."
+    },
+    "route_fields_present": {
+      "type": "boolean",
+      "description": "True only when response nodes contain route-bearing fields such as endpoint or transport_endpoint."
+    },
+    "redaction": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Human/machine-readable summary of route-field redaction in the selected view."
+    },
+    "dispatch_ticket_endpoint": {
+      "type": "string",
+      "description": "Relative endpoint for explicit ticketed route-dispatch discovery."
+    },
+    "ticketed_dispatch_available": {
+      "type": "boolean",
+      "description": "True when the directory supports POST /v1/dispatch/ticket."
     }
   },
   "$defs": {
     "NodeSummary": {
       "type": "object",
-      "required": ["node_id", "endpoint", "score", "available"],
+      "required": ["score", "available"],
       "additionalProperties": true,
       "properties": {
         "node_id": {
           "type": "string",
           "format": "uuid",
-          "description": "Globally unique node identifier assigned at registration."
+          "description": "Globally unique node identifier assigned at registration. Present only in route-dispatch view."
+        },
+        "node_id_prefix": {
+          "type": "string",
+          "description": "Public presentation-safe node identifier prefix; full UUIDs are not exposed in view=public."
         },
         "endpoint": {
           "type": "string",
           "format": "uri",
-          "description": "Routable base URL for submitting tasks to this node. HTTPS is preferred and required for browser consumers from the HTTPS website; native/node consumers may receive routable http:// endpoints where allowed by iicp-core.md §8 and iicp-dir.md §3.1."
+          "description": "Routable base URL for submitting tasks to this node. Present only in route-dispatch view. HTTPS is preferred and required for browser consumers from the HTTPS website; native/node consumers may receive routable http:// endpoints where allowed by iicp-core.md §8 and iicp-dir.md §3.1."
         },
         "score": {
           "type": "number",
@@ -58,14 +93,6 @@
         },
         "cx_public_key": {
           "description": "Canonical IICP-CX X25519 public key for encrypting task payloads to this node. Null means the node has not advertised CX support.",
-          "anyOf": [
-            { "$ref": "#/$defs/CxPublicKey" },
-            { "type": "null" }
-          ]
-        },
-        "public_key": {
-          "description": "Deprecated compatibility alias for cx_public_key during the SDK adoption window. New consumers should read cx_public_key first.",
-          "deprecated": true,
           "anyOf": [
             { "$ref": "#/$defs/CxPublicKey" },
             { "type": "null" }
@@ -104,6 +131,13 @@
             "error_class": { "type": ["string", "null"] },
             "evidence": { "type": "string", "enum": ["unknown", "self_reported"] }
           }
+        },
+        "node_policy_manifest": {
+          "description": "Optional public node policy metadata derived from REGISTER policy_manifest. Unsigned manifests are self-attested; signed manifests carry directory-computed Ed25519 verification evidence. This is transparency/routing-policy evidence only; it is not a legal compliance certificate.",
+          "anyOf": [
+            { "$ref": "#/$defs/NodePolicyManifest" },
+            { "type": "null" }
+          ]
         },
         "region": {
           "type": "string",
@@ -206,6 +240,106 @@
         }
       }
     },
+    "NodePolicyManifest": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "version": {
+          "type": ["string", "null"],
+          "description": "Self-attested manifest/profile version."
+        },
+        "jurisdiction": {
+          "type": ["string", "null"],
+          "description": "Operator-declared jurisdiction or region label."
+        },
+        "policy_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "contact_url": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "remote_executor_can_read_prompt": {
+          "type": "boolean",
+          "description": "True for normal remote inference because the selected executor can read the prompt it executes."
+        },
+        "training_use": {
+          "type": ["string", "null"],
+          "enum": ["none", "opt_in", "provider_defined", null],
+          "description": "Self-attested training/reuse posture. Unknown/absent values are to be treated conservatively as provider-defined."
+        },
+        "retention": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "properties": {
+            "task_payload": {
+              "type": ["string", "null"],
+              "enum": ["none", "transient", "provider_defined", null]
+            },
+            "logs_days": {
+              "type": ["integer", "null"],
+              "minimum": 0
+            }
+          }
+        },
+        "subprocessors": {
+          "type": ["array", "null"],
+          "items": { "type": "string" }
+        },
+        "unsupported_intents": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string",
+            "pattern": "^urn:iicp:intent:(x\\.[a-z0-9_.-]+|[a-z0-9_-]+):[a-z0-9_-]+:v[0-9]+$"
+          }
+        },
+        "signed_statement": {
+          "type": ["string", "null"],
+          "description": "Optional human-readable signed-policy reference. New implementations should prefer the structured verification block."
+        },
+        "verification": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["self_attested", "signed_valid", "signed_invalid", "signed_expired", "signed_revoked", "signed_superseded"]
+            },
+            "algorithm": { "type": ["string", "null"] },
+            "key_id": { "type": ["string", "null"] },
+            "signed_at": { "type": ["string", "null"], "format": "date-time" },
+            "expires_at": { "type": ["string", "null"], "format": "date-time" },
+            "canonical_sha256": { "type": ["string", "null"] },
+            "public_key_sha256": { "type": ["string", "null"] },
+            "error": { "type": ["string", "null"] }
+          }
+        },
+        "evidence": {
+          "type": ["string", "null"],
+          "enum": ["self_attested", "signed_verified", "signed_invalid", "signed_expired", "directory_revoked", "directory_superseded", null],
+          "description": "Evidence level for the manifest. Public NODELIST/DISCOVER normally expose self_attested or signed_verified because invalid/expired signed manifests are rejected at registration."
+        },
+        "manifest_identity_level": {
+          "type": ["string", "null"],
+          "enum": ["self_attested", "signed_valid", "operator_bound", "known_operator", "rotated", "revoked", null]
+        },
+        "operator_governance": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "known_operator": { "type": "boolean" },
+            "terms_status": { "type": "string", "enum": ["current", "outdated", "missing"] },
+            "terms_version": { "type": ["string", "null"] },
+            "dpa_status": { "type": "string", "enum": ["current", "outdated", "missing"] },
+            "dpa_version": { "type": ["string", "null"] },
+            "acceptance_method": { "type": ["string", "null"] },
+            "evidence": { "type": "string" }
+          },
+          "description": "Safe known-operator governance evidence. Never includes raw operator keys, raw nonces, emails, identity documents, or private evidence references."
+        }
+      }
+    },
     "CxPublicKey": {
       "type": "object",
       "required": ["algorithm", "encoding", "key", "key_id"],
@@ -236,6 +370,19 @@
           "latency_estimate_ms": 120,
           "available": true,
           "region": "eu-central",
+          "node_policy_manifest": {
+            "version": "2026-07-02",
+            "jurisdiction": "DE",
+            "remote_executor_can_read_prompt": true,
+            "training_use": "none",
+            "retention": {
+              "task_payload": "none",
+              "logs_days": 7
+            },
+            "subprocessors": ["self-hosted"],
+            "unsupported_intents": [],
+            "evidence": "self_attested"
+          },
           "capabilities": [
             {
               "intent": "urn:iicp:intent:llm:chat:v1",

@@ -1,16 +1,16 @@
 # IICP Confidentiality Extension (IICP-CX)
 
 **Spec ID**: S.16
-**Version**: 0.3.1-draft
-**Date**: 2026-06-28
+**Version**: 0.3.2-draft
+**Date**: 2026-07-10
 **Status**: Draft — **Tier 1 mandatory-posture (#360, privacy-first): encryption is on by default,
 no opt-out.** CX-Consumer encrypt is implemented in all three SDKs + CX-Provider decrypt/advertise in
 the adapter (round-trip verified); both default ON; rollout is migration-sequenced (#532) to fail-closed.
 Forward-secrecy claim corrected (#539 — Tier 1 has no FS vs node-key compromise; Tier 2 target).
 Previously — **Tier 1 partially implemented** (CX-Provider decrypt path + directory cx_public_key
 storage live). Reconciled after the 2026-06-21 key-alias hotfix: the CX key is `cx_public_key` at
-REGISTER/storage and `cx_public_key` is the canonical discover/NODELIST field. `public_key` is a
-deprecated compatibility alias during the SDK adoption window (§3.2); shipped error codes are
+REGISTER/storage and `cx_public_key` is the sole discover/NODELIST CX field. The deprecated CX
+`public_key` output alias was retired after the SDK adoption window (§3.2); shipped error codes are
 `IICP-E050` (collapsed decrypt/no-support) + `IICP-E049` (cx_public_key update auth) — see §6
 implementation status. Full E060–E064 model is the Tier-2 target. (#360)
 **Tracking**: #360 (E2E payload confidentiality), #361 (privacy threat model)
@@ -92,16 +92,18 @@ The `/v1/discover` (and NODELIST) response exposes the registered key under the 
 on the way **in** (REGISTER/HEARTBEAT) and the way **out** (discover/NODELIST), and avoids confusing
 the CX X25519 key with other protocol keys such as DID, gossip or directory-signing public keys.
 
-During the 2026-06-21 compatibility window the directory MAY also emit the same object under
-**`public_key`** for older consumers. New consumers MUST read `cx_public_key` first and MAY fall back
-to `public_key` only as a deprecated alias. The alias MUST NOT be used for new normative text.
+The 2026-06-21 compatibility window permitted the directory to duplicate this object under
+`public_key`. That output alias is retired by #557 after maintained SDKs adopted canonical
+`cx_public_key`. Consumers MAY retain read fallback for one further release when interoperating with
+older directories, but new directories MUST emit only `cx_public_key`. Missing or malformed key
+material remains equivalent to no CX key and MUST fail closed before task submission. This cutover
+does not affect node-detail or peer-exchange `public_key`, which is a separate Ed25519 gossip key.
 
 ```json
 {
   "node_id": "...",
   "endpoint": "...",
   "cx_public_key": { ... }, // the node's registered cx_public_key object, or null
-  "public_key": { ... },    // deprecated compatibility alias during migration, or null
   "capabilities": [ ... ]
 }
 ```
@@ -309,7 +311,7 @@ payload. This prevents silent downgrade.
 
 | ID | Level | Description |
 |----|-------|-------------|
-| CX-01 | MUST | CX-Provider advertises its CX key — `cx_public_key` at REGISTER and as canonical `cx_public_key` in NODELIST/discover (§3.2); `public_key` is a deprecated compatibility alias only |
+| CX-01 | MUST | CX-Provider advertises its CX key as `cx_public_key` at REGISTER and in NODELIST/discover (§3.2); directory output MUST NOT overload `public_key` for CX material |
 | CX-02 | MUST | CX-Provider decrypts CX envelope and returns correct response |
 | CX-03 | MUST | CX-Relay forwards CX-encrypted task envelope unmodified |
 | CX-04 | MUST | CX-Provider returns IICP-E060 for unknown key_id |
@@ -323,6 +325,7 @@ payload. This prevents silent downgrade.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3.2-draft | 2026-07-10 | #557 retires the deprecated CX `public_key` directory-output alias after the compatibility window. Canonical `cx_public_key` is now the sole CX discovery/dispatch field; consumer read fallback may remain for one further release. |
 | 0.3.1-draft | 2026-06-28 | §6–§7 remove the stale automatic plaintext fallback wording. Current SDK posture is fail-closed/keyless-skip by default, with plaintext only via an explicit transitional debug override; E060–E064 remain the Tier-2 target while shipped Tier-1 providers collapse errors to E050. |
 | 0.3.0-draft | 2026-06-13 | Tier-1 privacy-first confidentiality draft with canonical `cx_public_key`, static X25519 request encryption, fail-closed migration posture, and Tier-2 targets for forward secrecy, response encryption and granular errors. |
 

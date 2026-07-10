@@ -1,7 +1,7 @@
 # IICP Core — Wire Format and Mandatory Requirements
 
-**Version**: 1.3.1
-**Date**: 2026-06-28
+**Version**: 1.3.2
+**Date**: 2026-07-09
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -261,6 +261,7 @@ HTTP 200 OK
 | Field | Type | Notes |
 |-------|------|-------|
 | `model_used` | string | Actual model identifier used for this inference. Adapter SHOULD include in every successful response. Allows proxy to verify declared model matches execution. |
+| `generated_by_ai` | boolean | Successful model-produced responses SHOULD set this to `true`. This is an interaction notice, not authenticity proof or a media watermark. Compatibility proxies SHOULD expose `X-IICP-Generated-By-AI: true` rather than changing OpenAI/Ollama/Anthropic JSON contracts. |
 | `attestation_receipt` | string (base64) | Signed execution proof. OPTIONAL — Phase 6 prerequisite. Requires ADR-024 (signed message envelope, #155) and identity slot (#150). Adapters MUST NOT include until ADR-024 is ratified. |
 
 On error: `status = "error"`, `result = null`, `error = {"code": "...", "message": "..."}`.
@@ -600,6 +601,7 @@ advertise it in registered `endpoint` URLs when no other port is specified.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3.2 | 2026-07-09 | #614 adds optional `generated_by_ai` response metadata and the compatibility-proxy header rule; it is a transparency notice, not authenticity proof. |
 | 1.3.1 | 2026-06-28 | §8 replaces the stale blanket "plaintext HTTP rejected" wording with an endpoint scheme matrix: directory control plane is HTTPS/TLS-only; node task endpoints may be routable `http://` for native consumers where IICP-DIR permits and probes them; browser consumers require HTTPS/relay/WebRTC-safe paths; native data plane uses `iicp://`/`iicpsec://`. |
 | 1.0.0 | 2026-05-15 | Initial draft — extracted from IICP_draft_1.4.2.txt and IICP-core-phase1-profile.md as part of S.5 spec split |
 | 1.1.0 | 2026-05-15 | Added §11 Implicit Address Learning (DIR-ADDR-01..07) and default port 9484 |

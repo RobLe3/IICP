@@ -1,7 +1,7 @@
 # IICP-DIR — Directory Sub-Protocol Specification
 
-**Version**: 1.1.4
-**Date**: 2026-06-28
+**Version**: 1.1.21
+**Date**: 2026-07-10
 **Status**: draft
 **Issue**: #14
 **Authority**: Protocol Steward
@@ -63,12 +63,26 @@ Registers a node's identity, capabilities, and resource limits.
     "operator_pub": "<base64 ed25519 pubkey>",
     "not_after": 1893456000,
     "sig": "<base64 ed25519 signature>"
+  },
+  "policy_manifest": {
+    "version": "2026-07-02",
+    "jurisdiction": "DE",
+    "remote_executor_can_read_prompt": true,
+    "training_use": "none",
+    "retention": {
+      "task_payload": "none",
+      "logs_days": 7
+    },
+    "subprocessors": ["self-hosted"],
+    "unsupported_intents": [
+      "urn:iicp:intent:biometric:protected-trait-classification:v1"
+    ]
   }
 }
 ```
 
 **Required fields**: `endpoint`, `region`, `capabilities[].intent`, `limits.max_concurrent`
-**Optional**: `node_id` (directory assigns if absent), `availability`, `limits.tokens_per_min`, `transport_endpoint`, `capabilities[].input_modalities`, `operator_delegation`
+**Optional**: `node_id` (directory assigns if absent), `availability`, `limits.tokens_per_min`, `transport_endpoint`, `capabilities[].input_modalities`, `operator_delegation`, `policy_manifest`
 
 **`input_modalities` (v1.10.0, ADR-046 — multimodal)**: an OPTIONAL array on each capability object
 declaring the input modalities that capability accepts; one of `text`, `image`, `audio`, `video`.
@@ -148,6 +162,37 @@ REGISTER MAY also carry the optional updater-evidence fields listed in §3.2
 (`auto_update_enabled`, `auto_update_interval_s`, `sdk_latest_seen`,
 `sdk_update_last_checked_at`, `sdk_update_error_class`). They are advisory and do
 not replace directory-computed SDK-baseline enforcement.
+
+**`policy_manifest` (v1.1.8, EU/GDPR readiness — signed-manifest phase A)**: an OPTIONAL,
+small, public, machine-readable declaration about the node's data-handling posture. The
+directory stores and echoes safe fields. Unsigned manifests remain backward-compatible
+self-attestations; when `signature` is present the directory MUST verify the detached
+Ed25519 signature before accepting registration and MUST reject invalid or expired
+signed manifests. A valid signature is tamper evidence for the manifest statement, not
+legal identity proof, a DPA, or proof that the operator follows the declaration. Defined
+fields include:
+
+| Field | Type | Meaning |
+|-------|------|---------|
+| `version` | string\|null | Manifest/profile version chosen by the operator. |
+| `jurisdiction` | string\|null | Operator-declared jurisdiction or region label. |
+| `policy_url` / `contact_url` | URI\|null | Optional public policy/contact links. |
+| `remote_executor_can_read_prompt` | boolean | Explicit reminder that normal remote inference exposes the prompt to the selected executor; defaults to `true` if omitted. |
+| `training_use` | enum | `none`, `opt_in`, or `provider_defined`. |
+| `retention.task_payload` | enum | `none`, `transient`, or `provider_defined`. |
+| `retention.logs_days` | integer\|null | Self-declared log retention in days. |
+| `subprocessors[]` | string[] | Public subprocessor/backend labels, if any. |
+| `unsupported_intents[]` | string[] | Intent URNs the node explicitly refuses to serve. |
+| `signed_statement` | string\|null | Optional human-readable signed-policy reference. New implementations SHOULD prefer the structured `signature` block. |
+| `signature.algorithm` | string | `Ed25519` for signed-manifest phase A. |
+| `signature.key_id` | string\|null | Operator-chosen public key label for rotation/debugging. |
+| `signature.public_key` | string | Base64/base64url Ed25519 public key that verifies this manifest statement. This key is policy-signing metadata, not the CX encryption key. |
+| `signature.signature` | string | Base64/base64url detached Ed25519 signature over the canonical manifest payload. The canonical payload recursively sorts object keys and excludes only `signature.signature`, so `signed_at` and `expires_at` are covered by the signature. |
+| `signature.signed_at` | ISO-8601\|null | Optional signing timestamp. |
+| `signature.expires_at` | ISO-8601\|null | Optional expiry. Expired signed manifests MUST be rejected at registration. |
+
+This field is for routing-policy and transparency groundwork only. It is not a legal
+compliance certificate, not a DPA, and not proof that the node follows its declaration.
 
 **External tunnel operational guardrails (v1.1.4, SDK 0.7.75):**
 `transport_method=external_tunnel` covers operator-provided public tunnels
@@ -328,10 +373,19 @@ GET /v1/discover
 | `min_quality_score` | MAY | Float [0.0–1.0]; alias for minimum scoring threshold (ADR-019) |
 | `cip_capable` | MAY | Boolean; if `true`, directory MUST return only nodes with `allow_remote_inference=true` (i.e. `cip_conformance_level` ≠ `CIP-None`). CIP coordinators SHOULD pass `cip_capable=true` to avoid client-side filtering (S.12 §5.2). |
 | `modality` | MAY | One of `text`/`image`/`audio`/`video` (v1.10.0, ADR-046); if set, directory MUST return only nodes whose capability for the requested `intent` accepts that input modality (e.g. `?modality=image` → vision-capable nodes). |
+| `view` | MAY | `dispatch` (default) or `public` (v1.1.14). `dispatch` is route-bearing data for current clients that submit tasks directly to selected nodes. `public` is a presentation-safe projection for dashboards/research: it MUST omit full `node_id`, `endpoint`, `transport_endpoint`, `transport_metadata`, raw CX key material, and any route URL/host while preserving safe score, region, health, reputation, capability and route-class signals. New clients SHOULD migrate to `POST /v1/dispatch/ticket` for explicit route-bearing dispatch. |
 
 ---
 
 ### 3.4 NODELIST (Directory → Client)
+
+`GET /v1/discover` defaults to **route-dispatch** data because current IICP
+consumers need a serving route to submit tasks node-to-node. The response SHOULD
+include `data_class = "route_dispatch"` and `route_fields_present = true` so
+callers do not confuse it with a public dashboard API. Public pages, dashboards
+and audits that do not need to dispatch SHOULD use `GET /v1/registry/*` or
+`GET /v1/discover?...&view=public`; the public view returns the same candidate
+set as safe presentation metadata only.
 
 ```json
 {
@@ -363,6 +417,19 @@ GET /v1/discover
         "effective_until": null,
         "attested": true
       },
+      "node_policy_manifest": {
+        "version": "2026-07-02",
+        "jurisdiction": "DE",
+        "remote_executor_can_read_prompt": true,
+        "training_use": "none",
+        "retention": {
+          "task_payload": "none",
+          "logs_days": 7
+        },
+        "subprocessors": ["self-hosted"],
+        "unsupported_intents": [],
+        "evidence": "self_attested"
+      },
       "cip_conformance_level": "CIP-Provider",
       "health_label": "healthy",
       "exposure_mode": "ipv4_public_direct"
@@ -393,10 +460,118 @@ GET /v1/discover
 | `pricing.effective_from` | ISO-8601\|null | null = immediately effective. |
 | `pricing.effective_until` | ISO-8601\|null | null = no expiry. |
 | `pricing.attested` | bool | `true` if `declaration_signature` was verified at last registration (ADR-019 §5.1). |
+| `node_policy_manifest` | object\|null | Optional public node policy manifest derived from REGISTER `policy_manifest`. The directory echoes safe fields and adds evidence: `self_attested` for unsigned manifests, `signed_verified` when an Ed25519 signature verifies, and `signed_invalid`/`signed_expired`/`signed_revoked`/`signed_superseded` only on diagnostic/admin or already-registered lifecycle surfaces because invalid, expired, revoked or superseded signed manifests MUST be rejected at registration. Clients MAY use it for policy pre-screening. |
+| `node_policy_manifest.remote_executor_can_read_prompt` | boolean | `true` for normal remote inference: the selected executor can read the prompt it executes. This is a disclosure signal, not executor-blind confidentiality. |
+| `node_policy_manifest.training_use` | string | One of `none`, `opt_in`, `provider_defined`. Unknown/absent MUST be treated conservatively as provider-defined. |
+| `node_policy_manifest.retention` | object | Self-declared retention block; phase-1 clients should treat absent values as unknown/provider-defined. |
+| `node_policy_manifest.verification` | object | Directory-computed verification result. Public fields include `status`, `algorithm`, `key_id`, `signed_at`, `expires_at`, `canonical_sha256`, `public_key_sha256`, and a redacted `error` string. |
+| `node_policy_manifest.verification.status` | enum | `self_attested`, `signed_valid`, `signed_invalid`, `signed_expired`, `signed_revoked`, or `signed_superseded`. Public NODELIST/DISCOVER SHOULD normally expose only `self_attested` or `signed_valid`; `signed_revoked`/`signed_superseded` can appear for already-registered nodes when a directory-owned policy-key lifecycle record is added after registration. |
+| `node_policy_manifest.manifest_identity_level` | string\|null | Directory-computed #602 identity/accountability layer beyond signature verification. Values: `self_attested`, `signed_valid`, `operator_bound`, `known_operator`, `rotated`, `revoked`. `operator_bound` means the policy-signing Ed25519 key matches a directory-verified operator delegation key. `signed_valid` is tamper evidence only; it is not legal identity, DPA acceptance or compliance proof. Strict/private profiles MAY require `operator_bound` or `known_operator` and MUST fail closed on `revoked` or `rotated`. |
+| `node_policy_manifest.operator_fingerprint` | string\|null | Short hash of the verified operator key when the manifest is operator-bound. Full operator public keys remain directory-private. |
+| `node_policy_manifest.policy_key_fingerprint` | string\|null | Short hash of the policy-signing key for display/revocation matching. Full policy/operator public keys are not exposed. |
+| `node_policy_manifest.revoked_at` | ISO-8601\|null | Present only when the signed manifest or directory lifecycle registry carries a public-safe revocation timestamp. Past timestamps cause registration refusal with `signed_revoked`. |
+| `node_policy_manifest.rotation_epoch` | integer\|null | Public-safe monotonically increasing rotation epoch when the operator declares policy-key rotation state or the directory lifecycle registry marks a key superseded. It is not sufficient by itself to prove a replacement key. |
+| `node_policy_manifest.revocation_reason_class` | string\|null | Redacted revocation category such as `operator_request`, `compromise`, `superseded`, or `policy_violation`. Free-form details, private contact data and identity documents MUST NOT be exposed. |
+| `node_policy_manifest.operator_governance` | object | Safe known-operator evidence for strict/private routing profiles: `known_operator`, current/outdated/missing terms and DPA status, accepted versions, acceptance method, and evidence class. It MUST NOT expose emails, identity documents, raw operator keys, raw nonces, or acceptance evidence documents. `known_operator=true` requires current terms and current DPA acceptance via operator-key challenge or an equivalent future verifier. This is not legal certification. |
+
+**Directory-owned policy-key lifecycle registry (v1.1.15 / #608)**:
+Directories MAY maintain an authoritative `policy_key_sha256 → status` lifecycle registry outside
+the node's manifest. `status=revoked` yields `verification.status=signed_revoked` and
+`manifest_identity_level=revoked`; `status=superseded` yields
+`verification.status=signed_superseded` and `manifest_identity_level=rotated`. Both states MUST
+fail closed for strict/private policy profiles and MUST be rejected on new REGISTER attempts using
+that policy key. Public APIs expose only redacted lifecycle fields (`revoked_at`,
+`rotation_epoch`, `revocation_reason_class`, short fingerprints); raw policy keys, replacement-key
+hashes and private evidence references remain directory-private.
+
+### 3.4.1 Client remote-routing policy profiles
+
+Clients MAY apply prompt-safety routing profiles after DISCOVER and before submitting any task payload to a node. The directory remains prompt-free: policy evaluation uses discovery metadata such as region, CX key presence, and `node_policy_manifest`.
+
+| Profile | Required behavior |
+|---------|-------------------|
+| `standard` | Default mesh use. Require CX/key-ready nodes unless an explicit debug plaintext override is active. |
+| `sensitive` | Fail closed for remote executors. No task prompt is sent to remote nodes; local/browser execution is the preferred path. |
+| `eu_restricted` | Require key-ready nodes whose region is inside the caller's EU/EEA allowlist. If none remain, refuse before prompt dispatch. |
+| `strict_policy` | Require key-ready nodes and a signed-valid node policy manifest that declares no task-payload retention. Missing/unknown or unsigned policy values are treated conservatively and MUST be rejected before prompt dispatch. |
+| `operator_bound_policy` | Require key-ready nodes plus `node_policy_manifest.manifest_identity_level >= operator_bound`. This is stricter accountability than `strict_policy`, but still not legal/DPA compliance proof. |
+| `debug_override` | Explicit unsafe transition/debug mode. May allow plaintext/keyless dispatch only with a visible warning; MUST NOT be the default. |
+
+If a routing policy rejects every candidate, clients MUST fail before task submission and MUST NOT include the prompt in directory requests, logs, telemetry, or rejected node calls.
+
+#### Strict allowed-region profile (#600)
+
+`region` in QUERY remains a preference, not exclusion. Compliance-sensitive callers that
+need transfer-aware routing MUST apply an explicit fail-closed profile after prompt-free
+discovery and before task submission.
+
+| Profile | Parameters | Required behavior |
+|---------|------------|-------------------|
+| `allowed_regions_strict` | `allowed_regions: string[]`; optional `require_signed_policy_manifest`; optional `jurisdiction_allowlist` | Keep only key-ready nodes whose directory-safe `region` is in `allowed_regions`. If `require_signed_policy_manifest=true`, also require a signed-valid manifest whose `jurisdiction` or equivalent policy field is in `jurisdiction_allowlist`. If no eligible node remains, refuse before prompt dispatch. |
+| `eu_restricted` | Convenience profile for EU/EEA allowlists | Alias of `allowed_regions_strict` with an EU/EEA region set chosen by the caller/controller. |
+
+Region policy is a technical routing control, not GDPR transfer compliance proof. A region
+label may be self-attested or directory-observed and must be interpreted with its trust source,
+contracts/DPAs, subprocessors, transfer mechanisms and operator identity. Clients MUST NOT send
+the prompt to the directory to evaluate region policy. Redacted routing receipts MAY record the
+selected region and policy decision, but MUST NOT include prompt or response content.
+
+#### Intent risk taxonomy (#613)
+
+Public IICP directories classify intent URNs with a technical compliance-readiness
+vocabulary: `prohibited`, `high_risk`, `transparency_risk`, and
+`minimal_or_general`. The shared fixture is `spec/intent-risk-taxonomy.json`.
+This is not legal advice and is not prompt-content moderation; it is a structural
+routing guard for declared intent families.
+
+Public mesh default behavior:
+
+| Category | Public mesh default |
+|----------|---------------------|
+| `prohibited` | Refuse before registration, discovery, ticket issuance, or task dispatch. |
+| `high_risk` | Refuse by default unless a future explicit private/compliance profile is configured. |
+| `transparency_risk` | Allow, but user-facing surfaces SHOULD show AI/generated-content notice metadata where applicable. |
+| `minimal_or_general` | Allow normal routing subject to ordinary privacy/security policy. |
+
+Initial high-risk patterns cover employment/workforce decisions, education
+admission/grading, credit or essential-services access, law enforcement,
+migration/asylum/border/justice/democratic-process decisions, healthcare
+decisions, critical-infrastructure safety components, and robotics/physical-world
+control. The taxonomy MUST NOT block ordinary generic LLM chat, coding help,
+summarization, translation, or educational explanation intents merely because a
+prompt mentions those domains.
+
+#### MCP/tool risk vocabulary (#601)
+
+IICP may advertise MCP/CIP/tool capabilities, but public unknown callers MUST NOT receive
+arbitrary remote-code, filesystem, browser, credential or system-control capability by default.
+Tool manifests SHOULD include a risk label and required controls.
+
+| Risk label | Examples | Public unknown default |
+|------------|----------|------------------------|
+| `benign_read` | static calculator, format conversion, schema validation | MAY be advertised if authenticated task endpoint and redacted logging are in place. |
+| `data_read` | read selected document, list limited resource, query bounded database view | DENY unless explicit data scope and caller authorization exist. |
+| `network_fetch` | fetch URL, crawl site, call third-party API | DENY unless SSRF/rate/domain controls exist. |
+| `file_read` | read local file or directory | DENY unless sandboxed path allowlist and caller authorization exist. |
+| `file_write` | write/modify/delete local files | DENY unless sandbox, least privilege, approval policy and rollback/audit exist. |
+| `shell_exec` | bash/shell/exec/run command/eval | DENY by default for public callers; requires explicit dangerous-tool policy, sandbox, authz and audit. |
+| `browser_control` | remote browser/computer-use actions | DENY by default; requires sandbox, origin policy, approval and audit. |
+| `credential_access` | read/use secrets, wallets, tokens, SSH keys | DENY by default; public mesh exposure SHOULD be prohibited unless a private controller policy explicitly permits it. |
+| `system_control` | service restart, package install, firewall, kernel/OS settings | DENY by default; requires privileged sandbox/agent, human approval gates and rollback. |
+| `physical_world` | robot, drone, IoT actuator, medical/industrial device | DENY by default; requires permissioned deployment and safety case. |
+| `regulated_decision` | employment, credit, education, healthcare, public benefits or legal/significant decisions | DENY by default unless a domain-specific high-risk compliance package and human oversight are in force. |
+
+Minimum controls for any non-`benign_read` public tool are: explicit advertisement, caller
+authentication, caller authorization, bounded input schema, sandbox/least privilege, rate limits,
+redacted logs/receipts, retention policy, and an operator-visible audit trail. These controls are
+risk-reduction measures, not legal compliance proof.
+
 | `cip_conformance_level` | string | One of `"CIP-None"`, `"CIP-Consumer"`, `"CIP-Provider"`, `"CIP-Full"`. `"CIP-None"` means the node has not opted into any CIP role (equivalent to not declared). Per spec §5.2. |
 | `health_label` | string\|null | ADR-044 composed health label: `"healthy"` (score ≥0.85), `"degraded"` (≥0.65), `"impaired"` (≥0.40), `"critical"` (<0.40), `"offline"`. Computed from endpoint-liveness signals only — reachability 0.70, latency 0.30 (50–500 ms curve). Reputation and task-success were removed in #492 (ADR-044 amendment) — health reflects operational liveness, not earned history. Score is a float in [0.0, 1.0] (normalised from internal 0–100 scale by v1.10.6+). A reachable node with no latency evidence is capped below `"healthy"` until latency evidence arrives; consumers SHOULD treat the additive `health.confidence`/`evidence_level` fields on node detail/registry profile as the proof-strength signal. `null` against directories predating v1.10.0. |
 | `exposure_mode` | string\|null | ADR-043 8-category network exposure classification (e.g. `"ipv4_public_direct"`, `"cgnat_upnp"`, `"ipv6_gua"`). `null` if node has not run qualification. |
 | `reachability_tier` | string | v1.10.0, ADR-047: `"direct"` (dial-back-verified) or `"relay"` (heartbeating with a routable surface but not directly dial-back-verified — reachable via relay; e.g. CGNAT/IPv6 where the directory has no egress). Default discover returns `direct`+`relay`; a heartbeating node is never hidden purely for lacking dial-back. Clients SHOULD prefer `direct` and fall back to `relay`. |
+| `route_evidence` | string\|null | Evidence basis for the currently advertised route. Values: `directory_observed_ipv4`, `directory_observed_ipv6`, `external_probe_ipv6`, `directory_observed` (legacy aggregate), `self_attested`, or `missing`. Absence of IPv6 egress proof is not failure; IPv6 literal routes without independent proof remain self-attested/direct-unverified. |
+| `probe_source` | string\|null | Optional low-entropy source label for independent reachability evidence, e.g. `seed_directory`, `external_ipv6_worker`. Must not expose private worker credentials or raw probe logs. |
 | `input_modalities` | array | v1.10.0, ADR-046: union of input modalities the node's capabilities for this intent accept (`["text"]` default; `["text","image"]` for vision). Lets clients confirm multimodal support without a second round-trip; see `?modality=` (§3.3). |
 | `backend` | string\|null | Detected backend server flavor the node runs — one of `ollama`/`lmstudio`/`vllm`/`llamacpp`/`anthropic`/`custom`. Self-attested at REGISTER (the SDK auto-detects it by fingerprinting the backend's endpoints/headers); informational (operator/consumer visibility), not used for routing. `null` if unreported. Also accepted as an optional REGISTER field (§3.1). |
 | `transport_method` | string\|null | How the node is reachable for the native IICP transport (`"direct"`, `"upnp_mapped"`, `"stun_hole_punch"`, `"turn_relay"`, `"external_tunnel"`, `"webrtc_datachannel"`, …). Mirrors the REGISTER value (§3.1 / ADR-041). `external_tunnel` may be an operator-managed stable tunnel or an accountless temporary tunnel; clients treat it as an endpoint reachability shape, not as a guarantee about provider durability. |
@@ -405,7 +580,6 @@ GET /v1/discover
 | `address_family` | string\|null | `"ipv4"`, `"ipv6"`, or `"dual"` (maintainer directive 2026-05-27). Lets IPv6-only clients filter. |
 | `relay_capable` | boolean | `true` if the node can act as a relay for NAT-bound peers (Tier-3 reachability). |
 | `cx_public_key` | object\|null | Canonical IICP-CX confidentiality key (iicp-confidentiality §3.2): `{algorithm, encoding, key, key_id, not_after, hybrid_pq}`. Present when the node advertises E2E payload encryption support. `null` = node accepts plaintext only. Clients MUST use this to encrypt payloads when `X-IICP-Require-E2E` is set. |
-| `public_key` | object\|null | **Deprecated compatibility alias for `cx_public_key`** in discover/NODELIST during the 2026-06-21 SDK adoption window. New normative text and new consumers SHOULD use `cx_public_key` first and treat this field only as a fallback alias to avoid confusing the CX X25519 key with gossip/DID/directory public keys. |
 | `sdk_language` / `sdk_version` | string\|null | Advisory provenance of the serving node's SDK (#338). Informational only. |
 | `sdk_status` / `sdk_baseline_version` / `upgrade_required` | string/string/boolean | Directory-computed SDK-baseline posture. `sdk_status` is `"current"`, `"downlevel"`, or `"unknown"` against the directory's current baseline. Downlevel/unknown nodes remain visible during transition but are demoted and SHOULD NOT be preferred for privacy-sensitive routing. |
 | `key_ready` / `privacy_routing_status` | boolean/string | `key_ready=true` when the node advertises canonical `cx_public_key`. `privacy_routing_status` is `"key_ready"` or `"transitional"`; transitional nodes can serve legacy/plaintext paths but MUST NOT be treated as fully CX-ready. |
@@ -418,6 +592,101 @@ GET /v1/discover
 
 Only nodes with `available = true` AND `last_seen` within 90s are returned.
 Score computed per ADR-008. Nodes with score < 0.1 are excluded.
+
+**Public presentation view (v1.1.14 / #611)**:
+
+```json
+{
+  "nodes": [
+    {
+      "node_id_prefix": "b30aee67",
+      "region": "eu-central",
+      "score": 0.91,
+      "route_class": "external_tunnel",
+      "key_ready": true,
+      "reputation_tier": "gold",
+      "models": ["qwen2.5:0.5b"]
+    }
+  ],
+  "view": "public",
+  "data_class": "public_presentation",
+  "route_fields_present": false,
+  "redaction": {
+    "node_id": "node_id_prefix_only",
+    "endpoint": "omitted",
+    "transport_endpoint": "omitted",
+    "transport_metadata": "omitted",
+    "cx_public_key": "key_ready_boolean_only"
+  }
+}
+```
+
+In `view=public`, directories MUST NOT expose full endpoint URLs, tunnel hostnames,
+native transport URLs, full UUID node IDs, raw CX public keys or opaque transport
+metadata. This view is not sufficient for task dispatch. During the adoption
+window, existing consumers MAY still use default route-dispatch discovery; new
+consumers SHOULD request an explicit dispatch ticket before task submission.
+
+**Ticketed dispatch discovery (v1.1.16 / #612)**:
+
+```
+POST /v1/dispatch/ticket
+{
+  "intent": "urn:iicp:intent:llm:chat:v1",
+  "exclude_node_id_prefixes": ["b30aee67"]
+}
+```
+
+The request is control-plane only. It MUST NOT contain `prompt`, `messages`,
+`payload`, `input`, `chat`, `content`, `response`, or any task body. The
+directory returns one concrete route plus an Ed25519-signed ticket:
+
+```json
+{
+  "ticket": "b64url_payload.sig_hex",
+  "ticket_id_prefix": "a1b2c3d4e5f6",
+  "expires_at": 1780000000,
+  "intent": "urn:iicp:intent:llm:chat:v1",
+  "node_id": "uuid",
+  "node_id_prefix": "b30aee67",
+  "route": {
+    "node_id": "uuid",
+    "endpoint": "https://node.example.com",
+    "transport_endpoint": "iicpsec://node.example.com",
+    "cx_public_key": {"algorithm": "X25519", "key": "..."}
+  },
+  "algorithm": "ed25519",
+  "data_class": "ticketed_route_dispatch",
+  "route_fields_present": true,
+  "prompt_payload_accepted": false
+}
+```
+
+Tickets use domain `iicp:dispatch-route-ticket:v1`, type
+`dispatch-route-ticket`, audience `iicp.directory.dispatch`, and are scoped to
+one `node_id`, one `intent`, and a short expiry. They authorize route disclosure
+only; they do not move the task payload through the directory and do not prove
+legal/privacy compliance. Implementations MUST treat ticket IDs as log-safe only
+when redacted/truncated; full tickets are bearer route material and SHOULD NOT be
+written to public logs. A node selector is optional: without `node_id` or a
+unique `node_id_prefix`, the directory MAY ticket the top eligible candidate.
+Clients MAY send up to ten `exclude_node_id_prefixes` after failed direct
+attempts. The directory MUST exclude those candidates before issuing the next
+route. This preserves bounded client fallback without returning a bulk list of
+active route addresses.
+
+Directories MAY publish anonymous adoption evidence in public stats as
+`dispatch_discovery_adoption`. Such counters MUST be aggregate-only and MUST
+NOT retain caller addresses, identifiers, route URLs, ticket tokens or task
+content. Read-only dashboards, documentation examples and operational inventory
+checks MUST use `view=public`; otherwise they contaminate route-migration
+evidence. The reference directory retains daily aggregate mode counts for 30
+days and reports ticketed, legacy route-discovery and public-view request totals
+over a seven-day window. It also reports a configured measurement epoch, minimum
+sample, sustained-day threshold and `cutover_eligible`; pre-epoch rows remain
+retained but MUST NOT influence a strict cutover decision. Anonymous counters
+remain heuristic and MUST NOT be represented as verified unique-user adoption.
+
 
 **Consensus mode discovery** (Phase 5E — `constraints.consensus` ≠ `none`):
 When a proxy uses consensus mode (iicp-core.md §3.3), it MUST discover N workers
@@ -837,6 +1106,8 @@ A registered node (the *reporter*) submits a peer-divergence finding about a *ta
 | `directory_health` | Directory-infrastructure signal: `0.6·discover_latency + 0.4·conformance` (the signal REACH probes feed). Distinct from `mesh_health`. |
 | `sdk_adoption` | **Adoption telemetry (#531)** for the §6.1 capability-migration framework: `total_active` (count of active nodes), `by_language` (`{rust,python,typescript,browser,unknown}` → count), `by_version` (`sdk_version` → count, descending). Self-reported provenance (advisory), but the objective input that gates adoption-thresholded hard-enforcement stages. SHOULD be exposed per DIR-MIG-01. |
 
+**Directory DB retention (operational, non-payload):** implementations SHOULD bound raw operational telemetry so the directory database grows slowly without weakening control-plane evidence. The reference directory retains raw `iicp_telemetry_probes` for 14 days, detailed `iicp_telemetry_aggregates` for 30 days, `proxy_telemetry` for 30 days, and high-volume `HEARTBEAT` events for 1 day by default. Retention jobs MUST NOT drop credits, reputation, node/operator records or signed ledger events, and they MUST NOT export prompt payloads. Production migrations or pruning runs SHOULD be surrounded by pre- and post-change database backups.
+
 ### 3.9c Directory-initiated node probing (Directory internal, Phase 5)
 
 **Phase**: 5 (active reachability, #373 Phase B)
@@ -1073,6 +1344,139 @@ otherwise.
 | External-tunnel rebuild threshold | 2 failed health probes | Reference SDK treats repeated failed probes as twilight/recovery before rebuilding. |
 | External-tunnel dead retry backoff | 30–300 seconds | Reference SDK bounded retry/backoff range; supervised services may exit/restart according to `IICP_TUNNEL_DEAD_POLICY`. |
 
+### 3.15 Route self-recovery contract (#581)
+
+A node process can be alive and heartbeating while its advertised route is stale,
+rate-limited, sleeping, or not visible from the directory/browser path. SDKs MUST
+treat this as a deterministic recovery state machine, not as a reason for manual
+or LLM-based diagnosis.
+
+#### 3.15.1 Local observations
+
+Reference SDKs SHOULD evaluate these observations on every recovery tick (30s
+recommended, aligned with heartbeat/tunnel probe cadence):
+
+| Observation | Meaning |
+|-------------|---------|
+| `local_health` | `GET /iicp/health` on the serving process succeeds locally. |
+| `backend_health` | Configured model/backend health check succeeds or returns a recoverable busy/loading state. |
+| `directory_heartbeat` | Last heartbeat/register call was accepted by the directory. |
+| `directory_visible` | The node appears in discover/registry for at least one advertised intent when it claims public, relay or browser-usable reachability. |
+| `route_probe` | The current advertised endpoint passes the SDK's local/directory-compatible health probe. |
+| `tunnel_state` | External tunnel is `not_needed`, `starting`, `healthy`, `dead`, `rate_limited`, or `cooldown`. |
+| `supervisor_mode` | `supervised` when launchd/systemd/Docker restart policy is expected; otherwise `unsupervised`. |
+
+#### 3.15.2 Recovery states
+
+SDKs SHOULD expose these states in `doctor --json` and MAY send the safe subset
+in heartbeat metadata. Directory implementations MAY surface the same labels in
+registry `recovery_state`/`route_recovery_hint` fields.
+
+| State | Required interpretation | Directory routing posture |
+|-------|-------------------------|---------------------------|
+| `stable` | Backend, local health, directory heartbeat and current route evidence agree. | Eligible if ordinary routing rules pass. |
+| `route_mismatch` | The SDK is serving on a different endpoint/route than the directory currently advertises. | Old dead/stale endpoint MUST NOT remain discover-routable after confirmed failure. |
+| `endpoint_dead` | Advertised endpoint fails bounded health probes. | Remove/demote route until re-register publishes a valid route or cooldown clears. |
+| `tunnel_starting` | Direct route failed and the SDK is creating or binding a tunnel/relay fallback. | May be visible as recovering; clients SHOULD prefer stable alternatives. |
+| `tunnel_cooldown` | Tunnel provider rate limit or 1015-class evidence triggered host-wide cooldown. | Do not create tunnel storms; show recovery/cooldown without leaking tunnel secrets. |
+| `backend_attention` | Backend/model is unavailable, loading too long, or repeatedly errors while route is otherwise valid. | Node may heartbeat but should not be preferred for matching intents until backend recovers. |
+| `supervisor_restart_pending` | Bounded retries were exhausted and a supervised process should exit with a distinct temporary-failure code. | Temporary recovery window; supervisor should restart the node. |
+| `operator_action_needed` | Unsupervised recovery exhausted or configuration is missing/invalid. | Not discover-routable for affected intents until operator fixes configuration. |
+| `unavailable` | No recent heartbeat or process cannot prove liveness. | Not eligible for default discover. |
+
+#### 3.15.3 Recovery action enum
+
+`doctor --json` and SDK logs SHOULD use this action enum so operators and tests
+can compare clients:
+
+| Action | When to use |
+|--------|-------------|
+| `none` | State is stable or no action is needed. |
+| `reregister` | Route changed, stale endpoint was withdrawn, or public/direct/tunnel metadata must be refreshed. |
+| `wait_cooldown` | Tunnel provider back-pressure or bounded retry backoff is active. |
+| `restart_self` | Supervised retry budget exhausted; exit with a documented temporary-failure code so launchd/systemd/Docker restarts. |
+| `operator_endpoint_needed` | No routable/direct/tunnel/relay route can be established without configuration or credentials. |
+| `backend_attention` | Backend/model health blocks serving and route changes would not help. |
+
+Supervised clients SHOULD prefer bounded retry followed by `restart_self`.
+Unsupervised clients SHOULD prefer bounded retry plus a clear local message and
+MUST NOT spin up repeated tunnel creation attempts while cooldown is active.
+
+#### 3.15.4 Safe directory-visible fields
+
+Heartbeat/registry metadata MAY include only low-entropy recovery summaries:
+
+```json
+{
+  "recovery_state": "tunnel_cooldown",
+  "route_recovery_hint": "tunnel_provider_rate_limited",
+  "recovery_action": "wait_cooldown",
+  "recovery_next_retry_at": "2026-07-08T16:50:00Z",
+  "recovery_attempt": 2,
+  "recovery_supervised": true
+}
+```
+
+These fields MUST NOT include full node tokens, tunnel secret subdomains beyond
+what is already the active dispatch endpoint, provider account identifiers,
+private IP addresses, raw probe logs, prompts, or backend credentials. They are
+advisory explanation signals only; they MUST NOT weaken the existing rule that a
+confirmed dead endpoint is not discover-routable until a valid current route is
+published or verified.
+
+#### 3.15.5 Cross-SDK parity matrix
+
+All official SDK flavours SHOULD converge on this matrix before self-recovery is
+called stable:
+
+| Scenario | Expected state/action | Required test shape |
+|----------|-----------------------|---------------------|
+| Docker direct route healthy | `stable` / `none` | Container starts, registers, heartbeats, discover sees current endpoint. |
+| Laptop sleep/wake | transient `route_mismatch` or `tunnel_starting`, then `stable` / `reregister` | Simulate heartbeat gap plus stale tunnel; verify automatic re-register without manual restart. |
+| Tunnel dead after route was published | `endpoint_dead` → `tunnel_starting` / `reregister` | Kill tunnel, verify stale endpoint withdrawal and new route registration. |
+| Tunnel provider rate limit | `tunnel_cooldown` / `wait_cooldown` | Mock 429/1015, verify host-wide cooldown and no tunnel storm. |
+| Backend down but route alive | `backend_attention` / `backend_attention` | Stop backend, verify route logic does not rebuild tunnel unnecessarily. |
+| Supervised retry budget exhausted | `supervisor_restart_pending` / `restart_self` | Mock persistent tempfail, verify distinct exit code and supervisor restart. |
+| Unsupervised retry budget exhausted | `operator_action_needed` / `operator_endpoint_needed` | Run without supervisor, verify actionable local output and no endless restarts. |
+| Browser-node relay missing | `tunnel_starting` or `operator_action_needed` depending relay discovery | Browser/web-node test verifies no directory secret leakage and clear UI state. |
+
+Implementation issues for Rust, Python, TypeScript and browser-node MUST link to
+this section and report which rows are passing in Docker or browser tests.
+
+### 3.16 Operator-key self-service foundation (#599/#609)
+
+The reference directory exposes a prompt-free, operator-key authenticated API for
+current governance acceptance and data-subject requests. It is a technical
+self-service foundation, not a legal-compliance certificate or a substitute for
+operator-specific controller/processor analysis.
+
+| Route | Purpose | Additional rule |
+|-------|---------|-----------------|
+| `POST /v1/operator/challenge` | Issue a single-use five-minute nonce for a known operator key. | Response is `no-store` and exposes only a short fingerprint plus current terms/DPA versions. |
+| `POST /v1/operator/acceptance` | Record current terms and DPA version acknowledgement. | Requires a fresh challenge and operator Ed25519 signature. |
+| `POST /v1/operator/dsr/export` | Export records linked to the authenticated operator. | Selector is derived from the signed operator key, never caller-provided identity data. |
+| `POST /v1/operator/dsr/restrict` | Restrict matching operator records. | Requires signed `confirm=true`. |
+| `POST /v1/operator/dsr/anonymize` | Anonymize matching operator records under the existing retention rules. | Requires signed `confirm=true`; no cross-operator selector is accepted. |
+
+Canonical signing bytes are UTF-8:
+
+```text
+iicp:operator:self-service:v1\n
+<compact JSON object with alphabetically sorted top-level keys>
+```
+
+The JSON object contains `action`, `operator_pub`, `nonce`, `ts`, and the
+action-specific fields, but excludes `sig`. `action` is `accept`, `dsr_export`,
+`dsr_restrict`, or `dsr_anonymize`. `ts` MUST be within ±300 seconds. A challenge
+MUST be single-use and expire after 300 seconds. Signatures use Ed25519 and are
+base64 encoded. Error responses and successful responses MUST be `no-store` and
+MUST NOT return raw stored operator keys, raw nonces, private evidence documents,
+tokens, contact data, or task content.
+
+Official SDKs SHOULD expose byte-identical canonicalization/signing helpers so a
+future portal or CLI can keep the private operator key local. Browser self-service
+MUST NOT upload the private key to the directory.
+
 ### 3.11 Supplementary routes (scope note, #384)
 
 The following routes are present in the reference implementation but **outside the
@@ -1195,11 +1599,14 @@ could bind it when the real worker drops and intercept its tasks. To close this:
 - A worker MUST obtain a short-lived **bind ticket** from the directory
   (`POST /v1/relay/ticket`, authenticated with the worker's `node_token`),
   scoped to its `node_id`, with a short TTL and a relay-audience claim, signed by
-  the directory.
+  the directory. Every ticket MUST carry a cryptographically random, signed
+  `jti` with at least 128 bits of entropy.
 - The worker presents the ticket in `RELAY_BIND` / `POST /v1/relay/bind`. The
   relay MUST verify the directory signature, the audience, the TTL, and that the
   ticket's `node_id` equals the `worker_id` being bound, before admitting the
-  session. [→ DIR-RELAY-03, F1, #510]
+  session. A relay MUST atomically consume the `jti` on the first successful bind
+  and reject another bind using the same `jti` until at least the ticket's
+  expiration time. [→ DIR-RELAY-03, F1, #510]
 - Migration: the bind ticket follows §6.1 — additive in the SDKs first, soft
   (relay accepts ticketed and legacy binds), then hard (ticket required) once the
   adoption threshold is met.
@@ -1240,7 +1647,7 @@ IICP conformance.
 | `POST` | `/v1/credits/award` | Credit a worker after a validated CIPWorkerReceipt (HMAC-SHA256 + `response_hash` verified; IICP-E027 on failure). Conformance DIR-CRED-03. |
 | `GET`  | `/v1/credits/balance` | Current credit balance for the authenticated node. Conformance DIR-CRED-01. |
 | `GET`  | `/v1/credits/transactions` | Recent credit transaction history for the authenticated node. Conformance DIR-CRED-02. |
-| `GET`  | `/v1/credits/summary` | Lifetime credit summary for the authenticated node: `total_earned` (sum of `credit` rows), `total_spent` (sum of `debit` rows), `balance`, `tx_count`, and a `reconciles` boolean. `reconciles` is an integrity invariant — `true` iff `balance == total_earned − total_spent` (4-decimal precision); a tampered or inconsistent ledger MUST surface as `false`. Conformance DIR-CRED-04. |
+| `GET`  | `/v1/credits/summary` | Lifetime credit summary for the authenticated node: `total_earned` (sum of `credit` rows), `total_spent` (sum of `debit` rows), `balance`, `tx_count`, and a `reconciles` boolean. `reconciles` is an integrity invariant — `true` iff `balance == total_earned − total_spent` (4-decimal precision); a tampered or inconsistent ledger MUST surface as `false`. Implementations that support the billing extension v0.4.0+ also return the additive `operator_wallet` rollup defined in iicp-billing-extension §7; clients MUST treat it as optional and keep the node-local ledger as the audit trail. Conformance DIR-CRED-04. |
 | `GET`  | `/v1/credits/quote` | Quote the credit cost of a prospective task (tokens × multiplier). iicp-billing-extension §8 / CIP §2.2. |
 
 Free-tier allocation (5 credits / 6h gate) is automatic on registration — see §3.10. There is
@@ -1315,6 +1722,23 @@ Tracking: #508
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1.21 | 2026-07-10 | #557 completes the CX discovery-name cutover: discover/NODELIST and authenticated dispatch routes emit only canonical `cx_public_key`. The deprecated CX `public_key` alias is removed from directory output and schema; SDK consumers may retain read fallback for one further release. Node-detail `public_key` remains the distinct Ed25519 gossip key. |
+| 1.1.17 | 2026-07-09 | #613 intent-risk taxonomy: added shared `prohibited`/`high_risk`/`transparency_risk`/`minimal_or_general` vocabulary, public-mesh fail-closed defaults for prohibited/high-risk declared intents, and the non-legal-advice scope caveat. |
+| 1.1.18 | 2026-07-09 | #612 ticketed-dispatch adoption: added bounded failed-node prefix exclusion, safe policy-manifest route evidence, anonymous seven-day migration counters with 30-day retention, and automatic-client downgrade guardrails. |
+| 1.1.20 | 2026-07-10 | #599/#609 operator-key self-service foundation: single-use signed challenges for current terms/DPA acceptance and operator-scoped export, restriction and anonymization, with no-store/redaction requirements and cross-SDK canonical signing helpers. |
+| 1.1.19 | 2026-07-10 | #612 measurement integrity: read-only callers use `view=public`; adoption stats carry a post-cleanup measurement epoch, sample and sustained-window eligibility, while anonymous request counts remain explicitly heuristic. |
+| 1.1.16 | 2026-07-09 | #612 ticketed dispatch discovery: added `POST /v1/dispatch/ticket`, a prompt-free, short-lived, intent/node-scoped route-ticket path so new clients can obtain concrete dispatch routes without using public presentation discovery or relying permanently on default route-bearing GET discovery. |
+| 1.1.15 | 2026-07-09 | #608/#609 policy-key lifecycle and known-operator governance records: directory-owned revocation/supersession can change already-registered manifest status without node re-registration, and `known_operator` requires current terms+DPA acceptance metadata without exposing raw keys, nonces or evidence documents. |
+| 1.1.14 | 2026-07-09 | #611 public presentation discovery view: `view=public` returns safe scored candidates with endpoint URLs, transport endpoint URLs, full UUID node IDs, opaque transport metadata and raw CX keys redacted; default discover remains explicit route-dispatch data for current clients. |
+| 1.1.13 | 2026-07-08 | #558 IPv6 reachability evidence decision: prefer production directory IPv6 egress; use signed external IPv6 worker only as fallback; keep self-attested IPv6 separate from directory/external observed evidence. |
+| 1.1.12 | 2026-07-08 | #599/#602 research decision: operator-key challenge is the preferred DSR portal verifier; policy-manifest identity levels distinguish self-attested, signed-valid, operator-bound, known-operator, rotated and revoked without treating signatures as legal compliance proof. |
+| 1.1.11 | 2026-07-08 | #600/#601 strict region-policy and MCP/tool-risk gate staging: fail-closed allowed-region profile, tool risk vocabulary, public-unknown dangerous-tool denial defaults, and compliance-proof caveat. |
+| 1.1.10 | 2026-07-08 | #581 route self-recovery contract: states/actions, safe directory-visible recovery fields, and cross-SDK parity matrix for Docker/sleep-wake/tunnel-dead/cooldown/supervisor scenarios. |
+| 1.1.9 | 2026-07-08 | #557 cutover staging: live key-ready/current-SDK adoption may stage removal of the discover/NODELIST CX `public_key` alias, but directory alias emission stays for one compatibility release window and client alias fallback stays one further release; malformed/missing CX keys remain fail-closed. |
+| 1.1.8 | 2026-07-02 | Added signed node policy manifest phase A: optional Ed25519 detached signatures over canonical policy manifests, directory rejection for invalid/expired signed manifests, NODELIST/DISCOVER verification evidence, and `strict_policy` client requirement for signed-valid no-retention manifests. |
+| 1.1.7 | 2026-07-02 | Added client remote-routing policy profiles (`standard`, `sensitive`, `eu_restricted`, `strict_policy`, `debug_override`) and the fail-before-dispatch requirement for policy-rejected candidates. |
+| 1.1.6 | 2026-07-02 | EU/GDPR readiness phase-1: added optional REGISTER `policy_manifest` and NODELIST `node_policy_manifest` as a public self-attested node-policy declaration. Clarified that it is transparency/routing-policy metadata only, not a verified legal compliance certificate; signed manifest verification remains future work. |
+| 1.1.5 | 2026-06-30 | IICP-DIR-EXT-CREDITS: clarified that `GET /v1/credits/summary` remains the node-local DIR-CRED-04 ledger summary and may additionally include the `operator_wallet` rollup defined by iicp-billing-extension §7. This aligns the directory summary with operator-wallet CLI output without changing the wire contract. |
 | 1.1.4 | 2026-06-28 | §3.1 documents accountless external-tunnel guardrails shipped in SDK 0.7.75: host-wide create spacing (120s), creation lease (45s), persistent provider-rate-limit cooldown (900s), and fallback to prior safe reachability methods instead of spinning or advertising unverified routes. §3.4 reconciles transport_method enum wording, §3.6/§6 remove stale peer-exchange node-token/HMAC wording, §3.14 centralizes operational timer defaults, and §3.2 refreshes the updater-evidence example to SDK 0.7.75. |
 | 1.1.3 | 2026-06-25 | §3.4 adds SDK-baseline/key-readiness demotion fields and optional `auto_update` evidence; health text now caps no-latency nodes below `"healthy"` until latency evidence exists. |
 | 1.1.2 | 2026-06-21 | §3.4 clarifies IICP-CX discovery naming after the key-alias hotfix: `cx_public_key` is the canonical CX X25519 key; `public_key` is a deprecated compatibility alias in discover/NODELIST and remains a separate Ed25519 gossip key in node-detail/peer-exchange contexts. |

@@ -168,13 +168,16 @@ loopback rejected), use a 5-second TCP timeout, and record results in `iicp_tele
 with `test_id = "DIR-PROBE-NODE-01"`. Once a directory probe is recorded, `GET /v1/node/{id}`
 health response SHOULD reflect the independently observed `reachability` with `observed: true`.
 
-Note: This conformance test activates post-VPS when origin IPv6 egress is available to probe
-DS-Lite/IPv6 nodes. Pre-VPS: probe rows exist but may all be `passed=false` (non-routable
-network). After VPS: at least one `passed=true` row expected within 10 minutes.
+Note: This conformance test activates only when the directory origin or a signed external
+probe worker has IPv6 egress available to probe DS-Lite/IPv6 nodes. On the current df.eu
+shared production server, IPv6 egress is unavailable and a VPS is not an active/funded
+deployment path; probe rows may therefore exist but remain `passed=false` for IPv6-only
+routes without implying a node fault. Once an IPv6-capable probe lane exists, at least
+one `passed=true` row is expected within 10 minutes for a known reachable IPv6 node.
 
 | Test ID | Requirement | Expected | REACH probe |
 |---------|-------------|---------|-------------|
-| `DIR-PROBE-NODE-01` | Directory records probed nodes in `iicp_telemetry_probes` with `test_id='DIR-PROBE-NODE-01'` | Probe row exists for at least one registered node within 10 min of registration | Unit tests: `ProbeNodesCommandTest` (PHP), `run_probe_nodes_loop` (Rust). REACH probe: post-VPS only (not yet live — requires `IICP_REACH_NODE_PROBE=true` env flag). |
+| `DIR-PROBE-NODE-01` | Directory records probed nodes in `iicp_telemetry_probes` with `test_id='DIR-PROBE-NODE-01'` | Probe row exists for at least one registered node within 10 min of registration | Unit tests: `ProbeNodesCommandTest` (PHP), `run_probe_nodes_loop` (Rust). IPv6 REACH probe requires IPv6-capable origin egress or a signed external probe worker (not live on current df.eu shared hosting; requires `IICP_REACH_NODE_PROBE=true` env flag). |
 
 ### 3.3j WebRTC Signaling Mailbox (draft, SHOULD, #523)
 
@@ -396,7 +399,7 @@ Run with the SDK test harness: `iicp-conformance-sdk --sdk python --directory ht
 |---------|------|--------|
 | 4.45.0 | 2026-06-28 | §10.4 adds SDK-NODE-03..05 for SDK 0.7.75 external-tunnel guardrails: persistent provider-rate-limit cooldown, host-wide creation pacing/lease, and fallback to safe reachability methods rather than tunnel-create loops or unverified endpoint advertisement. §3.2/§3.3b/§7 reconcile peer-exchange conformance rows with Ed25519 gossip signatures instead of node-token/HMAC auth. |
 | 4.44.0 | 2026-06-21 | §3.3j DIR-SIGNAL-01..05 draft SHOULD tests added for optional WebRTC signaling mailbox (#523): auth, TTL/cleanup, size/type caps, no task payloads, and discover metadata shape. |
-| 4.42.0 | 2026-06-01 | §3.3i DIR-PROBE-NODE-01 added: active per-node reachability probing (#373 Phase B). Directory autonomously probes registered node endpoints (TCP/HTTP, SSRF-guarded, 5s timeout, 5-min interval). Records `test_id='DIR-PROBE-NODE-01'` in iicp_telemetry_probes. NodeHealthService uses independently observed signal when recent probe exists. PHP: `ProbeNodesCommandTest` 7 tests; Rust: `run_probe_nodes_loop`. REACH probe: post-VPS only (IICP_REACH_NODE_PROBE flag). |
+| 4.42.0 | 2026-06-01 | §3.3i DIR-PROBE-NODE-01 added: active per-node reachability probing (#373 Phase B). Directory autonomously probes registered node endpoints (TCP/HTTP, SSRF-guarded, 5s timeout, 5-min interval). Records `test_id='DIR-PROBE-NODE-01'` in iicp_telemetry_probes. NodeHealthService uses independently observed signal when recent probe exists. PHP: `ProbeNodesCommandTest` 7 tests; Rust: `run_probe_nodes_loop`. IPv6 REACH probing requires IPv6-capable origin egress or a signed external probe worker; the current df.eu shared production server does not provide this. |
 | 4.41.0 | 2026-06-01 | §13.6 REP-04..07 added: security hardening bypass mitigations (#380-383, 2026-06-01). REP-04: per-node hourly velocity ceiling (RT-01b, MAX_HOURLY_GAIN=0.20). REP-05: IP-level free credit gate (RT-02b). REP-06: Sybil quorum reporter independence — min age 3d + rep ≥0.55 (RT-03b). REP-07: audit-report reporter eligibility — same age+reputation gate (RT-05b). Tests added to CreditHarvestRegressionTest, ReputationServiceTest, ProxyTelemetryTest, AuditReportTest. |
 | 4.40.0 | 2026-05-31 | §3.3d DIR-CIP-03: valid `reputation_tier` set updated to include `"bronze"` (CIP spec v0.6.9, 2026-05-30 reconciliation). `bronze` is the floor tier for all sub-Silver nodes; `none` retained transitionally. Probe `valid_tiers` updated; PHP NodeScorer `none`→`bronze` for `score < 0.40`; Rust `tier_from_score` floor updated. REACH unit test updated (bronze PASS, `"probation"` used as the invalid-tier test case). |
 | 4.39.0 | 2026-05-26 | §11.9 Trust Precedence added per Phase 6 charter P6-4.3: DIR-FED-TRUST-01 (S.13 §3.2) — proxy resolves conflicting node-state per strict precedence Seed > Replica-by-seq > Tier-tiebreaker > Gossip; field-level (not row-level). 14 unit tests in proxy/tests/test_trust_resolver.py + INFO-skip REACH probe (activates when replica deployed); reach run_all 39→40. |

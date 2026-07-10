@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/spec/intent-risk-taxonomy.json",
+  "version": "2026-07-09",
+  "status": "technical-compliance-readiness",
+  "categories": [
+    "prohibited",
+    "high_risk",
+    "transparency_risk",
+    "minimal_or_general"
+  ],
+  "public_mesh_default": {
+    "prohibited": "refuse",
+    "high_risk": "refuse_without_explicit_private_compliance_profile",
+    "transparency_risk": "allow_with_notice_metadata",
+    "minimal_or_general": "allow"
+  },
+  "rules": [
+    {"category": "prohibited", "rule_id": "eu-ai-act-social-scoring", "label": "social scoring", "fragments": ["social-scoring", "social_scoring", "social:scoring"]},
+    {"category": "prohibited", "rule_id": "eu-ai-act-criminal-risk", "label": "individual criminal risk prediction", "fragments": ["criminal-risk", "criminal_risk", "criminal:risk", "predict-crime"]},
+    {"category": "prohibited", "rule_id": "eu-ai-act-workplace-education-emotion", "label": "workplace or education emotion recognition", "fragments": ["emotion:workplace", "emotion:education", "workplace-monitoring", "education-monitoring", "worker-monitoring"]},
+    {"category": "prohibited", "rule_id": "eu-ai-act-protected-trait-biometric", "label": "biometric protected-trait classification", "fragments": ["protected-trait", "protected_trait", "biometric:protected"]},
+    {"category": "prohibited", "rule_id": "eu-ai-act-untargeted-face-scraping", "label": "untargeted facial image scraping for recognition databases", "fragments": ["untargeted-scraping", "untargeted_scraping", "face-scraping", "facial-scraping"]},
+    {"category": "prohibited", "rule_id": "eu-ai-act-realtime-remote-biometric-id", "label": "real-time remote biometric identification", "fragments": ["remote-biometric:realtime", "realtime-remote-biometric", "real-time-remote-biometric"]},
+    {"category": "prohibited", "rule_id": "eu-ai-act-nonconsensual-sexual-deepfake", "label": "non-consensual sexual deepfake or CSAM generation", "fragments": ["nonconsensual-sexual", "non-consensual-sexual", "child-sexual-abuse", "csam"]},
+    {"category": "high_risk", "rule_id": "eu-ai-act-employment-workforce", "label": "employment, recruitment, worker management or worker monitoring decision", "fragments": ["employment:hiring", "employment:screen", "employment:rank", "recruitment:decision", "workforce:decision", "worker-management", "worker:performance", "worker:discipline"]},
+    {"category": "high_risk", "rule_id": "eu-ai-act-education-admission-grading", "label": "education admission, assessment or grading decision", "fragments": ["education:admission", "education:grading", "education:grade", "student:admission", "student:assess", "exam-grading"]},
+    {"category": "high_risk", "rule_id": "eu-ai-act-credit-essential-services", "label": "credit scoring or essential-services access decision", "fragments": ["credit-scoring", "credit:score", "credit:decision", "essential-services", "benefits:eligibility", "public-benefit:eligibility"]},
+    {"category": "high_risk", "rule_id": "eu-ai-act-law-enforcement-border-justice", "label": "law enforcement, migration, asylum, border, justice or democratic-process decision", "fragments": ["law-enforcement", "law_enforcement", "migration:decision", "asylum:decision", "border-control", "justice:decision", "democratic-process", "election:decision"]},
+    {"category": "high_risk", "rule_id": "eu-ai-act-healthcare-critical-infrastructure", "label": "healthcare decision or critical-infrastructure safety component", "fragments": ["healthcare:decision", "medical:diagnosis", "medical:triage", "clinical:decision", "critical-infrastructure", "grid:stabilize", "hospital:surge-capacity"]},
+    {"category": "high_risk", "rule_id": "eu-ai-act-physical-world-control", "label": "robotics, drone, IoT or physical-world control", "fragments": ["robotics:control", "robotics:fleet", "drone:control", "drone:search", "iot:actuate", "physical-world", "system_control"]},
+    {"category": "transparency_risk", "rule_id": "eu-ai-act-ai-interaction", "label": "AI interaction or generated content notice required", "fragments": ["chatbot", "ai-assistant", "synthetic-media", "deepfake:labelled", "content:generate-public", "creative:generate"]}
+  ]
+}
