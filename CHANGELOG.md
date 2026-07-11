@@ -1,5 +1,13 @@
 # IICP Changelog
 
+## Unreleased — non-normative strategic research 2026-07-11
+
+Added a public research note on layered intent, capability, policy, evidence
+and extension profiles. The note records reproducible compatibility,
+receipt-boundary and selection-screening results. **It does not change the
+v1.9 Protocol Suite, registry, or wire compatibility.** Any future normative
+change remains subject to the spec-source release and conformance-fixture gates.
+
 ## Unreleased — reference synchronization 2026-07-10
 
 The v1.9 working set has been synchronized from the reference repository without changing the

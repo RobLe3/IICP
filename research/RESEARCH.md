@@ -19,6 +19,16 @@
 > summary lives at <https://iicp.network/research>; spec wording is captured in
 > `spec/v1.9/validation-methodology.md` §7.
 
+> **Strategic taxonomy and interoperability checkpoint (2026-07-11)**: a
+> deterministic compatibility simulation passed stable-URN, alias, schema,
+> extension, policy-refusal, A2A-skill and MCP-tool scenarios. A companion
+> receipt-boundary simulation selected correlated client/node receipts with
+> redacted directory metadata. The resulting direction is a small stable intent
+> core plus capability, policy, evidence and extension profiles. This is
+> non-normative research: it does not change the v1.9 suite or current wire
+> contracts. See
+> [`research/strategic/2026-07-11-layered-intent-capability-research.md`](strategic/2026-07-11-layered-intent-capability-research.md).
+
 This document consolidates all research outcomes, datasets, test cases, and design
 insights across the active research tracks. It is the primary reference for
 spec writers, ADR authors, and implementation teams.
@@ -36,6 +46,7 @@ spec writers, ADR authors, and implementation teams.
 | **COMMUNITY-PLATFORM** — Forum / BBS choice | #268 | **Research COMPLETE 5/5** (iter-301) | Lemmy recommended; awaiting maintainer sign-off |
 | **INBOUND-ADAPTERS** — LLM API compat layer | #273 | **Research COMPLETE 1/1** (iter-370) | Priority matrix done: Ollama-compat Phase A, Anthropic-compat Phase B; implementation issues to be filed |
 | **OPER-EVIDENCE** — live implementation evidence discipline | Reference implementation | **Active** | Separate live, validated, simulated and future claims; see validation methodology §7 |
+| **STRATEGIC-PROFILES** — layered intent/capability/policy/evidence research | `iicp.network#619`, `RobLe3/IICP#2` | **Research complete; ratification gated** | Preserve stable URNs; publish profiles and shared fixtures before normative changes. |
 
 **RESA composite**: **92.36/90.0 CONVERGED** (iter93, 2026-05-18). R-GATE-1 OPEN.
 
