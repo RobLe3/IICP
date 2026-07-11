@@ -167,11 +167,17 @@ seasonal/yearly badges (§5.2/§5.3). Design + adversarial review: `research/gam
 the parameters below on 2026-06-05.
 
 **5.4.1 Keyed to the cryptographic operator identity, never node_id.** A founder ordinal is bound to the
-operator's **`operator_pubkey`** — the ed25519 operator key (== `operator_id`, #464; §3) that the
+operator's **active `operator_pubkey`** — the ed25519 operator key (== `operator_id`, #464; §3) that the
 directory verifies via the ADR-045 register delegation — not to any node. (This supersedes the earlier
 DID `identity_uri` framing for founder keying: the shipped lock-in detector keys on `operator_pubkey`,
 which is what reaches the directory.) Nodes are fungible; dev/test churn **MUST** be purged from the
 genesis snapshot and **MUST NOT** count toward any ordinal (§8 rule 1, R3).
+
+**Normal key rotation is the sole continuity exception.** A directory MAY move an ordinal to a successor
+operator key only after a single-use challenge and proofs of control from both the old and new keys.
+The old identity becomes ineligible for new claims; the successor inherits the ordinal exactly once; the
+transfer MUST be represented as `FOUNDER_SUCCESSION` on the recognition chain when that anchor is
+available. A lost or compromised key MUST NOT receive automatic continuity transfer.
 
 **5.4.2 Earned by serving — provisional → locked (as shipped).** An ordinal is **provisional** at first
 appearance and **locks in** when the directory's daily lock-in detector finds the operator has completed:
@@ -330,8 +336,9 @@ the canonical bytes `json({display_name, operator_pub, ts})` (alphabetical keys,
 slashes/unicode unescaped). The directory verifies the signature against `operator_pub`
 (== `operator_id`, #464 — proves key-control), rejects a `ts` outside ±300 s (replay), and
 updates the single operator-keyed record (reflected on every node + the leaderboard). The
-immutable `operator_id` and any earned founder ordinal stay bound to the key; only the floating
-`display_name` changes.
+active `operator_id` and any earned founder ordinal stay bound to the key; only the floating
+`display_name` changes. The separately defined dual-key rotation flow may transfer the active identity
+and its continuity under §5.4.1; rename itself never performs that transfer.
 
 "Operator-signed" means the request body carries the Identity Slot (`identity` +
 `identity_signature` per S.15 §3) with `identity_uri` matching the operator's published

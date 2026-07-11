@@ -1443,7 +1443,7 @@ called stable:
 Implementation issues for Rust, Python, TypeScript and browser-node MUST link to
 this section and report which rows are passing in Docker or browser tests.
 
-### 3.16 Operator-key self-service foundation (#599/#609)
+### 3.16 Operator-key self-service and identity lifecycle (#599/#609/#618)
 
 The reference directory exposes a prompt-free, operator-key authenticated API for
 current governance acceptance and data-subject requests. It is a technical
@@ -1454,6 +1454,8 @@ operator-specific controller/processor analysis.
 |-------|---------|-----------------|
 | `POST /v1/operator/challenge` | Issue a single-use five-minute nonce for a known operator key. | Response is `no-store` and exposes only a short fingerprint plus current terms/DPA versions. |
 | `POST /v1/operator/acceptance` | Record current terms and DPA version acknowledgement. | Requires a fresh challenge and operator Ed25519 signature. |
+| `POST /v1/operator/key/rotate` | Move an active operator identity to a successor key. | Requires one fresh challenge plus signatures from both the current and successor Ed25519 keys; linked node continuity moves atomically while independently signed policy manifests are not rewritten. |
+| `POST /v1/operator/key/revoke` | Revoke an active operator identity. | Requires a signed `confirm=true`; linked nodes become operator-unverified until explicitly re-delegated while historical ledgers follow existing retention rules. |
 | `POST /v1/operator/dsr/export` | Export records linked to the authenticated operator. | Selector is derived from the signed operator key, never caller-provided identity data. |
 | `POST /v1/operator/dsr/restrict` | Restrict matching operator records. | Requires signed `confirm=true`. |
 | `POST /v1/operator/dsr/anonymize` | Anonymize matching operator records under the existing retention rules. | Requires signed `confirm=true`; no cross-operator selector is accepted. |
@@ -1466,12 +1468,19 @@ iicp:operator:self-service:v1\n
 ```
 
 The JSON object contains `action`, `operator_pub`, `nonce`, `ts`, and the
-action-specific fields, but excludes `sig`. `action` is `accept`, `dsr_export`,
-`dsr_restrict`, or `dsr_anonymize`. `ts` MUST be within ±300 seconds. A challenge
+action-specific fields, but excludes `sig` and (for rotation) `new_key_sig`.
+`action` is `accept`, `key_rotate`, `key_rotate_successor`, `key_revoke`,
+`dsr_export`, `dsr_restrict`, or `dsr_anonymize`. `ts` MUST be within ±300 seconds. A challenge
 MUST be single-use and expire after 300 seconds. Signatures use Ed25519 and are
 base64 encoded. Error responses and successful responses MUST be `no-store` and
 MUST NOT return raw stored operator keys, raw nonces, private evidence documents,
 tokens, contact data, or task content.
+
+Normal rotation is an explicit continuity operation, not a silent key replacement:
+the old key becomes `rotated` and cannot create new self-service or delegation
+claims; the new key becomes active only after both key-control proofs verify. Only
+safe fingerprints, timestamp, epoch and redacted reason class may be public. A lost
+or compromised key MUST NOT receive automatic continuity transfer.
 
 Official SDKs SHOULD expose byte-identical canonicalization/signing helpers so a
 future portal or CLI can keep the private operator key local. Browser self-service
