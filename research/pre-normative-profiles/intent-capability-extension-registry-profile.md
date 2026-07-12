@@ -1,6 +1,6 @@
 # Proposal — Intent, Capability and Extension Registry Profile
 
-**Status:** fixture-gated pre-normative draft (profile fixture `0.2.0-draft`) · **Depends on:** IICP semantics, node capability format, spec-only sync issue `RobLe3/IICP#2`.
+**Status:** fixture-gated pre-normative draft (profile fixture `0.3.0-draft`) · **Depends on:** IICP semantics, node capability format, spec-only sync issue `RobLe3/IICP#2`.
 
 ## Purpose
 

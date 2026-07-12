@@ -22,6 +22,11 @@ signer-key revocation.
 hard eligibility, including stable ordering, bounded load clamping, and the
 single-candidate case. It does not alter the default `epsilon` strategy.
 
+`profile-negotiation-v0.json` covers additive directory capability negotiation
+for a caller-requested pre-normative profile. No request preserves legacy
+discovery; unsupported required requests fail closed, while optional requests
+remain advisory.
+
 `profile-fixture-manifest-v0.json` pins all canonical SHA-256 digests.
 Maintained implementations copy the fixtures into their own repository only
 through the documented synchronization check, so a copied fixture cannot
