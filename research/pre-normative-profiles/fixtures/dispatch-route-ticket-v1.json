@@ -1,0 +1,126 @@
+{
+  "fixture_version": "1.0.0-draft",
+  "status": "pre-normative",
+  "purpose": "Cross-implementation validation vectors for disclosure-only IICP dispatch route tickets.",
+  "domain": "iicp:dispatch-route-ticket:v1\n",
+  "public_key_hex": "ea4a6c63e29c520abef5507b132ec5f9954776aebebe7b92421eea691446d22c",
+  "valid": {
+    "token": "eyJ2IjoxLCJ0eXAiOiJkaXNwYXRjaC1yb3V0ZS10aWNrZXQiLCJpc3MiOiJodHRwczovL2RpcmVjdG9yeS5leGFtcGxlLnRlc3QiLCJhdWQiOiJpaWNwLmRpcmVjdG9yeS5kaXNwYXRjaCIsImp0aSI6IjAxMjM0NTY3ODlhYmNkZWYwMTIzNDU2NyIsIm5vZGVfaWQiOiJub2RlLTAwMDAwMDAxIiwiaW50ZW50IjoidXJuOmlpY3A6aW50ZW50OmxsbTpjaGF0OnYxIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjQxMDI0NDQ4MDB9.3adc08694e6d33ecb75f38d8f34b0d890f09daac9ba0b3eb4e2ede1f498bcd65602beff643779988c2c082d9e507a2cf2c44bfa38244e4061f6070e7447a8207",
+    "claims": {
+      "v": 1,
+      "typ": "dispatch-route-ticket",
+      "iss": "https://directory.example.test",
+      "aud": "iicp.directory.dispatch",
+      "jti": "0123456789abcdef01234567",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "iat": 1700000000,
+      "exp": 4102444800
+    }
+  },
+  "invalid_cases": [
+    "malformed_token",
+    "bad_signature",
+    "expired",
+    "wrong_issuer",
+    "wrong_audience",
+    "wrong_node",
+    "wrong_intent"
+  ],
+  "security": {
+    "control_plane_only": true,
+    "task_payload_fields_forbidden": [
+      "prompt",
+      "messages",
+      "payload",
+      "input",
+      "chat",
+      "content",
+      "response"
+    ],
+    "ticket_semantics": "route_disclosure_only",
+    "single_use_enforcement": "not_provided_in_v1",
+    "safe_receipt_fields": [
+      "ticket_id_prefix",
+      "node_id_prefix",
+      "intent",
+      "policy_decision",
+      "expiry"
+    ]
+  },
+  "validation_vectors": [
+    {
+      "name": "valid",
+      "token": "valid",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "valid"
+    },
+    {
+      "name": "malformed_token",
+      "token": "not-a-ticket",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "rejected"
+    },
+    {
+      "name": "bad_signature",
+      "token": "valid+0",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "rejected"
+    },
+    {
+      "name": "expired",
+      "token": "valid",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 4102444800,
+      "expected": "rejected"
+    },
+    {
+      "name": "wrong_issuer",
+      "token": "valid",
+      "issuer": "https://other-directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "rejected"
+    },
+    {
+      "name": "wrong_audience",
+      "token": "valid",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "unsupported_pre_normative_profile",
+      "unsupported_reason": "audience is an intrinsic signed claim; represented by issuer-audience verifier contract tests"
+    },
+    {
+      "name": "wrong_node",
+      "token": "valid",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-other",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "rejected"
+    },
+    {
+      "name": "wrong_intent",
+      "token": "valid",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:embedding:v1",
+      "now_s": 1800000000,
+      "expected": "rejected"
+    }
+  ]
+}
