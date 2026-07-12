@@ -7,6 +7,12 @@
     "ineligible_reasons": ["intent_mismatch", "policy_refusal", "required_extension_missing", "schema_digest_mismatch", "unsupported_binding"],
     "unsupported_status": "unsupported_pre_normative_profile"
   },
+  "native_policy_scenarios": [
+    {"name": "key_required", "node": {"region": "eu-central"}, "policy": {"require_encryption": true}, "expected_reason": "missing_encryption_key"},
+    {"name": "region_restricted", "node": {"region": "us-east", "cx_public_key": true}, "policy": {"allowed_regions": ["eu"]}, "expected_reason": "region_not_allowed"},
+    {"name": "manifest_identity_threshold", "node": {"region": "eu-central", "cx_public_key": true, "node_policy_manifest": {"manifest_identity_level": "signed_valid"}}, "policy": {"required_manifest_identity_level": "operator_bound"}, "expected_reason": "manifest_identity_level_too_low"},
+    {"name": "missing_critical_policy_claim", "node": {"region": "eu-central", "cx_public_key": true, "node_policy_manifest": {}}, "policy": {"require_no_payload_retention": true}, "expected_reason": "payload_retention_not_none"}
+  ],
   "scenarios": [
     {
       "name": "stable_chat",
