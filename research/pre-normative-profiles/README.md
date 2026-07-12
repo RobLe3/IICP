@@ -1,10 +1,30 @@
-# Pre-normative profile proposals
+# IICP proposal drafts
 
-These drafts are the fixture-gated working set for IICP intent/capability,
-policy/data-handling, and route-ticket/receipt profiles. They are **not** part
-of the ratified `spec/v1.9` suite and do not alter current wire contracts.
+These documents are pre-normative design proposals. They do not change the
+ratified IICP suite, existing wire contracts, or client behavior. A proposal
+may advance only after deterministic simulation, cross-SDK fixture tests,
+implementation review, a migration path and spec-only repository release
+synchronization.
 
-The fixture manifest pins the SHA-256 identity of the compatibility fixture.
-A proposal advances only after every maintained implementation consumes the
-same released fixture, an implementation review confirms migration safety, and
-the ratified-suite release process records the version and changelog.
+## Current strategic decision
+
+The current direction is **a small stable intent core plus explicit capability,
+policy, evidence and extension profiles**. Stable URNs are preserved; MCP and
+A2A are compatibility inputs rather than IICP core task models. The 2026-07-11
+simulation pass supports hybrid client/node receipts with redacted directory
+metadata and identifies composite inverse-load weighting as the only selection
+candidate ready for implementation research. It does not ratify a new wire
+contract or a broad domain ontology.
+
+Tracking: `iicp.network#619` and spec-source synchronization
+`RobLe3/IICP#2`.
+
+The shared fixture set contains
+[`fixtures/profile-compatibility-v0.json`](./fixtures/profile-compatibility-v0.json)
+and [`fixtures/dispatch-route-ticket-v1.json`](./fixtures/dispatch-route-ticket-v1.json).
+Its manifest pins both digests and it is consumed by maintained SDK, directory
+and browser checks. The profile compatibility evaluator is additive and
+pre-normative; it is intentionally not a new runtime requirement until a
+negotiated profile and ratified release process exist. The policy/data-handling
+schema and `selection-profile-v1.md` are likewise drafts, not a routing-default
+or wire-format change.
