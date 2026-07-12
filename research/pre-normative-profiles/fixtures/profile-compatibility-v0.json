@@ -1,12 +1,15 @@
 {
-  "fixture_version": "0.2.0-draft",
+  "fixture_version": "0.3.0-draft",
   "status": "pre-normative",
   "purpose": "Deterministic profile-compatibility cases for future IICP capability, policy, evidence and extension profiles.",
   "result_contract": {
     "eligible_reason": "compatible",
-    "ineligible_reasons": ["intent_mismatch", "policy_refusal", "required_extension_missing", "schema_digest_mismatch", "unsupported_binding"],
+    "ineligible_reasons": ["intent_mismatch", "policy_refusal", "required_extension_missing", "schema_digest_mismatch", "experimental_extension_expired", "unsupported_binding"],
     "unsupported_status": "unsupported_pre_normative_profile"
   },
+  "intent_aliases": [
+    {"from": "urn:iicp:intent:classify:v1", "to": "urn:iicp:intent:llm:classify:v1"}
+  ],
   "native_policy_scenarios": [
     {"name": "key_required", "node": {"region": "eu-central"}, "policy": {"require_encryption": true}, "expected_reason": "missing_encryption_key"},
     {"name": "region_restricted", "node": {"region": "us-east", "cx_public_key": true}, "policy": {"allowed_regions": ["eu"]}, "expected_reason": "region_not_allowed"},
@@ -44,10 +47,12 @@
       "name": "schema_mismatch",
       "request": {
         "intent": "urn:iicp:intent:llm:embedding:v1",
+        "schema_digest": "sha256:embedding-input-v1",
         "schema": { "type": "object", "required": ["input"], "properties": { "input": { "type": "string" } } }
       },
       "provider": {
         "intent": "urn:iicp:intent:llm:embedding:v1",
+        "schema_digest": "sha256:embedding-input-and-dimensions-v1",
         "schema": { "type": "object", "required": ["input", "dimensions"] }
       },
       "expected": "ineligible",
@@ -137,6 +142,32 @@
       },
       "expected": "ineligible",
       "expected_reason": "policy_refusal"
+    },
+    {
+      "name": "expired_experimental_extension",
+      "now_s": 1800000000,
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema_digest": "sha256:chat-v1",
+        "extensions": [{"uri": "https://iicp.network/extensions/experimental-citations/v1", "required": true, "experimental": true, "owner": "iicp-working-group", "review_expires_at_s": 1700000000}]
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema_digest": "sha256:chat-v1",
+        "extensions": [{"uri": "https://iicp.network/extensions/experimental-citations/v1"}]
+      },
+      "expected": "ineligible",
+      "expected_reason": "experimental_extension_expired"
+    },
+    {
+      "name": "unsupported_bridge_binding",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "mapping_kind": "opaque_vendor_bridge"
+      },
+      "provider": {"intent": "urn:iicp:intent:llm:chat:v1"},
+      "expected": "ineligible",
+      "expected_reason": "unsupported_binding"
     }
   ]
 }

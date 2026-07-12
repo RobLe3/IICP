@@ -18,6 +18,13 @@ coverage.
 - receipt and human-review requirement;
 - public versus authenticated extended-manifest disclosure.
 
+The companion `schemas/policy-and-data-handling-profile-v0.schema.json` is an
+additive draft schema. `remote_routing=local_only` is a caller-side exclusion,
+not a claim that a provider cannot be contacted by other policy contexts.
+Public views may expose only routing-safe profile claims. Any richer operator
+or processor detail belongs to authenticated disclosure and remains a provider
+claim unless independently evidenced.
+
 ## Routing rule
 
 A client excludes a candidate before dispatch when its policy profile conflicts

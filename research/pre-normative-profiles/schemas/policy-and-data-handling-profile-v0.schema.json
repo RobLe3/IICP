@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/proposals/policy-and-data-handling-profile-v0.schema.json",
+  "title": "IICP Policy and Data-Handling Profile v0",
+  "description": "Pre-normative additive provider claim. It is not an attestation, legal certification, anonymity guarantee, or executor-blind inference guarantee.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {"const": "0-draft"},
+    "data_class": {"enum": ["public", "internal", "confidential", "restricted"]},
+    "remote_routing": {"enum": ["allowed", "requires_approval", "local_only"]},
+    "jurisdiction": {"type": "string", "minLength": 2, "maxLength": 64},
+    "allowed_regions": {"type": "array", "items": {"type": "string", "minLength": 2}, "uniqueItems": true},
+    "retention": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {"task_payload": {"enum": ["none", "transient", "declared"]}}
+    },
+    "training_use": {"enum": ["none", "declared", "unknown"]},
+    "subprocessors": {"enum": ["none", "declared", "unknown"]},
+    "approval": {"enum": ["none", "user", "operator", "human_review"]},
+    "tool_risk": {"enum": ["none", "read_only", "write", "privileged"]},
+    "requires_encryption": {"type": "boolean"},
+    "requires_receipt": {"type": "boolean"},
+    "requires_human_review": {"type": "boolean"}
+  },
+  "required": ["version", "data_class", "remote_routing"]
+}

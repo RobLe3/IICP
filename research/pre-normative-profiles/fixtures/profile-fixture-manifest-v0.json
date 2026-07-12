@@ -4,8 +4,8 @@
   "fixtures": [
     {
       "path": "profile-compatibility-v0.json",
-      "fixture_version": "0.2.0-draft",
-      "sha256": "9d09b83ee35a3fffd4cbe50eef787e91d5abd5c6d3eb57966c1658d1c9ec8dd2"
+      "fixture_version": "0.3.0-draft",
+      "sha256": "4137ecf91b4748a2b368cf4428b4604c6947f8879d77402cc7937d11d24b2aaf"
     },
     {
       "path": "dispatch-route-ticket-v1.json",

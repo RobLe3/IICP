@@ -21,7 +21,7 @@ conditions it may do it.
 - Deprecated URNs may provide an explicit successor mapping only when their schemas remain compatible.
 - A provider is ineligible when intent, schema digest, or a required extension is incompatible.
 - Unknown optional extensions do not change core compatibility.
-- Experimental extensions require an owner, review/expiry date and no interoperability guarantee.
+- Experimental extensions require an owner, review/expiry date and no interoperability guarantee. A required experimental extension past its review expiry is rejected with `experimental_extension_expired`.
 - Compatibility uses the released fixture digest and portable reason codes. An
   implementation that has not adopted this draft profile returns
   `unsupported_pre_normative_profile`; it does not silently reinterpret a

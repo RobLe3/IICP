@@ -28,3 +28,13 @@ operator secret in public discovery or directory receipts.
 ## Evidence gate
 
 The receipt-boundary simulation rejects directory-only evidence, marks client-only/node-only as partial, and selects the hybrid client/node plus redacted-directory model. Production parity requires canonical expiry/tamper/claim-mismatch fixtures and cross-SDK verification next. Stateful replay redemption and node admission remain a future v2 design, not an implied v1 guarantee. The profile fixture manifest and the existing dispatch-ticket fixture are both required inputs to a future normative release.
+
+## Explicit v1/v2 boundary
+
+`dispatch-route-ticket:v1` has one directory signing key and verifies a
+short-lived route-disclosure statement. It cannot by itself express stateful
+redemption, node-admission authorization, or signer-key revocation. Those
+properties require an authenticated key-set and replay state, so they are a
+future v2 design rather than an untestable promise in v1. A v1 client fails
+closed on invalid signatures, expiry, audience, node, intent, or issuer
+mismatch; it must not infer any stronger admission or revocation guarantee.
