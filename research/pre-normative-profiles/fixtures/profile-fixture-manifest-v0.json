@@ -11,6 +11,11 @@
       "path": "dispatch-route-ticket-v1.json",
       "fixture_version": "1.0.0-draft",
       "sha256": "bbdbe180a543cb14cfc7791e9fdf18d0c9b5dfa88c4098690a1bed0003221a94"
+    },
+    {
+      "path": "selection-v1.json",
+      "fixture_version": "1.0.0-draft",
+      "sha256": "ba28a8865d58d87d5302f216602816431697f9c3f963974769536a45e8e9b488"
     }
   ]
 }

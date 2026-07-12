@@ -10,6 +10,12 @@ risk, encryption, reachability, region and requested manifest/trust policy.
 It then permits bounded weighted selection only within the eligible top-k
 candidates, with score-ordered safe retries after a failure.
 
+The opt-in `weighted_v1` weight is
+`max(score, 0.01) / (1 + clamp(load, 0, 1))`. `load` is directory-provided
+advisory capacity metadata; it is clamped so a malformed value cannot dominate
+selection. The canonical `fixtures/selection-v1.json` vectors are evaluated
+after hard eligibility and before dispatch.
+
 `deterministic` remains the diagnostic order. Existing `epsilon` remains the
 default until the three native SDKs have matching deterministic vectors and
 Docker evidence. A future weighted strategy must be explicit opt-in first; it
