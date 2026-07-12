@@ -10,6 +10,10 @@ A discovery caller may send `profile_id`, `profile_version`,
 directory whether it recognizes the named pre-normative profile fixture; they
 do not carry task content, provider credentials, endpoints, or policy details.
 
+Once `profile_id` is present, the version and 64-character fixture digest are
+also required. This prevents an implementation from accepting a profile name
+while silently evaluating a different fixture revision.
+
 When no profile fields are sent, the discovery request and response preserve
 the legacy contract. When a request is sent, the response includes a redacted
 `profile_negotiation` object with the requested identity, status, fixture

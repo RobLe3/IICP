@@ -19,8 +19,8 @@
     },
     {
       "path": "profile-negotiation-v0.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "dfd00b5e52937ffda3004a0e447349abb48d7bcff4ac7c7a9bfeb3fbbb06ba27"
+      "fixture_version": "0.2.0-draft",
+      "sha256": "2752765c44627319bca9968411e29e3cbd7429d9b0a1b5317bb0b4ec58a3bb20"
     }
   ]
 }

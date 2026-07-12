@@ -1,12 +1,15 @@
 {
-  "fixture_version": "0.1.0-draft",
+  "fixture_version": "0.2.0-draft",
   "status": "pre-normative",
   "profile_id": "iicp.profile.compatibility.v0",
+  "profile_version": "0.3.0-draft",
+  "profile_fixture_sha256": "4137ecf91b4748a2b368cf4428b4604c6947f8879d77402cc7937d11d24b2aaf",
   "purpose": "Deterministic additive discovery profile-negotiation cases. No request preserves legacy discovery.",
   "cases": [
-    {"name":"matching_required","request":{"profile_id":"iicp.profile.compatibility.v0","profile_version":"0.3.0-draft","profile_required":true},"expected":{"status":"compatible","reason":"compatible","dispatch_allowed":true}},
-    {"name":"fixture_digest_mismatch_required","request":{"profile_id":"iicp.profile.compatibility.v0","profile_version":"0.3.0-draft","fixture_sha256":"0000000000000000000000000000000000000000000000000000000000000000","profile_required":true},"expected":{"status":"unsupported","reason":"unsupported_pre_normative_profile","dispatch_allowed":false}},
-    {"name":"unknown_optional","request":{"profile_id":"iicp.profile.unknown.v0","profile_version":"0.1.0-draft","profile_required":false},"expected":{"status":"unsupported","reason":"unsupported_pre_normative_profile","dispatch_allowed":true}},
-    {"name":"unknown_required","request":{"profile_id":"iicp.profile.unknown.v0","profile_version":"0.1.0-draft","profile_required":true},"expected":{"status":"unsupported","reason":"unsupported_pre_normative_profile","dispatch_allowed":false}}
+    {"name":"legacy_no_request","request":{},"expected":{"requested":false,"dispatch_allowed":true}},
+    {"name":"matching_required","request":{"profile_id":"iicp.profile.compatibility.v0","profile_version":"0.3.0-draft","profile_fixture_sha256":"4137ecf91b4748a2b368cf4428b4604c6947f8879d77402cc7937d11d24b2aaf","profile_required":true},"expected":{"requested":true,"status":"compatible","reason":"compatible","dispatch_allowed":true}},
+    {"name":"fixture_digest_mismatch_required","request":{"profile_id":"iicp.profile.compatibility.v0","profile_version":"0.3.0-draft","profile_fixture_sha256":"0000000000000000000000000000000000000000000000000000000000000000","profile_required":true},"expected":{"requested":true,"status":"unsupported","reason":"unsupported_pre_normative_profile","dispatch_allowed":false}},
+    {"name":"unknown_optional","request":{"profile_id":"iicp.profile.unknown.v0","profile_version":"0.1.0-draft","profile_fixture_sha256":"0000000000000000000000000000000000000000000000000000000000000000","profile_required":false},"expected":{"requested":true,"status":"unsupported","reason":"unsupported_pre_normative_profile","dispatch_allowed":true}},
+    {"name":"unknown_required","request":{"profile_id":"iicp.profile.unknown.v0","profile_version":"0.1.0-draft","profile_fixture_sha256":"0000000000000000000000000000000000000000000000000000000000000000","profile_required":true},"expected":{"requested":true,"status":"unsupported","reason":"unsupported_pre_normative_profile","dispatch_allowed":false}}
   ]
 }
