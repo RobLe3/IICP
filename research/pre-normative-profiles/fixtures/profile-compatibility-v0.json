@@ -1,0 +1,136 @@
+{
+  "fixture_version": "0.2.0-draft",
+  "status": "pre-normative",
+  "purpose": "Deterministic profile-compatibility cases for future IICP capability, policy, evidence and extension profiles.",
+  "result_contract": {
+    "eligible_reason": "compatible",
+    "ineligible_reasons": ["intent_mismatch", "policy_refusal", "required_extension_missing", "schema_digest_mismatch", "unsupported_binding"],
+    "unsupported_status": "unsupported_pre_normative_profile"
+  },
+  "scenarios": [
+    {
+      "name": "stable_chat",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "deprecated_alias",
+      "request": {
+        "intent": "urn:iicp:intent:classify:v1",
+        "schema": { "type": "object", "required": ["text", "categories"] }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:classify:v1",
+        "schema": { "type": "object", "required": ["text", "categories"] }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "schema_mismatch",
+      "request": {
+        "intent": "urn:iicp:intent:llm:embedding:v1",
+        "schema": { "type": "object", "required": ["input"], "properties": { "input": { "type": "string" } } }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:embedding:v1",
+        "schema": { "type": "object", "required": ["input", "dimensions"] }
+      },
+      "expected": "ineligible",
+      "expected_reason": "schema_digest_mismatch"
+    },
+    {
+      "name": "optional_extension",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } },
+        "extensions": [{ "uri": "https://iicp.network/extensions/citations/v1", "required": false }]
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "required_extension",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } },
+        "extensions": [{ "uri": "https://iicp.network/extensions/regulated-receipt/v1", "required": true }]
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "expected": "ineligible",
+      "expected_reason": "required_extension_missing"
+    },
+    {
+      "name": "prohibited_policy",
+      "request": {
+        "intent": "urn:iicp:intent:social-scoring:v1",
+        "schema": { "type": "object", "required": ["messages"] },
+        "policy": "deny"
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:social-scoring:v1",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "expected": "ineligible",
+      "expected_reason": "policy_refusal"
+    },
+    {
+      "name": "a2a_skill_bridge",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"] },
+        "mapping_kind": "a2a_skill"
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "mcp_tool_safe",
+      "request": {
+        "intent": "urn:iicp:intent:llm:embedding:v1",
+        "schema": { "type": "object", "required": ["input"] },
+        "mapping_kind": "mcp_tool"
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:embedding:v1",
+        "schema": { "type": "object", "required": ["input"] }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "mcp_tool_dangerous",
+      "request": {
+        "intent": "urn:iicp:intent:mcp:write_file:v1",
+        "schema": { "type": "object", "required": ["messages"] },
+        "policy": "deny",
+        "mapping_kind": "mcp_tool"
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:mcp:write_file:v1",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "expected": "ineligible",
+      "expected_reason": "policy_refusal"
+    }
+  ]
+}

@@ -178,3 +178,9 @@ README.md                  spec/v1.5/iicp-core.md
 ## v1.4.2 — 2024
 
 Original Internet-Draft. Single monolithic document. Archived at `spec/v1.4/IICP_draft_1.4.2.txt`.
+
+## Unreleased
+
+- Added fixture-gated, pre-normative profile proposals and their digest-pinned
+  compatibility fixture. These documents are explicitly outside the ratified
+  suite and introduce no wire-contract change.
