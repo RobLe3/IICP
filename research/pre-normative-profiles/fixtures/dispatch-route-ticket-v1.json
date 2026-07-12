@@ -3,9 +3,9 @@
   "status": "pre-normative",
   "purpose": "Cross-implementation validation vectors for disclosure-only IICP dispatch route tickets.",
   "domain": "iicp:dispatch-route-ticket:v1\n",
-  "public_key_hex": "ea4a6c63e29c520abef5507b132ec5f9954776aebebe7b92421eea691446d22c",
+  "public_key_hex": "557a59f8820da4ad8a684fdc8a00355d30149b5ec22231ae331a62daa8dcf869",
   "valid": {
-    "token": "eyJ2IjoxLCJ0eXAiOiJkaXNwYXRjaC1yb3V0ZS10aWNrZXQiLCJpc3MiOiJodHRwczovL2RpcmVjdG9yeS5leGFtcGxlLnRlc3QiLCJhdWQiOiJpaWNwLmRpcmVjdG9yeS5kaXNwYXRjaCIsImp0aSI6IjAxMjM0NTY3ODlhYmNkZWYwMTIzNDU2NyIsIm5vZGVfaWQiOiJub2RlLTAwMDAwMDAxIiwiaW50ZW50IjoidXJuOmlpY3A6aW50ZW50OmxsbTpjaGF0OnYxIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjQxMDI0NDQ4MDB9.3adc08694e6d33ecb75f38d8f34b0d890f09daac9ba0b3eb4e2ede1f498bcd65602beff643779988c2c082d9e507a2cf2c44bfa38244e4061f6070e7447a8207",
+    "token": "eyJ2IjoxLCJ0eXAiOiJkaXNwYXRjaC1yb3V0ZS10aWNrZXQiLCJpc3MiOiJodHRwczovL2RpcmVjdG9yeS5leGFtcGxlLnRlc3QiLCJhdWQiOiJpaWNwLmRpcmVjdG9yeS5kaXNwYXRjaCIsImp0aSI6IjAxMjM0NTY3ODlhYmNkZWYwMTIzNDU2NyIsIm5vZGVfaWQiOiJub2RlLTAwMDAwMDAxIiwiaW50ZW50IjoidXJuOmlpY3A6aW50ZW50OmxsbTpjaGF0OnYxIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjQxMDI0NDQ4MDB9.86cf4831d15b1b2a73c7dd8cd2b4692a6f12a742ba4fd1b0ac30e6c60cfecf17bf8b9a0ac340677951649bd3403496883e9123b63d3313b8ad3438a8e3cf6a0d",
     "claims": {
       "v": 1,
       "typ": "dispatch-route-ticket",
@@ -96,13 +96,12 @@
     },
     {
       "name": "wrong_audience",
-      "token": "valid",
+      "token": "wrong_audience",
       "issuer": "https://directory.example.test",
       "node_id": "node-00000001",
       "intent": "urn:iicp:intent:llm:chat:v1",
       "now_s": 1800000000,
-      "expected": "unsupported_pre_normative_profile",
-      "unsupported_reason": "audience is an intrinsic signed claim; represented by issuer-audience verifier contract tests"
+      "expected": "rejected"
     },
     {
       "name": "wrong_node",
@@ -122,5 +121,19 @@
       "now_s": 1800000000,
       "expected": "rejected"
     }
-  ]
+  ],
+  "wrong_audience": {
+    "token": "eyJ2IjoxLCJ0eXAiOiJkaXNwYXRjaC1yb3V0ZS10aWNrZXQiLCJpc3MiOiJodHRwczovL2RpcmVjdG9yeS5leGFtcGxlLnRlc3QiLCJhdWQiOiJpaWNwLmRpcmVjdG9yeS53cm9uZy1hdWRpZW5jZSIsImp0aSI6IjAxMjM0NTY3ODlhYmNkZWYwMTIzNDU2NyIsIm5vZGVfaWQiOiJub2RlLTAwMDAwMDAxIiwiaW50ZW50IjoidXJuOmlpY3A6aW50ZW50OmxsbTpjaGF0OnYxIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjQxMDI0NDQ4MDB9.b085edb655d4c9cc81dd29cbc07082da43fd6cf9e79adc68aa674bd4e166c1e54da59b96b44b34ce7634e6130d784eea48c77bb19e1a6edb537b9e5e99fe6b0f",
+    "claims": {
+      "v": 1,
+      "typ": "dispatch-route-ticket",
+      "iss": "https://directory.example.test",
+      "aud": "iicp.directory.wrong-audience",
+      "jti": "0123456789abcdef01234567",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "iat": 1700000000,
+      "exp": 4102444800
+    }
+  }
 }
