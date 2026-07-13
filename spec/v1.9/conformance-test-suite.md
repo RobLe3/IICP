@@ -85,7 +85,7 @@ docker compose up -d   # brings up directory + adapter + database
 | `DIR-DISC-07` | Nodes with score < 0.1 excluded | No low-score nodes in results | — (covered by DIR-DISC-04 score range check) |
 | `DIR-DISC-09` | `?min_reputation=2.0` (out-of-range, max=1.0) MUST return 422 | Input validation for min_reputation query parameter | `probe_dir_disc_09` |
 | `DIR-DISC-10` | `GET /v1/discover` without `intent` parameter MUST return 422 | intent is a required query parameter | `probe_dir_disc_10` |
-| `DIR-DISC-08` | `GET /v1/discover` response includes `Cache-Control: public, max-age=30` | CDN edge caching enabled; `stale-while-revalidate=30` also recommended | `probe_dir_disc_08` |
+| `DIR-DISC-08` | `GET /v1/discover` response includes `Cache-Control: public, max-age=5, s-maxage=10, stale-while-revalidate=5` | Live tunnel and relay routes remain fresh across endpoint rotation; longer caching is non-conformant | `probe_dir_disc_08` |
 | `DIR-DISC-11` | `GET /v1/discover?intent=urn:iicp:intent:x.<vendor>:*:v*` MUST return 200, not 422 | Directory MUST accept custom intent URNs (x.<vendor>); per iicp-core.md §4.1 | `probe_dir_disc_11` — live 2026-05-22 |
 
 ### 3.3b Mesh Bootstrap (MUST, Phase 2)
@@ -397,6 +397,7 @@ Run with the SDK test harness: `iicp-conformance-sdk --sdk python --directory ht
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.46.0 | 2026-07-13 | `DIR-DISC-08` now verifies the short live-route discovery cache contract: `public, max-age=5, s-maxage=10, stale-while-revalidate=5`. This preserves prompt-free discovery freshness across relay and tunnel endpoint rotation; historical 30/60-second expectations are retired. |
 | 4.45.0 | 2026-06-28 | §10.4 adds SDK-NODE-03..05 for SDK 0.7.75 external-tunnel guardrails: persistent provider-rate-limit cooldown, host-wide creation pacing/lease, and fallback to safe reachability methods rather than tunnel-create loops or unverified endpoint advertisement. §3.2/§3.3b/§7 reconcile peer-exchange conformance rows with Ed25519 gossip signatures instead of node-token/HMAC auth. |
 | 4.44.0 | 2026-06-21 | §3.3j DIR-SIGNAL-01..05 draft SHOULD tests added for optional WebRTC signaling mailbox (#523): auth, TTL/cleanup, size/type caps, no task payloads, and discover metadata shape. |
 | 4.42.0 | 2026-06-01 | §3.3i DIR-PROBE-NODE-01 added: active per-node reachability probing (#373 Phase B). Directory autonomously probes registered node endpoints (TCP/HTTP, SSRF-guarded, 5s timeout, 5-min interval). Records `test_id='DIR-PROBE-NODE-01'` in iicp_telemetry_probes. NodeHealthService uses independently observed signal when recent probe exists. PHP: `ProbeNodesCommandTest` 7 tests; Rust: `run_probe_nodes_loop`. IPv6 REACH probing requires IPv6-capable origin egress or a signed external probe worker; the current df.eu shared production server does not provide this. |
