@@ -573,7 +573,7 @@ risk-reduction measures, not legal compliance proof.
 | `route_evidence` | string\|null | Evidence basis for the currently advertised route. Values: `directory_observed_ipv4`, `directory_observed_ipv6`, `external_probe_ipv6`, `directory_observed` (legacy aggregate), `self_attested`, or `missing`. Absence of IPv6 egress proof is not failure; IPv6 literal routes without independent proof remain self-attested/direct-unverified. |
 | `probe_source` | string\|null | Optional low-entropy source label for independent reachability evidence, e.g. `seed_directory`, `external_ipv6_worker`. Must not expose private worker credentials or raw probe logs. |
 | `input_modalities` | array | v1.10.0, ADR-046: union of input modalities the node's capabilities for this intent accept (`["text"]` default; `["text","image"]` for vision). Lets clients confirm multimodal support without a second round-trip; see `?modality=` (§3.3). |
-| `backend` | string\|null | Detected backend server flavor the node runs — one of `ollama`/`lmstudio`/`vllm`/`llamacpp`/`anthropic`/`custom`. Self-attested at REGISTER (the SDK auto-detects it by fingerprinting the backend's endpoints/headers); informational (operator/consumer visibility), not used for routing. `null` if unreported. Also accepted as an optional REGISTER field (§3.1). |
+| `backend` | string\|null | Detected backend server flavor the node runs — one of `ollama`/`lmstudio`/`vllm`/`llamacpp`/`meshllm`/`anthropic`/`custom`. Self-attested at REGISTER; informational (operator/consumer visibility), not used for routing. `meshllm` identifies a local OpenAI-compatible MeshLLM gateway only; its peer topology and control-plane data are not directory metadata. `null` if unreported. Also accepted as an optional REGISTER field (§3.1). |
 | `transport_method` | string\|null | How the node is reachable for the native IICP transport (`"direct"`, `"upnp_mapped"`, `"stun_hole_punch"`, `"turn_relay"`, `"external_tunnel"`, `"webrtc_datachannel"`, …). Mirrors the REGISTER value (§3.1 / ADR-041). `external_tunnel` may be an operator-managed stable tunnel or an accountless temporary tunnel; clients treat it as an endpoint reachability shape, not as a guarantee about provider durability. |
 | `nat_type` | string\|null | Detected NAT topology (ADR-041). Advisory; clients MAY prefer `"direct"`/`"full_cone"`. |
 | `transport_metadata` | object\|null | Transport-specific detail (relay endpoint, candidate list). Shape per ADR-041; opaque to clients that only use `endpoint`. |
@@ -587,6 +587,32 @@ risk-reduction measures, not legal compliance proof.
 | `models` / `quantization` / `inference_engine` | array\|string\|null | Advisory capability detail (iicp-core §2.1). The directory MUST NOT reject unrecognized values. |
 | `operator_display_name` | string\|null | v0.10.3, #463: the operator's public `display_name`, resolved from the operator record by `operator_pubkey` for nodes bound via a verified ADR-045 delegation (§3.1). `null` when the node is not operator-bound. The `operator_pubkey` itself is directory-private and is **never** served; only the human-readable display_name appears. Surfaced in `/v1/discover` and node-detail so consumers see who operates a node. |
 | `operator_fingerprint` | string\|null | v1.1.1, #525: a short public fingerprint derived from the verified operator key, surfaced only alongside `operator_display_name`. It lets clients disambiguate look-alike names without exposing the directory-private `operator_pubkey`. `null` when the node is not operator-bound or no display name is set. |
+
+#### MeshLLM provider profile (informational backend, stable chat)
+
+A node MAY self-attest `backend: "meshllm"` when its local backend is a
+MeshLLM OpenAI-compatible gateway. This is provider implementation metadata,
+not an IICP transport, federation, or routing protocol. Discovery and
+selection remain based on intent, declared model, policy, encryption and
+ordinary health evidence; MeshLLM peer topology, stage placement, relay/Nostr
+state, compute capacity and internal identities MUST NOT be registered or
+returned in public directory responses.
+
+For the stable profile, an IICP MeshLLM provider advertises only
+`urn:iicp:intent:llm:chat:v1`. Before admitting that capability, reference
+clients MUST confirm both `GET /readyz` and `GET /v1/models`, and MUST confirm
+that the selected model appears in the returned inventory. A failed readiness
+or inventory check is a temporary `backend_loading`/`backend_attention` state;
+the provider SHOULD remain heartbeating but MUST NOT be preferred for the
+affected capability until the local gateway is ready again. Clients MUST NOT
+infer completions, embeddings, tools, responses, multimodal support or model
+quality merely from the backend label or a model name.
+
+The MeshLLM virtual `model: "mesh"` is experimental. It MUST be excluded from
+ordinary automatic registration and model selection. An operator MAY expose it
+only through an explicit experimental configuration and a separately declared
+experimental capability; it is not an ordinary foundation-model inventory
+entry.
 
 **`probation` (clarification, R3)**: `probation` is computed server-side and used to *filter* discover results (probation nodes are excluded from `?qos=interactive`/`realtime`), but the discover NODELIST does **not** include a `probation` field per node. The full `probation` boolean is surfaced only by `GET /v1/node/{id}` (node-detail). Clients needing the flag query node-detail.
 

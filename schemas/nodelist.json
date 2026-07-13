@@ -187,7 +187,7 @@
         },
         "backend": {
           "type": ["string", "null"],
-          "description": "Self-attested backend family such as ollama, lmstudio, vllm, llamacpp, anthropic or custom."
+          "description": "Self-attested backend family such as ollama, lmstudio, vllm, llamacpp, meshllm, anthropic or custom."
         },
         "health_label": {
           "type": ["string", "null"],
