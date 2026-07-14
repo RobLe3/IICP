@@ -1,0 +1,60 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "notice": "Compatibility evidence only. This fixture does not make querying_node_id mandatory and does not change settlement.",
+  "attribution_cases": [
+    {
+      "name": "legacy receipt remains compatible but has no trust weight",
+      "input": {"serving_node_id": "worker-a", "serving_operator": "op-a"},
+      "expected": {"action": "award", "attribution": "legacy_unattributed", "trust_weight": 0.0}
+    },
+    {
+      "name": "same node is excluded",
+      "input": {"serving_node_id": "worker-a", "serving_operator": "op-a", "querying_node_id": "worker-a", "querying_exists": true, "querying_operator": "op-a"},
+      "expected": {"action": "exclude", "attribution": "self_node", "trust_weight": 0.0}
+    },
+    {
+      "name": "same verified operator is excluded",
+      "input": {"serving_node_id": "worker-a", "serving_operator": "op-a", "querying_node_id": "consumer-b", "querying_exists": true, "querying_operator": "op-a"},
+      "expected": {"action": "exclude", "attribution": "self_operator", "trust_weight": 0.0}
+    },
+    {
+      "name": "unknown querying node is rejected",
+      "input": {"serving_node_id": "worker-a", "serving_operator": "op-a", "querying_node_id": "missing", "querying_exists": false},
+      "expected": {"action": "reject", "attribution": "unknown_querying_node", "trust_weight": 0.0, "error": "IICP-E027"}
+    },
+    {
+      "name": "verified cross operator receives full trust weight",
+      "input": {"serving_node_id": "worker-a", "serving_operator": "op-a", "querying_node_id": "consumer-b", "querying_exists": true, "querying_operator": "op-b"},
+      "expected": {"action": "award", "attribution": "attributed_cross_operator", "trust_weight": 1.0}
+    },
+    {
+      "name": "unverified operator relationship receives reduced trust weight",
+      "input": {"serving_node_id": "worker-a", "serving_operator": null, "querying_node_id": "consumer-b", "querying_exists": true, "querying_operator": "op-b"},
+      "expected": {"action": "award", "attribution": "attributed_cross_node_unverified_operator", "trust_weight": 0.5}
+    }
+  ],
+  "heartbeat_cases": [
+    {"name": "normal heartbeat", "input": {"tasks_success": 42, "tasks_failed": 3}, "expected": {"counted_success": 42, "completed_increment": 42, "lifetime_jobs_increment": 45}},
+    {"name": "success count is capped", "input": {"tasks_success": 1000, "tasks_failed": 2}, "expected": {"counted_success": 300, "completed_increment": 300, "lifetime_jobs_increment": 302}},
+    {"name": "zero work remains zero", "input": {"tasks_success": 0, "tasks_failed": 0}, "expected": {"counted_success": 0, "completed_increment": 0, "lifetime_jobs_increment": 0}}
+  ],
+  "receipt_time_cases": [
+    {"name": "receipt inside five minute window", "input": {"completed_at": "2026-07-14T12:00:00Z", "observed_at": "2026-07-14T12:02:00Z", "expires_at": "2026-07-14T12:05:00Z"}, "expected": {"action": "accept"}},
+    {"name": "receipt observed after expiry", "input": {"completed_at": "2026-07-14T12:00:00Z", "observed_at": "2026-07-14T12:05:01Z", "expires_at": "2026-07-14T12:05:00Z"}, "expected": {"action": "reject", "error": "IICP-E027"}},
+    {"name": "receipt expiry exceeds completion plus five minutes", "input": {"completed_at": "2026-07-14T12:00:00Z", "observed_at": "2026-07-14T12:01:00Z", "expires_at": "2026-07-14T12:05:01Z"}, "expected": {"action": "reject", "error": "IICP-E027"}},
+    {"name": "missing expiry fails closed", "input": {"completed_at": "2026-07-14T12:00:00Z", "observed_at": "2026-07-14T12:01:00Z"}, "expected": {"action": "reject", "error": "IICP-E027"}}
+  ],
+  "selection_tie_cases": [
+    {
+      "name": "equal eligible scores use stable node id",
+      "input": {"nodes": [{"node_id": "node-b", "score": 0.8, "eligible": true}, {"node_id": "node-a", "score": 0.8, "eligible": true}]},
+      "expected": {"selected_node_id": "node-a"}
+    },
+    {
+      "name": "higher ineligible score cannot win",
+      "input": {"nodes": [{"node_id": "node-a", "score": 0.99, "eligible": false}, {"node_id": "node-b", "score": 0.6, "eligible": true}]},
+      "expected": {"selected_node_id": "node-b"}
+    }
+  ]
+}
