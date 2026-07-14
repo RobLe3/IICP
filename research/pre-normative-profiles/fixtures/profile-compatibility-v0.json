@@ -1,5 +1,5 @@
 {
-  "fixture_version": "0.3.0-draft",
+  "fixture_version": "0.4.0-draft",
   "status": "pre-normative",
   "purpose": "Deterministic profile-compatibility cases for future IICP capability, policy, evidence and extension profiles.",
   "result_contract": {
@@ -59,6 +59,47 @@
       "expected_reason": "schema_digest_mismatch"
     },
     {
+      "name": "schema_digest_match",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema_digest": "sha256:chat-input-v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema_digest": "sha256:chat-input-v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "unknown_intent",
+      "request": {
+        "intent": "urn:iicp:intent:unregistered:example:v1",
+        "schema": { "type": "object", "required": ["input"] }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "expected": "ineligible",
+      "expected_reason": "intent_mismatch"
+    },
+    {
+      "name": "unsupported_intent_version",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v2",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "expected": "ineligible",
+      "expected_reason": "intent_mismatch"
+    },
+    {
       "name": "optional_extension",
       "request": {
         "intent": "urn:iicp:intent:llm:chat:v1",
@@ -85,6 +126,19 @@
       },
       "expected": "ineligible",
       "expected_reason": "required_extension_missing"
+    },
+    {
+      "name": "required_extension_supported",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "extensions": [{ "uri": "https://iicp.network/extensions/regulated-receipt/v1", "required": true }]
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "extensions": [{ "uri": "https://iicp.network/extensions/regulated-receipt/v1" }]
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
     },
     {
       "name": "prohibited_policy",

@@ -1,6 +1,6 @@
 # Proposal — Intent, Capability and Extension Registry Profile
 
-**Status:** fixture-gated pre-normative draft (profile fixture `0.3.0-draft`) · **Depends on:** IICP semantics, node capability format, spec-only sync issue `RobLe3/IICP#2`.
+**Status:** fixture-gated pre-normative draft (profile fixture `0.4.0-draft`) · **Depends on:** IICP semantics, node capability format, spec-only sync issue `RobLe3/IICP#2`.
 
 ## Purpose
 
@@ -29,4 +29,4 @@ conditions it may do it.
 
 ## Evidence gate
 
-The strategic taxonomy simulation covers stable intents, aliases, schema mismatch, optional/required extensions, risk refusal, A2A skill mappings and MCP tool mappings. This proposal cannot become normative until manifest-pinned fixtures are shared across all directory and SDK implementations and the spec-only release records their digest and changelog entry.
+The strategic taxonomy simulation covers stable and unknown intent versions, deprecated aliases, schema digest match/mismatch, optional and required extensions, risk refusal, A2A skill mappings and MCP tool mappings. This proposal cannot become normative until manifest-pinned fixtures are shared across all directory and SDK implementations and the spec-only release records their digest and changelog entry.

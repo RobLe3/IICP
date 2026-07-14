@@ -4,8 +4,8 @@
   "fixtures": [
     {
       "path": "profile-compatibility-v0.json",
-      "fixture_version": "0.3.0-draft",
-      "sha256": "4137ecf91b4748a2b368cf4428b4604c6947f8879d77402cc7937d11d24b2aaf"
+      "fixture_version": "0.4.0-draft",
+      "sha256": "d039eaf52afca6866832779261db7bdd2ffd818a36bc8ba9aea1db0c9c115012"
     },
     {
       "path": "dispatch-route-ticket-v1.json",
@@ -20,7 +20,7 @@
     {
       "path": "profile-negotiation-v0.json",
       "fixture_version": "0.2.0-draft",
-      "sha256": "2752765c44627319bca9968411e29e3cbd7429d9b0a1b5317bb0b4ec58a3bb20"
+      "sha256": "c86428264dd5be4f589c2d7171ac9c7e2488dc37a78f38cbb7a83ffb63339d68"
     }
   ]
 }

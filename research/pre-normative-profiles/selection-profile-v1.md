@@ -1,7 +1,7 @@
 # Proposal — Selection Profile v1
 
 **Status:** pre-normative, additive draft · **Depends on:** profile fixture
-`0.3.0-draft`, route-ticket/receipt profile and #616 evidence.
+`0.4.0-draft`, route-ticket/receipt profile and #616 evidence.
 
 ## Contract
 

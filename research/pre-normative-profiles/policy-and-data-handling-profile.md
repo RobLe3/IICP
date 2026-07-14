@@ -1,6 +1,6 @@
 # Proposal — Policy and Data-Handling Profile
 
-**Status:** fixture-gated pre-normative draft (profile fixture `0.3.0-draft`) · **Depends on:** existing intent-risk taxonomy, policy manifests, DSR/key lifecycle work.
+**Status:** fixture-gated pre-normative draft (profile fixture `0.4.0-draft`) · **Depends on:** existing intent-risk taxonomy, policy manifests, DSR/key lifecycle work.
 
 ## Purpose
 
