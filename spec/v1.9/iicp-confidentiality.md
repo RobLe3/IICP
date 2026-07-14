@@ -251,6 +251,15 @@ distinct label so request and response keys differ:
 `resp_key = HKDF(ikm=shared_secret, salt=resp_nonce, info="IICP-CX-RESP-v1" || task_id, length=32)`.
 The client already holds `shared_secret` and decrypts. The response envelope mirrors `iicp_conf`.
 
+Implementations MAY deploy this element before the complete Tier-2 bundle by advertising
+`cx_public_key.features: ["response_encryption_v1"]`. A consumer that selects such a node sends
+`cx_response_encryption: "required"` in the task envelope. The provider then MUST return
+`iicp_conf_resp` and omit the plaintext result. A consumer MUST reject a plaintext response after
+that negotiation. This granular feature does **not** authorize advertising `cx_tier: 2`; that field
+remains reserved for implementations that also satisfy §5a.1, §5a.2 and all applicable §5a.3
+conformance requirements. Nodes and consumers that do not advertise/understand the feature retain
+the Tier-1 response behavior.
+
 - **Streaming (SSE):** each streamed chunk is an independent AEAD frame; the per-frame AAD includes a
   **monotonically increasing sequence number** (`task_id || "|" || seq`) so dropped, reordered, or
   replayed frames are detected. The final frame sets an `end` marker; the client MUST verify
@@ -262,6 +271,9 @@ consumers prefer it; absent it, Tier-1 applies. Tier 2 makes the granular `IICP-
 model (§6) fully emittable. New conformance IDs: **CX-T2-01** (operator-sig verified before encrypt),
 **CX-T2-02** (prekey ephemeral-ephemeral FS; `fs=false` surfaced on depletion), **CX-T2-03**
 (response + streaming frames authenticated and sequence-checked).
+
+`response_encryption_v1` is therefore an additive, independently negotiable confidentiality
+feature and not a synonym for `cx_tier: 2`. Unknown `cx_public_key.features` entries MUST be ignored.
 
 ---
 
