@@ -1,7 +1,7 @@
 # S.12 — IICP Cooperative Inference Protocol (CIP)
 
 **Status**: Draft (active — normative text in §2–§7, §10; §4 wire format normative per 0.4.0-draft)  
-**Version**: 0.6.12
+**Version**: 0.6.13
 **Phase**: 5 (Cooperative Inference)  
 **Authors**: Protocol Steward  
 **Linked ADR**: ADR-012 (Phase 5 CIP Scoring Formula), ADR-019 (Declarative Node Pricing)  
@@ -157,7 +157,7 @@ Client ← Coordinator
 
 - `cip.replicas` MUST be an odd integer ≥ 3. A Coordinator MUST reject a `majority_vote` request with even `cip.replicas` at parse time (before dispatch) with a client error `IICP-E025` (invalid replica count for majority_vote).
 - The Coordinator MUST aggregate responses using semantic equivalence: two responses are considered equivalent when their embedding cosine similarity is ≥ 0.95. Implementations without embedding capability MUST fall back to exact-match string equivalence on the first 512 characters of the response.
-- A majority is reached when ≥ `cip.quorum` workers agree. If `cip.quorum` is null, the Coordinator MUST compute the quorum as ⌈N/2⌉ + 1.
+- A majority is reached when ≥ `cip.quorum` workers agree. If `cip.quorum` is null, the Coordinator MUST compute the strict-majority quorum as `floor(N / 2) + 1`. Because `majority_vote` requires odd `N`, this is equivalent to `ceil(N / 2)` for every valid request. Implementations MUST NOT add another `+ 1` after applying `ceil(N / 2)`.
 - If a quorum is reached within `worker_timeout`, the Coordinator MUST return the majority result. Among the agreeing responses, the Coordinator MUST select the one from the worker with the lowest `metrics.latency_ms`.
 - If no quorum is reached within `worker_timeout`, the Coordinator MUST fall back per §6 fallback rules. The Coordinator MUST NOT synthesize or blend non-majority results.
 - The Coordinator MUST include the quorum vote tally (`cip_vote_count`, `cip_quorum_threshold`) in the response `trace.cip_aggregation` object for auditability.
@@ -207,7 +207,7 @@ optional fields in the `constraints` object:
 |-------|------|-------------|
 | `cip.policy` | string | `best_of_n` \| `majority_vote` \| `map_reduce` |
 | `cip.replicas` | integer | Number of worker nodes to fan out to (2–5) |
-| `cip.quorum` | integer\|null | Minimum agreeing workers for majority_vote (null → ⌈N/2⌉) |
+| `cip.quorum` | integer\|null | Minimum agreeing workers for majority_vote (null → `floor(N/2)+1`; equivalently `ceil(N/2)` for valid odd N) |
 
 **Normative requirements — CIP CALL field validation:**
 
@@ -276,7 +276,7 @@ Coordinator RESPONSES MUST include a `cip_aggregation` object within `trace` whe
 | `selected_worker_id` | string\|null | MUST | Node ID of the worker whose result was returned; `null` if zero workers responded |
 | `aggregation_latency_ms` | integer | SHOULD | Elapsed time from last worker response received to aggregation complete |
 | `cip_vote_count` | integer\|null | MUST for majority_vote | Number of workers in the agreeing majority |
-| `cip_quorum_threshold` | integer\|null | MUST for majority_vote | Quorum required (⌈N/2⌉ + 1 or explicit `cip.quorum`) |
+| `cip_quorum_threshold` | integer\|null | MUST for majority_vote | Strict-majority quorum required (`floor(N/2)+1`, or explicit `cip.quorum`) |
 
 **Normative requirements — CIP aggregation object:**
 
@@ -669,6 +669,7 @@ Colluding nodes can inflate credit balances by routing tasks between coordinatin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6.13 | 2026-07-14 | Corrected the default `majority_vote` quorum to the strict-majority formula `floor(N/2)+1` (equivalent to `ceil(N/2)` for the required odd replica count) and explicitly prohibited the erroneous double increment. No wire-shape change. |
 | 0.6.12 | 2026-06-30 | Credit quote/debit alignment with operator wallet: quote responses include `effective_balance`, `balance_scope` and optional `operator_wallet_balance`; `balance_sufficient` is computed against the effective balance. Award settlement debits operator-bound consumers from their pooled wallet while preserving per-node ledger rows. |
 | 0.6.11 | 2026-06-09 | §10.3 HMAC canonical message: extended form `{…}:{response_hash}:{querying_node_id}` when `querying_node_id` is present in receipt body — REQUIRED to prevent a malicious serving node from substituting a foreign `querying_node_id` to drain foreign operator balances (TC-9e, #490). Backwards-compatible: receipts without `querying_node_id` use the 6-field form. §10.3 Credit debit: after awarding the Worker, directory SHOULD best-effort debit the querying node by the same amount; `CREDIT_SPEND_INSUFFICIENT` logged on failure; response includes `spent` + `spend_reason`. Implementation: directory v1.10.25, all 3 SDKs v0.7.50. |
 | 0.6.10 | 2026-06-06 | §7 Credit Accounting: added **rate-parity** clause — CIP tasks price on the same schedule as standard routing (no CIP premium, #305); the ×1.0 worker / ×0.05 coordinator rates are the *split* of `routing_cost`, not a surcharge. Cross-refs iicp-billing-extension §10.1–§10.3 (credit schedule + economy fold). |
