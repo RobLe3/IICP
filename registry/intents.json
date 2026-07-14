@@ -1,8 +1,8 @@
 {
-  "version": "1.0.0",
-  "updated": "2026-05-14",
+  "version": "1.3.0",
+  "updated": "2026-06-03",
   "authority": "https://iicp.network",
-  "description": "IICP Intent URN Registry \u2014 authoritative list of defined intents. New intents require Protocol Steward sign-off.",
+  "description": "IICP Intent URN Registry — authoritative list of defined intents. New intents require Protocol Steward sign-off.",
   "intents": [
     {
       "urn": "urn:iicp:intent:llm:chat:v1",
@@ -101,15 +101,17 @@
     },
     {
       "urn": "urn:iicp:intent:classify:v1",
-      "name": "Text Classification",
-      "description": "Classify text into one or more categories from a provided set.",
+      "name": "Text Classification (deprecated)",
+      "description": "Classify text into one or more categories from a provided set. DEPRECATED: use urn:iicp:intent:llm:classify:v1 for LLM-based classification with chain-of-thought support. This alias is retained for Phase 1 backward compatibility only.",
       "payload_schema": {
         "text": "string",
         "categories": "array of strings",
         "multi_label": "boolean (optional, default false)"
       },
       "phase": 1,
-      "status": "active"
+      "status": "deprecated",
+      "deprecated_by": "urn:iicp:intent:llm:classify:v1",
+      "deprecated_since": "2026-05-17"
     },
     {
       "urn": "urn:iicp:intent:embedding:multimodal:v1",
@@ -124,7 +126,7 @@
     {
       "urn": "urn:iicp:intent:mcp:tools/call:v1",
       "name": "MCP Tool Call",
-      "description": "Execute an MCP tool call via IICP transport. Formal binding spec: spec/iicp-mcp-binding.md (Phase 2).",
+      "description": "Execute an MCP tool call through IICP transport. Reserved for the formal MCP binding so MCP-compatible tools can be addressed as mesh capabilities.",
       "payload_schema": {
         "tool_name": "string",
         "arguments": "object"
@@ -138,7 +140,7 @@
       "description": "Summarize a document or long text into a condensed form. Part of the Cooperative Inference Profile (Phase 5).",
       "payload_schema": {
         "text": "string",
-        "max_length": "integer (optional \u2014 target word count)",
+        "max_length": "integer (optional — target word count)",
         "format": "string (optional: bullets | paragraph | headline)",
         "language": "string (optional: ISO 639-1, default source language)"
       },
@@ -153,7 +155,7 @@
         "text": "string",
         "categories": "array of strings",
         "multi_label": "boolean (optional, default false)",
-        "explain": "boolean (optional \u2014 return reasoning)"
+        "explain": "boolean (optional — return reasoning)"
       },
       "phase": 5,
       "status": "reserved"
@@ -170,6 +172,55 @@
       },
       "phase": 5,
       "status": "reserved"
+    },
+    {
+      "urn": "urn:iicp:intent:audio:transcribe:v1",
+      "name": "Audio Transcription (Speech-to-Text)",
+      "description": "Transcribe speech audio to text using OpenAI-compatible transcription payloads and Whisper-class backends. Audio is carried as base64 in the request and posted by SDKs as a multipart upload to compatible backends.",
+      "payload_schema": {
+        "audio": "string (base64-encoded audio bytes — wav/mp3/m4a/…)",
+        "filename": "string (optional, default audio.wav — hints the container/codec)",
+        "model": "string (optional — backend default if absent; whisper.cpp ignores it)",
+        "language": "string (optional — ISO 639-1; auto-detect if absent)",
+        "response_format": "string (optional: json | text, default json)",
+        "prompt": "string (optional — decoding/vocabulary hint)",
+        "temperature": "float 0-1 (optional)"
+      },
+      "phase": 5,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:audio:speech:v1",
+      "name": "Text-to-Speech (Speech Synthesis)",
+      "description": "Synthesize speech audio from text using OpenAI-compatible speech payloads. The backend returns binary audio, and SDKs carry it back as base64 in result.audio for transport through the mesh.",
+      "payload_schema": {
+        "input": "string (text to synthesize)",
+        "model": "string (optional — backend default if absent)",
+        "voice": "string (optional, default alloy — ignored by engines like espeak-ng)",
+        "response_format": "string (optional: wav | mp3 | opus | flac | aac, backend-dependent)",
+        "speed": "float 0.25-4.0 (optional)"
+      },
+      "result_schema": {
+        "audio": "string (base64-encoded audio bytes)",
+        "content_type": "string (e.g. audio/wav)",
+        "format": "string (container/codec)"
+      },
+      "phase": 5,
+      "status": "active"
+    },
+    {
+      "urn": "urn:iicp:intent:safety:moderate:v1",
+      "name": "Content Moderation",
+      "description": "Classify text for policy-violating content using OpenAI-compatible moderation payloads or compatible safety classifiers. The request and response are plain JSON; the backend may supply its own fixed moderation model.",
+      "payload_schema": {
+        "input": "string or array of strings (text to moderate)",
+        "model": "string (optional — backend supplies a fixed moderation model)"
+      },
+      "result_schema": {
+        "results": "array of {flagged: boolean, categories: {category: boolean}, category_scores: {category: float}}"
+      },
+      "phase": 5,
+      "status": "active"
     }
   ]
 }

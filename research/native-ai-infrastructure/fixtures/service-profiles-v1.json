@@ -1,0 +1,126 @@
+{
+  "fixture_version": "1.0.0-draft",
+  "purpose": "Implementation-neutral conformance vectors for the proposed IICP service-lifecycle and provider-admission profiles. These vectors do not modify the base wire frame.",
+  "profiles": [
+    "urn:iicp:profile:service-lifecycle:v1",
+    "urn:iicp:profile:provider-admission:v1"
+  ],
+  "lifecycle_vectors": [
+    {
+      "id": "SERVICE-LIFECYCLE-01",
+      "name": "accepted task completes once",
+      "input": {"task_id": "t-01", "required_profiles": ["urn:iicp:profile:service-lifecycle:v1"]},
+      "events": [
+        {"sequence": 0, "event": "accepted", "is_final": false},
+        {"sequence": 1, "event": "completed", "is_final": true}
+      ],
+      "expected": "accept events in order; one terminal outcome"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-02",
+      "name": "streaming events are ordered",
+      "input": {"task_id": "t-02"},
+      "events": [
+        {"sequence": 0, "event": "accepted", "is_final": false},
+        {"sequence": 1, "event": "partial", "is_final": false},
+        {"sequence": 2, "event": "partial", "is_final": false},
+        {"sequence": 3, "event": "completed", "is_final": true}
+      ],
+      "expected": "accept strictly increasing sequence numbers"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-03",
+      "name": "duplicate partial event is discarded",
+      "input": {"task_id": "t-03"},
+      "events": [
+        {"sequence": 0, "event": "accepted", "is_final": false},
+        {"sequence": 1, "event": "partial", "is_final": false},
+        {"sequence": 1, "event": "partial", "is_final": false},
+        {"sequence": 2, "event": "completed", "is_final": true}
+      ],
+      "expected": "discard duplicate sequence 1; retain one terminal outcome"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-04",
+      "name": "cancellation before acceptance rejects",
+      "input": {"task_id": "t-04", "cancel_before_acceptance": true},
+      "events": [{"sequence": 0, "event": "rejected", "is_final": true}],
+      "expected": "no execution and no billable acceptance"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-05",
+      "name": "accepted cancellation is terminal",
+      "input": {"task_id": "t-05", "cancel_after_acceptance": true},
+      "events": [
+        {"sequence": 0, "event": "accepted", "is_final": false},
+        {"sequence": 1, "event": "cancelled", "is_final": true}
+      ],
+      "expected": "no later completed event"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-06",
+      "name": "deadline expires after acceptance",
+      "input": {"task_id": "t-06", "timeout_ms": 1},
+      "events": [
+        {"sequence": 0, "event": "accepted", "is_final": false},
+        {"sequence": 1, "event": "timed_out", "is_final": true}
+      ],
+      "expected": "one final timeout without payload echo"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-07",
+      "name": "same idempotent retry returns known state",
+      "input": {"task_id": "t-07", "idempotency_key": "k-07", "same_request": true},
+      "expected": "return the existing accepted or terminal state; do not execute or bill twice"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-08",
+      "name": "different request reusing task id conflicts",
+      "input": {"task_id": "t-08", "idempotency_key": "k-08", "same_request": false},
+      "expected": "conflict before execution"
+    }
+  ],
+  "admission_vectors": [
+    {
+      "id": "ADMISSION-01",
+      "name": "ready provider accepts bounded work",
+      "provider": {"availability": "ready", "deadline_support": true},
+      "request": {"timeout_ms": 1000},
+      "expected": {"outcome": "accepted"}
+    },
+    {
+      "id": "ADMISSION-02",
+      "name": "unknown required profile rejects before execution",
+      "provider": {"supported_profiles": []},
+      "request": {"required_profiles": ["urn:iicp:profile:unknown:v1"]},
+      "expected": {"outcome": "unsupported_profile", "billable_execution": false}
+    },
+    {
+      "id": "ADMISSION-03",
+      "name": "capacity exhaustion is bounded",
+      "provider": {"availability": "ready", "slot_available": false},
+      "request": {},
+      "expected": {"outcome": "capacity_exceeded", "http_status": 429, "billable_execution": false}
+    },
+    {
+      "id": "ADMISSION-04",
+      "name": "draining provider accepts no new work",
+      "provider": {"availability": "draining"},
+      "request": {},
+      "expected": {"outcome": "temporarily_unavailable", "billable_execution": false}
+    },
+    {
+      "id": "ADMISSION-05",
+      "name": "unachievable deadline rejects before acceptance",
+      "provider": {"availability": "ready", "deadline_support": true, "can_meet_deadline": false},
+      "request": {"timeout_ms": 1},
+      "expected": {"outcome": "deadline_unachievable", "billable_execution": false}
+    },
+    {
+      "id": "ADMISSION-06",
+      "name": "advertisement remains topology-redacted",
+      "provider": {"availability": "ready", "capacity_class": "standard", "deadline_support": true},
+      "expected": "advertise only availability, capacity_class, deadline_support, and supported_profiles; omit queue, peer, route, shard, and scheduler fields"
+    }
+  ]
+}

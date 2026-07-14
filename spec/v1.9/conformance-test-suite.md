@@ -891,10 +891,56 @@ These test IDs are registered from `spec/iicp-recognition.md §10` for traceabil
 
 ---
 
+## 16. Native Framing Implementation-Backed Vectors
+
+The framing layer remains draft. The following vectors establish the current
+cross-SDK baseline and do not by themselves ratify unimplemented framing,
+streaming, fragmentation, or QUIC semantics.
+
+| Test ID | Requirement | Fixture / evidence |
+|---|---|---|
+| NATIVE-FRAME-BASE-01 | Encoder emits the 12-byte `PING` header with magic, version, type, flags, reserved byte, and u32 big-endian length at offsets 0–11. | `research/native-ai-infrastructure/fixtures/native-framing-v1.json` `ping_empty` |
+| NATIVE-FRAME-BASE-02 | Decoder accepts canonical empty and CBOR-bearing frames and reports the exact consumed length. | Same fixture: `ping_empty`, `call_minimal_cbor` |
+| NATIVE-FRAME-BASE-03 | Decoder preserves the current forward-compatible receive behavior for a non-zero reserved byte and unknown flag bits. | Same fixture: `reserved_byte_is_ignored_by_decoder`, `unknown_flag_bits_are_ignored_by_decoder` |
+| NATIVE-FRAME-BASE-04 | Decoder rejects invalid magic, truncated headers, and truncated payloads. | Same fixture: `bad_magic`, `truncated_header`, `truncated_payload` |
+
+Maintained SDK copies of this fixture MUST be byte-identical to the manifest-
+pinned canonical source. `tools/check_native_framing_fixtures.py` verifies the
+digest and local copy parity.
+
+---
+
+## 17. Proposed Service Profile Vectors
+
+The following vectors are **draft-profile** requirements only. They do not
+change Phase 1 conformance or the fixed native frame. The canonical fixture is
+`research/native-ai-infrastructure/fixtures/service-profiles-v1.json`.
+
+| Test ID | Requirement | Profile / fixture |
+|---|---|---|
+| `SERVICE-LIFECYCLE-01` | An accepted task completes with exactly one terminal event. | Service lifecycle / `t-01` |
+| `SERVICE-LIFECYCLE-02` | Streaming events have strictly increasing sequence numbers. | Service lifecycle / `t-02` |
+| `SERVICE-LIFECYCLE-03` | Duplicate or stale partial events are discarded. | Service lifecycle / `t-03` |
+| `SERVICE-LIFECYCLE-04` | Cancellation before acceptance rejects without execution. | Service lifecycle / `t-04` |
+| `SERVICE-LIFECYCLE-05` | Cancellation after acceptance terminates without a later completion. | Service lifecycle / `t-05` |
+| `SERVICE-LIFECYCLE-06` | An accepted task honors its deadline with one terminal timeout. | Service lifecycle / `t-06` |
+| `SERVICE-LIFECYCLE-07` | Same-idempotency retry returns existing state without double execution or billing. | Service lifecycle / `t-07` |
+| `SERVICE-LIFECYCLE-08` | Reusing a task ID for different content conflicts before execution. | Service lifecycle / `t-08` |
+| `ADMISSION-01` | A ready provider accepts bounded work. | Provider admission / `ADMISSION-01` |
+| `ADMISSION-02` | An unknown required profile rejects before execution. | Provider admission / `ADMISSION-02` |
+| `ADMISSION-03` | Capacity exhaustion rejects without unbounded queueing or billing. | Provider admission / `ADMISSION-03` |
+| `ADMISSION-04` | A draining provider accepts no new work. | Provider admission / `ADMISSION-04` |
+| `ADMISSION-05` | An unachievable deadline rejects before acceptance. | Provider admission / `ADMISSION-05` |
+| `ADMISSION-06` | Admission capability data remains topology-redacted. | Provider admission / `ADMISSION-06` |
+
+---
+
 ## Changelog
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.47.0 | 2026-07-14 | §17 adds proposed service-lifecycle and provider-admission vectors. They are additive draft profiles and do not alter base-wire or Phase 1 conformance. |
+| 4.46.0 | 2026-07-14 | §16 adds NATIVE-FRAME-BASE-01..04: implementation-backed 12-byte native framing vectors, manifest digest gate, and explicit draft boundary. No wire behavior changed. |
 | 4.45.0 | 2026-06-28 | §10.4 adds SDK-NODE-03..05 for SDK 0.7.75 external-tunnel guardrails: persistent provider-rate-limit cooldown, host-wide creation pacing/lease, and fallback to safe reachability methods rather than tunnel-create loops or unverified endpoint advertisement. §3.2/§3.3b/§7 reconcile peer-exchange conformance rows with Ed25519 gossip signatures instead of node-token/HMAC auth. |
 | 4.44.0 | 2026-06-09 | §3.5b Per-Node Health Vector (ADR-044 / #492): DIR-NODE-HEALTH-01..04 registered. Formula W_REACHABILITY=0.70 + W_LATENCY=0.30; success_rate + reputation absent. Key test: DIR-NODE-HEALTH-03 — new reachable node with no task history MUST score ≥85 ("healthy"). PHP: `NodeDetailHealthTest` (3 tests); Rust: `health.rs` (27 tests including `new_reachable_node_with_no_task_history_is_healthy`). |
 | 4.43.0 | 2026-06-06 | §15.8 Founder ordinals — register RECOG-FND-01..06 (claimed registered in iicp-recognition §10 but absent here). Reconciled to the shipped #310 detector + iicp-recognition v0.6.0 (operator_pubkey keying, genuine-served-node gate, #1 reserved/gate-exempt, GENESIS_MS, founder events on a dedicated non-federated chain). SPEC_UPDATE_PLAN Unit A tail. |

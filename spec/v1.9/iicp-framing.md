@@ -1,8 +1,8 @@
 # IICP Binary Framing Layer
 
 **Document**: `spec/iicp-framing.md`  
-**Version**: 0.1.5-draft  
-**Date**: 2026-06-06  
+**Version**: 0.1.6-draft
+**Date**: 2026-07-14
 **Status**: Draft — NOT YET RATIFIED (see §12)  
 **Authority**: Protocol Steward  
 **Issue**: #231  
@@ -38,7 +38,7 @@ HTTP fallback mode specification.
 
 ### 1.1 Frame structure
 
-Every IICP native-transport frame consists of an 11-byte fixed header followed by a
+Every IICP native-transport frame consists of a 12-byte fixed header followed by a
 variable-length CBOR payload:
 
 ```
@@ -55,7 +55,7 @@ variable-length CBOR payload:
  ...
 ```
 
-Total header size: **11 bytes**. Length field does NOT include the header.
+Total header size: **12 bytes**. Length field does NOT include the header.
 
 ### 1.2 Header fields
 
@@ -97,7 +97,7 @@ MUST be `0x00` on send. MUST be ignored on receive. Reserved for future use.
 #### Length (4 bytes, big-endian)
 
 Unsigned 32-bit integer in network byte order (big-endian). Specifies the byte count
-of the CBOR payload following the header. Does NOT include the 11-byte header itself.
+of the CBOR payload following the header. Does NOT include the 12-byte header itself.
 A receiver MUST NOT allocate a buffer for the payload until after validating the magic
 bytes and confirming Length is within its configured maximum (see §2).
 
@@ -788,7 +788,7 @@ IICP workloads where concurrent inference tasks are common.
 
 **Length field over QUIC:**
 
-The IICP 11-byte frame header (§1.1) including the 4-byte Length field is **required
+The IICP 12-byte frame header (§1.1) including the 4-byte Length field is **required
 over QUIC**. QUIC STREAM frames partition the byte stream arbitrarily at the network
 layer; IICP frames may span multiple QUIC STREAM frames. The Length field is the
 authoritative frame boundary marker regardless of transport.
@@ -1026,12 +1026,12 @@ plane stays HTTP; the data plane negotiates transport in INIT. See #230 for the
 
 ## Appendix A — Design Decisions
 
-### A.1 Why 11-byte header (not 8)?
+### A.1 Why 12-byte header (not 8)?
 
 8 bytes: `[magic:4][version:1][type:1][length:2]` — only 64 KiB max payload, forces
-fragmentation for any non-trivial CALL. 12 bytes with a 4-byte length allows 4 GiB
-which is too large. 11 bytes: `[magic:4][version:1][type:1][flags:1][reserved:1][length:4]`
-gives 4 GiB theoretical max but enforced at 16 MiB by §2. The single reserved byte
+fragmentation for any non-trivial CALL. The 12-byte layout
+`[magic:4][version:1][type:1][flags:1][reserved:1][length:4]` gives 4 GiB
+theoretical length space but §2 enforces 16 MiB. The single reserved byte
 costs nothing and provides a clean alignment point for future extension.
 
 ### A.2 Why big-endian length?
@@ -1069,3 +1069,4 @@ mechanisms are complementary.
 | 0.1.5-draft | 2026-06-07 | PS | §11.1 reserved-band partition (informative): 9480–9483 local proxy band (proxy 9483 / plugin 9482, grow down), 9484 node port, 9485–9490+ node auto-increment (grow up). Documents the proxy port standardization (11434→9483). ADR-049 / #475. |
 | 0.1.4-draft | 2026-06-06 | PS | §10.3 FRAME8 reassembly caps (#242): per-connection `MAX_INCOMPLETE_FRAMES`=64 + `MAX_REASSEMBLY_BYTES`=64 MiB (CLOSE `reassembly_limit_exceeded`, §9.6 row added) — bounds reassembly memory to O(1) per connection, resolving the adversarial-review amplification finding. §12: flipped #239 (IANA, closed 2026-05-20) and #242 (adversarial review, closed 2026-05-24) ratification gates to complete. Header version reconciled to 0.1.4 (it trailed the changelog, which already carried 0.1.1–0.1.3). |
 | 0.1.4-draft | 2026-05-20 | PS | §10.4-10.6 QUIC transport profile — stream mapping (stream-per-request), fragmentation over QUIC (OPTIONAL, QUIC segments natively), CBOR encoding constraints (deterministic encoding for signed messages, no indefinite-length). §13 Interoperability — dual-mode design selected, HTTP↔native translation table, CUSTOM frame gateway behavior, OBSERVE SSE bridge, directory control-plane constraint. Issues #236 #238 closed. |
+| 0.1.6-draft | 2026-07-14 | Protocol Steward | Corrected a pre-ratification editorial arithmetic error: the declared field layout has always occupied 12 bytes, not 11. The implementation-backed disposition and canonical vectors are recorded in `research/native-ai-infrastructure/FRAMING_ROOT_CAUSE_2026-07-14.md` and `fixtures/native-framing-v1.json`. No wire behavior changed. |

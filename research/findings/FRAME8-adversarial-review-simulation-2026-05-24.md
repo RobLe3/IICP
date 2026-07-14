@@ -1,5 +1,13 @@
 # FRAME8 — Simulated Adversarial Expert Review
 
+> **2026-07-14 erratum:** This historical simulation describes an unimplemented
+> 11-byte proposal with a three-byte length. The maintained native reference,
+> REACH probes, and Rust/Python/TypeScript clients instead implement
+> `magic(4)+version(1)+type(1)+flags(1)+reserved(1)+length:u32be(4)` = 12
+> bytes. See `research/native-ai-infrastructure/FRAMING_ROOT_CAUSE_2026-07-14.md`.
+> This document remains historical research and is not a current framing
+> contract.
+
 **Issue**: #242 (FRAME8: Adversarial network expert review)
 **Date**: 2026-05-24
 **Status**: Internal simulation complete — external expert review remains externally blocked
@@ -21,9 +29,10 @@ document provides the answer the framing spec should contain.
 
 ## NEL-DEEP Review — Network Engineer Adversarial
 
-### "Why 11-byte header and not 8? What are you optimizing?"
+### Historical question — superseded: “Why an 11-byte header and not 8?”
 
-The IICP binary frame header layout (from `spec/iicp-framing.md` / #231):
+The following was an unimplemented proposal considered by this historical
+simulation. It is **not** the IICP framing layout:
 ```
 [4 bytes] magic (0x49494350 "IICP")
 [1 byte]  version
@@ -33,14 +42,16 @@ The IICP binary frame header layout (from `spec/iicp-framing.md` / #231):
 Total: 11 bytes
 ```
 
-**Answer for spec**: The 11-byte header is optimized for alignment over wire efficiency.
+**Historical answer (superseded)**: The 11-byte header is optimized for alignment over wire efficiency.
 The 24-bit payload length supports 16MB frames without the 32-bit overhead of standard
 length fields. The reserved 2 bytes are explicitly documented for future use (extension
 flags, compression indicator, priority class). If the reviewer wants 8 bytes, the trade-off
 is: either reduce max frame size to 64KB (16-bit length, loses large model output support)
 or eliminate the reserved bytes (no room for protocol evolution).
 
-**Decision**: 11 bytes is defensible. The spec should document WHY each byte exists.
+**Historical decision (superseded)**: 11 bytes was considered defensible. It
+must not be used as current framing guidance; the implementation-backed
+12-byte contract and its canonical vectors supersede this proposal.
 
 ### "Magic bytes don't protect against replay — how does IICP prevent replay attacks?"
 

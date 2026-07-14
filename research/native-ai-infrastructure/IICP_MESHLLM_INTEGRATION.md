@@ -44,6 +44,7 @@ benchmark evidence.
 ## Migration stages
 
 1. Maintain MeshLLM as a named IICP backend via its public API.
-2. Add IICP streaming/cancellation/capacity profiles and adapter conformance.
+2. Mature the proposed IICP service-lifecycle and provider-admission profiles
+   through independent adapter conformance; keep MeshLLM topology opaque.
 3. Compare whole-task IICP routing with direct OpenAI-compatible forwarding.
 4. Only then evaluate a runtime-neutral distributed-inference sub-protocol.

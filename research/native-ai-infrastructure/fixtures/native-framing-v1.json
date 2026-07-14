@@ -1,0 +1,59 @@
+{
+  "fixture_version": "1.0.0-draft",
+  "status": "implementation-backed-pre-ratification",
+  "purpose": "Cross-implementation native framing vectors derived from the current Rust, Python, TypeScript, adapter, node and REACH implementations. This fixture covers frame decoding only; dispatch and lifecycle behavior are covered separately.",
+  "frame": {
+    "framing_version": 1,
+    "header_bytes": 12,
+    "layout": [
+      {"name": "magic", "offset": 0, "bytes": 4, "value_hex": "49494350"},
+      {"name": "version", "offset": 4, "bytes": 1},
+      {"name": "type", "offset": 5, "bytes": 1},
+      {"name": "flags", "offset": 6, "bytes": 1},
+      {"name": "reserved", "offset": 7, "bytes": 1},
+      {"name": "payload_length", "offset": 8, "bytes": 4, "encoding": "u32be"}
+    ],
+    "decode_contract": {
+      "reserved_byte": "ignored_on_receive",
+      "unknown_flag_bits": "ignored_on_receive",
+      "message_type_validation": "outside_frame_decoder"
+    }
+  },
+  "scenarios": [
+    {
+      "name": "ping_empty",
+      "wire_hex": "494943500109000000000000",
+      "expected": {"outcome": "accept", "version": 1, "message_type": 9, "flags": 0, "payload_hex": "", "consumed": 12}
+    },
+    {
+      "name": "call_minimal_cbor",
+      "wire_hex": "494943500105000000000003a10101",
+      "expected": {"outcome": "accept", "version": 1, "message_type": 5, "flags": 0, "payload_hex": "a10101", "consumed": 15}
+    },
+    {
+      "name": "reserved_byte_is_ignored_by_decoder",
+      "wire_hex": "49494350010900ff00000000",
+      "expected": {"outcome": "accept", "version": 1, "message_type": 9, "flags": 0, "payload_hex": "", "consumed": 12}
+    },
+    {
+      "name": "unknown_flag_bits_are_ignored_by_decoder",
+      "wire_hex": "494943500109800000000000",
+      "expected": {"outcome": "accept", "version": 1, "message_type": 9, "flags": 128, "payload_hex": "", "consumed": 12}
+    },
+    {
+      "name": "bad_magic",
+      "wire_hex": "584943500109000000000000",
+      "expected": {"outcome": "reject", "reason": "invalid_magic"}
+    },
+    {
+      "name": "truncated_header",
+      "wire_hex": "4949435001090000000000",
+      "expected": {"outcome": "reject", "reason": "truncated_header"}
+    },
+    {
+      "name": "truncated_payload",
+      "wire_hex": "494943500105000000000003a101",
+      "expected": {"outcome": "reject", "reason": "truncated_payload"}
+    }
+  ]
+}

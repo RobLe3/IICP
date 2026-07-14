@@ -1,0 +1,11 @@
+{
+  "manifest_version": "1.0.0-draft",
+  "status": "implementation-backed-pre-ratification",
+  "fixtures": [
+    {
+      "path": "native-framing-v1.json",
+      "fixture_version": "1.0.0-draft",
+      "sha256": "e73a871c069f194c42716f462d2bde04fb79d769e1e98249c2d17c9af50bcfc1"
+    }
+  ]
+}
