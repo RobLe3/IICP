@@ -1,0 +1,17 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "research-only",
+  "normalization": "UTF-8 NFC; exact_match trims outer whitespace and remains case-sensitive",
+  "cases": [
+    {"name": "exact-nfc-trim", "evaluator": "exact_match", "candidate": "  café  ", "expected_value": "café", "expected": {"passed": true, "score": 1.0}},
+    {"name": "exact-case-sensitive", "evaluator": "exact_match", "candidate": "Answer", "expected_value": "answer", "expected": {"passed": false, "score": 0.0}},
+    {"name": "numeric-absolute", "evaluator": "numeric_tolerance", "candidate": "3.1415", "expected_value": "3.14", "absolute_tolerance": "0.002", "relative_tolerance": "0", "expected": {"passed": true, "score": 1.0}},
+    {"name": "numeric-relative-fail", "evaluator": "numeric_tolerance", "candidate": "105", "expected_value": "100", "absolute_tolerance": "0", "relative_tolerance": "0.04", "expected": {"passed": false, "score": 0.0}},
+    {"name": "schema-valid", "evaluator": "json_schema_subset", "candidate": {"answer": "ok", "count": 2}, "schema": {"type": "object", "required": ["answer", "count"], "additionalProperties": false, "properties": {"answer": {"type": "string"}, "count": {"type": "integer", "minimum": 1}}}, "expected": {"passed": true, "score": 1.0}},
+    {"name": "schema-reject-extra", "evaluator": "json_schema_subset", "candidate": {"answer": "ok", "count": 2, "secret": "no"}, "schema": {"type": "object", "required": ["answer", "count"], "additionalProperties": false, "properties": {"answer": {"type": "string"}, "count": {"type": "integer"}}}, "expected": {"passed": false, "score": 0.0}},
+    {"name": "constraints-valid", "evaluator": "constraints", "candidate": {"status": "ready", "items": [1, 2]}, "constraints": [{"path": "status", "op": "equals", "value": "ready"}, {"path": "items", "op": "min_items", "value": 2}], "expected": {"passed": true, "score": 1.0}},
+    {"name": "constraints-fail", "evaluator": "constraints", "candidate": {"status": "degraded"}, "constraints": [{"path": "status", "op": "in", "value": ["ready", "warming"]}], "expected": {"passed": false, "score": 0.0}},
+    {"name": "unit-summary-pass", "evaluator": "unit_test_summary", "candidate": {"passed": 12, "failed": 0, "skipped": 1, "suite_digest": "sha256:fixture"}, "expected": {"passed": true, "score": 1.0}},
+    {"name": "unit-summary-fail", "evaluator": "unit_test_summary", "candidate": {"passed": 11, "failed": 1, "skipped": 0, "suite_digest": "sha256:fixture"}, "expected": {"passed": false, "score": 0.916667}}
+  ]
+}

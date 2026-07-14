@@ -57,8 +57,8 @@ The `policy` block is an optional object in the REGISTER request body. All field
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `allow_remote_inference` | bool | `false` | Node participates as CIP Worker |
-| `allow_tool_execution` | bool | `false` | Node accepts tasks with tool-execution intent domain |
-| `allow_file_access` | bool | `false` | Node accepts tasks requiring filesystem reads/writes |
+| `allow_tool_execution` | bool | `false` | General node/MCP policy only; MUST NOT authorize tool execution in the CIP Worker role |
+| `allow_file_access` | bool | `false` | General node/MCP policy only; MUST NOT authorize filesystem access in the CIP Worker role |
 | `minimum_reputation` | float [0.0–1.0] | `0.0` | Minimum coordinator reputation score required; coordinators below this threshold receive IICP-E020 |
 | `max_concurrent_remote` | int ≥ 1 | `2` | Maximum simultaneous CIP sub-tasks accepted; excess receives IICP-E021 |
 
@@ -75,6 +75,13 @@ allow_file_access = false        # mirrors REGISTER policy block
 minimum_reputation = 0.0         # coordinator reputation floor (0.0 = accept all)
 max_concurrent_remote = 2        # MUST be ≥ 1
 ```
+
+`allow_tool_execution` and `allow_file_access` are retained for compatibility
+with the general node policy manifest. They do not weaken §10: a CIP Worker is
+a pure-inference role and MUST reject tool, shell, file, browser, credential,
+system-control, and coordinator-requested outbound-network operations. A future
+cooperative tool protocol requires a separately named authorization and sandbox
+profile; it MUST NOT be inferred from these fields.
 
 ### 2.2 Consumer Activation (Phase A)
 
@@ -214,6 +221,14 @@ optional fields in the `constraints` object:
 - A Coordinator MUST validate `cip.policy` before dispatching. Valid values are `"best_of_n"`, `"majority_vote"`, and `"map_reduce"`. Any other value MUST be rejected with `IICP-E028` (invalid CIP field value).
 - `cip.replicas` MUST be a positive integer in the range [1, 10]. A Coordinator MUST reject requests with `cip.replicas` outside this range with `IICP-E028`. For `"majority_vote"`, `cip.replicas` MUST additionally be odd (see §3.2; rejection error: `IICP-E025`).
 - `cip.quorum` MUST be `null` or a positive integer ≤ `cip.replicas`. A non-null `cip.quorum` that exceeds `cip.replicas` MUST be rejected with `IICP-E028`.
+
+The `[1, 10]` rule is the generic CALL-envelope parsing range. After envelope
+validation and before dispatch, a Coordinator MUST apply mode-specific
+validation: single-provider execution uses exactly `1`; `best_of_n` uses at
+least `2` and no more than the operator's configured maximum; `majority_vote`
+uses an odd count of at least `3` and no more than the operator maximum. A mode
+that is syntactically known but not implemented MUST be reported as unsupported
+and MUST NOT be advertised as executable.
 - A Coordinator MUST NOT process a CIP CALL where the `cip` object is present but `cip.policy` is absent. Such requests MUST be rejected with `IICP-E028`.
 - All four validation checks MUST occur at parse time, before any worker selection or dispatch.
 
@@ -427,13 +442,14 @@ CIP defines three conformance profiles. Implementations declare at most one prof
 | **CIP-None** | Phase 1–4 behavior: no CIP capabilities declared. Default for nodes that do not opt in. | Cannot participate in CIP fan-out or credit settlement. |
 | **CIP-Consumer** | Can send CIP CALL messages (§4.1). Enforces `max_credits`, `max_multiplier`, `min_quality_score`. Supports `local-first` strategy. Does NOT fan out. | Cannot act as Coordinator. No worker selection. |
 | **CIP-Provider** | Can receive and execute CIP sub-tasks (§4.2). Enforces `max_concurrent_remote`, `minimum_reputation`. Returns `cip_role = worker` in trace. | Cannot initiate fan-out. No aggregation logic. |
-| **CIP-Full** | All of CIP-Consumer + CIP-Provider + full Coordinator/Aggregator. Supports best_of_n, majority_vote, and map_reduce. Handles credit settlement (§7) and consensus fallback (§6). | — |
+| **CIP-Full** | All of CIP-Consumer + CIP-Provider plus Coordinator/Aggregator behavior for every mode declared in `cip_modes`. Handles credit settlement (§7) and consensus fallback (§6). | MUST NOT claim an unimplemented mode. |
 
 Nodes declare their profile in the REGISTER payload via:
 
 ```json
 {
-  "cip_conformance_level": "CIP-None | CIP-Consumer | CIP-Provider | CIP-Full"
+  "cip_conformance_level": "CIP-None | CIP-Consumer | CIP-Provider | CIP-Full",
+  "cip_modes": ["best_of_n", "majority_vote"]
 }
 ```
 
@@ -441,7 +457,11 @@ Nodes declare their profile in the REGISTER payload via:
 `cip_conformance_level` in NODELIST with `"CIP-None"` as the default when a node
 has not opted into any CIP role. Nodes declaring `CIP-Full` MUST satisfy ALL
 normative requirements in §2–§10 of this document. Partial implementations MUST
-declare the most restrictive matching profile.
+declare the most restrictive matching profile. Implementations MUST also
+declare `cip_modes` when they declare Coordinator capability. The Directory and
+clients MUST treat an absent mode as unsupported. Until Map-Reduce execution and
+its conformance vectors pass, implementations MUST omit `map_reduce` even when
+their generic parser recognizes the value.
 
 ---
 
@@ -562,8 +582,13 @@ Test marks: `@pytest.mark.phase5`. All IDs map to `spec/conformance-test-suite.m
 | ADR-012 accepted (price + model_match terms) | Proposed — needs PS + SA sign-off |
 | S.12 conformance test suite additions | Pending (spec/conformance-test-suite.md §12) |
 
-**CIP implementation gate**: ADR-012 must be Accepted (not just Proposed) and Phase 4
-Milestone 1 gate must be closed before any CIP code is written.
+**CIP implementation status gate**: historical readiness prerequisites apply to
+promotion claims, not to the existence of experimental policy and validation
+code already present in maintained clients. Documentation and conformance
+evidence MUST distinguish `specified`, `implemented`, `tested`, `cross-client
+conformant`, `deployed`, and `production validated`. No implementation may
+advance its public conformance claim solely because a parser or policy module
+exists.
 
 ---
 
@@ -669,6 +694,7 @@ Colluding nodes can inflate credit balances by routing tasks between coordinatin
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.6.14 | 2026-07-14 | Separated the stable 1..10 envelope from mode-execution rules, required evidence-backed `cip_modes`, clarified that CIP Workers remain pure inference regardless of legacy general tool/file policy fields, and replaced the stale pre-code readiness statement with explicit evidence stages. Added no wire fields and enabled no mode. |
 | 0.6.13 | 2026-07-14 | Corrected the default `majority_vote` quorum to the strict-majority formula `floor(N/2)+1` (equivalent to `ceil(N/2)` for the required odd replica count) and explicitly prohibited the erroneous double increment. No wire-shape change. |
 | 0.6.12 | 2026-06-30 | Credit quote/debit alignment with operator wallet: quote responses include `effective_balance`, `balance_scope` and optional `operator_wallet_balance`; `balance_sufficient` is computed against the effective balance. Award settlement debits operator-bound consumers from their pooled wallet while preserving per-node ledger rows. |
 | 0.6.11 | 2026-06-09 | §10.3 HMAC canonical message: extended form `{…}:{response_hash}:{querying_node_id}` when `querying_node_id` is present in receipt body — REQUIRED to prevent a malicious serving node from substituting a foreign `querying_node_id` to drain foreign operator balances (TC-9e, #490). Backwards-compatible: receipts without `querying_node_id` use the 6-field form. §10.3 Credit debit: after awarding the Worker, directory SHOULD best-effort debit the querying node by the same amount; `CREDIT_SPEND_INSUFFICIENT` logged on failure; response includes `spent` + `spend_reason`. Implementation: directory v1.10.25, all 3 SDKs v0.7.50. |

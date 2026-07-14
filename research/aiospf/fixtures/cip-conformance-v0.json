@@ -1,0 +1,293 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "notice": "Research/conformance fixture only; does not enable CIP or ARCP routing.",
+  "protocol_envelope": {
+    "minimum_replicas": 1,
+    "maximum_replicas": 10
+  },
+  "execution_modes": {
+    "single": {
+      "minimum_replicas": 1,
+      "maximum_replicas": 1
+    },
+    "best_of_n": {
+      "minimum_replicas": 2,
+      "maximum_replicas_source": "operator"
+    },
+    "majority_vote": {
+      "minimum_replicas": 3,
+      "odd_only": true,
+      "default_quorum": "floor(n/2)+1"
+    },
+    "map_reduce": {
+      "advertise_only_when_implemented": true
+    }
+  },
+  "worker_safety": {
+    "role": "pure_inference",
+    "forbidden": [
+      "shell",
+      "filesystem",
+      "outbound_network",
+      "credentials",
+      "browser",
+      "system_control"
+    ]
+  },
+  "cases": [
+    {
+      "name": "envelope-min",
+      "input": {
+        "policy": null,
+        "replicas": 1
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "accept",
+        "quorum": null
+      }
+    },
+    {
+      "name": "envelope-max",
+      "input": {
+        "policy": "best_of_n",
+        "replicas": 10,
+        "operator_max_replicas": 10
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "accept",
+        "quorum": null
+      }
+    },
+    {
+      "name": "envelope-zero",
+      "input": {
+        "policy": null,
+        "replicas": 0
+      },
+      "expected": {
+        "envelope": "reject",
+        "execution": "reject",
+        "error": "IICP-E028"
+      }
+    },
+    {
+      "name": "envelope-eleven",
+      "input": {
+        "policy": "best_of_n",
+        "replicas": 11,
+        "operator_max_replicas": 11
+      },
+      "expected": {
+        "envelope": "reject",
+        "execution": "reject",
+        "error": "IICP-E028"
+      }
+    },
+    {
+      "name": "best-of-n-one",
+      "input": {
+        "policy": "best_of_n",
+        "replicas": 1,
+        "operator_max_replicas": 5
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "reject",
+        "error": "IICP-E028"
+      }
+    },
+    {
+      "name": "best-of-n-over-operator",
+      "input": {
+        "policy": "best_of_n",
+        "replicas": 6,
+        "operator_max_replicas": 5
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "reject",
+        "error": "IICP-E028"
+      }
+    },
+    {
+      "name": "majority-three",
+      "input": {
+        "policy": "majority_vote",
+        "replicas": 3,
+        "operator_max_replicas": 9
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "accept",
+        "quorum": 2
+      }
+    },
+    {
+      "name": "majority-five",
+      "input": {
+        "policy": "majority_vote",
+        "replicas": 5,
+        "operator_max_replicas": 9
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "accept",
+        "quorum": 3
+      }
+    },
+    {
+      "name": "majority-seven",
+      "input": {
+        "policy": "majority_vote",
+        "replicas": 7,
+        "operator_max_replicas": 9
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "accept",
+        "quorum": 4
+      }
+    },
+    {
+      "name": "majority-nine",
+      "input": {
+        "policy": "majority_vote",
+        "replicas": 9,
+        "operator_max_replicas": 9
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "accept",
+        "quorum": 5
+      }
+    },
+    {
+      "name": "majority-even",
+      "input": {
+        "policy": "majority_vote",
+        "replicas": 4,
+        "operator_max_replicas": 9
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "reject",
+        "error": "IICP-E025"
+      }
+    },
+    {
+      "name": "majority-too-small",
+      "input": {
+        "policy": "majority_vote",
+        "replicas": 1,
+        "operator_max_replicas": 9
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "reject",
+        "error": "IICP-E025"
+      }
+    },
+    {
+      "name": "explicit-quorum-valid",
+      "input": {
+        "policy": "majority_vote",
+        "replicas": 5,
+        "quorum": 4,
+        "operator_max_replicas": 9
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "accept",
+        "quorum": 4
+      }
+    },
+    {
+      "name": "explicit-quorum-over-replicas",
+      "input": {
+        "policy": "majority_vote",
+        "replicas": 5,
+        "quorum": 6,
+        "operator_max_replicas": 9
+      },
+      "expected": {
+        "envelope": "reject",
+        "execution": "reject",
+        "error": "IICP-E028"
+      }
+    },
+    {
+      "name": "map-reduce-not-implemented",
+      "input": {
+        "policy": "map_reduce",
+        "replicas": 3,
+        "operator_max_replicas": 5,
+        "implemented_modes": [
+          "best_of_n",
+          "majority_vote"
+        ]
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "unsupported",
+        "advertise": false
+      }
+    },
+    {
+      "name": "sensitivity-precedes-score",
+      "input": {
+        "policy": null,
+        "replicas": 1,
+        "sensitivity": "high",
+        "send_sensitive_prompts": false,
+        "quality_score": 1.0
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "local",
+        "remote_eligible": false
+      }
+    },
+    {
+      "name": "tool-intent-not-cip-worker",
+      "input": {
+        "policy": null,
+        "replicas": 1,
+        "intent": "urn:iicp:intent:mcp:bash:v1",
+        "allow_tool_execution": true
+      },
+      "expected": {
+        "envelope": "accept",
+        "execution": "reject",
+        "remote_eligible": false
+      }
+    }
+  ],
+  "canonical_receipt_vectors": [
+    {
+      "name": "worker-receipt-with-querying-node",
+      "hmac_key_utf8": "test-node-hmac-key",
+      "result": {
+        "answer": "ok",
+        "items": [
+          1,
+          2
+        ]
+      },
+      "canonical_result_json": "{\"answer\":\"ok\",\"items\":[1,2]}",
+      "response_hash": "87cd169c144ae302b00bb36a1b0af3728b7e2bb788742de076037925c868824e",
+      "fields": {
+        "task_id": "11111111-1111-4111-8111-111111111111",
+        "tokens_used": 42,
+        "cip_parent_task_id": "22222222-2222-4222-8222-222222222222",
+        "cip_session_key": "session-test",
+        "nonce": "00112233445566778899aabbccddeeff",
+        "querying_node_id": "33333333-3333-4333-8333-333333333333"
+      },
+      "canonical_message": "11111111-1111-4111-8111-111111111111:42:22222222-2222-4222-8222-222222222222:session-test:00112233445566778899aabbccddeeff:87cd169c144ae302b00bb36a1b0af3728b7e2bb788742de076037925c868824e:33333333-3333-4333-8333-333333333333",
+      "signature_hmac_sha256": "e2023f8058ffbbc14163c6a11d529895e6385e4cb8b017a5d88449fdf4262ce6"
+    }
+  ]
+}
