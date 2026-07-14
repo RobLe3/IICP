@@ -1622,8 +1622,14 @@ A relay MUST offer at least one of:
 
 A relay MUST bound its concurrent sessions (RECOMMENDED default 256). A bind that
 would exceed the cap MUST be rejected (`503 IICP-E039` / `RELAY_ACK error`); a
-**rebind of an already-bound `worker_id` is exempt**. Relays SHOULD additionally
-rate-limit binds per source IP. This caps a bind-flood memory-exhaustion DoS.
+**rebind of an already-bound `worker_id` is exempt**. Relays MUST also rate-limit
+new binds per source principal (RECOMMENDED default 30 per 60 seconds). HTTP and
+native relays SHOULD use the source IP where visible; a path that intentionally
+hides it MAY use an authenticated worker principal. Rate-limited HTTP binds use
+`429 IICP-E039` with reason `relay_bind_rate_limited`; native binds use a
+`RELAY_ACK error`. Recovery of a dead previously-bound session is exempt. Logs
+MUST NOT contain raw source addresses. This caps bind-flood memory exhaustion
+without turning legitimate reconnects into a self-inflicted outage.
 [→ DIR-RELAY-02, F5, shipped 0.7.58]
 
 ### 7.4 Bind authorization — bind ticket (normative, adoption-gated per §6.1)
