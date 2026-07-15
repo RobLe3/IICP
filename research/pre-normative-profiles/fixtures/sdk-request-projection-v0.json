@@ -1,0 +1,129 @@
+{
+  "schema": "iicp.sdk-request-projection.fixture.v0",
+  "fixture_version": "0.1.0",
+  "status": "pre-normative",
+  "invariant": "route-only fields never enter the provider task envelope",
+  "precedence": [
+    "route_constraints",
+    "legacy_task_constraints",
+    "client_config",
+    "protocol_default"
+  ],
+  "cases": [
+    {
+      "name": "explicit_route_constraints_win",
+      "config": {
+        "region": "eu-west",
+        "profile_request": {
+          "profile_id": "urn:iicp:profile:config",
+          "profile_version": "0",
+          "profile_fixture_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "required": false
+        }
+      },
+      "task": {
+        "constraints": {
+          "timeout_ms": 45000,
+          "qos": "batch",
+          "region": "us-east",
+          "model": "legacy-model",
+          "min_reputation": 0.3
+        },
+        "route_constraints": {
+          "region": "eu-central",
+          "qos": "interactive",
+          "model": "route-model",
+          "min_reputation": 0.8,
+          "browser_usable_only": true,
+          "limit": 5,
+          "profile_request": {
+            "profile_id": "urn:iicp:profile:route",
+            "profile_version": "0",
+            "profile_fixture_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "required": true
+          }
+        }
+      },
+      "expected": {
+        "route_options": {
+          "region": "eu-central",
+          "qos": "interactive",
+          "model": "route-model",
+          "min_reputation": 0.8,
+          "browser_usable_only": true,
+          "limit": 5,
+          "profile_request": {
+            "profile_id": "urn:iicp:profile:route",
+            "profile_version": "0",
+            "profile_fixture_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "required": true
+          }
+        },
+        "execution_constraints": {
+          "timeout_ms": 45000,
+          "qos": "batch",
+          "model": "legacy-model"
+        }
+      }
+    },
+    {
+      "name": "legacy_constraints_project_compatibly",
+      "config": {
+        "region": "eu-west"
+      },
+      "task": {
+        "constraints": {
+          "timeout_ms": 30000,
+          "qos": "realtime",
+          "region": "eu-north",
+          "model": "compat-model",
+          "min_reputation": 0.65
+        }
+      },
+      "expected": {
+        "route_options": {
+          "region": "eu-north",
+          "qos": "realtime",
+          "model": "compat-model",
+          "min_reputation": 0.65,
+          "browser_usable_only": false,
+          "limit": 10,
+          "profile_request": null
+        },
+        "execution_constraints": {
+          "timeout_ms": 30000,
+          "qos": "realtime",
+          "model": "compat-model"
+        }
+      }
+    },
+    {
+      "name": "config_and_protocol_defaults",
+      "config": {
+        "region": "eu-central"
+      },
+      "task": {
+        "constraints": {
+          "timeout_ms": 30000,
+          "qos": "interactive"
+        }
+      },
+      "expected": {
+        "route_options": {
+          "region": "eu-central",
+          "qos": "interactive",
+          "model": null,
+          "min_reputation": null,
+          "browser_usable_only": false,
+          "limit": 10,
+          "profile_request": null
+        },
+        "execution_constraints": {
+          "timeout_ms": 30000,
+          "qos": "interactive"
+        }
+      }
+    }
+  ]
+}
+
