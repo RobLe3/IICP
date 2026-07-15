@@ -37,3 +37,7 @@ adding directory fields or changing the IICP wire envelope.
 `service-lifecycle-v1-amendment.md` completes the proposed asynchronous task
 state machine, observation, replay, cancellation and idempotency semantics. It
 remains profile-level research and does not change the fixed native frame.
+
+`dispatch-ticket-trust-profile-v2.md` proposes independently anchored Directory
+signing keys, overlap rotation and explicit strict/open compatibility modes. It
+does not change or overstate the disclosure-only v1 ticket contract.

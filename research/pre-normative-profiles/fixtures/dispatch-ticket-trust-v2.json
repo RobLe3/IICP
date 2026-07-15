@@ -1,0 +1,151 @@
+{
+  "profile": "urn:iicp:profile:dispatch-ticket-trust:v2",
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative-semantic-vectors; signed-token vectors pending",
+  "modes": [
+    "strict_pinned",
+    "open_compat"
+  ],
+  "cases": [
+    {
+      "id": "TICKET-TRUST-01",
+      "mode": "strict_pinned",
+      "ticket_profile": "v2",
+      "key_state": "active",
+      "key_known": true,
+      "key_time_valid": true,
+      "signature_valid": true,
+      "claims_match": true,
+      "bundle_version": 4,
+      "minimum_bundle_version": 4,
+      "expected": "accept_anchored"
+    },
+    {
+      "id": "TICKET-TRUST-02",
+      "mode": "strict_pinned",
+      "ticket_profile": "v2",
+      "key_state": "retiring",
+      "key_known": true,
+      "key_time_valid": true,
+      "signature_valid": true,
+      "claims_match": true,
+      "bundle_version": 4,
+      "minimum_bundle_version": 4,
+      "expected": "accept_anchored"
+    },
+    {
+      "id": "TICKET-TRUST-03",
+      "mode": "strict_pinned",
+      "ticket_profile": "v2",
+      "key_state": "retiring",
+      "key_known": true,
+      "key_time_valid": false,
+      "signature_valid": true,
+      "claims_match": true,
+      "bundle_version": 4,
+      "minimum_bundle_version": 4,
+      "expected": "reject_key_expired"
+    },
+    {
+      "id": "TICKET-TRUST-04",
+      "mode": "strict_pinned",
+      "ticket_profile": "v2",
+      "key_state": "revoked",
+      "key_known": true,
+      "key_time_valid": true,
+      "signature_valid": true,
+      "claims_match": true,
+      "bundle_version": 4,
+      "minimum_bundle_version": 4,
+      "expected": "reject_key_revoked"
+    },
+    {
+      "id": "TICKET-TRUST-05",
+      "mode": "strict_pinned",
+      "ticket_profile": "v2",
+      "key_state": "active",
+      "key_known": false,
+      "key_time_valid": true,
+      "signature_valid": true,
+      "claims_match": true,
+      "bundle_version": 4,
+      "minimum_bundle_version": 4,
+      "expected": "reject_unknown_key"
+    },
+    {
+      "id": "TICKET-TRUST-06",
+      "mode": "strict_pinned",
+      "ticket_profile": "v2",
+      "key_state": "active",
+      "key_known": true,
+      "key_time_valid": true,
+      "signature_valid": false,
+      "claims_match": true,
+      "bundle_version": 4,
+      "minimum_bundle_version": 4,
+      "expected": "reject_signature"
+    },
+    {
+      "id": "TICKET-TRUST-07",
+      "mode": "strict_pinned",
+      "ticket_profile": "v2",
+      "key_state": "active",
+      "key_known": true,
+      "key_time_valid": true,
+      "signature_valid": true,
+      "claims_match": false,
+      "bundle_version": 4,
+      "minimum_bundle_version": 4,
+      "expected": "reject_claim_mismatch"
+    },
+    {
+      "id": "TICKET-TRUST-08",
+      "mode": "strict_pinned",
+      "ticket_profile": "v2",
+      "key_state": "active",
+      "key_known": true,
+      "key_time_valid": true,
+      "signature_valid": true,
+      "claims_match": true,
+      "bundle_version": 3,
+      "minimum_bundle_version": 4,
+      "expected": "reject_bundle_rollback"
+    },
+    {
+      "id": "TICKET-TRUST-09",
+      "mode": "strict_pinned",
+      "ticket_profile": "v1",
+      "same_origin_key_valid": true,
+      "expected": "reject_required_profile_downgrade"
+    },
+    {
+      "id": "TICKET-TRUST-10",
+      "mode": "open_compat",
+      "ticket_profile": "v1",
+      "same_origin_key_valid": true,
+      "expected": "accept_same_origin_unanchored"
+    },
+    {
+      "id": "TICKET-TRUST-11",
+      "mode": "open_compat",
+      "ticket_profile": "v2",
+      "key_known": false,
+      "same_origin_key_valid": true,
+      "expected": "reject_unknown_v2_key"
+    },
+    {
+      "id": "TICKET-TRUST-12",
+      "mode": "strict_pinned",
+      "ticket_profile": "v2",
+      "key_state": "active",
+      "key_known": true,
+      "key_time_valid": true,
+      "signature_valid": true,
+      "claims_match": true,
+      "bundle_version": 4,
+      "minimum_bundle_version": 4,
+      "jti_seen": true,
+      "expected": "reject_local_replay"
+    }
+  ]
+}

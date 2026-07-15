@@ -42,6 +42,10 @@ pinned. It does not publish resolver output or authorize private routes.
 resume, retry, disconnect, cancellation and privacy behavior. It remains draft
 until two independent implementations consume the same digest.
 
+`dispatch-ticket-trust-v2.json` covers trust-bundle, rotation, revocation,
+downgrade, rollback and local replay decisions. Signed-token vectors remain a
+required later gate before implementation or ratification.
+
 `profile-fixture-manifest-v0.json` pins its declared canonical SHA-256 digests.
 Standalone endpoint-security and lifecycle research fixtures are instead
 byte-compared with their declared mirrors by dedicated synchronization checks
