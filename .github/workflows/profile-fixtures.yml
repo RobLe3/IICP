@@ -3,7 +3,7 @@ name: Profile fixture contract
 on:
   pull_request:
     paths:
-      - "research/pre-normative-profiles/fixtures/**"
+      - "research/pre-normative-profiles/**"
       - "tools/check_profile_fixture_manifest.py"
       - "tools/check_spec_release_integrity.py"
       - "spec/v1.9/release-integrity-manifest.json"
@@ -14,7 +14,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "research/pre-normative-profiles/fixtures/**"
+      - "research/pre-normative-profiles/**"
       - "tools/check_profile_fixture_manifest.py"
       - "tools/check_spec_release_integrity.py"
       - "spec/v1.9/release-integrity-manifest.json"
