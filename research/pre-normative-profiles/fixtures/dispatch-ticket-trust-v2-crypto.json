@@ -1,0 +1,192 @@
+{
+  "fixture_version": "0.2.0-draft",
+  "status": "pre-normative",
+  "profile": "dispatch_ticket_trust_v2_crypto",
+  "domain_separator_b64url": "SUlDUC1ESVNQQVRDSC1USUNLRVQtVjIA",
+  "canonicalization": "UTF-8 JSON; recursively sorted object keys; compact separators; no ASCII escaping",
+  "now": 2000000000,
+  "keys": [
+    {
+      "key_id": "dir-2026-active",
+      "public_key_b64url": "0EqyMnQrtKs6E2i9RhXk5tAiSrcaAWuvhSCjMsl3hzc",
+      "state": "active",
+      "valid_from": 1900000000,
+      "valid_until": 2100000000
+    },
+    {
+      "key_id": "dir-2025-retiring",
+      "public_key_b64url": "oJql9HpnWYAv-VX43C0qFKXJnSO-l_hkEn_5ODRVpPA",
+      "state": "retiring",
+      "valid_from": 1800000000,
+      "valid_until": 2000001000
+    },
+    {
+      "key_id": "dir-revoked",
+      "public_key_b64url": "F8t5-ytBIPKx7GXkGY1uCLKOgT_rAeSkAIObheGAgM4",
+      "state": "revoked",
+      "valid_from": 1800000000,
+      "valid_until": 2100000000
+    },
+    {
+      "key_id": "dir-expired",
+      "public_key_b64url": "11l5O7wTooGagnx2rbb7qKSa7gB_SfLQmS2ZuCWtLEg",
+      "state": "retiring",
+      "valid_from": 1800000000,
+      "valid_until": 1999999999
+    },
+    {
+      "key_id": "dir-unknown",
+      "public_key_b64url": "xoImN8fTEOxXYnvgC6JZ0lN0n0qvZERwz_vlOjX3MkI",
+      "state": "active",
+      "valid_from": 1900000000,
+      "valid_until": 2100000000
+    }
+  ],
+  "vectors": [
+    {
+      "id": "active_key_accepts",
+      "now": 2000000000,
+      "claims": {
+        "profile": "dispatch_ticket_v2",
+        "issuer": "https://directory.example",
+        "provider_id": "provider-a",
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "expires_at": 2000000300,
+        "jti": "ticket-0001",
+        "constraints_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "key_id": "dir-2026-active"
+      },
+      "signature_b64url": "vgoDcGLb5oBPto7i0aiKzYms3W8DJdgOouRes7Eee8_v2WjJa-WdMpaEXRakaMv5C1kmiLEYIQwpWuauzOPgCA",
+      "trust_bundle_key_ids": [
+        "dir-2026-active"
+      ],
+      "jti_seen": false,
+      "expected_signature_valid": true,
+      "expected": "accept_anchored"
+    },
+    {
+      "id": "retiring_overlap_accepts",
+      "now": 2000000000,
+      "claims": {
+        "profile": "dispatch_ticket_v2",
+        "issuer": "https://directory.example",
+        "provider_id": "provider-a",
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "expires_at": 2000000300,
+        "jti": "ticket-0002",
+        "constraints_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "key_id": "dir-2025-retiring"
+      },
+      "signature_b64url": "Ucz2mND5knZtyqBddWU4PrnWBnvNMuKU_qF1FhRyAUxT7R8p6AxemrfWqmbC2qgMjlcCOwr2uVJy-R7KUs00Bw",
+      "trust_bundle_key_ids": [
+        "dir-2025-retiring"
+      ],
+      "jti_seen": false,
+      "expected_signature_valid": true,
+      "expected": "accept_anchored"
+    },
+    {
+      "id": "revoked_key_refused",
+      "now": 2000000000,
+      "claims": {
+        "profile": "dispatch_ticket_v2",
+        "issuer": "https://directory.example",
+        "provider_id": "provider-a",
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "expires_at": 2000000300,
+        "jti": "ticket-0003",
+        "constraints_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "key_id": "dir-revoked"
+      },
+      "signature_b64url": "9u98CND_U9U23KRTeNN3aeEKM8VvbI4TAXHa-vyHacQO_QDFnG40dUcL4j9pywoLFZfo5hjy8aCPxYM1p-A5Dw",
+      "trust_bundle_key_ids": [
+        "dir-revoked"
+      ],
+      "jti_seen": false,
+      "expected_signature_valid": true,
+      "expected": "reject_key_revoked"
+    },
+    {
+      "id": "expired_key_refused",
+      "now": 2000000000,
+      "claims": {
+        "profile": "dispatch_ticket_v2",
+        "issuer": "https://directory.example",
+        "provider_id": "provider-a",
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "expires_at": 2000000300,
+        "jti": "ticket-0004",
+        "constraints_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "key_id": "dir-expired"
+      },
+      "signature_b64url": "aJU7aIDcqazcjtE-L1nBOtv5_faNNZa7rF7esQ0NiLMKdQnLcBaQQAjwzd3F6XPh-mv-ck_qELg4_mJ0-7XqAQ",
+      "trust_bundle_key_ids": [
+        "dir-expired"
+      ],
+      "jti_seen": false,
+      "expected_signature_valid": true,
+      "expected": "reject_key_expired"
+    },
+    {
+      "id": "unknown_key_refused",
+      "now": 2000000000,
+      "claims": {
+        "profile": "dispatch_ticket_v2",
+        "issuer": "https://directory.example",
+        "provider_id": "provider-a",
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "expires_at": 2000000300,
+        "jti": "ticket-0005",
+        "constraints_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "key_id": "dir-unknown"
+      },
+      "signature_b64url": "Ro8f4u6QIp6jD0s7Erfca5Kmt0xwUDu2yO6XsNlVKDFuCj8i2Vws04Gh0copK01NFGuDhKNxLDCfwtm0QdTTAg",
+      "trust_bundle_key_ids": [],
+      "jti_seen": false,
+      "expected_signature_valid": true,
+      "expected": "reject_unknown_key"
+    },
+    {
+      "id": "tampered_claim_refused",
+      "now": 2000000000,
+      "claims": {
+        "profile": "dispatch_ticket_v2",
+        "issuer": "https://directory.example",
+        "provider_id": "provider-b",
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "expires_at": 2000000300,
+        "jti": "ticket-0006",
+        "constraints_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "key_id": "dir-2026-active"
+      },
+      "signature_b64url": "dAyTOU-BM2G1tuZD_8ALZW76uWDdJFnWdhKHoYGlwpEt6lOvF2r2PWKfBcXx6H0vOzKraAxR_pa1phl4_SX7DQ",
+      "trust_bundle_key_ids": [
+        "dir-2026-active"
+      ],
+      "jti_seen": false,
+      "expected_signature_valid": false,
+      "expected": "reject_signature"
+    },
+    {
+      "id": "local_replay_refused",
+      "now": 2000000000,
+      "claims": {
+        "profile": "dispatch_ticket_v2",
+        "issuer": "https://directory.example",
+        "provider_id": "provider-a",
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "expires_at": 2000000300,
+        "jti": "ticket-0007",
+        "constraints_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "key_id": "dir-2026-active"
+      },
+      "signature_b64url": "RV4ZGrPREAD9cOuSDNkdKA2_gDR_XLNK5aGo-9-m4jrfcgqrLPa_COe-tkQ5Rrd3aDGqCzAyewuTfvNmRn0OCg",
+      "trust_bundle_key_ids": [
+        "dir-2026-active"
+      ],
+      "jti_seen": true,
+      "expected_signature_valid": true,
+      "expected": "reject_local_replay"
+    }
+  ]
+}
