@@ -41,3 +41,68 @@ TypeScript, Rust and browser consumers. New policy values need corresponding
 schema fixtures, refusal tests and user-facing wording before ratification.
 Fixture results use the shared manifest digest and portable reason codes so a
 provider cannot substitute a weaker local policy interpretation.
+
+## Request and provider declarations
+
+The same schema is used in two roles and implementations MUST preserve the role:
+
+- a **request requirement** states the caller's minimum routing conditions;
+- a **provider declaration** states what the provider claims it will do.
+
+A declaration satisfies a requirement only through explicit field rules; missing
+values are not treated as permissive. A request may mark individual requirements
+critical. An unknown critical field or value fails with
+`unsupported_policy_requirement`; an unknown optional value is ignored without
+weakening known requirements.
+
+## Field semantics
+
+- `data_class` is caller classification, not content inspection by the Directory.
+  Classification SHOULD occur locally. `restricted` is a conservative routing
+  class, not a claim that one specific law applies.
+- `remote_routing` is a hard caller gate. `local_only` forbids remote
+  dispatch; `requires_approval` requires the declared approval event before
+  dispatch; `allowed` does not override any other restriction.
+- `jurisdiction` and `allowed_regions` describe declared execution/operator
+  location constraints. Region is not evidence of legal establishment or legal
+  compliance.
+- `retention.task_payload`, `training_use` and `subprocessors` are provider
+  claims. `unknown` or absent does not satisfy a caller requiring `none`.
+  `transient` requires a separately declared bounded operational interval.
+- `approval`, `requires_human_review` and `tool_risk` are cumulative. A
+  provider cannot downgrade a caller's required approval or tool-risk boundary.
+- `requires_encryption` requires a currently usable negotiated confidentiality
+  profile/key before dispatch; transport TLS alone does not satisfy an explicit
+  payload-confidentiality requirement.
+- `requires_receipt` requires a negotiated redacted receipt profile, not an
+  arbitrary log statement.
+
+## Evidence and precedence
+
+Provider declarations are not self-authenticating evidence. A decision record
+keeps four sources distinct: caller requirement, provider claim, independent
+conformance/attestation, and observed operational evidence. A more favorable
+claim never overrides a conflicting authenticated manifest or observed hard
+failure. Absence of independent evidence is represented as unknown rather than
+false certification.
+
+Hard caller requirements, prohibited/high-risk intent policy, authorization,
+required confidentiality and local-only routing take precedence over score,
+reputation, price, load spreading and fallback. Failure to find a compatible
+candidate returns a policy refusal; fallback MUST NOT widen the policy.
+
+## Disclosure and receipts
+
+Public capability output may expose only coarse routing-safe values and a
+manifest digest/reference. Authenticated disclosure may provide declared
+retention intervals, subprocessors and evidence references to an authorized
+caller. Receipts contain requirement/declaration digests, decision reason and
+redacted provider reference, but no prompt, response, credential, raw endpoint,
+natural-person contact detail or private backend topology.
+
+## Evolution
+
+New values require a schema version, compatibility rule, refusal fixture,
+cross-SDK implementation evidence and user-facing wording. Existing values are
+never silently redefined. This draft remains optional until negotiated; future
+ratification must preserve legacy behavior for callers that do not request it.
