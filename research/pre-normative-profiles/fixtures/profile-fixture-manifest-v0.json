@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.1.0-draft",
+  "manifest_version": "0.2.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -26,6 +26,11 @@
       "path": "sdk-request-projection-v0.json",
       "fixture_version": "0.1.0",
       "sha256": "0a89ae1ee02aca25f7989576b0ab88640bf382bf2d13e37e489798c81d010d8c"
+    },
+    {
+      "path": "dispatch-ticket-trust-v2-crypto.json",
+      "fixture_version": "0.2.0-draft",
+      "sha256": "48be1f06e79da7849367f48deeb7a5ffa71a1de0e21800491dc6bf55d016fb94"
     }
   ]
 }

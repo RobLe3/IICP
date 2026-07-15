@@ -1,6 +1,6 @@
 # Proposal — Dispatch Ticket Trust Profile v2
 
-**Version:** 0.1.0-draft  
+**Version:** 0.2.0-draft  
 **Status:** pre-normative trust-profile proposal  
 **Tracking:** iicp.network #621  
 **Relation:** disclosure-only `dispatch-route-ticket:v1`
@@ -85,6 +85,18 @@ Every failure is non-retryable until trusted configuration, rotation state or a
 new ticket changes. Receipts expose only ticket/profile IDs, a redacted key ID
 prefix, verification outcome and expiry class.
 
+## Signature input
+
+The fixture profile signs the ASCII domain separator
+`IICP-DISPATCH-TICKET-V2` followed by one zero byte and the UTF-8 canonical
+claims object. Canonical claims use recursively sorted object keys, compact JSON
+separators and unescaped Unicode. Numbers in standardized ticket claims are
+integers; implementations MUST reject duplicate keys, non-finite numbers and
+unrepresentable integer values rather than normalizing them differently.
+
+This deterministic encoding is limited to the proposed v2 ticket profile. It
+does not retroactively redefine v1 tickets or the IICP base frame.
+
 ## Compatibility and migration
 
 SDKs first add bundle parsing and fixture-only verification. A later coordinated
@@ -97,5 +109,7 @@ No base-wire change is required.
 
 `fixtures/dispatch-ticket-trust-v2.json` covers active/retiring/expired/revoked
 keys, unknown keys, same-origin replacement, claim mismatch, bundle rollback and
-v1 compatibility labeling. Cryptographic signed-token vectors and adversarial
-rotation/recovery tests are required before implementation or ratification.
+v1 compatibility labeling. `fixtures/dispatch-ticket-trust-v2-crypto.json`
+adds deterministic Ed25519 signatures for active and overlap acceptance plus
+revocation, expiry, unknown-key, tamper and replay refusal. Runtime enablement
+and adversarial rotation/recovery remain required before ratification.
