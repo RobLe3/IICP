@@ -36,8 +36,12 @@ adding directory fields or changing the IICP wire envelope.
 
 `service-lifecycle-v1-amendment.md` completes the proposed asynchronous task
 state machine, observation, replay, cancellation and idempotency semantics. It
-remains profile-level research and does not change the fixed native frame.
+now has three transport-neutral SDK stores and two explicitly mounted HTTP
+adapters, but remains profile-level research and does not change the fixed
+native frame or ordinary node routes.
 
 `dispatch-ticket-trust-profile-v2.md` proposes independently anchored Directory
 signing keys, overlap rotation and explicit strict/open compatibility modes. It
-does not change or overstate the disclosure-only v1 ticket contract.
+now has opt-in caller-supplied-bundle verifiers in all three SDKs. They are not
+wired into default dispatch and do not change or overstate the disclosure-only
+v1 ticket contract.

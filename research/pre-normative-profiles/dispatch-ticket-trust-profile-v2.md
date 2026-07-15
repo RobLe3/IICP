@@ -1,6 +1,6 @@
 # Proposal — Dispatch Ticket Trust Profile v2
 
-**Version:** 0.2.0-draft  
+**Version:** 0.3.0-draft
 **Status:** pre-normative trust-profile proposal  
 **Tracking:** iicp.network #621  
 **Relation:** disclosure-only `dispatch-route-ticket:v1`
@@ -104,6 +104,13 @@ release may ship `strict_pinned` as opt-in while v1 remains the default. Strict
 mode becomes a public default only after bundle distribution, rotation overlap,
 offline recovery, clock skew and rollback drills pass across maintained clients.
 No base-wire change is required.
+
+The 0.3 prototype exposes a caller-invoked verifier in Python, TypeScript and
+Rust. It accepts an independently supplied bundle, expected route bindings,
+minimum bundle version and optional process-local replay cache. It is not called
+by default discovery or submission code and does not fetch replacement keys from
+the route origin. Persistence of replay state remains an application concern and
+does not imply network-wide redemption.
 
 ## Conformance gate
 

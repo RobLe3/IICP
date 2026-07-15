@@ -1,6 +1,6 @@
 # Proposal — Asynchronous Service Lifecycle Amendment
 
-**Version:** 0.2.0-draft  
+**Version:** 0.3.0-draft
 **Status:** pre-normative amendment to the proposed service-lifecycle profile  
 **Profile:** `urn:iicp:profile:service-lifecycle:v1`  
 **Tracking:** iicp.network #668
@@ -130,9 +130,13 @@ if used by a binding, are audience-bound, expiring and replay-limited.
 
 The companion `fixtures/service-lifecycle-v1.json` defines valid and invalid
 transitions, disconnect/resume, cancellation, duplicate and privacy vectors.
-The Python and Rust reference adapters consume the same fixture and now pass
-idempotent submission, authorization, disconnect/resume and terminal-cancel
-tests. This is sufficient prototype evidence, not ratification evidence.
+Python, TypeScript and Rust reference stores consume the same fixture. Python
+and Rust provide explicitly mounted HTTP adapters; TypeScript remains
+transport-neutral. All three exercise idempotent submission, bounded replay,
+restart snapshot restoration and terminal cancellation. Snapshots are an
+implementation hook, not a standardized persistence format or proof of
+multi-process durability. This is sufficient prototype evidence, not
+ratification evidence.
 
 The amendment remains draft until live observation under backpressure,
 cancellation during real backend execution, replay-window expiry, authorization
