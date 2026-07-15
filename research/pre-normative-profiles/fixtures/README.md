@@ -27,6 +27,10 @@ for a caller-requested pre-normative profile. No request preserves legacy
 discovery; unsupported required requests fail closed, while optional requests
 remain advisory.
 
+`endpoint-security-v1.json` covers the common public/private address and
+hostname policy used by maintained clients before a provider connection is
+pinned. It does not authorize private routes or expose resolver output.
+
 `profile-fixture-manifest-v0.json` pins all canonical SHA-256 digests.
 Maintained implementations copy the fixtures into their own repository only
 through the documented synchronization check, so a copied fixture cannot

@@ -21,10 +21,15 @@ Tracking: `iicp.network#619` and spec-source synchronization
 
 The shared fixture set contains
 [`fixtures/profile-compatibility-v0.json`](./fixtures/profile-compatibility-v0.json)
-and [`fixtures/dispatch-route-ticket-v1.json`](./fixtures/dispatch-route-ticket-v1.json).
+[`fixtures/dispatch-route-ticket-v1.json`](./fixtures/dispatch-route-ticket-v1.json),
+and [`fixtures/endpoint-security-v1.json`](./fixtures/endpoint-security-v1.json).
 Its manifest pins both digests and it is consumed by maintained SDK, directory
 and browser checks. The profile compatibility evaluator is additive and
 pre-normative; it is intentionally not a new runtime requirement until a
 negotiated profile and ratified release process exist. The policy/data-handling
 schema and `selection-profile-v1.md` are likewise drafts, not a routing-default
 or wire-format change.
+
+`endpoint-security-profile-v1.md` is a client-side transport-hardening profile.
+It requires DNS-aware validation and address-pinned provider connections without
+adding directory fields or changing the IICP wire envelope.
