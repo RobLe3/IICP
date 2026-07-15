@@ -40,6 +40,11 @@ now has three transport-neutral SDK stores and two explicitly mounted HTTP
 adapters, but remains profile-level research and does not change the fixed
 native frame or ordinary node routes.
 
+`service-lifecycle-persistence-v1.md` defines the bounded implementation
+contract for opt-in, single-host transactional stores. Python and Rust provide
+reference SQLite adapters behind their lifecycle storage ports; this does not
+mount lifecycle routes by default or standardize SQLite as protocol state.
+
 `dispatch-ticket-trust-profile-v2.md` proposes independently anchored Directory
 signing keys, overlap rotation and explicit strict/open compatibility modes. It
 now has opt-in caller-supplied-bundle verifiers in all three SDKs. They are not
