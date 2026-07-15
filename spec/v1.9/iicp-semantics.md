@@ -1,7 +1,7 @@
 # IICP Semantics — Routing, QoS, and Node Selection
 
-**Version**: 1.6.3
-**Date**: 2026-07-02
+**Version**: 1.6.4
+**Date**: 2026-07-15
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -237,9 +237,10 @@ for proxy-side consumers of the discovery response.
 
 ### 3.1 Score computation (directory-side)
 
-Score is computed server-side by the directory. The directory applies one of two
-weight sets depending on whether a `?model=` parameter is present (ADR-008,
-ADR-012, ADR-021). The proxy MUST NOT re-compute scores; it is filter-only.
+The canonical directory score is computed server-side. The directory applies one
+of two weight sets depending on whether a `?model=` parameter is present
+(ADR-008, ADR-012, ADR-021). A client MUST NOT alter or represent a locally
+computed value as that canonical directory score.
 
 #### Phase 3 weights (no `?model=` parameter)
 
@@ -272,16 +273,31 @@ score = 0.25 × availability_factor
 **not** excluded from results — they appear lower in the sorted list (proxy may
 still route to them for non-model-specific tasks).
 
-**Hard rule**: The proxy MUST NOT re-compute scores. It is filter-only.
+**Hard rule**: hard directory and client eligibility gates are non-overridable.
+Intent, version, authorization, risk/sensitivity, required encryption, region
+and required profile constraints MUST be applied before any local selection.
+Local policy MUST NOT restore an ineligible provider.
 
 ### 3.2 Proxy filter behaviour
 
-After receiving a discovery response, the proxy SHOULD:
+After receiving a discovery response, a legacy/default client SHOULD:
 
 1. Filter out any node where `available = false`
 2. Skip nodes with open circuit breakers (per-node failure state)
-3. Use the remaining list in directory score order
-4. Never locally reorder by score
+3. Use the remaining list in directory recommendation order
+4. Preserve the canonical `score` and its evidence as directory-owned values
+
+A client MAY select or reorder only within the eligible set when the caller has
+chosen a declared selection profile, such as the pre-normative
+`iicp.selection.v1`. The client MUST keep its local selection value distinct
+from the directory score and SHOULD emit a redacted receipt naming the selection
+profile. A client without such a profile preserves directory order.
+
+Directory-ticket routing remains a separate selection mode. A single-route
+ticket authorizes the directory-selected eligible route; it does not silently
+grant the client permission to substitute another provider. A future
+multi-candidate ticket profile may authorize client selection while binding the
+eligible candidate set and hard constraints.
 
 ### 3.3 Eligibility filter
 

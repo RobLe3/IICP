@@ -184,3 +184,7 @@ Original Internet-Draft. Single monolithic document. Archived at `spec/v1.4/IICP
 - Added fixture-gated, pre-normative profile proposals and their digest-pinned
   compatibility fixture. These documents are explicitly outside the ratified
   suite and introduce no wire-contract change.
+- Clarified the v1.9 routing-authority boundary: directories own canonical
+  scores and hard eligibility, while a declared client selection profile may
+  choose only within the eligible set and must preserve directory evidence.
+  Legacy clients continue to use directory recommendation order.

@@ -7,6 +7,7 @@
     "registry/intents.json": "4a0ad7b2a9dc5d5d7516223b6c06573701662f22b25efcb4dabbc7a3106db5a4",
     "spec/v1.9/VERSION": "30f4611383aa30a15753789f40effde81332f2f8714e6d3b2940bf0fc4592377",
     "spec/v1.9/iicp-framing.md": "96695f762f512d7e1d66a3b5e6e56355911c4475197adccd883e9bdef7af79bf",
+    "spec/v1.9/iicp-semantics.md": "5c3cb5a63348d68ec3623bc6135de5474f7b66e45df9679f63da013470967017",
     "spec/v1.9/iicp-service-lifecycle-profile.md": "e79d419d03a5d2dac92b37112c69fc683e832b9d1fc7d5e589e86bc95b8841eb",
     "spec/v1.9/iicp-provider-admission-profile.md": "3d20f8df593b16f2faf757c904e8a501e89f8bf71ba5bd9e8e1a4d414c60b28b",
     "spec/v1.9/conformance-test-suite.md": "70eca691daf8999c8da62c8937ee31fccc8c03505de66394994f7ee7290aaebb",
