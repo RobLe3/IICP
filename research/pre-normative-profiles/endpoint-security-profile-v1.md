@@ -39,4 +39,5 @@ not the security boundary.
 
 `fixtures/endpoint-security-v1.json` defines the portable address and hostname
 policy vectors. The fixture is pre-normative until all maintained SDKs pass policy,
-redirect, pinning, and Docker rebinding tests.
+redirect, pinning, and Docker rebinding tests. The 2026-07-15 source-image Docker
+gate passes all three SDKs; coordinated-release compatibility remains separate.

@@ -9,24 +9,222 @@
     "connection": "connect to one validated address while preserving the original TLS hostname"
   },
   "address_vectors": [
-    {"id":"public-v4","addresses":["93.184.216.34"],"allow_private":false,"allowed":true},
-    {"id":"public-v6","addresses":["2606:2800:220:1:248:1893:25c8:1946"],"allow_private":false,"allowed":true},
-    {"id":"loopback-v4","addresses":["127.0.0.1"],"allow_private":false,"allowed":false},
-    {"id":"rfc1918-v4","addresses":["10.0.0.5"],"allow_private":false,"allowed":false},
-    {"id":"metadata-v4","addresses":["169.254.169.254"],"allow_private":false,"allowed":false},
-    {"id":"cgnat-v4","addresses":["100.64.0.1"],"allow_private":false,"allowed":false},
-    {"id":"documentation-v4","addresses":["192.0.2.10"],"allow_private":false,"allowed":false},
-    {"id":"unique-local-v6","addresses":["fd00::1"],"allow_private":false,"allowed":false},
-    {"id":"link-local-v6","addresses":["fe80::1"],"allow_private":false,"allowed":false},
-    {"id":"mapped-loopback-v6","addresses":["::ffff:127.0.0.1"],"allow_private":false,"allowed":false},
-    {"id":"mixed-public-private","addresses":["93.184.216.34","10.0.0.5"],"allow_private":false,"allowed":false},
-    {"id":"explicit-private-override","addresses":["10.0.0.5"],"allow_private":true,"allowed":true}
+    {
+      "id": "public-v4",
+      "addresses": [
+        "93.184.216.34"
+      ],
+      "allow_private": false,
+      "allowed": true
+    },
+    {
+      "id": "public-v6",
+      "addresses": [
+        "2606:2800:220:1:248:1893:25c8:1946"
+      ],
+      "allow_private": false,
+      "allowed": true
+    },
+    {
+      "id": "loopback-v4",
+      "addresses": [
+        "127.0.0.1"
+      ],
+      "allow_private": false,
+      "allowed": false
+    },
+    {
+      "id": "rfc1918-v4",
+      "addresses": [
+        "10.0.0.5"
+      ],
+      "allow_private": false,
+      "allowed": false
+    },
+    {
+      "id": "metadata-v4",
+      "addresses": [
+        "169.254.169.254"
+      ],
+      "allow_private": false,
+      "allowed": false
+    },
+    {
+      "id": "cgnat-v4",
+      "addresses": [
+        "100.64.0.1"
+      ],
+      "allow_private": false,
+      "allowed": false
+    },
+    {
+      "id": "documentation-v4",
+      "addresses": [
+        "192.0.2.10"
+      ],
+      "allow_private": false,
+      "allowed": false
+    },
+    {
+      "id": "unique-local-v6",
+      "addresses": [
+        "fd00::1"
+      ],
+      "allow_private": false,
+      "allowed": false
+    },
+    {
+      "id": "link-local-v6",
+      "addresses": [
+        "fe80::1"
+      ],
+      "allow_private": false,
+      "allowed": false
+    },
+    {
+      "id": "mapped-loopback-v6",
+      "addresses": [
+        "::ffff:127.0.0.1"
+      ],
+      "allow_private": false,
+      "allowed": false
+    },
+    {
+      "id": "mixed-public-private",
+      "addresses": [
+        "93.184.216.34",
+        "10.0.0.5"
+      ],
+      "allow_private": false,
+      "allowed": false
+    },
+    {
+      "id": "explicit-private-override",
+      "addresses": [
+        "10.0.0.5"
+      ],
+      "allow_private": true,
+      "allowed": true
+    }
   ],
   "hostname_vectors": [
-    {"id":"public-host","host":"provider.example.com","allowed":true},
-    {"id":"localhost","host":"localhost","allowed":false},
-    {"id":"dot-local","host":"provider.local","allowed":false},
-    {"id":"dot-internal","host":"provider.internal","allowed":false},
-    {"id":"bare-service","host":"ollama","allowed":false}
+    {
+      "id": "public-host",
+      "host": "provider.example.com",
+      "allowed": true
+    },
+    {
+      "id": "localhost",
+      "host": "localhost",
+      "allowed": false
+    },
+    {
+      "id": "dot-local",
+      "host": "provider.local",
+      "allowed": false
+    },
+    {
+      "id": "dot-internal",
+      "host": "provider.internal",
+      "allowed": false
+    },
+    {
+      "id": "bare-service",
+      "host": "ollama",
+      "allowed": false
+    }
+  ],
+  "resolution_attempt_vectors": [
+    {
+      "id": "stable-public",
+      "attempts": [
+        [
+          "93.184.216.34"
+        ],
+        [
+          "93.184.216.34"
+        ]
+      ],
+      "allow_private": false,
+      "expected": [
+        "allow",
+        "allow"
+      ]
+    },
+    {
+      "id": "public-to-private-rebind",
+      "attempts": [
+        [
+          "93.184.216.34"
+        ],
+        [
+          "127.0.0.1"
+        ]
+      ],
+      "allow_private": false,
+      "expected": [
+        "allow",
+        "refuse"
+      ]
+    },
+    {
+      "id": "public-to-mixed-rebind",
+      "attempts": [
+        [
+          "93.184.216.34"
+        ],
+        [
+          "93.184.216.34",
+          "10.0.0.5"
+        ]
+      ],
+      "allow_private": false,
+      "expected": [
+        "allow",
+        "refuse"
+      ]
+    }
+  ],
+  "redirect_vectors": [
+    {
+      "id": "same-origin-307",
+      "status": 307,
+      "same_origin": true,
+      "target_addresses": [
+        "93.184.216.34"
+      ],
+      "allow_private": false,
+      "expected": "follow_after_revalidation"
+    },
+    {
+      "id": "cross-origin-307",
+      "status": 307,
+      "same_origin": false,
+      "target_addresses": [
+        "93.184.216.34"
+      ],
+      "allow_private": false,
+      "expected": "refuse"
+    },
+    {
+      "id": "same-origin-private-target",
+      "status": 308,
+      "same_origin": true,
+      "target_addresses": [
+        "169.254.169.254"
+      ],
+      "allow_private": false,
+      "expected": "refuse"
+    },
+    {
+      "id": "method-changing-302",
+      "status": 302,
+      "same_origin": true,
+      "target_addresses": [
+        "93.184.216.34"
+      ],
+      "allow_private": false,
+      "expected": "refuse"
+    }
   ]
 }
