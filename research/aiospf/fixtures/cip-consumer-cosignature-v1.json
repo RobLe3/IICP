@@ -1,0 +1,417 @@
+{
+  "fixture_version": "1.0.0-draft",
+  "status": "pre-normative",
+  "notice": "Conformance evidence only. This fixture does not enable or require consumer co-signatures, and it changes no settlement behavior.",
+  "profile": {
+    "id": "urn:iicp:profile:cip:consumer-cosignature:v1",
+    "alias": "consumer_cosignature_v1",
+    "canonicalization": "RFC8785-JCS",
+    "digest": "SHA-256",
+    "domain_separator_utf8": "IICP-CIP-CONSUMER-COSIGNATURE-V1\\0",
+    "signature": "Ed25519",
+    "signature_input": "32-byte domain-separated receipt digest"
+  },
+  "canonical_vector": {
+    "receipt": {
+      "accounting": {
+        "compute_millis": "900719925474099312345",
+        "credits": "12345678901234567890.000001",
+        "input_tokens": "9007199254740993",
+        "output_tokens": "42"
+      },
+      "completed_at": "2026-07-15T10:00:00Z",
+      "dispatch_nonce": "dispatch-7b5e9f6c-31aa-4d8b-b54f-8fd627e2e904",
+      "expires_at": "2026-07-15T10:05:00Z",
+      "extensions": {
+        "nullable": null,
+        "unicode": "IICP 🌐 café 東京",
+        "zero": -0.0
+      },
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "profile": "urn:iicp:profile:cip:consumer-cosignature:v1",
+      "querying_node_id": "33333333-3333-4333-8333-333333333333",
+      "response_hash": "762c2749580c286a68d4528d912a4afa02a17dc2025c6c65b17b0dfab8291408",
+      "serving_node_id": "22222222-2222-4222-8222-222222222222",
+      "task_id": "11111111-1111-4111-8111-111111111111"
+    },
+    "canonical_json_utf8": "{\"accounting\":{\"compute_millis\":\"900719925474099312345\",\"credits\":\"12345678901234567890.000001\",\"input_tokens\":\"9007199254740993\",\"output_tokens\":\"42\"},\"completed_at\":\"2026-07-15T10:00:00Z\",\"dispatch_nonce\":\"dispatch-7b5e9f6c-31aa-4d8b-b54f-8fd627e2e904\",\"expires_at\":\"2026-07-15T10:05:00Z\",\"extensions\":{\"nullable\":null,\"unicode\":\"IICP 🌐 café 東京\",\"zero\":0},\"intent\":\"urn:iicp:intent:llm:chat:v1\",\"profile\":\"urn:iicp:profile:cip:consumer-cosignature:v1\",\"querying_node_id\":\"33333333-3333-4333-8333-333333333333\",\"response_hash\":\"762c2749580c286a68d4528d912a4afa02a17dc2025c6c65b17b0dfab8291408\",\"serving_node_id\":\"22222222-2222-4222-8222-222222222222\",\"task_id\":\"11111111-1111-4111-8111-111111111111\"}",
+    "canonical_json_sha256": "ab456cd0eb9d3976a457c0fe96698fe400a5c3f5de927d27791d970bfeb272f3",
+    "receipt_digest_hex": "fd20e07882946103d9a40397e99a3fec9689e267993c46d7b6040d9ec5fffd9e",
+    "provider_public_key_b64url": "11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo",
+    "consumer_public_key_b64url": "PUAXw-hDiVqStwqnTRt-vJyYLM8uxJaMwM1V8Sr0Zgw",
+    "provider_signature_b64url": "YGK8Cm64I2cPplsj8XoTHHPyMd5DGm4PcSYIMzDHSXcBjRcDd0dl7VnGbEm_E7WeSrB4RBQljwQeohLGL-WIBA",
+    "consumer_signature_b64url": "iuvN7O755IrQv8I72SVdAaasXZ1oH9HYQOwt864E6fikL4HAt-BX3ovB1MlVXo3ym3UtJmbFD1_d26vU7uKABg"
+  },
+  "conformance_cases": [
+    {
+      "name": "valid_cross_operator_required",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "valid",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "accept",
+        "reason": "cosignature_verified",
+        "trust_weight": "1.0"
+      }
+    },
+    {
+      "name": "legacy_optional_missing_consumer",
+      "input": {
+        "mode": "optional",
+        "provider_signature": "valid",
+        "consumer_signature": "missing",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "accept_legacy",
+        "reason": "consumer_signature_missing_optional",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "required_missing_consumer",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "missing",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "reject",
+        "reason": "consumer_signature_required",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "required_invalid_consumer",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "invalid",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "reject",
+        "reason": "consumer_signature_invalid",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "invalid_provider_signature",
+      "input": {
+        "mode": "required",
+        "provider_signature": "invalid",
+        "consumer_signature": "valid",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "reject",
+        "reason": "provider_signature_invalid",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "response_hash_mismatch",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "not_created",
+        "binding": "response_hash_mismatch",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "refuse_signing",
+        "reason": "response_hash_mismatch",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "cost_mismatch",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "not_created",
+        "binding": "cost_mismatch",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "refuse_signing",
+        "reason": "cost_mismatch",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "nonce_replay",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "valid",
+        "binding": "match",
+        "nonce": "used",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "reject",
+        "reason": "dispatch_nonce_replayed",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "expired_receipt",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "valid",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "expired",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "reject",
+        "reason": "receipt_expired",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "task_node_intent_mismatch",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "not_created",
+        "binding": "task_node_intent_mismatch",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "refuse_signing",
+        "reason": "receipt_binding_mismatch",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "revoked_consumer_key",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "valid",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "revoked",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "reject",
+        "reason": "consumer_key_revoked",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "rotated_consumer_key_outside_validity",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "valid",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "rotated_outside_validity",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "reject",
+        "reason": "consumer_key_not_valid_at_completion",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "same_node_excluded",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "valid",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "same_node"
+      },
+      "expected": {
+        "action": "exclude",
+        "reason": "self_node",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "same_operator_excluded",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "valid",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "same_operator"
+      },
+      "expected": {
+        "action": "exclude",
+        "reason": "self_operator",
+        "trust_weight": "0.0"
+      }
+    }
+  ],
+  "settlement_cases": [
+    {
+      "name": "completed_once",
+      "input": {
+        "outcome": "completed",
+        "reservation": "held",
+        "settlement_attempts": 1
+      },
+      "expected": {
+        "action": "settle_once",
+        "awards": 1,
+        "debits": 1
+      }
+    },
+    {
+      "name": "timeout",
+      "input": {
+        "outcome": "timeout",
+        "reservation": "held",
+        "settlement_attempts": 1
+      },
+      "expected": {
+        "action": "release",
+        "awards": 0,
+        "debits": 0
+      }
+    },
+    {
+      "name": "cancelled",
+      "input": {
+        "outcome": "cancelled",
+        "reservation": "held",
+        "settlement_attempts": 1
+      },
+      "expected": {
+        "action": "release",
+        "awards": 0,
+        "debits": 0
+      }
+    },
+    {
+      "name": "partial_stream",
+      "input": {
+        "outcome": "partial",
+        "reservation": "held",
+        "settlement_attempts": 1
+      },
+      "expected": {
+        "action": "release",
+        "awards": 0,
+        "debits": 0
+      }
+    },
+    {
+      "name": "retry_after_timeout",
+      "input": {
+        "outcome": "completed_after_retry",
+        "reservation": "held",
+        "settlement_attempts": 1
+      },
+      "expected": {
+        "action": "settle_once",
+        "awards": 1,
+        "debits": 1
+      }
+    },
+    {
+      "name": "duplicate_settlement",
+      "input": {
+        "outcome": "completed",
+        "reservation": "held",
+        "settlement_attempts": 2
+      },
+      "expected": {
+        "action": "settle_once",
+        "awards": 1,
+        "debits": 1
+      }
+    },
+    {
+      "name": "insufficient_balance_reservation",
+      "input": {
+        "outcome": "completed",
+        "reservation": "refused_insufficient_balance",
+        "settlement_attempts": 1
+      },
+      "expected": {
+        "action": "refuse_dispatch",
+        "awards": 0,
+        "debits": 0
+      }
+    }
+  ],
+  "privacy_contract": {
+    "forbidden_fields": [
+      "prompt",
+      "response",
+      "endpoint",
+      "credential",
+      "user_identity",
+      "conversation"
+    ],
+    "self_reported_metrics_have_authority": false
+  }
+}
