@@ -130,6 +130,11 @@ if used by a binding, are audience-bound, expiring and replay-limited.
 
 The companion `fixtures/service-lifecycle-v1.json` defines valid and invalid
 transitions, disconnect/resume, cancellation, duplicate and privacy vectors.
-This amendment remains draft until two independent implementations consume the
-same digest and pass disconnect/reconnect plus duplicate-event tests. No base
-wire change is authorized by this draft.
+The Python and Rust reference adapters consume the same fixture and now pass
+idempotent submission, authorization, disconnect/resume and terminal-cancel
+tests. This is sufficient prototype evidence, not ratification evidence.
+
+The amendment remains draft until live observation under backpressure,
+cancellation during real backend execution, replay-window expiry, authorization
+integration and bounded-retention behavior have cross-implementation evidence.
+No base-wire change is authorized by this draft.
