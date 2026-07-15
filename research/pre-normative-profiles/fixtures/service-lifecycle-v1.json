@@ -1,0 +1,345 @@
+{
+  "profile": "urn:iicp:profile:service-lifecycle:v1",
+  "fixture_version": "0.2.0-draft",
+  "terminal_states": [
+    "rejected",
+    "completed",
+    "failed",
+    "cancelled",
+    "expired"
+  ],
+  "deprecated_aliases": {
+    "timed_out": "expired"
+  },
+  "transitions": {
+    "submitted": [
+      "accepted",
+      "rejected",
+      "expired"
+    ],
+    "accepted": [
+      "queued",
+      "running",
+      "completed",
+      "cancelled",
+      "failed",
+      "expired"
+    ],
+    "queued": [
+      "running",
+      "waiting",
+      "cancelled",
+      "failed",
+      "expired"
+    ],
+    "running": [
+      "waiting",
+      "streaming",
+      "completed",
+      "cancelled",
+      "failed",
+      "expired"
+    ],
+    "waiting": [
+      "queued",
+      "running",
+      "cancelled",
+      "failed",
+      "expired"
+    ],
+    "streaming": [
+      "streaming",
+      "waiting",
+      "completed",
+      "cancelled",
+      "failed",
+      "expired"
+    ],
+    "rejected": [],
+    "completed": [],
+    "failed": [],
+    "cancelled": [],
+    "expired": []
+  },
+  "vectors": [
+    {
+      "id": "LIFECYCLE-01",
+      "kind": "valid",
+      "events": [
+        [
+          "accepted",
+          0,
+          false
+        ],
+        [
+          "queued",
+          1,
+          false
+        ],
+        [
+          "running",
+          2,
+          false
+        ],
+        [
+          "completed",
+          3,
+          true
+        ]
+      ],
+      "expected": "accept"
+    },
+    {
+      "id": "LIFECYCLE-02",
+      "kind": "valid",
+      "events": [
+        [
+          "accepted",
+          0,
+          false
+        ],
+        [
+          "running",
+          1,
+          false
+        ],
+        [
+          "streaming",
+          2,
+          false
+        ],
+        [
+          "streaming",
+          3,
+          false
+        ],
+        [
+          "completed",
+          4,
+          true
+        ]
+      ],
+      "expected": "accept"
+    },
+    {
+      "id": "LIFECYCLE-03",
+      "kind": "invalid",
+      "events": [
+        [
+          "accepted",
+          0,
+          false
+        ],
+        [
+          "completed",
+          1,
+          true
+        ],
+        [
+          "running",
+          2,
+          false
+        ]
+      ],
+      "expected": "event_after_terminal"
+    },
+    {
+      "id": "LIFECYCLE-04",
+      "kind": "invalid",
+      "events": [
+        [
+          "accepted",
+          0,
+          false
+        ],
+        [
+          "running",
+          2,
+          false
+        ]
+      ],
+      "expected": "sequence_gap"
+    },
+    {
+      "id": "LIFECYCLE-05",
+      "kind": "duplicate",
+      "events": [
+        [
+          "accepted",
+          0,
+          false
+        ],
+        [
+          "running",
+          1,
+          false
+        ],
+        [
+          "running",
+          1,
+          false
+        ],
+        [
+          "completed",
+          2,
+          true
+        ]
+      ],
+      "expected": "deduplicate"
+    },
+    {
+      "id": "LIFECYCLE-06",
+      "kind": "invalid",
+      "events": [
+        [
+          "accepted",
+          0,
+          false
+        ],
+        [
+          "running",
+          1,
+          true
+        ]
+      ],
+      "expected": "terminal_flag_mismatch"
+    },
+    {
+      "id": "LIFECYCLE-07",
+      "kind": "valid",
+      "events": [
+        [
+          "accepted",
+          0,
+          false
+        ],
+        [
+          "queued",
+          1,
+          false
+        ],
+        [
+          "cancelled",
+          2,
+          true
+        ]
+      ],
+      "expected": "accept"
+    },
+    {
+      "id": "LIFECYCLE-08",
+      "kind": "valid",
+      "events": [
+        [
+          "accepted",
+          0,
+          false
+        ],
+        [
+          "running",
+          1,
+          false
+        ],
+        [
+          "expired",
+          2,
+          true
+        ]
+      ],
+      "expected": "accept"
+    },
+    {
+      "id": "LIFECYCLE-09",
+      "kind": "resume",
+      "after_sequence": 1,
+      "retained_sequences": [
+        2,
+        3,
+        4
+      ],
+      "latest_sequence": 4,
+      "expected": "replay_2_through_4"
+    },
+    {
+      "id": "LIFECYCLE-10",
+      "kind": "resume",
+      "after_sequence": 1,
+      "retained_sequences": [],
+      "latest_sequence": 8,
+      "replay_window_expired": true,
+      "expected": "resume_unavailable"
+    },
+    {
+      "id": "LIFECYCLE-11",
+      "kind": "retry",
+      "same_task_id": true,
+      "same_idempotency_key": true,
+      "same_request": true,
+      "existing_state": "running",
+      "expected": "return_existing_state_no_execution"
+    },
+    {
+      "id": "LIFECYCLE-12",
+      "kind": "retry",
+      "same_task_id": true,
+      "same_idempotency_key": true,
+      "same_request": false,
+      "existing_state": "accepted",
+      "expected": "conflict_no_execution"
+    },
+    {
+      "id": "LIFECYCLE-13",
+      "kind": "disconnect",
+      "existing_state": "running",
+      "expected": "state_unchanged"
+    },
+    {
+      "id": "LIFECYCLE-14",
+      "kind": "late_cancel",
+      "existing_state": "completed",
+      "expected": "return_completed"
+    },
+    {
+      "id": "LIFECYCLE-15",
+      "kind": "privacy",
+      "event": {
+        "task_id": "t-15",
+        "sequence": 1,
+        "state": "running",
+        "is_final": false,
+        "progress": {
+          "completed_units": 2,
+          "total_units": 10,
+          "unit": "chunks"
+        }
+      },
+      "forbidden_fields": [
+        "prompt",
+        "payload",
+        "response",
+        "credentials",
+        "endpoint",
+        "peer_topology",
+        "checkpoint_contents"
+      ],
+      "expected": "redacted"
+    },
+    {
+      "id": "LIFECYCLE-16",
+      "kind": "alias",
+      "events": [
+        [
+          "accepted",
+          0,
+          false
+        ],
+        [
+          "timed_out",
+          1,
+          true
+        ]
+      ],
+      "expected": "accept_as_expired"
+    }
+  ]
+}

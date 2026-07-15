@@ -27,14 +27,25 @@ for a caller-requested pre-normative profile. No request preserves legacy
 discovery; unsupported required requests fail closed, while optional requests
 remain advisory.
 
-`endpoint-security-v1.json` covers the common public/private address and
-hostname policy used by maintained clients before a provider connection is
-pinned. It does not authorize private routes or expose resolver output.
+`cip-consumer-cosignature-v1.json` covers the optional, pre-normative
+`consumer_cosignature_v1` profile. It pins RFC 8785 subset bytes, a
+domain-separated SHA-256 receipt digest, provider and consumer Ed25519
+signatures, anti-replay/binding/key-lifecycle cases, self-dealing exclusions,
+and network-isolated reservation/settlement outcomes. It does not enable the
+profile or change production credits, reputation, reservation or settlement.
 
-`profile-fixture-manifest-v0.json` pins all canonical SHA-256 digests.
-Maintained implementations copy the fixtures into their own repository only
-through the documented synchronization check, so a copied fixture cannot
-silently drift.
+`endpoint-security-v1.json` covers the common public/private address and
+hostname policy used by the maintained clients before a provider connection is
+pinned. It does not publish resolver output or authorize private routes.
+
+`service-lifecycle-v1.json` covers valid and invalid asynchronous lifecycle,
+resume, retry, disconnect, cancellation and privacy behavior. It remains draft
+until two independent implementations consume the same digest.
+
+`profile-fixture-manifest-v0.json` pins its declared canonical SHA-256 digests.
+Standalone endpoint-security and lifecycle research fixtures are instead
+byte-compared with their declared mirrors by dedicated synchronization checks
+until their implementation gates are complete.
 
 The fixture set is pre-normative: it does not alter current discovery wire
 formats or make profile fields required. Any change must increment the fixture
