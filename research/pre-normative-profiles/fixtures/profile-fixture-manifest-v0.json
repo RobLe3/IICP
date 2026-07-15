@@ -14,8 +14,8 @@
     },
     {
       "path": "selection-v1.json",
-      "fixture_version": "1.0.0-draft",
-      "sha256": "ba28a8865d58d87d5302f216602816431697f9c3f963974769536a45e8e9b488"
+      "fixture_version": "1.1.0-draft",
+      "sha256": "cacb87b268e480fbf2f288faab3b41e90b9d3ec14b13bd9c0a731c376e4ea3ca"
     },
     {
       "path": "profile-negotiation-v0.json",

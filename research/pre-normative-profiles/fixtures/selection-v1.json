@@ -1,14 +1,152 @@
 {
-  "fixture_version": "1.0.0-draft",
+  "fixture_version": "1.1.0-draft",
   "status": "pre-normative",
   "profile": "weighted_v1",
   "formula": "max(score,0.01)/(1+clamp(load,0,1))",
   "top_k": 3,
   "purpose": "Deterministic vectors for opt-in inverse-load candidate selection after hard eligibility.",
   "vectors": [
-    {"name":"equal_scores_stable_order","random":0.0,"nodes":[{"node_id":"a","score":0.8,"load":0.2},{"node_id":"b","score":0.8,"load":0.2},{"node_id":"c","score":0.8,"load":0.2}],"expected_order":["a","b","c"]},
-    {"name":"lower_load_spreads_selection","random":0.5,"nodes":[{"node_id":"a","score":0.9,"load":0.9},{"node_id":"b","score":0.8,"load":0.0},{"node_id":"c","score":0.7,"load":0.5}],"expected_order":["b","a","c"]},
-    {"name":"load_is_clamped","random":0.9,"nodes":[{"node_id":"a","score":0.9,"load":4.0},{"node_id":"b","score":0.5,"load":0.0}],"expected_order":["b","a"]},
-    {"name":"single_candidate","random":0.7,"nodes":[{"node_id":"a","score":0.2,"load":0.4}],"expected_order":["a"]}
+    {
+      "name": "equal_scores_stable_order",
+      "random": 0.0,
+      "nodes": [
+        {
+          "node_id": "a",
+          "score": 0.8,
+          "load": 0.2
+        },
+        {
+          "node_id": "b",
+          "score": 0.8,
+          "load": 0.2
+        },
+        {
+          "node_id": "c",
+          "score": 0.8,
+          "load": 0.2
+        }
+      ],
+      "expected_order": [
+        "a",
+        "b",
+        "c"
+      ]
+    },
+    {
+      "name": "lower_load_spreads_selection",
+      "random": 0.5,
+      "nodes": [
+        {
+          "node_id": "a",
+          "score": 0.9,
+          "load": 0.9
+        },
+        {
+          "node_id": "b",
+          "score": 0.8,
+          "load": 0.0
+        },
+        {
+          "node_id": "c",
+          "score": 0.7,
+          "load": 0.5
+        }
+      ],
+      "expected_order": [
+        "b",
+        "a",
+        "c"
+      ]
+    },
+    {
+      "name": "load_is_clamped",
+      "random": 0.9,
+      "nodes": [
+        {
+          "node_id": "a",
+          "score": 0.9,
+          "load": 4.0
+        },
+        {
+          "node_id": "b",
+          "score": 0.5,
+          "load": 0.0
+        }
+      ],
+      "expected_order": [
+        "b",
+        "a"
+      ]
+    },
+    {
+      "name": "single_candidate",
+      "random": 0.7,
+      "nodes": [
+        {
+          "node_id": "a",
+          "score": 0.2,
+          "load": 0.4
+        }
+      ],
+      "expected_order": [
+        "a"
+      ]
+    }
+  ],
+  "distribution_vectors": [
+    {
+      "name": "weighted_spread_1000",
+      "sample_count": 1000,
+      "top_k": 3,
+      "nodes": [
+        {
+          "node_id": "a",
+          "score": 0.9,
+          "load": 0.9
+        },
+        {
+          "node_id": "b",
+          "score": 0.8,
+          "load": 0.0
+        },
+        {
+          "node_id": "c",
+          "score": 0.7,
+          "load": 0.5
+        }
+      ],
+      "expected_first_counts": {
+        "a": 272,
+        "b": 460,
+        "c": 268
+      }
+    },
+    {
+      "name": "configured_top_k_is_a_hard_pool_boundary",
+      "sample_count": 1000,
+      "top_k": 2,
+      "nodes": [
+        {
+          "node_id": "a",
+          "score": 0.9,
+          "load": 0.9
+        },
+        {
+          "node_id": "b",
+          "score": 0.8,
+          "load": 0.0
+        },
+        {
+          "node_id": "c",
+          "score": 0.7,
+          "load": 0.5
+        }
+      ],
+      "expected_first_counts": {
+        "a": 372,
+        "b": 628,
+        "c": 0
+      }
+    }
   ]
 }

@@ -5,12 +5,22 @@ on:
     paths:
       - "research/pre-normative-profiles/fixtures/**"
       - "tools/check_profile_fixture_manifest.py"
+      - "tools/check_spec_release_integrity.py"
+      - "spec/v1.9/release-integrity-manifest.json"
+      - "spec/v1.9/**"
+      - "registry/**"
+      - "SPEC_RELEASE_PROCESS.md"
       - ".github/workflows/profile-fixtures.yml"
   push:
     branches: [main]
     paths:
       - "research/pre-normative-profiles/fixtures/**"
       - "tools/check_profile_fixture_manifest.py"
+      - "tools/check_spec_release_integrity.py"
+      - "spec/v1.9/release-integrity-manifest.json"
+      - "spec/v1.9/**"
+      - "registry/**"
+      - "SPEC_RELEASE_PROCESS.md"
       - ".github/workflows/profile-fixtures.yml"
 
 permissions:
@@ -25,3 +35,4 @@ jobs:
         with:
           python-version: "3.11"
       - run: python3 tools/check_profile_fixture_manifest.py
+      - run: python3 tools/check_spec_release_integrity.py

@@ -23,6 +23,16 @@ implementation worktree.
 6. Bump the Protocol Suite version only through its explicit versioning process.
    A draft profile or fixture update does not by itself ratify a suite release.
 
+## Promotion checklist
+
+- Classify every changed artifact as research, pre-normative, or ratified.
+- Link implementation and conformance evidence for registry or normative changes.
+- Update schema and fixture digests in the same reviewed change.
+- Run both release-integrity and profile-fixture gates in the pull request.
+- Record compatibility, deprecation and successor behavior where applicable.
+- Ratify only after the required independent implementations pass the pinned
+  fixture; otherwise retain the artifact's draft status.
+
 ## Boundaries
 
 - Current executable behavior takes precedence over contradictory historical
