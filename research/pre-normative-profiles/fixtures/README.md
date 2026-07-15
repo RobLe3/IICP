@@ -42,6 +42,11 @@ pinned. It does not publish resolver output or authorize private routes.
 resume, retry, disconnect, cancellation and privacy behavior. It remains draft
 until two independent implementations consume the same digest.
 
+`service-lifecycle-persistence-v1.json` covers the opt-in single-host storage
+port: transactional state/event updates, restart recovery, concurrent terminal
+writes, bounded replay, expiry and content minimization. It does not standardize
+a database format or claim cross-host consensus.
+
 `dispatch-ticket-trust-v2.json` covers trust-bundle, rotation, revocation,
 downgrade, rollback and local replay decisions.
 
@@ -51,9 +56,9 @@ handling and local replay decisions. SDKs verify these exact bytes without
 enabling the pre-normative profile at runtime.
 
 `profile-fixture-manifest-v0.json` pins its declared canonical SHA-256 digests.
-Standalone endpoint-security and lifecycle research fixtures are instead
-byte-compared with their declared mirrors by dedicated synchronization checks
-until their implementation gates are complete.
+Standalone endpoint-security mirrors are byte-compared by dedicated
+synchronization checks. Lifecycle and lifecycle-persistence fixture digests are
+now pinned here while their profiles remain pre-normative.
 
 The fixture set is pre-normative: it does not alter current discovery wire
 formats or make profile fields required. Any change must increment the fixture

@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.2.0-draft",
+  "manifest_version": "0.3.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -31,6 +31,16 @@
       "path": "dispatch-ticket-trust-v2-crypto.json",
       "fixture_version": "0.2.0-draft",
       "sha256": "48be1f06e79da7849367f48deeb7a5ffa71a1de0e21800491dc6bf55d016fb94"
+    },
+    {
+      "path": "service-lifecycle-v1.json",
+      "fixture_version": "0.2.0-draft",
+      "sha256": "7bb6be604278656b960b48e1c07279ae41cb19447140d9dceeeea10f7c90b3c7"
+    },
+    {
+      "path": "service-lifecycle-persistence-v1.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "b785a929c7c32b1348d5e1b086d18de78d88a083c1e28526482a61bc7906c0b3"
     }
   ]
 }

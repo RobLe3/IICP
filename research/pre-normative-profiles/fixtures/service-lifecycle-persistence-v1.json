@@ -1,0 +1,111 @@
+{
+  "profile": "urn:iicp:profile:service-lifecycle:v1",
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative implementation evidence",
+  "storage_scope": "single-host transactional reference adapter",
+  "required_guarantees": [
+    "task_id_unique",
+    "idempotency_key_unique",
+    "request_digest_bound",
+    "state_event_atomic",
+    "sequence_contiguous",
+    "replay_bounded",
+    "terminal_ttl",
+    "single_terminal_winner",
+    "restart_no_duplicate_execution"
+  ],
+  "vectors": [
+    {
+      "id": "LIFECYCLE-PERSIST-01",
+      "kind": "idempotent_submit",
+      "same_task_id": true,
+      "same_idempotency_key": true,
+      "same_request_digest": true,
+      "expected": "existing_record_no_new_execution"
+    },
+    {
+      "id": "LIFECYCLE-PERSIST-02",
+      "kind": "task_conflict",
+      "same_task_id": true,
+      "same_idempotency_key": true,
+      "same_request_digest": false,
+      "expected": "conflict_no_write"
+    },
+    {
+      "id": "LIFECYCLE-PERSIST-03",
+      "kind": "idempotency_conflict",
+      "same_task_id": false,
+      "same_idempotency_key": true,
+      "same_request_digest": true,
+      "expected": "conflict_no_write"
+    },
+    {
+      "id": "LIFECYCLE-PERSIST-04",
+      "kind": "interrupted_transition",
+      "interrupt_after": "task_state_update_before_event_insert",
+      "expected": "transaction_rollback"
+    },
+    {
+      "id": "LIFECYCLE-PERSIST-05",
+      "kind": "concurrent_terminal",
+      "candidates": ["completed", "failed"],
+      "expected": "one_terminal_winner"
+    },
+    {
+      "id": "LIFECYCLE-PERSIST-06",
+      "kind": "restart_recovery",
+      "existing_state": "running",
+      "expected": "same_state_and_sequence_no_new_execution"
+    },
+    {
+      "id": "LIFECYCLE-PERSIST-07",
+      "kind": "bounded_replay",
+      "max_events": 2,
+      "after_sequence": 0,
+      "first_retained_sequence": 2,
+      "expected": "resume_unavailable"
+    },
+    {
+      "id": "LIFECYCLE-PERSIST-08",
+      "kind": "terminal_ttl",
+      "expected": "cascade_delete_then_unknown_task"
+    },
+    {
+      "id": "LIFECYCLE-PERSIST-09",
+      "kind": "content_minimization",
+      "allowed_detail_fields": [
+        "event_id",
+        "progress",
+        "reason_code",
+        "outcome",
+        "receipt_digest",
+        "checkpoint_digest"
+      ],
+      "forbidden_fields": [
+        "prompt",
+        "payload",
+        "response",
+        "credentials",
+        "endpoint",
+        "filesystem_path",
+        "peer_topology",
+        "checkpoint_contents",
+        "shard"
+      ],
+      "expected": "reject_before_write"
+    },
+    {
+      "id": "LIFECYCLE-PERSIST-10",
+      "kind": "storage_boundary",
+      "guarantee": "single_host_multi_process",
+      "non_guarantees": [
+        "cross_host_consensus",
+        "whole_store_rollback_resistance",
+        "production_authorization",
+        "backend_cancellation"
+      ],
+      "expected": "documented"
+    }
+  ]
+}
+
