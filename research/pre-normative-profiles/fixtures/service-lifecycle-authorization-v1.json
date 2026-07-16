@@ -1,0 +1,26 @@
+{
+  "profile": "urn:iicp:profile:service-lifecycle:v1",
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "decision_contract": {
+    "unauthenticated": 401,
+    "forbidden": 403,
+    "concealed_task": 404,
+    "allowed": 200
+  },
+  "cases": [
+    {"id":"LIFECYCLE-AUTH-01","credential":null,"operation":"submit","task_id":"task-a","expected":"unauthenticated"},
+    {"id":"LIFECYCLE-AUTH-02","credential":"Bearer invalid","operation":"submit","task_id":"task-a","expected":"unauthenticated"},
+    {"id":"LIFECYCLE-AUTH-03","credential":"Bearer owner","operation":"submit","task_id":"task-a","expected":"allowed"},
+    {"id":"LIFECYCLE-AUTH-04","credential":"Bearer owner","operation":"status","task_id":"task-a","expected":"allowed"},
+    {"id":"LIFECYCLE-AUTH-05","credential":"Bearer other","operation":"status","task_id":"task-a","expected":"concealed_task"},
+    {"id":"LIFECYCLE-AUTH-06","credential":"Bearer other","operation":"observe","task_id":"task-a","expected":"concealed_task"},
+    {"id":"LIFECYCLE-AUTH-07","credential":"Bearer other","operation":"cancel","task_id":"task-a","expected":"concealed_task"},
+    {"id":"LIFECYCLE-AUTH-08","credential":"Bearer read-only","operation":"submit","task_id":"task-b","expected":"forbidden"},
+    {"id":"LIFECYCLE-AUTH-09","credential":"Bearer expired","operation":"status","task_id":"task-a","expected":"unauthenticated"},
+    {"id":"LIFECYCLE-AUTH-10","credential":"Bearer operator","operation":"cancel","task_id":"task-a","expected":"allowed"}
+  ],
+  "privacy": {
+    "forbidden_response_fields": ["prompt","response","credential","endpoint","peer_topology","principal_id"]
+  }
+}
