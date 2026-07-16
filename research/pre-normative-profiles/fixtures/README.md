@@ -82,6 +82,10 @@ claims as proof of authentication.
 allow, unauthenticated, forbidden and task-concealment outcomes for the opt-in
 lifecycle authorization port. It does not mandate a token or identity system.
 
+`service-lifecycle-distributed-v1.json` defines consistency-first ownership,
+fencing, failover idempotency, duplicate-event suppression, replay-gap and
+terminal-retention outcomes. It standardizes no database or consensus product.
+
 `service-lifecycle-accounting-v1.json` defines portable reservation and
 settlement cardinality for submit, status, observation, resume, cancellation,
 partial delivery and terminal outcomes. Amounts and production economics are

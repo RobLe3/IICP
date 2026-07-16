@@ -205,3 +205,31 @@ requires an explicit caller decision plus a fresh `task_id` and fresh
 completed, failed, expired, cancelled or partially delivered execution remains
 an implementation/profile policy and MUST be bound to the terminal outcome.
 This draft helper is not mounted into production lifecycle or credit paths.
+
+## Distributed persistence and replay guarantee profile
+
+The companion `service-lifecycle-distributed-v1` fixture extends the storage
+port semantically without prescribing a database or consensus implementation.
+A task has one active mutation owner identified by a monotonically increasing
+fencing epoch. A writer using an older epoch is rejected. Ownership transfer
+MUST preserve task/idempotency/request-digest binding and MUST recover an
+existing execution record rather than start a second execution.
+
+Events have task-scoped stable event identifiers and monotonically contiguous
+sequences. Replayed duplicate event identifiers are ignored; a new event with a
+sequence gap is rejected. If an observer cursor predates the retained replay
+window, a non-terminal task returns `resume_unavailable`. A terminal task MAY
+return its bounded terminal snapshot together with an explicit replay-gap
+marker, but MUST NOT invent missing events.
+
+Mutation admission is consistency-first: when the implementation cannot prove
+current lease/fencing authority or its required write quorum, it returns
+temporary unavailability without writing or starting execution. Read-only
+terminal snapshots may remain available. Implementations choosing availability
+over duplicate suppression require a different profile and cannot claim these
+guarantees.
+
+The profile excludes prompts, payloads, responses, credentials, endpoints,
+filesystem paths, private topology, checkpoint contents and shard placement. It
+standardizes observable guarantees only; consensus protocol, storage engine,
+backend checkpoints and recovery internals remain implementation-specific.

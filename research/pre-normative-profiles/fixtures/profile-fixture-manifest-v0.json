@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.6.0-draft",
+  "manifest_version": "0.7.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -61,6 +61,11 @@
       "path": "policy-detail-disclosure-v0.json",
       "fixture_version": "0.1.0-draft",
       "sha256": "341669ad9f866d0f5f975ae9855f4443ca05fb363df0e097c6deffc7329f5012"
+    },
+    {
+      "path": "service-lifecycle-distributed-v1.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "475ce846a173647cf1fb8895edf8979b0bc96f31afe02df1b1985eac8cb7cdc1"
     }
   ]
 }

@@ -1,5 +1,12 @@
 # IICP Changelog
 
+## Unreleased — distributed lifecycle guarantee candidate 2026-07-16
+
+Added a fixture-gated consistency profile for ownership fencing, failover-safe
+idempotency, duplicate-event suppression, replay gaps and terminal retention.
+It does not standardize a database, consensus product, checkpoint format or
+wire change, and no lifecycle route is enabled by default.
+
 ## Unreleased — authenticated policy-detail port 2026-07-16
 
 Added a fixture-gated provider-side authorization and redaction port for
