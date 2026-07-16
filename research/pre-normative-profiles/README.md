@@ -39,6 +39,11 @@ The policy operational-evidence fixture adds only an opt-in compatibility
 check for locally authenticated, digest-bound and unexpired evidence records.
 It is not a legal certification and does not change default routing.
 
+The authenticated policy-detail fixture adds an opt-in provider-side policy
+port with deterministic authorization and redaction outcomes. It keeps the
+Directory limited to signed route/manifest binding and mounts no public or
+default runtime endpoint.
+
 The lifecycle accounting fixture defines reservation and idempotent settlement
 cardinality for replay, cancellation, partial delivery and explicit new tasks.
 It does not define prices or mount production economic behavior.

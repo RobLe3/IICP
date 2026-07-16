@@ -100,6 +100,18 @@ caller. Receipts contain requirement/declaration digests, decision reason and
 redacted provider reference, but no prompt, response, credential, raw endpoint,
 natural-person contact detail or private backend topology.
 
+The companion `policy-detail-disclosure-v0` fixture makes this boundary
+executable without mounting a new public Directory route. An integration first
+cryptographically verifies the short-lived consumer identity and dispatch
+ticket, then passes only the verified target, intent and manifest binding to the
+portable authorization policy. Missing, invalid or expired authentication is
+`401`; an authenticated caller without disclosure permission is `403`; target,
+intent or digest mismatch is a concealed `404`. Success returns only bounded
+retention intervals and opaque subprocessor, approval and operational-evidence
+references with `claim_status=provider_declared`. The Directory remains the
+ticket signer, not a document gateway, and ordinary discovery never performs
+this optional fetch.
+
 For ticketed dispatch, a directory MAY bind the public-safe canonical manifest
 digest into its signed route ticket as `policy_manifest_sha256`. A client that
 receives this claim MUST compare it with the selected route's manifest digest

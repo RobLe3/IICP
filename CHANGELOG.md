@@ -1,5 +1,14 @@
 # IICP Changelog
 
+## Unreleased — authenticated policy-detail port 2026-07-16
+
+Added a fixture-gated provider-side authorization and redaction port for
+bounded policy details. It verifies the portable Directory consumer-token
+format, requires target/intent/manifest correspondence with a verified dispatch
+ticket context, and returns deterministic 401/403/concealed-404 outcomes. No
+Directory document endpoint, default route, wire change, or legal certification
+is introduced.
+
 ## Unreleased — lifecycle runtime-control parity 2026-07-16
 
 Recorded three-SDK parity for the pre-normative cancellation and bounded
