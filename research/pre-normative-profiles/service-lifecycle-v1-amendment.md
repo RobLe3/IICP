@@ -1,6 +1,6 @@
 # Proposal — Asynchronous Service Lifecycle Amendment
 
-**Version:** 0.3.0-draft
+**Version:** 0.4.0-draft
 **Status:** pre-normative amendment to the proposed service-lifecycle profile  
 **Profile:** `urn:iicp:profile:service-lifecycle:v1`  
 **Tracking:** iicp.network #668
@@ -179,3 +179,24 @@ the observer after delivery and disconnect releases its slot.
 The pre-normative fixture
 `fixtures/service-lifecycle-runtime-control-v1.json` defines the portable
 outcomes. It adds no transport-specific frame or default runtime mounting.
+
+## Partial-delivery accounting cardinality
+
+The companion `fixtures/service-lifecycle-accounting-v1.json` defines only
+whether a lifecycle action creates, reuses, releases or leaves unchanged an
+execution reservation and whether it creates or reuses a settlement. It does
+not define prices, settlement amounts, credit units, refunds or commercial
+terms.
+
+One execution has at most one reservation. Terminal and post-acceptance
+cancellation outcomes have at most one idempotent settlement. Status,
+observation and replay never create a reservation or settlement. A repeated
+terminal or cancellation action returns the existing settlement. Cancellation
+before acceptance releases an existing reservation without settlement.
+
+`resume_unavailable` never authorizes automatic resubmission. A new execution
+requires an explicit caller decision plus a fresh `task_id` and fresh
+`idempotency_key`; it then receives its own reservation. The amount due for a
+completed, failed, expired, cancelled or partially delivered execution remains
+an implementation/profile policy and MUST be bound to the terminal outcome.
+This draft helper is not mounted into production lifecycle or credit paths.

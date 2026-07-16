@@ -34,6 +34,10 @@ The policy operational-evidence fixture adds only an opt-in compatibility
 check for locally authenticated, digest-bound and unexpired evidence records.
 It is not a legal certification and does not change default routing.
 
+The lifecycle accounting fixture defines reservation and idempotent settlement
+cardinality for replay, cancellation, partial delivery and explicit new tasks.
+It does not define prices or mount production economic behavior.
+
 `endpoint-security-profile-v1.md` is a client-side transport-hardening profile.
 It requires DNS-aware validation and address-pinned provider connections without
 adding directory fields or changing the IICP wire envelope.
