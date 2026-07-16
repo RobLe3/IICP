@@ -50,11 +50,11 @@ adding directory fields or changing the IICP wire envelope.
 `service-lifecycle-v1-amendment.md` completes the proposed asynchronous task
 state machine, observation, replay, cancellation and idempotency semantics. It
 now has three transport-neutral SDK stores, runtime cancellation/observer
-controls in all three SDKs, and two explicitly mounted HTTP adapters. The
-TypeScript OpenAI-dialect path propagates opt-in cancellation to Ollama, LM
-Studio, vLLM and MeshLLM without importing backend-private topology. The work
-remains profile-level research and does not change the fixed native frame or
-ordinary node routes.
+controls in all three SDKs, and two explicitly mounted HTTP adapters. Portable
+evidence distinguishes transport abort from backend acknowledgement, confirmed
+execution stop and local cleanup without importing backend-private topology.
+The work remains profile-level research and does not change the fixed native
+frame or ordinary node routes.
 
 `service-lifecycle-persistence-v1.md` defines the bounded implementation
 contract for opt-in, single-host transactional stores. Python and Rust provide
