@@ -1,5 +1,13 @@
 # IICP Changelog
 
+## Unreleased — registry profile experimental-candidate decision 2026-07-16
+
+Recorded that the fixture-gated intent/capability/extension registry proposal
+has completed its cross-implementation experimental-candidate gate. It remains
+pre-normative: stable URNs, the v1.9 suite and runtime defaults are unchanged.
+Normative promotion requires a separate reviewed release with independent
+implementation or adoption evidence.
+
 ## Unreleased — non-normative strategic research 2026-07-11
 
 Added a public research note on layered intent, capability, policy, evidence

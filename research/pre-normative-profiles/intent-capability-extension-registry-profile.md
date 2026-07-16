@@ -1,6 +1,6 @@
 # Proposal — Intent, Capability and Extension Registry Profile
 
-**Status:** fixture-gated pre-normative draft (profile fixture `0.4.0-draft`) · **Depends on:** IICP semantics, node capability format, spec-only sync issue `RobLe3/IICP#2`.
+**Status:** implementation-complete experimental candidate, still pre-normative (profile fixture `0.4.0-draft`) · **Depends on:** IICP semantics and node capability format. Normative promotion is tracked separately and requires independent adoption evidence.
 
 ## Purpose
 
@@ -29,7 +29,7 @@ conditions it may do it.
 
 ## Evidence gate
 
-The strategic taxonomy simulation covers stable and unknown intent versions, deprecated aliases, schema digest match/mismatch, optional and required extensions, risk refusal, A2A skill mappings and MCP tool mappings. This proposal cannot become normative until manifest-pinned fixtures are shared across all directory and SDK implementations and the spec-only release records their digest and changelog entry.
+The strategic taxonomy simulation covers stable and unknown intent versions, deprecated aliases, schema digest match/mismatch, optional and required extensions, risk refusal, A2A skill mappings and MCP tool mappings. Manifest-pinned fixtures are shared across both directory variants, the browser consumer and all maintained SDKs, and the spec-only promotion workflow verifies their digest. This completes the experimental-candidate implementation gate; it does not ratify the profile. Normative promotion additionally requires independent implementation/adoption evidence and a reviewed suite release.
 
 ## Registry entry contract
 
