@@ -68,3 +68,7 @@ maintained implementations.
 `policy-data-handling-v0.json` is the executable, pre-normative compatibility
 contract for request requirements, provider declarations and local negotiated
 evidence. It is opt-in and does not make provider claims into attestations.
+
+`service-lifecycle-authorization-v1.json` defines portable operation-level
+allow, unauthenticated, forbidden and task-concealment outcomes for the opt-in
+lifecycle authorization port. It does not mandate a token or identity system.

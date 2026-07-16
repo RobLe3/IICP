@@ -142,3 +142,21 @@ The amendment remains draft until live observation under backpressure,
 cancellation during real backend execution, replay-window expiry, authorization
 integration and bounded-retention behavior have cross-implementation evidence.
 No base-wire change is authorized by this draft.
+
+## Authorization port
+
+An implementation exposing lifecycle submit, status, observe or cancel surfaces
+MUST authenticate and authorize each operation. The profile does not mandate an
+identity provider or token format. An implementation MAY expose a pluggable
+authorization port whose input is limited to the presented credential,
+operation and opaque `task_id`.
+
+An unauthenticated request returns `401`. An authenticated principal lacking a
+general operation scope returns `403`. Status, observation or cancellation of a
+task outside that principal's task scope SHOULD be concealed as `404` to avoid
+task-identifier enumeration. A deployment authorizer is responsible for binding
+a verified principal to a task identifier at submission; the lifecycle store
+format and identity database remain implementation-specific. Authorization
+responses MUST NOT expose principal identifiers, credentials, task content,
+endpoints or backend topology. The existing single bearer-token helper is only
+a compatibility/test adapter and is not a production identity design.
