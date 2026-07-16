@@ -233,3 +233,26 @@ The profile excludes prompts, payloads, responses, credentials, endpoints,
 filesystem paths, private topology, checkpoint contents and shard placement. It
 standardizes observable guarantees only; consensus protocol, storage engine,
 backend checkpoints and recovery internals remain implementation-specific.
+
+## Production identity projection, revocation and audit
+
+An opt-in production adapter authenticates a deployment credential and projects
+it to an opaque one-way principal reference plus operation scopes, credential
+key identifier and revocation epoch. The lifecycle store binds only the
+principal reference to a task at submission. Public lifecycle responses MUST
+NOT expose the principal identifier or reference.
+
+Missing, invalid, expired, revoked, or pre-revocation-epoch credentials are
+unauthenticated. For a valid credential, cross-task status, observe, resume and
+cancel access is concealed. Same-task insufficient scope is forbidden. An
+operator override requires a distinct operation-specific scope and a redacted
+audit event; it does not silently change task ownership.
+
+Audit records are bounded, retention-reviewed and limited to opaque task and
+principal references, credential key ID, revocation epoch, operation, outcome,
+reason and timestamp. Credentials, prompts, payloads, responses, endpoints,
+contacts and private topology are rejected before write.
+
+This profile is additive. Ordinary task dispatch without the lifecycle identity
+profile retains its existing open-mesh policy. Lifecycle control surfaces MUST
+NOT interpret missing identity as permission to downgrade to open access.

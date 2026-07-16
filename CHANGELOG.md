@@ -1,5 +1,11 @@
 # IICP Changelog
 
+## Unreleased — lifecycle identity and audit candidate 2026-07-16
+
+Added fixture-gated task ownership, revocation-epoch, cross-task concealment and
+bounded redacted audit semantics. This remains an opt-in adapter contract; no
+identity provider, production endpoint or default task policy is mandated.
+
 ## Unreleased — distributed lifecycle guarantee candidate 2026-07-16
 
 Added a fixture-gated consistency profile for ownership fencing, failover-safe

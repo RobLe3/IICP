@@ -1,0 +1,41 @@
+{
+  "profile": "urn:iicp:profile:service-lifecycle-identity:v1",
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "identity_boundary": "deployment-verified principal projected to a one-way principal reference",
+  "audit_retention_seconds": 604800,
+  "allowed_audit_fields": [
+    "event_id",
+    "task_ref",
+    "principal_ref_digest",
+    "credential_key_id",
+    "revocation_epoch",
+    "operation",
+    "outcome",
+    "reason_code",
+    "occurred_at"
+  ],
+  "forbidden_audit_fields": [
+    "principal_id",
+    "credential",
+    "prompt",
+    "payload",
+    "response",
+    "endpoint",
+    "peer_topology",
+    "contact"
+  ],
+  "cases": [
+    {"id":"LIFECYCLE-IDENTITY-01","profile_requested":false,"surface":"ordinary_task","credential_status":"missing","expected":"legacy_open_mesh_unchanged"},
+    {"id":"LIFECYCLE-IDENTITY-02","profile_requested":true,"surface":"lifecycle","credential_status":"missing","operation":"submit","expected":"unauthenticated"},
+    {"id":"LIFECYCLE-IDENTITY-03","profile_requested":true,"surface":"lifecycle","credential_status":"valid","operation":"submit","scope":["submit"],"principal_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","expected":"allowed_bind_owner"},
+    {"id":"LIFECYCLE-IDENTITY-04","profile_requested":true,"surface":"lifecycle","credential_status":"valid","operation":"status","scope":["status"],"principal_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","task_owner_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","expected":"allowed"},
+    {"id":"LIFECYCLE-IDENTITY-05","profile_requested":true,"surface":"lifecycle","credential_status":"valid","operation":"observe","scope":["observe"],"principal_ref_digest":"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","task_owner_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","expected":"concealed_task"},
+    {"id":"LIFECYCLE-IDENTITY-06","profile_requested":true,"surface":"lifecycle","credential_status":"revoked","operation":"cancel","scope":["cancel"],"principal_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","task_owner_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","expected":"unauthenticated"},
+    {"id":"LIFECYCLE-IDENTITY-07","profile_requested":true,"surface":"lifecycle","credential_status":"valid","operation":"cancel","scope":["status"],"principal_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","task_owner_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","expected":"forbidden"},
+    {"id":"LIFECYCLE-IDENTITY-08","profile_requested":true,"surface":"lifecycle","credential_status":"valid","operation":"resume","scope":["resume"],"principal_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","task_owner_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","credential_revocation_epoch":4,"minimum_revocation_epoch":5,"expected":"unauthenticated"},
+    {"id":"LIFECYCLE-IDENTITY-09","profile_requested":true,"surface":"lifecycle","credential_status":"valid","operation":"cancel","scope":["operator:cancel"],"operator_override":true,"principal_ref_digest":"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","task_owner_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","expected":"allowed_operator_override"},
+    {"id":"LIFECYCLE-IDENTITY-10","kind":"audit_retention","age_seconds":604801,"expected":"audit_record_pruned"},
+    {"id":"LIFECYCLE-IDENTITY-11","kind":"audit_redaction","audit":{"event_id":"evt-1","task_ref":"task…abcd","principal_ref_digest":"sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","operation":"status","outcome":"allowed","principal_id":"must-not-leak"},"expected":"reject_before_write"}
+  ]
+}
