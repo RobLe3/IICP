@@ -3,10 +3,10 @@
 ## Unreleased — lifecycle runtime-control parity 2026-07-16
 
 Recorded three-SDK parity for the pre-normative cancellation and bounded
-observation fixture. The TypeScript OpenAI-compatible path demonstrates
-task-scoped HTTP abort propagation for Ollama, LM Studio, vLLM and MeshLLM.
-This does not change ordinary node routes, the wire protocol, or backend-private
-execution and recovery semantics.
+observation fixture. Portable evidence now separates cancellation request,
+transport abort, backend acknowledgement, confirmed stop, unsupported
+cancellation and local cleanup. This does not change ordinary node routes, the
+wire protocol, or backend-private execution and recovery semantics.
 
 ## Unreleased — registry profile experimental-candidate decision 2026-07-16
 

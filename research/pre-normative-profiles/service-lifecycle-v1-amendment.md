@@ -166,8 +166,13 @@ Cancellation changes lifecycle state only after the provider has attempted to
 signal the active execution handle. Implementations distinguish
 `cancel_signalled`, `cancel_unsupported` and `already_terminal`; a cancellation
 request MUST NOT silently imply that backend execution stopped immediately.
-Backend-specific handles and acknowledgement mechanisms remain implementation
-details.
+Portable evidence then distinguishes `cancel_requested`,
+`transport_aborted`, `backend_acknowledged`, `execution_stopped`,
+`cancel_unsupported` and `already_terminal`. These levels are evidence, not
+aliases: a closed HTTP request proves neither backend acknowledgement nor
+execution termination. `cleanup_complete` proves only that the provider
+released its local task-scoped cancellation handle. Backend-specific handles
+and acknowledgement mechanisms remain implementation details.
 
 Sustained observation uses a bounded provider buffer. When an observer's last
 accepted sequence precedes the earliest retained event, the provider returns
