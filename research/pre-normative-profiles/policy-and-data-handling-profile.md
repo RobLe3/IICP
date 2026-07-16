@@ -106,3 +106,17 @@ New values require a schema version, compatibility rule, refusal fixture,
 cross-SDK implementation evidence and user-facing wording. Existing values are
 never silently redefined. This draft remains optional until negotiated; future
 ratification must preserve legacy behavior for callers that do not request it.
+
+## Executable compatibility contract
+
+The pre-normative `fixtures/policy-data-handling-v0.json` fixture separates a
+caller `requirement`, provider `declaration`, and locally observed `context`.
+The evaluator order is deterministic so all maintained SDKs return the same
+portable refusal reason. `accepted_data_classes` is a provider declaration;
+`data_class` remains caller classification. A transient-retention declaration
+MUST include `max_seconds` when a caller supplies a maximum. Encryption and
+receipt readiness are local negotiated/observed context, not inferred from a
+provider claim. Unknown optional hints are ignored only after all known hard
+gates are evaluated; an unknown field named by `critical_requirements` fails
+closed. These evaluators remain opt-in and MUST NOT widen fallback or alter
+legacy discovery when the draft profile was not requested.

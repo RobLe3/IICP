@@ -64,3 +64,7 @@ The fixture set is pre-normative: it does not alter current discovery wire
 formats or make profile fields required. Any change must increment the fixture
 version, update the manifest digest, retain a migration note, and pass all
 maintained implementations.
+
+`policy-data-handling-v0.json` is the executable, pre-normative compatibility
+contract for request requirements, provider declarations and local negotiated
+evidence. It is opt-in and does not make provider claims into attestations.
