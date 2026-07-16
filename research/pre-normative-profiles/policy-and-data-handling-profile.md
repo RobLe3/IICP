@@ -100,6 +100,14 @@ caller. Receipts contain requirement/declaration digests, decision reason and
 redacted provider reference, but no prompt, response, credential, raw endpoint,
 natural-person contact detail or private backend topology.
 
+For ticketed dispatch, a directory MAY bind the public-safe canonical manifest
+digest into its signed route ticket as `policy_manifest_sha256`. A client that
+receives this claim MUST compare it with the selected route's manifest digest
+before dispatch and fail closed on absence from the route, malformed values or
+mismatch. Tickets without the additive claim remain compatible and do not make
+a policy manifest required. This binding authenticates correspondence between
+the ticket and public manifest summary; it does not certify the declaration.
+
 ## Evolution
 
 New values require a schema version, compatibility rule, refusal fixture,
