@@ -1,0 +1,128 @@
+{
+  "profile": "urn:iicp:profile:policy-operational-evidence:v0",
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "evaluated_at": "2026-07-16T15:00:00Z",
+  "known_evidence_types": [
+    "retention_control",
+    "subprocessor_disclosure",
+    "approval_event"
+  ],
+  "reason_precedence": [
+    "unsupported_evidence_requirement",
+    "manifest_digest_mismatch",
+    "evidence_missing",
+    "evidence_unauthenticated",
+    "evidence_expired",
+    "compatible"
+  ],
+  "cases": [
+    {
+      "id": "POLICY-EVIDENCE-01",
+      "requirement": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "required_evidence": ["retention_control", "subprocessor_disclosure", "approval_event"]
+      },
+      "context": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": [
+          {"type": "retention_control", "verified": true, "expires_at": "2026-07-17T15:00:00Z"},
+          {"type": "subprocessor_disclosure", "verified": true, "expires_at": "2026-07-17T15:00:00Z"},
+          {"type": "approval_event", "verified": true, "expires_at": "2026-07-16T16:00:00Z"}
+        ]
+      },
+      "expected": "compatible"
+    },
+    {
+      "id": "POLICY-EVIDENCE-02",
+      "requirement": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "required_evidence": ["future_evidence"]
+      },
+      "context": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": []
+      },
+      "expected": "unsupported_evidence_requirement"
+    },
+    {
+      "id": "POLICY-EVIDENCE-03",
+      "requirement": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "required_evidence": ["retention_control"]
+      },
+      "context": {
+        "manifest_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "evidence": []
+      },
+      "expected": "manifest_digest_mismatch"
+    },
+    {
+      "id": "POLICY-EVIDENCE-04",
+      "requirement": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "required_evidence": ["subprocessor_disclosure"]
+      },
+      "context": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": []
+      },
+      "expected": "evidence_missing"
+    },
+    {
+      "id": "POLICY-EVIDENCE-05",
+      "requirement": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "required_evidence": ["retention_control"]
+      },
+      "context": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": [
+          {"type": "retention_control", "verified": false, "expires_at": "2026-07-17T15:00:00Z"}
+        ]
+      },
+      "expected": "evidence_unauthenticated"
+    },
+    {
+      "id": "POLICY-EVIDENCE-06",
+      "requirement": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "required_evidence": ["approval_event"]
+      },
+      "context": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": [
+          {"type": "approval_event", "verified": true, "expires_at": "2026-07-16T14:59:59Z"}
+        ]
+      },
+      "expected": "evidence_expired"
+    },
+    {
+      "id": "POLICY-EVIDENCE-07",
+      "requirement": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "required_evidence": []
+      },
+      "context": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": []
+      },
+      "expected": "compatible"
+    },
+    {
+      "id": "POLICY-EVIDENCE-08",
+      "requirement": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "required_evidence": ["retention_control", "approval_event"]
+      },
+      "context": {
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "evidence": [
+          {"type": "retention_control", "verified": true, "expires_at": "2026-07-17T15:00:00Z"},
+          {"type": "approval_event", "verified": false, "expires_at": "2026-07-16T14:59:59Z"}
+        ]
+      },
+      "expected": "evidence_unauthenticated"
+    }
+  ]
+}
