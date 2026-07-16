@@ -33,6 +33,11 @@
       "sha256": "48be1f06e79da7849367f48deeb7a5ffa71a1de0e21800491dc6bf55d016fb94"
     },
     {
+      "path": "dispatch-ticket-trust-store-v1.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "b3d70461ee4c1cde722e3371cd7254b095ed75803fd637eca0185f632b0a6261"
+    },
+    {
       "path": "service-lifecycle-v1.json",
       "fixture_version": "0.2.0-draft",
       "sha256": "7bb6be604278656b960b48e1c07279ae41cb19447140d9dceeeea10f7c90b3c7"
