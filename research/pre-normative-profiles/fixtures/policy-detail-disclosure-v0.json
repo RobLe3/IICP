@@ -1,0 +1,170 @@
+{
+  "profile": "urn:iicp:profile:policy-detail-disclosure:v0",
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "allowed_detail_fields": [
+    "retention_intervals",
+    "subprocessor_references",
+    "approval_evidence_references",
+    "operational_evidence_references"
+  ],
+  "reason_precedence": [
+    "consumer_auth_required",
+    "consumer_auth_invalid",
+    "consumer_auth_expired",
+    "disclosure_forbidden",
+    "resource_concealed",
+    "compatible"
+  ],
+  "cases": [
+    {
+      "id": "POLICY-DISCLOSURE-01",
+      "context": {
+        "consumer_auth": "valid",
+        "disclosure_allowed": true,
+        "provider_node_id": "node-a",
+        "consumer_target_node_id": "node-a",
+        "ticket_target_node_id": "node-a",
+        "consumer_intent": "urn:iicp:intent:llm:chat:v1",
+        "ticket_intent": "urn:iicp:intent:llm:chat:v1",
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "ticket_manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "details": {
+          "retention_intervals": {
+            "task_payload_max_seconds": 30,
+            "logs_max_days": 7
+          },
+          "subprocessor_references": [
+            "urn:iicp:processor:self-hosted"
+          ],
+          "approval_evidence_references": [
+            "urn:iicp:evidence:approval:abc"
+          ],
+          "operational_evidence_references": [
+            "urn:iicp:evidence:retention:def"
+          ],
+          "prompt": "must-not-leak",
+          "response": "must-not-leak",
+          "credential": "must-not-leak",
+          "endpoint": "https://private.example",
+          "natural_person_contact": "must-not-leak@example.invalid",
+          "backend_topology": {
+            "peer": "private"
+          }
+        }
+      },
+      "expected": {
+        "status": 200,
+        "reason": "compatible"
+      }
+    },
+    {
+      "id": "POLICY-DISCLOSURE-02",
+      "context": {
+        "consumer_auth": "missing",
+        "disclosure_allowed": true
+      },
+      "expected": {
+        "status": 401,
+        "reason": "consumer_auth_required"
+      }
+    },
+    {
+      "id": "POLICY-DISCLOSURE-03",
+      "context": {
+        "consumer_auth": "invalid",
+        "disclosure_allowed": true
+      },
+      "expected": {
+        "status": 401,
+        "reason": "consumer_auth_invalid"
+      }
+    },
+    {
+      "id": "POLICY-DISCLOSURE-04",
+      "context": {
+        "consumer_auth": "expired",
+        "disclosure_allowed": true
+      },
+      "expected": {
+        "status": 401,
+        "reason": "consumer_auth_expired"
+      }
+    },
+    {
+      "id": "POLICY-DISCLOSURE-05",
+      "context": {
+        "consumer_auth": "valid",
+        "disclosure_allowed": false
+      },
+      "expected": {
+        "status": 403,
+        "reason": "disclosure_forbidden"
+      }
+    },
+    {
+      "id": "POLICY-DISCLOSURE-06",
+      "context": {
+        "consumer_auth": "valid",
+        "disclosure_allowed": true,
+        "provider_node_id": "node-a",
+        "consumer_target_node_id": "node-b",
+        "ticket_target_node_id": "node-a",
+        "consumer_intent": "urn:iicp:intent:llm:chat:v1",
+        "ticket_intent": "urn:iicp:intent:llm:chat:v1",
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "ticket_manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "expected": {
+        "status": 404,
+        "reason": "resource_concealed"
+      }
+    },
+    {
+      "id": "POLICY-DISCLOSURE-07",
+      "context": {
+        "consumer_auth": "valid",
+        "disclosure_allowed": true,
+        "provider_node_id": "node-a",
+        "consumer_target_node_id": "node-a",
+        "ticket_target_node_id": "node-a",
+        "consumer_intent": "urn:iicp:intent:llm:chat:v1",
+        "ticket_intent": "urn:iicp:intent:llm:embedding:v1",
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "ticket_manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "expected": {
+        "status": 404,
+        "reason": "resource_concealed"
+      }
+    },
+    {
+      "id": "POLICY-DISCLOSURE-08",
+      "context": {
+        "consumer_auth": "valid",
+        "disclosure_allowed": true,
+        "provider_node_id": "node-a",
+        "consumer_target_node_id": "node-a",
+        "ticket_target_node_id": "node-a",
+        "consumer_intent": "urn:iicp:intent:llm:chat:v1",
+        "ticket_intent": "urn:iicp:intent:llm:chat:v1",
+        "manifest_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "ticket_manifest_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "expected": {
+        "status": 404,
+        "reason": "resource_concealed"
+      }
+    }
+  ],
+  "crypto_vectors": {
+    "evaluated_at_unix": 1800000000,
+    "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664",
+    "expected_subject": "consumer-a",
+    "expected_target_node_id": "node-a",
+    "expected_intent": "urn:iicp:intent:llm:chat:v1",
+    "valid_consumer_token": "eyJ2IjoxLCJpc3MiOiJodHRwczovL2lpY3AubmV0d29yayIsInN1YiI6ImNvbnN1bWVyLWEiLCJhdWQiOiJub2RlLWEiLCJpbnRlbnQiOiJ1cm46aWljcDppbnRlbnQ6bGxtOmNoYXQ6djEiLCJpYXQiOjE4MDAwMDAwMDAsImV4cCI6MTgwMDAwMDMwMH0.1e84446db9af38ec1b34f1bb81a29609cc972772a2dc6e409b35574e74f74803d721f8a673d46ba789dc45e4bf35afe05099a776b90600c57a6abc6fd9a8e801",
+    "expired_consumer_token": "eyJ2IjoxLCJpc3MiOiJodHRwczovL2lpY3AubmV0d29yayIsInN1YiI6ImNvbnN1bWVyLWEiLCJhdWQiOiJub2RlLWEiLCJpbnRlbnQiOiJ1cm46aWljcDppbnRlbnQ6bGxtOmNoYXQ6djEiLCJpYXQiOjE4MDAwMDAwMDAsImV4cCI6MTc5OTk5OTk5OX0.4bb5e2260800b4934db2e8873f6a0ac96dc0ad2912afb66587646b54ce1a26937f0b4245993261fd4c514753a667e243c81eb215cc7da88eb458b61a50073e02",
+    "tampered_consumer_token": "eyJ2IjoxLCJpc3MiOiJodHRwczovL2lpY3AubmV0d29yayIsInN1YiI6ImNvbnN1bWVyLWEiLCJhdWQiOiJub2RlLWEiLCJpbnRlbnQiOiJ1cm46aWljcDppbnRlbnQ6bGxtOmNoYXQ6djEiLCJpYXQiOjE4MDAwMDAwMDAsImV4cCI6MTgwMDAwMDMwMH0.1e84446db9af38ec1b34f1bb81a29609cc972772a2dc6e409b35574e74f74803d721f8a673d46ba789dc45e4bf35afe05099a776b90600c57a6abc6fd9a8e800"
+  }
+}

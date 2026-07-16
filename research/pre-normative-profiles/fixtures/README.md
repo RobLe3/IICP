@@ -73,6 +73,11 @@ evidence. It is opt-in and does not make provider claims into attestations.
 unexpired retention-control, subprocessor-disclosure and approval evidence. It
 does not verify law or accept provider-supplied `verified` flags as trust.
 
+`policy-detail-disclosure-v0.json` defines provider-side authenticated detail
+authorization, target/intent/manifest concealment and a strict output allow-list.
+It is not a public Directory document endpoint and does not accept request-body
+claims as proof of authentication.
+
 `service-lifecycle-authorization-v1.json` defines portable operation-level
 allow, unauthenticated, forbidden and task-concealment outcomes for the opt-in
 lifecycle authorization port. It does not mandate a token or identity system.
