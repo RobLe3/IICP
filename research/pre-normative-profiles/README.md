@@ -30,6 +30,11 @@ negotiated profile and ratified release process exist. The policy/data-handling
 schema and `selection-profile-v1.md` are likewise drafts, not a routing-default
 or wire-format change.
 
+The intent/capability/extension registry proposal has completed its
+cross-implementation experimental-candidate gate. This means its fixtures and
+release workflow are ready for explicit opt-in research; it is not a normative
+promotion.
+
 The policy operational-evidence fixture adds only an opt-in compatibility
 check for locally authenticated, digest-bound and unexpired evidence records.
 It is not a legal certification and does not change default routing.
