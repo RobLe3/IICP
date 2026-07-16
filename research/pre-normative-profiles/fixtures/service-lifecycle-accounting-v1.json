@@ -1,0 +1,400 @@
+{
+  "profile": "urn:iicp:profile:service-lifecycle-accounting:v1",
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "result_contract": {
+    "reservation_actions": [
+      "none",
+      "create",
+      "reuse",
+      "release"
+    ],
+    "settlement_actions": [
+      "none",
+      "create",
+      "reuse"
+    ],
+    "amount_semantics": "implementation_specific",
+    "default_runtime_mount": false
+  },
+  "cases": [
+    {
+      "id": "LIFECYCLE-ACCOUNT-01",
+      "input": {
+        "operation": "submit",
+        "binding": "fresh",
+        "reservation_exists": false,
+        "settlement_exists": false,
+        "accepted": false,
+        "delivery": "none"
+      },
+      "expected": {
+        "decision": "start_execution",
+        "reservation_action": "create",
+        "settlement_action": "none",
+        "new_execution": true
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-02",
+      "input": {
+        "operation": "submit",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "none"
+      },
+      "expected": {
+        "decision": "reuse_execution",
+        "reservation_action": "reuse",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-03",
+      "input": {
+        "operation": "submit",
+        "binding": "conflict",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "none"
+      },
+      "expected": {
+        "decision": "reject_conflict",
+        "reservation_action": "none",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-04",
+      "input": {
+        "operation": "status",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "partial"
+      },
+      "expected": {
+        "decision": "return_status",
+        "reservation_action": "none",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-05",
+      "input": {
+        "operation": "observe",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "partial"
+      },
+      "expected": {
+        "decision": "replay_events",
+        "reservation_action": "none",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-06",
+      "input": {
+        "operation": "resume",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "partial",
+        "resume_available": true,
+        "explicit_new_task": false,
+        "fresh_task_id": false,
+        "fresh_idempotency_key": false
+      },
+      "expected": {
+        "decision": "replay_events",
+        "reservation_action": "none",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-07",
+      "input": {
+        "operation": "resume",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "partial",
+        "resume_available": false,
+        "explicit_new_task": false,
+        "fresh_task_id": false,
+        "fresh_idempotency_key": false
+      },
+      "expected": {
+        "decision": "explicit_new_task_required",
+        "reservation_action": "none",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-08",
+      "input": {
+        "operation": "resume",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "partial",
+        "resume_available": false,
+        "explicit_new_task": true,
+        "fresh_task_id": false,
+        "fresh_idempotency_key": false
+      },
+      "expected": {
+        "decision": "reject_identifier_reuse",
+        "reservation_action": "none",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-09",
+      "input": {
+        "operation": "resume",
+        "binding": "fresh",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "partial",
+        "resume_available": false,
+        "explicit_new_task": true,
+        "fresh_task_id": true,
+        "fresh_idempotency_key": true
+      },
+      "expected": {
+        "decision": "start_new_task",
+        "reservation_action": "create",
+        "settlement_action": "none",
+        "new_execution": true
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-10",
+      "input": {
+        "operation": "cancel",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": false,
+        "delivery": "none"
+      },
+      "expected": {
+        "decision": "cancel_before_acceptance",
+        "reservation_action": "release",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-11",
+      "input": {
+        "operation": "cancel",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "none"
+      },
+      "expected": {
+        "decision": "cancel_after_acceptance",
+        "reservation_action": "reuse",
+        "settlement_action": "create",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-12",
+      "input": {
+        "operation": "cancel",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "partial"
+      },
+      "expected": {
+        "decision": "cancel_after_partial_delivery",
+        "reservation_action": "reuse",
+        "settlement_action": "create",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-13",
+      "input": {
+        "operation": "cancel",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": true,
+        "accepted": true,
+        "delivery": "partial"
+      },
+      "expected": {
+        "decision": "return_existing_settlement",
+        "reservation_action": "reuse",
+        "settlement_action": "reuse",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-14",
+      "input": {
+        "operation": "terminal",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "complete",
+        "terminal_state": "completed"
+      },
+      "expected": {
+        "decision": "settle_completed",
+        "reservation_action": "reuse",
+        "settlement_action": "create",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-15",
+      "input": {
+        "operation": "terminal",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "partial",
+        "terminal_state": "failed"
+      },
+      "expected": {
+        "decision": "settle_failed_partial",
+        "reservation_action": "reuse",
+        "settlement_action": "create",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-16",
+      "input": {
+        "operation": "terminal",
+        "binding": "same",
+        "reservation_exists": true,
+        "settlement_exists": true,
+        "accepted": true,
+        "delivery": "complete",
+        "terminal_state": "completed"
+      },
+      "expected": {
+        "decision": "return_existing_settlement",
+        "reservation_action": "reuse",
+        "settlement_action": "reuse",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-17",
+      "input": {
+        "operation": "terminal",
+        "binding": "same",
+        "reservation_exists": false,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "none",
+        "terminal_state": "expired"
+      },
+      "expected": {
+        "decision": "reject_missing_reservation",
+        "reservation_action": "none",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-18",
+      "input": {
+        "operation": "cancel",
+        "binding": "same",
+        "reservation_exists": false,
+        "settlement_exists": false,
+        "accepted": false,
+        "delivery": "none"
+      },
+      "expected": {
+        "decision": "cancel_without_accounting",
+        "reservation_action": "none",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-19",
+      "input": {
+        "operation": "submit",
+        "binding": "fresh",
+        "reservation_exists": true,
+        "settlement_exists": false,
+        "accepted": false,
+        "delivery": "none"
+      },
+      "expected": {
+        "decision": "reject_conflict",
+        "reservation_action": "none",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-20",
+      "input": {
+        "operation": "submit",
+        "binding": "same",
+        "reservation_exists": false,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "none"
+      },
+      "expected": {
+        "decision": "reject_missing_reservation",
+        "reservation_action": "none",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    },
+    {
+      "id": "LIFECYCLE-ACCOUNT-21",
+      "input": {
+        "operation": "terminal",
+        "binding": "fresh",
+        "reservation_exists": false,
+        "settlement_exists": false,
+        "accepted": true,
+        "delivery": "complete",
+        "terminal_state": "completed"
+      },
+      "expected": {
+        "decision": "reject_conflict",
+        "reservation_action": "none",
+        "settlement_action": "none",
+        "new_execution": false
+      }
+    }
+  ]
+}
