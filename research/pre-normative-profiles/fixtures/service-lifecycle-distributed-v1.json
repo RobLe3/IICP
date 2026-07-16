@@ -1,0 +1,43 @@
+{
+  "profile": "urn:iicp:profile:service-lifecycle-distributed:v1",
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "consistency_model": "single-writer lease with monotonically increasing fencing epoch",
+  "required_guarantees": [
+    "one_active_owner_per_epoch",
+    "stale_owner_fenced",
+    "idempotency_binding_survives_failover",
+    "event_id_duplicate_suppression",
+    "sequence_monotonic_per_task",
+    "bounded_replay_with_explicit_gap",
+    "terminal_snapshot_survives_replay_gap",
+    "terminal_retention_is_time_bounded",
+    "quorum_loss_fails_closed_for_mutations"
+  ],
+  "forbidden_fields": [
+    "prompt",
+    "payload",
+    "response",
+    "credentials",
+    "endpoint",
+    "filesystem_path",
+    "peer_topology",
+    "checkpoint_contents",
+    "shard"
+  ],
+  "vectors": [
+    {"id":"LIFECYCLE-DIST-01","kind":"owner_write","writer_epoch":7,"current_epoch":7,"expected":"write_accepted"},
+    {"id":"LIFECYCLE-DIST-02","kind":"owner_write","writer_epoch":6,"current_epoch":7,"expected":"stale_owner_rejected"},
+    {"id":"LIFECYCLE-DIST-03","kind":"failover_submit","request_digest_matches":true,"idempotency_key_matches":true,"execution_started":true,"expected":"existing_execution_recovered"},
+    {"id":"LIFECYCLE-DIST-04","kind":"failover_submit","request_digest_matches":false,"idempotency_key_matches":true,"execution_started":true,"expected":"conflict_no_new_execution"},
+    {"id":"LIFECYCLE-DIST-05","kind":"append_event","event_id_seen":true,"sequence":8,"latest_sequence":8,"expected":"duplicate_event_ignored"},
+    {"id":"LIFECYCLE-DIST-06","kind":"append_event","event_id_seen":false,"sequence":9,"latest_sequence":8,"expected":"event_appended"},
+    {"id":"LIFECYCLE-DIST-07","kind":"append_event","event_id_seen":false,"sequence":10,"latest_sequence":8,"expected":"sequence_gap_rejected"},
+    {"id":"LIFECYCLE-DIST-08","kind":"observe","after_sequence":3,"first_retained_sequence":5,"terminal":false,"expected":"resume_unavailable"},
+    {"id":"LIFECYCLE-DIST-09","kind":"observe","after_sequence":3,"first_retained_sequence":5,"terminal":true,"expected":"terminal_snapshot_with_replay_gap"},
+    {"id":"LIFECYCLE-DIST-10","kind":"terminal_retention","age_ms":3600001,"ttl_ms":3600000,"expected":"unknown_task_after_expiry"},
+    {"id":"LIFECYCLE-DIST-11","kind":"mutation_admission","quorum_available":false,"expected":"temporarily_unavailable_no_write"},
+    {"id":"LIFECYCLE-DIST-12","kind":"mutation_admission","quorum_available":true,"expected":"mutation_allowed"},
+    {"id":"LIFECYCLE-DIST-13","kind":"content_minimization","detail":{"event_id":"evt-1","outcome":"failed","prompt":"forbidden"},"expected":"reject_before_write"}
+  ]
+}
