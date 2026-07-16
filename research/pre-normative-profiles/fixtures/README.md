@@ -69,6 +69,10 @@ maintained implementations.
 contract for request requirements, provider declarations and local negotiated
 evidence. It is opt-in and does not make provider claims into attestations.
 
+`policy-operational-evidence-v0.json` covers locally verified, digest-bound and
+unexpired retention-control, subprocessor-disclosure and approval evidence. It
+does not verify law or accept provider-supplied `verified` flags as trust.
+
 `service-lifecycle-authorization-v1.json` defines portable operation-level
 allow, unauthenticated, forbidden and task-concealment outcomes for the opt-in
 lifecycle authorization port. It does not mandate a token or identity system.

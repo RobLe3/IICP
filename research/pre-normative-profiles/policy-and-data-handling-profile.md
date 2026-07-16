@@ -115,6 +115,29 @@ cross-SDK implementation evidence and user-facing wording. Existing values are
 never silently redefined. This draft remains optional until negotiated; future
 ratification must preserve legacy behavior for callers that do not request it.
 
+## Operational evidence boundary
+
+The companion pre-normative operational-evidence fixture distinguishes an
+authenticated local verification result from a provider declaration. A caller
+may require evidence classes for a retention control, subprocessor disclosure,
+or approval event. Each accepted record is bound to the selected manifest
+digest, locally verified, and unexpired at evaluation time. Missing, unknown,
+unauthenticated, expired, or digest-mismatched required evidence fails closed.
+
+The evaluator does not verify legal compliance and does not prove that a
+declared process was followed outside the observed evidence boundary. The
+`verified` input is produced by an authenticated verifier; it MUST NOT be copied
+from an untrusted provider payload. This additive check is opt-in and does not
+change legacy discovery or dispatch.
+
+### Production opt-in and rollback
+
+Operators first publish a signed policy manifest and validate its public digest,
+then expose authenticated evidence only to authorized callers. Consumers enable
+operational-evidence requirements per request after pinning the fixture/profile
+version. Rollback disables the optional requirement and returns to legacy route
+evaluation; it never treats failed evidence as permission to widen routing.
+
 ## Executable compatibility contract
 
 The pre-normative `fixtures/policy-data-handling-v0.json` fixture separates a
