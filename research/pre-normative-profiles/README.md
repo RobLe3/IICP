@@ -71,6 +71,10 @@ single-writer ownership, failover-safe idempotency, duplicate-event suppression
 and explicit replay gaps. It fails mutation admission closed when ownership
 authority cannot be proven and leaves storage/consensus selection local.
 
+The lifecycle identity fixture adds opt-in principal projection, task ownership,
+revocation and redacted audit semantics. It does not expose principals publicly,
+mandate one identity provider or change ordinary open-mesh task dispatch.
+
 `dispatch-ticket-trust-profile-v2.md` proposes independently anchored Directory
 signing keys, overlap rotation and explicit strict/open compatibility modes. It
 now has opt-in caller-supplied-bundle verifiers and owner-local durable store

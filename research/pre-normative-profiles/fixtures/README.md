@@ -86,6 +86,10 @@ lifecycle authorization port. It does not mandate a token or identity system.
 fencing, failover idempotency, duplicate-event suppression, replay-gap and
 terminal-retention outcomes. It standardizes no database or consensus product.
 
+`service-lifecycle-identity-v1.json` defines verified-principal projection,
+task ownership, revocation-epoch, cross-task concealment and bounded redacted
+audit outcomes while preserving ordinary open-mesh behavior when absent.
+
 `service-lifecycle-accounting-v1.json` defines portable reservation and
 settlement cardinality for submit, status, observation, resume, cancellation,
 partial delivery and terminal outcomes. Amounts and production economics are
