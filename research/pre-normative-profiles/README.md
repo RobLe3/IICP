@@ -47,6 +47,9 @@ mount lifecycle routes by default or standardize SQLite as protocol state.
 
 `dispatch-ticket-trust-profile-v2.md` proposes independently anchored Directory
 signing keys, overlap rotation and explicit strict/open compatibility modes. It
-now has opt-in caller-supplied-bundle verifiers in all three SDKs. They are not
-wired into default dispatch and do not change or overstate the disclosure-only
-v1 ticket contract.
+now has opt-in caller-supplied-bundle verifiers and owner-local durable store
+ports in all three SDKs. They are not wired into default dispatch, do not claim
+whole-store rollback resistance and do not change or overstate the
+disclosure-only v1 ticket contract.
+The shared `dispatch-ticket-trust-store-v1.json` fixture pins canonical bundle
+digests and cross-SDK storage transitions without enabling the profile.

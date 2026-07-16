@@ -112,6 +112,15 @@ by default discovery or submission code and does not fetch replacement keys from
 the route origin. Persistence of replay state remains an application concern and
 does not imply network-wide redemption.
 
+The optional trust-store contract persists one canonical bundle, its digest and
+a monotonic local high-water mark behind an atomic compare-and-install port.
+Reference file adapters use owner-only state, process serialization and explicit
+recovery. Callers pass the loaded high-water mark to ticket verification. This
+protects against stale candidates, corruption, interrupted replacement and local
+writer races, but deliberately does not claim protection against restoration of
+the entire store. An independent rollback anchor remains a separate prerequisite
+for making strict trust a default.
+
 ## Conformance gate
 
 `fixtures/dispatch-ticket-trust-v2.json` covers active/retiring/expired/revoked
@@ -120,3 +129,6 @@ v1 compatibility labeling. `fixtures/dispatch-ticket-trust-v2-crypto.json`
 adds deterministic Ed25519 signatures for active and overlap acceptance plus
 revocation, expiry, unknown-key, tamper and replay refusal. Runtime enablement
 and adversarial rotation/recovery remain required before ratification.
+`fixtures/dispatch-ticket-trust-store-v1.json` covers the additive durable-store
+state machine; filesystem crash and concurrent-writer behavior remains an
+implementation conformance requirement.
