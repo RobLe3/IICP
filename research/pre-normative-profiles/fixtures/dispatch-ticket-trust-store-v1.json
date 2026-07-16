@@ -1,0 +1,140 @@
+{
+  "profile": "dispatch-ticket-trust-store-v1",
+  "version": "0.1.0-draft",
+  "contract": {
+    "canonicalization": "recursive-key-sort-compact-json-utf8",
+    "digest": "sha256",
+    "default_mode_changed": false,
+    "whole_store_rollback_protected": false
+  },
+  "bundles": {
+    "v1": {
+      "bundle_version": 1,
+      "issuer": "did:web:directory.example",
+      "keys": []
+    },
+    "v1_conflict": {
+      "bundle_version": 1,
+      "issuer": "did:web:replacement.example",
+      "keys": []
+    },
+    "v2": {
+      "bundle_version": 2,
+      "issuer": "did:web:directory.example",
+      "keys": []
+    },
+    "v3_keyed": {
+      "bundle_version": 3,
+      "issuer": "did:web:directory.example",
+      "keys": [
+        {
+          "key_id": "key-b",
+          "public_key_b64url": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "state": "retiring",
+          "valid_from": 100,
+          "valid_until": 500,
+          "allowed_profiles": [
+            "profile-z",
+            "dispatch_ticket_v2"
+          ],
+          "issuers": [
+            "issuer-z",
+            "issuer-a"
+          ],
+          "audiences": [
+            "audience-z",
+            "audience-a"
+          ]
+        },
+        {
+          "key_id": "key-a",
+          "public_key_b64url": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "state": "active",
+          "valid_from": 50,
+          "valid_until": 600
+        }
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": "install_initial",
+      "operation": "install",
+      "candidate": "v1",
+      "expected": "installed",
+      "high_water": 1
+    },
+    {
+      "id": "restart_load",
+      "operation": "load",
+      "expected": "loaded",
+      "bundle": "v1",
+      "high_water": 1
+    },
+    {
+      "id": "idempotent_install",
+      "operation": "install",
+      "candidate": "v1",
+      "expected": "unchanged",
+      "high_water": 1
+    },
+    {
+      "id": "same_version_conflict",
+      "operation": "install",
+      "candidate": "v1_conflict",
+      "expected": "conflict",
+      "high_water": 1
+    },
+    {
+      "id": "install_upgrade",
+      "operation": "install",
+      "candidate": "v2",
+      "expected_current_version": 1,
+      "expected": "installed",
+      "high_water": 2
+    },
+    {
+      "id": "reject_stale",
+      "operation": "install",
+      "candidate": "v1",
+      "expected": "stale",
+      "high_water": 2
+    },
+    {
+      "id": "compare_conflict",
+      "operation": "install",
+      "candidate": "v2",
+      "expected_current_version": 1,
+      "expected": "conflict",
+      "high_water": 2
+    },
+    {
+      "id": "corrupt_state",
+      "operation": "load_corrupt",
+      "expected": "corrupt"
+    },
+    {
+      "id": "explicit_recovery_required",
+      "operation": "recover",
+      "candidate": "v1",
+      "authorized": false,
+      "expected": "recovery_required"
+    },
+    {
+      "id": "explicit_recovery",
+      "operation": "recover",
+      "candidate": "v1",
+      "authorized": true,
+      "reason": "operator-approved-test-recovery",
+      "preserve_high_water": 2,
+      "expected": "recovered",
+      "high_water": 2
+    }
+  ],
+  "canonical_digests": {
+    "v1": "sha256:3a034c6ea3fc595d5d750ca5dda26ae0b69e2cb99d7f3a014e5936d1cb16d029",
+    "v1_conflict": "sha256:b24f0f542bb599a849dc7f7eba6b2afc9ea889e8e21ebac4757fcac44343c558",
+    "v2": "sha256:495e651655f5bcc439c38d8f76a7446a68a8535f9c323b957404b9296cf9c288",
+    "v3_keyed": "sha256:33be78b0323d7d7413507a64566b74fba5ec9b12903d89581df0898907d2c907"
+  }
+}
