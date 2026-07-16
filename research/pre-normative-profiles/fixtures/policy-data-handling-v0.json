@@ -1,0 +1,323 @@
+{
+  "profile": "urn:iicp:profile:policy-data-handling:v0",
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "known_requirement_fields": [
+    "version",
+    "role",
+    "data_class",
+    "remote_routing",
+    "allowed_regions",
+    "retention",
+    "training_use",
+    "subprocessors",
+    "approval",
+    "tool_risk",
+    "requires_encryption",
+    "requires_receipt",
+    "requires_human_review",
+    "critical_requirements"
+  ],
+  "reason_precedence": [
+    "unsupported_policy_requirement",
+    "remote_routing_forbidden",
+    "data_class_not_accepted",
+    "approval_required",
+    "region_not_allowed",
+    "retention_requirement_unsatisfied",
+    "training_use_requirement_unsatisfied",
+    "subprocessor_requirement_unsatisfied",
+    "approval_requirement_unsatisfied",
+    "tool_risk_requirement_unsatisfied",
+    "encryption_requirement_unsatisfied",
+    "receipt_requirement_unsatisfied",
+    "human_review_requirement_unsatisfied",
+    "compatible"
+  ],
+  "cases": [
+    {
+      "id": "POLICY-DATA-01",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "confidential",
+        "remote_routing": "allowed",
+        "allowed_regions": [
+          "eu-central"
+        ],
+        "retention": {
+          "task_payload": "none"
+        },
+        "training_use": "none",
+        "subprocessors": "none",
+        "approval": "user",
+        "tool_risk": "read_only",
+        "requires_encryption": true,
+        "requires_receipt": true,
+        "requires_human_review": true,
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "public",
+          "internal",
+          "confidential"
+        ],
+        "jurisdiction": "eu-central",
+        "retention": {
+          "task_payload": "none"
+        },
+        "training_use": "none",
+        "subprocessors": "none",
+        "approval": "human_review",
+        "tool_risk": "read_only",
+        "requires_human_review": true,
+        "role": "declaration"
+      },
+      "context": {
+        "encryption_ready": true,
+        "receipt_supported": true,
+        "approval_granted": true
+      },
+      "expected": "compatible"
+    },
+    {
+      "id": "POLICY-DATA-02",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "public",
+        "remote_routing": "local_only",
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "public"
+        ],
+        "role": "declaration"
+      },
+      "context": {},
+      "expected": "remote_routing_forbidden"
+    },
+    {
+      "id": "POLICY-DATA-03",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "restricted",
+        "remote_routing": "allowed",
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "public",
+          "internal"
+        ],
+        "role": "declaration"
+      },
+      "context": {},
+      "expected": "data_class_not_accepted"
+    },
+    {
+      "id": "POLICY-DATA-04",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "internal",
+        "remote_routing": "requires_approval",
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "internal"
+        ],
+        "role": "declaration"
+      },
+      "context": {
+        "approval_granted": false
+      },
+      "expected": "approval_required"
+    },
+    {
+      "id": "POLICY-DATA-05",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "public",
+        "remote_routing": "allowed",
+        "allowed_regions": [
+          "eu-central"
+        ],
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "public"
+        ],
+        "jurisdiction": "us-east",
+        "role": "declaration"
+      },
+      "context": {},
+      "expected": "region_not_allowed"
+    },
+    {
+      "id": "POLICY-DATA-06",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "public",
+        "remote_routing": "allowed",
+        "retention": {
+          "task_payload": "none"
+        },
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "public"
+        ],
+        "retention": {
+          "task_payload": "transient",
+          "max_seconds": 300
+        },
+        "role": "declaration"
+      },
+      "context": {},
+      "expected": "retention_requirement_unsatisfied"
+    },
+    {
+      "id": "POLICY-DATA-07",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "public",
+        "remote_routing": "allowed",
+        "retention": {
+          "task_payload": "transient",
+          "max_seconds": 60
+        },
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "public"
+        ],
+        "retention": {
+          "task_payload": "transient",
+          "max_seconds": 300
+        },
+        "role": "declaration"
+      },
+      "context": {},
+      "expected": "retention_requirement_unsatisfied"
+    },
+    {
+      "id": "POLICY-DATA-08",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "public",
+        "remote_routing": "allowed",
+        "training_use": "none",
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "public"
+        ],
+        "training_use": "unknown",
+        "role": "declaration"
+      },
+      "context": {},
+      "expected": "training_use_requirement_unsatisfied"
+    },
+    {
+      "id": "POLICY-DATA-09",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "public",
+        "remote_routing": "allowed",
+        "subprocessors": "none",
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "public"
+        ],
+        "subprocessors": "declared",
+        "role": "declaration"
+      },
+      "context": {},
+      "expected": "subprocessor_requirement_unsatisfied"
+    },
+    {
+      "id": "POLICY-DATA-10",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "public",
+        "remote_routing": "allowed",
+        "requires_encryption": true,
+        "requires_receipt": true,
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "public"
+        ],
+        "role": "declaration"
+      },
+      "context": {
+        "encryption_ready": false,
+        "receipt_supported": true
+      },
+      "expected": "encryption_requirement_unsatisfied"
+    },
+    {
+      "id": "POLICY-DATA-11",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "public",
+        "remote_routing": "allowed",
+        "critical_requirements": [
+          "extensions.future_control"
+        ],
+        "extensions": {
+          "future_control": "strict"
+        },
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "public"
+        ],
+        "role": "declaration"
+      },
+      "context": {},
+      "expected": "unsupported_policy_requirement"
+    },
+    {
+      "id": "POLICY-DATA-12",
+      "requirement": {
+        "version": "0-draft",
+        "data_class": "public",
+        "remote_routing": "allowed",
+        "extensions": {
+          "future_hint": "advisory"
+        },
+        "role": "requirement"
+      },
+      "declaration": {
+        "version": "0-draft",
+        "accepted_data_classes": [
+          "public"
+        ],
+        "role": "declaration"
+      },
+      "context": {},
+      "expected": "compatible"
+    }
+  ]
+}

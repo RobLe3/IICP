@@ -6,23 +6,157 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "version": {"const": "0-draft"},
-    "data_class": {"enum": ["public", "internal", "confidential", "restricted"]},
-    "remote_routing": {"enum": ["allowed", "requires_approval", "local_only"]},
-    "jurisdiction": {"type": "string", "minLength": 2, "maxLength": 64},
-    "allowed_regions": {"type": "array", "items": {"type": "string", "minLength": 2}, "uniqueItems": true},
+    "role": {
+      "enum": [
+        "requirement",
+        "declaration"
+      ]
+    },
+    "version": {
+      "const": "0-draft"
+    },
+    "data_class": {
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "restricted"
+      ]
+    },
+    "accepted_data_classes": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "public",
+          "internal",
+          "confidential",
+          "restricted"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "remote_routing": {
+      "enum": [
+        "allowed",
+        "requires_approval",
+        "local_only"
+      ]
+    },
+    "jurisdiction": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64
+    },
+    "allowed_regions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 2
+      },
+      "uniqueItems": true
+    },
     "retention": {
       "type": "object",
       "additionalProperties": false,
-      "properties": {"task_payload": {"enum": ["none", "transient", "declared"]}}
+      "properties": {
+        "task_payload": {
+          "enum": [
+            "none",
+            "transient",
+            "declared"
+          ]
+        },
+        "max_seconds": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
     },
-    "training_use": {"enum": ["none", "declared", "unknown"]},
-    "subprocessors": {"enum": ["none", "declared", "unknown"]},
-    "approval": {"enum": ["none", "user", "operator", "human_review"]},
-    "tool_risk": {"enum": ["none", "read_only", "write", "privileged"]},
-    "requires_encryption": {"type": "boolean"},
-    "requires_receipt": {"type": "boolean"},
-    "requires_human_review": {"type": "boolean"}
+    "training_use": {
+      "enum": [
+        "none",
+        "declared",
+        "unknown"
+      ]
+    },
+    "subprocessors": {
+      "enum": [
+        "none",
+        "declared",
+        "unknown"
+      ]
+    },
+    "approval": {
+      "enum": [
+        "none",
+        "user",
+        "operator",
+        "human_review"
+      ]
+    },
+    "tool_risk": {
+      "enum": [
+        "none",
+        "read_only",
+        "write",
+        "privileged"
+      ]
+    },
+    "requires_encryption": {
+      "type": "boolean"
+    },
+    "requires_receipt": {
+      "type": "boolean"
+    },
+    "requires_human_review": {
+      "type": "boolean"
+    },
+    "critical_requirements": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
   },
-  "required": ["version", "data_class", "remote_routing"]
+  "required": [
+    "version",
+    "role"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "role": {
+            "const": "requirement"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "data_class",
+          "remote_routing"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "role": {
+            "const": "declaration"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "accepted_data_classes"
+        ]
+      }
+    }
+  ]
 }
