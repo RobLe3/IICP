@@ -160,3 +160,22 @@ format and identity database remain implementation-specific. Authorization
 responses MUST NOT expose principal identifiers, credentials, task content,
 endpoints or backend topology. The existing single bearer-token helper is only
 a compatibility/test adapter and is not a production identity design.
+## Runtime cancellation and observer backpressure
+
+Cancellation changes lifecycle state only after the provider has attempted to
+signal the active execution handle. Implementations distinguish
+`cancel_signalled`, `cancel_unsupported` and `already_terminal`; a cancellation
+request MUST NOT silently imply that backend execution stopped immediately.
+Backend-specific handles and acknowledgement mechanisms remain implementation
+details.
+
+Sustained observation uses a bounded provider buffer. When an observer's last
+accepted sequence precedes the earliest retained event, the provider returns
+`observer_lagged` with only the earliest available and latest sequence. The
+observer reconnects through ordinary bounded replay; the provider MUST NOT grow
+an unbounded queue for a slow or disconnected consumer. Terminal events close
+the observer after delivery and disconnect releases its slot.
+
+The pre-normative fixture
+`fixtures/service-lifecycle-runtime-control-v1.json` defines the portable
+outcomes. It adds no transport-specific frame or default runtime mounting.

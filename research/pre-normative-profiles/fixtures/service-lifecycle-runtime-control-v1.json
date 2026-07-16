@@ -1,0 +1,25 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "profile": "urn:iicp:profile:service-lifecycle:v1",
+  "status": "pre-normative",
+  "cancellation": [
+    {"id": "CANCEL-RUNTIME-01", "state": "queued", "handler": "registered", "expected": "cancel_signalled"},
+    {"id": "CANCEL-RUNTIME-02", "state": "running", "handler": "registered", "expected": "cancel_signalled"},
+    {"id": "CANCEL-RUNTIME-03", "state": "streaming", "handler": "registered", "expected": "cancel_signalled"},
+    {"id": "CANCEL-RUNTIME-04", "state": "running", "handler": "unsupported", "expected": "cancel_unsupported"},
+    {"id": "CANCEL-RUNTIME-05", "state": "completed", "handler": "registered", "expected": "already_terminal"},
+    {"id": "CANCEL-RUNTIME-06", "state": "cancelled", "handler": "registered", "expected": "already_terminal"}
+  ],
+  "observation": {
+    "capacity": 2,
+    "published_sequences": [1, 2, 3],
+    "vectors": [
+      {"id": "OBSERVE-RUNTIME-01", "after_sequence": 1, "expected_sequences": [2, 3]},
+      {"id": "OBSERVE-RUNTIME-02", "after_sequence": 0, "expected_error": "observer_lagged", "earliest_available": 2, "latest_sequence": 3},
+      {"id": "OBSERVE-RUNTIME-03", "after_sequence": 3, "expected_sequences": []}
+    ],
+    "terminal_closes_observer": true,
+    "disconnect_releases_slot": true
+  },
+  "forbidden_event_fields": ["prompt", "response", "credential", "endpoint", "backend_topology"]
+}
