@@ -28,7 +28,8 @@ discovery; unsupported required requests fail closed, while optional requests
 remain advisory.
 
 `cip-consumer-cosignature-v1.json` covers the optional, pre-normative
-`consumer_cosignature_v1` profile. It pins RFC 8785 subset bytes, a
+`consumer_cosignature_v1` profile. It pins full RFC 8785 bytes, including
+number formatting and UTF-16 property ordering, plus a
 domain-separated SHA-256 receipt digest, provider and consumer Ed25519
 signatures, anti-replay/binding/key-lifecycle cases, self-dealing exclusions,
 and network-isolated reservation/settlement outcomes. It does not enable the
