@@ -1,5 +1,9 @@
 # IICP proposal drafts
 
+The optional consumer co-signature research contract is documented in
+`consumer-cosignature-v1.md`; its adoption advertisement is dormant and does
+not alter routing or economics.
+
 These documents are pre-normative design proposals. They do not change the
 ratified IICP suite, existing wire contracts, or client behavior. A proposal
 may advance only after deterministic simulation, cross-SDK fixture tests,
