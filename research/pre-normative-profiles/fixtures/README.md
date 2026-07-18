@@ -35,6 +35,12 @@ signatures, anti-replay/binding/key-lifecycle cases, self-dealing exclusions,
 and network-isolated reservation/settlement outcomes. It does not enable the
 profile or change production credits, reputation, reservation or settlement.
 
+`arcp-coordinator-transcript-v0.json` covers portable coordinator outcomes for
+quorum completion, duplicate suppression, cancellation, strict timeout
+fallback, same-operator exclusion and coordinator failure. It is a semantic
+research transcript, not evidence that every SDK implements a runtime
+coordinator and not authorization for ARCP routing.
+
 `endpoint-security-v1.json` covers the common public/private address and
 hostname policy used by the maintained clients before a provider connection is
 pinned. It does not publish resolver output or authorize private routes.

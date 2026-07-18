@@ -1,0 +1,67 @@
+{
+  "schema": "iicp.research.arcp.coordinator-transcript.v0",
+  "status": "pre-normative",
+  "boundary": "semantic transcript only; not runtime coordinator evidence",
+  "cases": [
+    {
+      "name": "quorum_completion_ignores_duplicate",
+      "quorum": 2,
+      "strict_replicas": true,
+      "events": [
+        {"type": "dispatch", "worker": "a"},
+        {"type": "dispatch", "worker": "b"},
+        {"type": "dispatch", "worker": "c"},
+        {"type": "result", "worker": "a", "attribution": "cross_operator"},
+        {"type": "duplicate_result", "worker": "a"},
+        {"type": "result", "worker": "b", "attribution": "cross_operator"}
+      ],
+      "expected": {"terminal": "completed", "counted_results": 2, "duplicates_ignored": 1, "settlement": "settle_contributors"}
+    },
+    {
+      "name": "consumer_cancellation_propagates",
+      "quorum": 2,
+      "strict_replicas": true,
+      "events": [
+        {"type": "dispatch", "worker": "a"},
+        {"type": "dispatch", "worker": "b"},
+        {"type": "cancel"},
+        {"type": "result", "worker": "a", "attribution": "cross_operator"}
+      ],
+      "expected": {"terminal": "cancelled", "counted_results": 0, "duplicates_ignored": 0, "settlement": "release_unspent"}
+    },
+    {
+      "name": "strict_timeout_falls_back",
+      "quorum": 2,
+      "strict_replicas": true,
+      "events": [
+        {"type": "dispatch", "worker": "a"},
+        {"type": "dispatch", "worker": "b"},
+        {"type": "result", "worker": "a", "attribution": "cross_operator"},
+        {"type": "timeout", "worker": "b"}
+      ],
+      "expected": {"terminal": "local_fallback", "counted_results": 1, "duplicates_ignored": 0, "settlement": "release_unspent"}
+    },
+    {
+      "name": "same_operator_result_is_not_trust_evidence",
+      "quorum": 1,
+      "strict_replicas": false,
+      "events": [
+        {"type": "dispatch", "worker": "a"},
+        {"type": "result", "worker": "a", "attribution": "same_operator"},
+        {"type": "timeout", "worker": "a"}
+      ],
+      "expected": {"terminal": "failed", "counted_results": 0, "duplicates_ignored": 0, "settlement": "exclude_self_dealing"}
+    },
+    {
+      "name": "coordinator_failure_releases_reservation",
+      "quorum": 2,
+      "strict_replicas": false,
+      "events": [
+        {"type": "dispatch", "worker": "a"},
+        {"type": "dispatch", "worker": "b"},
+        {"type": "coordinator_failure"}
+      ],
+      "expected": {"terminal": "failed", "counted_results": 0, "duplicates_ignored": 0, "settlement": "release_unspent"}
+    }
+  ]
+}
