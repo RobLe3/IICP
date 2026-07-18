@@ -101,3 +101,10 @@ audit outcomes while preserving ordinary open-mesh behavior when absent.
 settlement cardinality for submit, status, observation, resume, cancellation,
 partial delivery and terminal outcomes. Amounts and production economics are
 out of scope.
+
+`e050-strict-v0.json` defines the disabled-by-default secured-node
+re-registration ownership matrix shared by the PHP and Rust directory
+implementations. Strict mode rejects tokenless refreshes even when the route is
+unchanged, preventing a two-step credential-rotation and route-takeover bypass.
+It does not authorize a production cutover; the sustained adoption and recovery
+gates remain external prerequisites.

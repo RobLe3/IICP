@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.8.0-draft",
+  "manifest_version": "0.9.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -71,6 +71,11 @@
       "path": "service-lifecycle-identity-v1.json",
       "fixture_version": "0.1.0-draft",
       "sha256": "9f556c4422e690c036ec53c583557dfbea9f80fd24be1e27f7ec73e293b14dfe"
+    },
+    {
+      "path": "e050-strict-v0.json",
+      "fixture_version": "0.0.0-pre-deployment",
+      "sha256": "77307de48195abb080493d0cd4393b0de9855d70cb37b04580f68abd503c0728"
     }
   ]
 }

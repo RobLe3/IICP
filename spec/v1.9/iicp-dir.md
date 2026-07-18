@@ -1,7 +1,7 @@
 # IICP-DIR — Directory Sub-Protocol Specification
 
-**Version**: 1.1.21
-**Date**: 2026-07-10
+**Version**: 1.1.23
+**Date**: 2026-07-18
 **Status**: draft
 **Issue**: #14
 **Authority**: Protocol Steward
@@ -579,7 +579,7 @@ risk-reduction measures, not legal compliance proof.
 | `transport_metadata` | object\|null | Transport-specific detail (relay endpoint, candidate list). Shape per ADR-041; opaque to clients that only use `endpoint`. |
 | `address_family` | string\|null | `"ipv4"`, `"ipv6"`, or `"dual"` (maintainer directive 2026-05-27). Lets IPv6-only clients filter. |
 | `relay_capable` | boolean | `true` if the node can act as a relay for NAT-bound peers (Tier-3 reachability). |
-| `cx_public_key` | object\|null | Canonical IICP-CX confidentiality key (iicp-confidentiality §3.2): `{algorithm, encoding, key, key_id, not_after, hybrid_pq}`. Present when the node advertises E2E payload encryption support. `null` = node accepts plaintext only. Clients MUST use this to encrypt payloads when `X-IICP-Require-E2E` is set. |
+| `cx_public_key` | object\|null | Canonical IICP-CX confidentiality key (iicp-confidentiality §3.2): `{algorithm, encoding, key, key_id, not_after, hybrid_pq, features}`. `features` is an optional additive string list; `response_encryption_v1` negotiates authenticated encrypted responses without claiming the complete `cx_tier: 2` bundle. Unknown features are ignored. Present when the node advertises E2E payload encryption support. `null` = node accepts plaintext only. Clients MUST use this to encrypt payloads when `X-IICP-Require-E2E` is set. |
 | `sdk_language` / `sdk_version` | string\|null | Advisory provenance of the serving node's SDK (#338). Informational only. |
 | `sdk_status` / `sdk_baseline_version` / `upgrade_required` | string/string/boolean | Directory-computed SDK-baseline posture. `sdk_status` is `"current"`, `"downlevel"`, or `"unknown"` against the directory's current baseline. Downlevel/unknown nodes remain visible during transition but are demoted and SHOULD NOT be preferred for privacy-sensitive routing. |
 | `key_ready` / `privacy_routing_status` | boolean/string | `key_ready=true` when the node advertises canonical `cx_public_key`. `privacy_routing_status` is `"key_ready"` or `"transitional"`; transitional nodes can serve legacy/plaintext paths but MUST NOT be treated as fully CX-ready. |
@@ -1206,7 +1206,7 @@ The directory grants a small free-credit allocation to bootstrap new nodes into 
 | `IICP-E034` | 429 | Too many registration attempts from this source IP (60/min per source IP — see iicp-core.md §7) |
 | `IICP-E035` | 422 | Non-routable endpoint host (ADR-041 invariant; `RoutableEndpoint` validator, iter-1365 / #325) |
 | `IICP-E049` | 403 | Re-registration with a changed `cx_public_key` requires a valid `current_node_token` proving ownership. **Normative (MUST)**: if a re-registration request supplies a `cx_public_key` that differs from the stored value, the directory MUST verify that `current_node_token` bcrypt-matches the stored token hash. Failure → 403 IICP-E049. This gate prevents unauthenticated key-substitution attacks. (RT-6-1, #390, iter-1807) |
-| `IICP-E050` | 403 | Re-registration that changes a **routing-critical field** (`endpoint`, `transport_endpoint`, `relay_endpoint`) requires proof that the caller controls the existing `node_id`. **Normative (MUST)**: if a re-registration request changes any routing-critical field from the stored value, the directory MUST accept the change only if **either** (a) `current_node_token` bcrypt-matches the stored token hash (**ownership proof**), **or** (b) the node's previously-stored endpoint is **verified absent** — a directory liveness probe `GET {stored_endpoint}/iicp/health` fails within the registration liveness budget (**old-endpoint absence**, the legitimate-rotation path: a rotating tunnel/CGNAT node's prior URL is already dead). If neither holds (old endpoint still answers AND no valid `current_node_token`), the directory MUST reject with 403 IICP-E050. This extends the RT-6-1 ownership pattern (IICP-E049) to routing fields, preventing unauthenticated endpoint-substitution (node-traffic hijack) while preserving token-less re-registration for genuine endpoint rotation. **Hardening (E′, MUST once adoption-gated per §6.1)**: for nodes that have an `operator_pubkey` or `cx_public_key` on record (**secured nodes**), the directory MUST require path (a) — `current_node_token` — regardless of old-endpoint liveness, so a secured node cannot be hijacked by an attacker who first disables its old endpoint. (RT-6-2, #529, #522) |
+| `IICP-E050` | 403 | Re-registration that changes a **routing-critical field** (`endpoint`, `transport_endpoint`, `relay_endpoint`) requires proof that the caller controls the existing `node_id`. **Normative (MUST)**: if a re-registration request changes any routing-critical field from the stored value, the directory MUST accept the change only if **either** (a) `current_node_token` bcrypt-matches the stored token hash (**ownership proof**), **or** (b) the node's previously-stored endpoint is **verified absent** — a directory liveness probe `GET {stored_endpoint}/iicp/health` fails within the registration liveness budget (**old-endpoint absence**, the legitimate-rotation path: a rotating tunnel/CGNAT node's prior URL is already dead). If neither holds (old endpoint still answers AND no valid `current_node_token`), the directory MUST reject with 403 IICP-E050. This extends the RT-6-1 ownership pattern (IICP-E049) to routing fields, preventing unauthenticated endpoint-substitution (node-traffic hijack) while preserving token-less re-registration for genuine endpoint rotation. **Hardening (E′, MUST once adoption-gated per §6.1)**: for an existing node that has an `operator_pubkey` or `cx_public_key` on record (**secured node**), every REGISTER refresh MUST supply a `current_node_token` that matches the stored hash, even when its routing fields are unchanged. The directory MUST reject a missing or invalid token with IICP-E050 and MUST NOT rotate credentials. Requiring ownership only when the route changes is insufficient because a tokenless unchanged-route refresh could first obtain a fresh token and use it to authorize a second routing change. (RT-6-2, #529, #522, #534) |
 
 ### 3.12 Consumer Token Issuance (Phase 2, #496)
 
@@ -1480,8 +1480,8 @@ operator-specific controller/processor analysis.
 |-------|---------|-----------------|
 | `POST /v1/operator/challenge` | Issue a single-use five-minute nonce for a known operator key. | Response is `no-store` and exposes only a short fingerprint plus current terms/DPA versions. |
 | `POST /v1/operator/acceptance` | Record current terms and DPA version acknowledgement. | Requires a fresh challenge and operator Ed25519 signature. |
-| `POST /v1/operator/key/rotate` | Move an active operator identity to a successor key. | Requires one fresh challenge plus signatures from both the current and successor Ed25519 keys; linked node continuity moves atomically while independently signed policy manifests are not rewritten. |
-| `POST /v1/operator/key/revoke` | Revoke an active operator identity. | Requires a signed `confirm=true`; linked nodes become operator-unverified until explicitly re-delegated while historical ledgers follow existing retention rules. |
+| `POST /v1/operator/key/rotate` | Move an active operator identity to a successor key. | Requires one fresh challenge plus a signature from both the current and successor Ed25519 keys. Linked node bindings and node-backed credit/reputation/recognition continuity move atomically; independently signed policy manifests are **not** rewritten. |
+| `POST /v1/operator/key/revoke` | Revoke an active operator identity. | Requires a signed `confirm=true`; linked nodes become operator-unverified until explicitly re-delegated. Historical ledgers remain subject to their existing retention rules. |
 | `POST /v1/operator/dsr/export` | Export records linked to the authenticated operator. | Selector is derived from the signed operator key, never caller-provided identity data. |
 | `POST /v1/operator/dsr/restrict` | Restrict matching operator records. | Requires signed `confirm=true`. |
 | `POST /v1/operator/dsr/anonymize` | Anonymize matching operator records under the existing retention rules. | Requires signed `confirm=true`; no cross-operator selector is accepted. |
@@ -1504,9 +1504,12 @@ tokens, contact data, or task content.
 
 Normal rotation is an explicit continuity operation, not a silent key replacement:
 the old key becomes `rotated` and cannot create new self-service or delegation
-claims; the new key becomes active only after both key-control proofs verify. Only
-safe fingerprints, timestamp, epoch and redacted reason class may be public. A lost
-or compromised key MUST NOT receive automatic continuity transfer.
+claims; the new key becomes active only after both key-control proofs verify. The
+directory MAY expose only successor/current **fingerprints**, redacted reason class,
+timestamp and epoch. It MUST NOT expose raw old/new keys, alias mappings, tokens or
+private evidence. If the current key is lost or compromised, automated continuity
+transfer is forbidden; the assisted recovery process is intentionally outside this
+accountless endpoint.
 
 Official SDKs SHOULD expose byte-identical canonicalization/signing helpers so a
 future portal or CLI can keep the private operator key local. Browser self-service
@@ -1763,6 +1766,8 @@ Tracking: #508
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1.23 | 2026-07-18 | #534 clarifies adoption-gated strict E050: every re-registration of an existing secured node requires the current token, including unchanged routes, so a tokenless refresh cannot mint a credential and then authorize a second-step route takeover. Transitional old-endpoint-absence behavior remains unchanged until an explicit cutover. |
+| 1.1.22 | 2026-07-11 | #618 accountless operator-key lifecycle: dual-key signed normal rotation preserves linked-node, credit/reputation and recognition continuity atomically while policy manifests remain independently re-signed; signed revocation fails closed for node operator bindings. Old keys become ineligible for new claims, and public receipts remain redacted/no-store. |
 | 1.1.21 | 2026-07-10 | #557 completes the CX discovery-name cutover: discover/NODELIST and authenticated dispatch routes emit only canonical `cx_public_key`. The deprecated CX `public_key` alias is removed from directory output and schema; SDK consumers may retain read fallback for one further release. Node-detail `public_key` remains the distinct Ed25519 gossip key. |
 | 1.1.17 | 2026-07-09 | #613 intent-risk taxonomy: added shared `prohibited`/`high_risk`/`transparency_risk`/`minimal_or_general` vocabulary, public-mesh fail-closed defaults for prohibited/high-risk declared intents, and the non-legal-advice scope caveat. |
 | 1.1.18 | 2026-07-09 | #612 ticketed-dispatch adoption: added bounded failed-node prefix exclusion, safe policy-manifest route evidence, anonymous seven-day migration counters with 30-day retention, and automatic-client downgrade guardrails. |

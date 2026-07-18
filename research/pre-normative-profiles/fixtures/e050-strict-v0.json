@@ -1,0 +1,128 @@
+{
+  "schema": "iicp.e050_strict_parity.v0",
+  "status": "pre-deployment-disabled-by-default",
+  "routing_critical_fields": [
+    "endpoint",
+    "transport_endpoint",
+    "relay_endpoint"
+  ],
+  "cases": [
+    {
+      "name": "strict_secured_same_route_no_token_rejected_to_prevent_token_laundering",
+      "input": {
+        "strict": true,
+        "secured": true,
+        "endpoint_changed": false,
+        "transport_endpoint_changed": false,
+        "relay_endpoint_changed": false,
+        "has_ownership": false,
+        "old_endpoint_alive": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "strict_secured_endpoint_dead_no_token",
+      "input": {
+        "strict": true,
+        "secured": true,
+        "endpoint_changed": true,
+        "transport_endpoint_changed": false,
+        "relay_endpoint_changed": false,
+        "has_ownership": false,
+        "old_endpoint_alive": false
+      },
+      "allowed": false
+    },
+    {
+      "name": "strict_secured_transport_no_token",
+      "input": {
+        "strict": true,
+        "secured": true,
+        "endpoint_changed": false,
+        "transport_endpoint_changed": true,
+        "relay_endpoint_changed": false,
+        "has_ownership": false,
+        "old_endpoint_alive": false
+      },
+      "allowed": false
+    },
+    {
+      "name": "strict_secured_relay_no_token",
+      "input": {
+        "strict": true,
+        "secured": true,
+        "endpoint_changed": false,
+        "transport_endpoint_changed": false,
+        "relay_endpoint_changed": true,
+        "has_ownership": false,
+        "old_endpoint_alive": false
+      },
+      "allowed": false
+    },
+    {
+      "name": "strict_secured_with_token",
+      "input": {
+        "strict": true,
+        "secured": true,
+        "endpoint_changed": true,
+        "transport_endpoint_changed": true,
+        "relay_endpoint_changed": true,
+        "has_ownership": true,
+        "old_endpoint_alive": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "soft_endpoint_dead_no_token",
+      "input": {
+        "strict": false,
+        "secured": true,
+        "endpoint_changed": true,
+        "transport_endpoint_changed": false,
+        "relay_endpoint_changed": false,
+        "has_ownership": false,
+        "old_endpoint_alive": false
+      },
+      "allowed": true
+    },
+    {
+      "name": "soft_endpoint_alive_no_token",
+      "input": {
+        "strict": false,
+        "secured": true,
+        "endpoint_changed": true,
+        "transport_endpoint_changed": false,
+        "relay_endpoint_changed": false,
+        "has_ownership": false,
+        "old_endpoint_alive": true
+      },
+      "allowed": false
+    },
+    {
+      "name": "soft_secondary_change_no_token",
+      "input": {
+        "strict": false,
+        "secured": true,
+        "endpoint_changed": false,
+        "transport_endpoint_changed": true,
+        "relay_endpoint_changed": true,
+        "has_ownership": false,
+        "old_endpoint_alive": true
+      },
+      "allowed": true
+    },
+    {
+      "name": "strict_unsecured_preserves_soft_fallback",
+      "input": {
+        "strict": true,
+        "secured": false,
+        "endpoint_changed": true,
+        "transport_endpoint_changed": false,
+        "relay_endpoint_changed": false,
+        "has_ownership": false,
+        "old_endpoint_alive": false
+      },
+      "allowed": true
+    }
+  ]
+}
