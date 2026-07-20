@@ -2,7 +2,9 @@
 
 The optional consumer co-signature research contract is documented in
 `consumer-cosignature-v1.md`; its adoption advertisement is dormant and does
-not alter routing or economics.
+not alter routing or economics. Its companion transcript fixture makes the
+proposed offer, acceptance and settlement exchange testable without mounting
+an endpoint or authorizing strict enforcement.
 
 These documents are pre-normative design proposals. They do not change the
 ratified IICP suite, existing wire contracts, or client behavior. A proposal

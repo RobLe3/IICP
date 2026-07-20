@@ -1,0 +1,168 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "notice": "Message-shape and transition evidence only. No endpoint is implemented, legacy HMAC settlement remains authoritative, and strict enforcement is not authorized.",
+  "profile": {
+    "id": "urn:iicp:profile:cip:consumer-cosignature:v1",
+    "alias": "consumer_cosignature_v1",
+    "canonicalization": "RFC8785-JCS",
+    "digest": "SHA-256",
+    "domain_separator_utf8": "IICP-CIP-CONSUMER-COSIGNATURE-V1\\0",
+    "signature": "Ed25519",
+    "signature_input": "32-byte domain-separated receipt digest"
+  },
+  "proposed_transport_binding": "POST /api/v1/credits/settle",
+  "transcript": [
+    {
+      "step": 1,
+      "sender": "provider",
+      "recipient": "consumer",
+      "message": {
+        "type": "receipt_offer",
+        "profile": "consumer_cosignature_v1",
+        "receipt": {
+          "accounting": {
+            "compute_millis": "900719925474099312345",
+            "credits": "12345678901234567890.000001",
+            "input_tokens": "9007199254740993",
+            "output_tokens": "42"
+          },
+          "completed_at": "2026-07-15T10:00:00Z",
+          "dispatch_nonce": "dispatch-7b5e9f6c-31aa-4d8b-b54f-8fd627e2e904",
+          "expires_at": "2026-07-15T10:05:00Z",
+          "extensions": {
+            "nullable": null,
+            "unicode": "IICP 🌐 café 東京",
+            "zero": -0.0
+          },
+          "intent": "urn:iicp:intent:llm:chat:v1",
+          "profile": "urn:iicp:profile:cip:consumer-cosignature:v1",
+          "querying_node_id": "33333333-3333-4333-8333-333333333333",
+          "response_hash": "762c2749580c286a68d4528d912a4afa02a17dc2025c6c65b17b0dfab8291408",
+          "serving_node_id": "22222222-2222-4222-8222-222222222222",
+          "task_id": "11111111-1111-4111-8111-111111111111"
+        },
+        "receipt_digest_hex": "fd20e07882946103d9a40397e99a3fec9689e267993c46d7b6040d9ec5fffd9e",
+        "provider_signature_b64url": "YGK8Cm64I2cPplsj8XoTHHPyMd5DGm4PcSYIMzDHSXcBjRcDd0dl7VnGbEm_E7WeSrB4RBQljwQeohLGL-WIBA"
+      },
+      "required_action": "verify_provider_binding_and_observed_result_before_signing"
+    },
+    {
+      "step": 2,
+      "sender": "consumer",
+      "recipient": "provider",
+      "message": {
+        "type": "receipt_acceptance",
+        "profile": "consumer_cosignature_v1",
+        "receipt_digest_hex": "fd20e07882946103d9a40397e99a3fec9689e267993c46d7b6040d9ec5fffd9e",
+        "consumer_signature_b64url": "iuvN7O755IrQv8I72SVdAaasXZ1oH9HYQOwt864E6fikL4HAt-BX3ovB1MlVXo3ym3UtJmbFD1_d26vU7uKABg"
+      },
+      "required_action": "provider_must_not_modify_receipt_after_acceptance"
+    },
+    {
+      "step": 3,
+      "sender": "provider",
+      "recipient": "directory",
+      "message": {
+        "type": "settlement_request",
+        "profile": "consumer_cosignature_v1",
+        "receipt": {
+          "accounting": {
+            "compute_millis": "900719925474099312345",
+            "credits": "12345678901234567890.000001",
+            "input_tokens": "9007199254740993",
+            "output_tokens": "42"
+          },
+          "completed_at": "2026-07-15T10:00:00Z",
+          "dispatch_nonce": "dispatch-7b5e9f6c-31aa-4d8b-b54f-8fd627e2e904",
+          "expires_at": "2026-07-15T10:05:00Z",
+          "extensions": {
+            "nullable": null,
+            "unicode": "IICP 🌐 café 東京",
+            "zero": -0.0
+          },
+          "intent": "urn:iicp:intent:llm:chat:v1",
+          "profile": "urn:iicp:profile:cip:consumer-cosignature:v1",
+          "querying_node_id": "33333333-3333-4333-8333-333333333333",
+          "response_hash": "762c2749580c286a68d4528d912a4afa02a17dc2025c6c65b17b0dfab8291408",
+          "serving_node_id": "22222222-2222-4222-8222-222222222222",
+          "task_id": "11111111-1111-4111-8111-111111111111"
+        },
+        "receipt_digest_hex": "fd20e07882946103d9a40397e99a3fec9689e267993c46d7b6040d9ec5fffd9e",
+        "provider_signature_b64url": "YGK8Cm64I2cPplsj8XoTHHPyMd5DGm4PcSYIMzDHSXcBjRcDd0dl7VnGbEm_E7WeSrB4RBQljwQeohLGL-WIBA",
+        "consumer_signature_b64url": "iuvN7O755IrQv8I72SVdAaasXZ1oH9HYQOwt864E6fikL4HAt-BX3ovB1MlVXo3ym3UtJmbFD1_d26vU7uKABg"
+      },
+      "required_action": "verify_both_operator_key_bindings_and_settle_atomically_once"
+    }
+  ],
+  "transition_modes": [
+    {
+      "mode": "legacy",
+      "authoritative_path": "existing_hmac_receipt",
+      "dual_signature_effect": "ignored",
+      "economic_effect": "legacy_settlement_once",
+      "strict_enforcement_authorized": false
+    },
+    {
+      "mode": "observe",
+      "authoritative_path": "existing_hmac_receipt",
+      "dual_signature_effect": "aggregate_evidence_only",
+      "economic_effect": "no_additional_award_or_debit",
+      "strict_enforcement_authorized": false
+    },
+    {
+      "mode": "required",
+      "authoritative_path": "atomic_dual_signature_settlement",
+      "dual_signature_effect": "required",
+      "economic_effect": "settle_once_or_fail_closed",
+      "runtime_status": "unavailable",
+      "strict_enforcement_authorized": false
+    }
+  ],
+  "failure_cases": [
+    {
+      "name": "missing_acceptance",
+      "expected": "do_not_submit_or_settle"
+    },
+    {
+      "name": "digest_mismatch",
+      "expected": "reject_before_consumer_signing"
+    },
+    {
+      "name": "invalid_consumer_signature",
+      "expected": "reject_settlement"
+    },
+    {
+      "name": "operator_binding_mismatch",
+      "expected": "reject_settlement"
+    },
+    {
+      "name": "replayed_settlement",
+      "expected": "return_original_outcome_without_duplicate_economics"
+    },
+    {
+      "name": "expired_receipt",
+      "expected": "reject_settlement"
+    },
+    {
+      "name": "cancelled_or_partial_task",
+      "expected": "release_reservation_without_award_or_debit"
+    },
+    {
+      "name": "insufficient_balance",
+      "expected": "refuse_dispatch_before_execution"
+    }
+  ],
+  "privacy_contract": {
+    "content_free": true,
+    "forbidden_fields": [
+      "prompt",
+      "response",
+      "endpoint",
+      "credential",
+      "user_identity",
+      "conversation"
+    ],
+    "directory_must_not_receive_task_content": true
+  }
+}

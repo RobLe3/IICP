@@ -12,6 +12,14 @@ The shared fixture defines byte-identical JCS vectors, anti-replay and binding
 refusals, key lifecycle, self-dealing exclusions, and terminal settlement
 outcomes. Signatures prove attribution, not answer quality.
 
+The companion
+`fixtures/cip-consumer-cosignature-transcript-v1.json` fixture defines the
+proposed three-message exchange: provider `receipt_offer`, consumer
+`receipt_acceptance`, and provider `settlement_request`. It binds every message
+to the same digest and keeps legacy HMAC settlement authoritative in `legacy`
+and `observe`. The proposed settlement endpoint is not mounted; `required`
+remains unavailable and unauthorized.
+
 ## Dormant adoption metadata
 
 Providers may explicitly advertise
