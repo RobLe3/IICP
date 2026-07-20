@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-20",
+  "current_namespace": "RobLe3",
+  "planned_namespace": "iicp-protocol",
+  "organization_plan": "github-free",
+  "repositories": [
+    {
+      "id": "specification",
+      "name": "IICP",
+      "url": "https://github.com/RobLe3/IICP",
+      "visibility": "public",
+      "lifecycle": "active",
+      "authority": "normative protocol, registries and reviewed research",
+      "language": "specification",
+      "protocol": "1.9",
+      "release": "1.9.0"
+    },
+    {
+      "id": "project-hub",
+      "name": "iicp.network",
+      "url": "https://github.com/RobLe3/iicp.network",
+      "visibility": "private",
+      "lifecycle": "restructuring",
+      "authority": "cross-component issues, integration, conformance and project history",
+      "language": "mixed",
+      "protocol": "1.9",
+      "release": null
+    },
+    {
+      "id": "website",
+      "name": "iicp-website",
+      "url": "https://github.com/RobLe3/iicp-website",
+      "visibility": "private",
+      "lifecycle": "active",
+      "authority": "iicp.network website source and static-build contracts",
+      "language": "typescript",
+      "protocol": "1.9",
+      "release": "0.1.0"
+    },
+    {
+      "id": "directory-php",
+      "name": "iicp-directory-php",
+      "url": "https://github.com/RobLe3/iicp-directory-php",
+      "visibility": "private",
+      "lifecycle": "publication-review",
+      "authority": "PHP reference directory implementation and current Genesis Seed code line",
+      "language": "php",
+      "protocol": "1.9",
+      "release": "1.10.76"
+    },
+    {
+      "id": "directory-rust",
+      "name": "iicp-directory-rust",
+      "url": "https://github.com/RobLe3/iicp-directory-rust",
+      "visibility": "private",
+      "lifecycle": "publication-review",
+      "authority": "Rust directory implementation and parity candidate",
+      "language": "rust",
+      "protocol": "1.9",
+      "release": "0.1.0"
+    },
+    {
+      "id": "client-python",
+      "name": "iicp-client-python",
+      "url": "https://github.com/RobLe3/iicp-client-python",
+      "visibility": "public",
+      "lifecycle": "active",
+      "authority": "Python consumer and provider SDK",
+      "language": "python",
+      "protocol": "1.9",
+      "release": "0.7.94",
+      "package": "pypi:iicp-client"
+    },
+    {
+      "id": "client-typescript",
+      "name": "iicp-client-typescript",
+      "url": "https://github.com/RobLe3/iicp-client-typescript",
+      "visibility": "public",
+      "lifecycle": "active",
+      "authority": "TypeScript consumer and provider SDK",
+      "language": "typescript",
+      "protocol": "1.9",
+      "release": "0.7.94",
+      "package": "npm:@iicp/client"
+    },
+    {
+      "id": "client-rust",
+      "name": "iicp-client-rust",
+      "url": "https://github.com/RobLe3/iicp-client-rust",
+      "visibility": "public",
+      "lifecycle": "active",
+      "authority": "Rust consumer and provider SDK",
+      "language": "rust",
+      "protocol": "1.9",
+      "release": "0.7.94",
+      "package": "crates:iicp-client"
+    },
+    {
+      "id": "web-node",
+      "name": "iicp-web-node",
+      "url": "https://github.com/RobLe3/iicp-web-node",
+      "visibility": "public",
+      "lifecycle": "experimental",
+      "authority": "browser-native IICP consumer and provider implementation",
+      "language": "typescript",
+      "protocol": "1.9",
+      "release": "0.2.2",
+      "package": "npm:@iicp/web-node"
+    }
+  ]
+}

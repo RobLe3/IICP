@@ -10,6 +10,19 @@
 
 ---
 
+## Repository family
+
+IICP components are independently versioned repositories rather than Git
+submodules. This repository remains authoritative for protocol semantics and
+publishes the machine-readable ecosystem registry. See
+[`IMPLEMENTATIONS.md`](IMPLEMENTATIONS.md) for the official implementations,
+their current visibility, maturity and ownership boundaries.
+
+No paid GitHub feature is required to build, test, implement or participate in
+the protocol.
+
+---
+
 ## What Is IICP?
 
 IICP is an open protocol that lets AI agents discover each other, negotiate capabilities, and route tasks across a distributed network — without any central broker owning the compute or controlling the data.
