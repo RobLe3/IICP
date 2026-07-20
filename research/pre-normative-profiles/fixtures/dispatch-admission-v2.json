@@ -1,0 +1,68 @@
+{
+  "profile": "urn:iicp:profile:dispatch-admission:v2",
+  "fixture_version": "0.2.0-research",
+  "status": "pre-normative; disabled provider-local prototype only",
+  "defaults": {"clock_skew_s": 30, "retention_s": 120, "cleanup_batch": 2},
+  "cases": [
+    {
+      "id": "ADMIT-01",
+      "claim": {"jti":"admission-ticket-00000001","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1699999900,"expires_at":1700000100},
+      "expected_provider_id":"provider-a","expected_intent":"urn:iicp:intent:llm:chat:v1","now":1700000000,"expected":"accepted"
+    },
+    {
+      "id": "ADMIT-02",
+      "claim": {"jti":"admission-ticket-00000002","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1699999900,"expires_at":1700000100},
+      "prior":[{"now":1699999999}],"expected_provider_id":"provider-a","expected_intent":"urn:iicp:intent:llm:chat:v1","now":1700000000,"expected":"reject_replay"
+    },
+    {
+      "id": "ADMIT-03",
+      "claim": {"jti":"admission-ticket-00000003","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1699999900,"expires_at":1700000100},
+      "expected_provider_id":"provider-b","expected_intent":"urn:iicp:intent:llm:chat:v1","now":1700000000,"expected":"reject_provider_binding"
+    },
+    {
+      "id": "ADMIT-04",
+      "claim": {"jti":"admission-ticket-00000004","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1699999900,"expires_at":1700000100},
+      "expected_provider_id":"provider-a","expected_intent":"urn:iicp:intent:llm:embedding:v1","now":1700000000,"expected":"reject_intent_binding"
+    },
+    {
+      "id": "ADMIT-05",
+      "claim": {"jti":"admission-ticket-00000005","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1699999000,"expires_at":1699999900},
+      "expected_provider_id":"provider-a","expected_intent":"urn:iicp:intent:llm:chat:v1","now":1700000000,"expected":"reject_expired"
+    },
+    {
+      "id": "ADMIT-06",
+      "claim": {"jti":"admission-ticket-00000006","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1699999900,"expires_at":1700000100},
+      "trust_verified":false,"expected_provider_id":"provider-a","expected_intent":"urn:iicp:intent:llm:chat:v1","now":1700000000,"expected":"reject_issuer_key"
+    },
+    {
+      "id": "ADMIT-07",
+      "claim": {"jti":"admission-ticket-00000007","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1699999900,"expires_at":1700000100},
+      "prior":[{"now":1699999999}],"reopen":true,"expected_provider_id":"provider-a","expected_intent":"urn:iicp:intent:llm:chat:v1","now":1700000000,"expected":"reject_replay"
+    },
+    {
+      "id": "ADMIT-08",
+      "claim": {"jti":"admission-ticket-00000008","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1699999900,"expires_at":1700000100},
+      "prior":[{"now":1699999999,"terminal_state":"cancelled"}],"expected_provider_id":"provider-a","expected_intent":"urn:iicp:intent:llm:chat:v1","now":1700000000,"expected":"reject_terminal"
+    },
+    {
+      "id": "ADMIT-09",
+      "claim": {"jti":"admission-ticket-00000009","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1700000100,"expires_at":1700000200},
+      "expected_provider_id":"provider-a","expected_intent":"urn:iicp:intent:llm:chat:v1","now":1700000000,"expected":"reject_not_yet_valid"
+    },
+    {
+      "id": "ADMIT-10",
+      "claim": {"jti":"admission-ticket-00000010","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1699999900,"expires_at":1700000100},
+      "directory_available":false,"expected_provider_id":"provider-a","expected_intent":"urn:iicp:intent:llm:chat:v1","now":1700000000,"expected":"accepted"
+    },
+    {
+      "id": "ADMIT-11",
+      "claim": {"jti":"admission-ticket-00000011","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1699999900,"expires_at":1700000100},
+      "relay_forward":true,"expected_provider_id":"provider-a","expected_intent":"urn:iicp:intent:llm:chat:v1","now":1700000000,"expected":"accepted"
+    },
+    {
+      "id": "ADMIT-12",
+      "claim": {"jti":"admission-ticket-00000012","provider_id":"provider-a","intent":"urn:iicp:intent:llm:chat:v1","not_before":1699999900,"expires_at":1700000100},
+      "expected_provider_id":"provider-b","expected_intent":"urn:iicp:intent:llm:chat:v1","now":1700000000,"expected":"reject_provider_binding"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.9.0-draft",
+  "manifest_version": "0.10.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -76,6 +76,11 @@
       "path": "e050-strict-v0.json",
       "fixture_version": "0.0.0-pre-deployment",
       "sha256": "77307de48195abb080493d0cd4393b0de9855d70cb37b04580f68abd503c0728"
+    },
+    {
+      "path": "dispatch-admission-v2.json",
+      "fixture_version": "0.2.0-research",
+      "sha256": "708fc4732d1f9817ded3b185050992076669daf5cbdd2a1c4bb19b4e909c42cb"
     }
   ]
 }

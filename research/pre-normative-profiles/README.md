@@ -89,3 +89,9 @@ whole-store rollback resistance and do not change or overstate the
 disclosure-only v1 ticket contract.
 The shared `dispatch-ticket-trust-store-v1.json` fixture pins canonical bundle
 digests and cross-SDK storage transitions without enabling the profile.
+
+`dispatch-admission-v2.md` adds a separate provider-local single-use admission
+prototype. Python and Rust keep it opt-in and unmounted, with durable
+content-free redemption state and shared crash/replay fixtures. It does not
+reinterpret v1 route disclosure, contact the Directory on the execution path,
+or authorize a production admission endpoint.
