@@ -8,6 +8,8 @@ Git submodules. Visibility describes source access, not protocol maturity.
 |---|---|---|---|---|---|
 | [IICP](https://github.com/RobLe3/IICP) | normative protocol, registries and reviewed research | specification | public | active | 1.9.0 |
 | iicp.network (source private) | cross-component issues, integration, conformance and project history | mixed | private | restructuring | — |
+| iicp-network-ops (source private) | reviewed deployment, rollback, REACH and community operational source; no live credentials or production data | mixed | private | active | — |
+| iicp-network-internal (source private) | FORGE, agent, project-management and reviewed private-history material; never a public build dependency | mixed | private | active | — |
 | iicp-website (source private) | iicp.network website source and static-build contracts | typescript | private | active | 0.1.0 |
 | iicp-directory-php (source private) | PHP reference directory implementation and current Genesis Seed code line | php | private | publication-review | 1.10.76 |
 | iicp-directory-rust (source private) | Rust directory implementation and parity candidate | rust | private | publication-review | 0.1.0 |

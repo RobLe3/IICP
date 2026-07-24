@@ -28,6 +28,28 @@
       "release": null
     },
     {
+      "id": "private-operations",
+      "name": "iicp-network-ops",
+      "url": "https://github.com/RobLe3/iicp-network-ops",
+      "visibility": "private",
+      "lifecycle": "active",
+      "authority": "reviewed deployment, rollback, REACH and community operational source; no live credentials or production data",
+      "language": "mixed",
+      "protocol": "1.9",
+      "release": null
+    },
+    {
+      "id": "private-project-history",
+      "name": "iicp-network-internal",
+      "url": "https://github.com/RobLe3/iicp-network-internal",
+      "visibility": "private",
+      "lifecycle": "active",
+      "authority": "FORGE, agent, project-management and reviewed private-history material; never a public build dependency",
+      "language": "mixed",
+      "protocol": "1.9",
+      "release": null
+    },
+    {
       "id": "website",
       "name": "iicp-website",
       "url": "https://github.com/RobLe3/iicp-website",
