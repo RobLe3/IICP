@@ -10,8 +10,8 @@ Git submodules. Visibility describes source access, not protocol maturity.
 | iicp.network (source private) | cross-component issues, integration, conformance and project history | mixed | private | restructuring | — |
 | iicp-network-ops (source private) | reviewed deployment, rollback, REACH and community operational source; no live credentials or production data | mixed | private | active | — |
 | iicp-network-internal (source private) | FORGE, agent, project-management and reviewed private-history material; never a public build dependency | mixed | private | active | — |
-| iicp-website (source private) | iicp.network website source and static-build contracts | typescript | private | active | 0.1.0 |
-| iicp-directory-php (source private) | PHP reference directory implementation and current Genesis Seed code line | php | private | publication-review | 1.10.76 |
+| iicp-website (source private) | private iicp.network website source and static-build contracts; not planned for publication | typescript | private | active | 0.1.0 |
+| [iicp-directory-php](https://github.com/RobLe3/iicp-directory-php) | PHP reference directory implementation and current Genesis Seed code line | php | public | active | 1.10.76 |
 | iicp-directory-rust (source private) | Rust directory implementation and parity candidate | rust | private | publication-review | 0.1.0 |
 | [iicp-client-python](https://github.com/RobLe3/iicp-client-python) | Python consumer and provider SDK | python | public | active | 0.7.94 |
 | [iicp-client-typescript](https://github.com/RobLe3/iicp-client-typescript) | TypeScript consumer and provider SDK | typescript | public | active | 0.7.94 |
