@@ -10,7 +10,14 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "ecosystem" / "repositories.json"
 OUTPUT = ROOT / "IMPLEMENTATIONS.md"
 VISIBILITIES = {"public", "private"}
-LIFECYCLES = {"active", "experimental", "publication-review", "restructuring", "archived"}
+LIFECYCLES = {
+    "active",
+    "experimental",
+    "operator-preview",
+    "publication-review",
+    "restructuring",
+    "archived",
+}
 
 
 def load() -> dict:

@@ -75,9 +75,9 @@
       "id": "directory-rust",
       "name": "iicp-directory-rust",
       "url": "https://github.com/RobLe3/iicp-directory-rust",
-      "visibility": "private",
-      "lifecycle": "publication-review",
-      "authority": "Rust directory implementation and parity candidate",
+      "visibility": "public",
+      "lifecycle": "operator-preview",
+      "authority": "pre-1.0 Rust directory operator preview; not the production Genesis authority",
       "language": "rust",
       "protocol": "1.9",
       "release": "0.1.0"
