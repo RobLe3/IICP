@@ -66,7 +66,8 @@ implements Protocol Suite v1.9.0).
 
 | Component | Current version | Location |
 |-----------|----------------|----------|
-| Directory (PHP) | v1.10.4 | `directory/config/app.php` `iicp_version` |
+| Directory (PHP Genesis) | v1.10.80.1 | Public runtime release; see `IMPLEMENTATIONS.md` |
+| Directory (Rust preview) | v0.1.0 | Independent pre-1.0 implementation version |
 | Adapter (Python) | v1.x — check adapter/VERSION or pyproject.toml | |
 | Proxy (Python) | v1.x | |
 | Rust node | v0.x | `iicp-node/Cargo.toml` |

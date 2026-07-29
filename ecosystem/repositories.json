@@ -69,18 +69,18 @@
       "authority": "PHP reference directory implementation and current Genesis Seed code line",
       "language": "php",
       "protocol": "1.9",
-      "release": "1.10.80.1"
+      "release": "1.10.81.1"
     },
     {
       "id": "directory-rust",
       "name": "iicp-directory-rust",
       "url": "https://github.com/RobLe3/iicp-directory-rust",
-      "visibility": "private",
-      "lifecycle": "publication-review",
-      "authority": "Rust directory implementation and parity candidate",
+      "visibility": "public",
+      "lifecycle": "operator-preview",
+      "authority": "pre-1.0 Rust directory operator preview; not the production Genesis authority",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.1.0"
+      "release": "0.1.1"
     },
     {
       "id": "client-python",

@@ -126,7 +126,7 @@ Read [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) for th
 
 ## Client SDKs
 
-Three official client SDKs (current release: **v0.7.87**) implement
+Three official client SDKs (current release: **v0.7.97**) implement
 both sides of the protocol — the consumer (discovery, routing, retry, fallback, CIP
 consumer) and the provider (`iicp-node` runtime with backend auto-detection, NAT
 escalation, relay worker/server modes, and a built-in MCP gateway). All are open-source
@@ -144,6 +144,11 @@ consumer — with a connection console that shows every discover/dispatch wire s
 
 The SDKs are conformant reference clients — a good starting point for understanding the
 wire format in practice. Bug reports and PRs are welcome on each repository.
+
+If you are connecting an autonomous agent rather than calling the API by hand,
+start with [Connect an AI agent to IICP](docs/agent-bootstrap.md). It separates
+consumer discovery from provider registration and shows where MCP or A2A can
+carry the task after IICP selects a route.
 
 ### Reachability: the automatic NAT ladder
 
@@ -235,7 +240,7 @@ See [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) SEC-* test 
 
 **Cooperative Inference and routing hardening (active)**
 
-The [iicp.network](https://iicp.network) directory is live and the **client SDKs are published at v0.7.87** (PyPI / npm / crates.io). Each includes the `iicp-node` provider runtime, so a participant can use the mesh first and provide capacity later. Live node availability, installed-version adoption and encryption evidence change over time; consult the [live stats page](https://iicp.network/stats) before treating any network condition as current.
+The [iicp.network](https://iicp.network) directory is live and the **client SDKs are published at v0.7.97** (PyPI / npm / crates.io). Each includes the `iicp-node` provider runtime, so a participant can use the mesh first and provide capacity later. Live node availability, installed-version adoption and encryption evidence change over time; consult the [live stats page](https://iicp.network/stats) before treating any network condition as current.
 
 The mesh is usable for its current capabilities, while relay hardening, broader privacy evidence and public federation remain separate maturity gates. Remote execution still means the selected provider can read the task it executes.
 
@@ -244,7 +249,7 @@ The mesh is usable for its current capabilities, while relay hardening, broader 
 | Core protocol — register / discover / route | ✅ Live | Current evidence is published on the live stats page |
 | CIP coordinator (multi-node dispatch) | ✅ Implemented | Credit receipts, response integrity verification |
 | Reputation scoring | ✅ Ratified | Tier structure (§5.1.1) + bootstrap floor (§5.1.2) ratified 2026-05-24 — normative |
-| Published SDKs (Python / TypeScript / Rust) | ✅ Published v0.7.87 | Shared protocol baseline; see [Client SDKs](#client-sdks) |
+| Published SDKs (Python / TypeScript / Rust) | ✅ Published v0.7.97 | Shared protocol baseline; see [Client SDKs](#client-sdks) |
 | Node runtime (`iicp-node`) | ✅ Published | Ships inside every SDK (`pip install iicp-client` → `iicp-node serve`) |
 | Relay transport for unreachable workers | ✅ Shipped (v0.7.56) | HTTP long-poll worker transport — browsers and CGNAT operators bind outbound to a relay-capable node; consumers route through path-scoped relay endpoints with zero client changes |
 | **Browser node** (WebGPU, zero install) | ✅ Live | [iicp.network/browser-node](https://iicp.network/browser-node) — runs a real model in the browser via WebLLM, queries the live mesh as an IICP consumer (with a wire-level connection console), and can serve into the mesh via a relay. First **directory-listed browser node** verified end-to-end on 2026-06-12 |
@@ -282,17 +287,17 @@ v1.5+ is **wire-compatible with v1.4.2** — no message opcodes, field names, or
 
 ---
 
-## Reference Implementation
+## Implementations
 
-The reference implementation (`RobLe3/iicp.network`) is currently **private** — it will be opened once the system reaches public beta readiness. The architecture is:
+IICP components are published as dedicated repositories. The
+[implementation registry](IMPLEMENTATIONS.md) records their authority,
+visibility, lifecycle and independently versioned releases.
 
-| Component | Language | Purpose |
-|-----------|----------|---------|
-| `directory/` | PHP 8.3 + Laravel | Control plane — registration, discovery, scoring (interim, shared-hosting) |
-| `iicp-directory-rs/` | Rust 2021 + axum | Control plane — permanent replacement for the PHP directory (auditable scoring compiled into one binary) |
-| `adapter/` | Python 3.11 + FastAPI | Execution plane — task acceptance, backend dispatch |
-| `proxy/` | Python 3.11 | Client plane — discovery, routing, retry, fallback |
-| `iicp-node/` | Rust 2021 + tokio | High-performance node runtime |
+The PHP directory is the current Genesis Seed implementation. The Rust
+directory is a pre-1.0 operator preview and the intended long-term successor,
+but publishing it does not move production traffic or deprecate PHP. The three
+SDK repositories provide consumer and provider runtimes; the browser-node
+repository provides the experimental browser implementation.
 
 The protocol specification in this repository is the authoritative source for building interoperable implementations. Third-party implementations that conform to the spec (see conformance test suite) are fully compatible with the live network.
 
