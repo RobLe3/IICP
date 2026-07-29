@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/iicp-deployment-record-v1.json",
+  "title": "IICP live-directory deployment record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "deployment_kind",
+    "directory",
+    "artifact",
+    "compatibility",
+    "deployed_at",
+    "root_key_id",
+    "signature"
+  ],
+  "properties": {
+    "schema": { "const": "iicp.deployment-record.v1" },
+    "deployment_kind": {
+      "enum": ["shared_hosting", "container", "native", "other"]
+    },
+    "directory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["flavor", "runtime_version", "release_tag", "source_commit"],
+      "properties": {
+        "flavor": { "enum": ["php", "rust", "other"] },
+        "runtime_version": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "release_tag": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "source_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["build_digest", "image_digest", "sbom_digest"],
+      "properties": {
+        "build_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+        "image_digest": {
+          "type": ["string", "null"],
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "sbom_digest": {
+          "type": ["string", "null"],
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["openapi_version", "protocol_min", "protocol_max"],
+      "properties": {
+        "openapi_version": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "protocol_min": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "protocol_max": { "type": "string", "minLength": 1, "maxLength": 64 }
+      }
+    },
+    "deployed_at": { "type": "string", "format": "date-time" },
+    "root_key_id": { "type": "string", "minLength": 1, "maxLength": 512 },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "purpose", "key_id", "value"],
+      "properties": {
+        "algorithm": { "const": "Ed25519" },
+        "purpose": { "const": "iicp-deployment-record-v1" },
+        "key_id": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "value": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{86}$"
+        }
+      }
+    }
+  }
+}
