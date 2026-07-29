@@ -35,6 +35,7 @@ Start here when you are new to the protocol. Each document builds on the previou
 | [`iicp-mcp-binding.md`](./iicp-mcp-binding.md) | IICP↔MCP protocol bridge binding | ADR-007, ADR-009 |
 | [`iicp-cbor-wire.md`](./iicp-cbor-wire.md) | CBOR wire format reference (Phase 4+) | — |
 | [`iicp-identity-slot.md`](./iicp-identity-slot.md) | Directory-anchored operator identity slot and DID binding | ADR-030, ADR-034 |
+| [`iicp-deployment-provenance.md`](./iicp-deployment-provenance.md) | Signed mapping from a running directory to its release and artifact | — |
 | [`node-capability-format.md`](./node-capability-format.md) | Node capability envelope schema | ADR-007 |
 | [`iicp-recognition.md`](./iicp-recognition.md) | Operator recognition / gamification (draft skeleton — PS review pending) | ADR-030 |
 

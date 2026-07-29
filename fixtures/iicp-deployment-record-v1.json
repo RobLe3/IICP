@@ -1,0 +1,59 @@
+{
+    "schema": "iicp.deployment-record-fixture.v1",
+    "public_key_b64url": "IVL40Zt5HSRFMkLhXy6rbLfP-ntqXtMAl5YOBpiB2xI",
+    "canonical_unsigned_json": "{\"artifact\":{\"build_digest\":\"sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"image_digest\":null,\"sbom_digest\":null},\"compatibility\":{\"openapi_version\":\"1.6.0\",\"protocol_max\":\"1.9.0\",\"protocol_min\":\"1.9.0\"},\"deployed_at\":\"2026-07-29T16:54:13Z\",\"deployment_kind\":\"shared_hosting\",\"directory\":{\"flavor\":\"php\",\"release_tag\":\"v1.10.81.2\",\"runtime_version\":\"v1.10.81.2\",\"source_commit\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"root_key_id\":\"did:web:iicp.network#key-1\",\"schema\":\"iicp.deployment-record.v1\"}",
+    "signing_input_hex": "494943502d4445504c4f594d454e542d5245434f52442d5631007b226172746966616374223a7b226275696c645f646967657374223a227368613235363a62626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262626262222c22696d6167655f646967657374223a6e756c6c2c2273626f6d5f646967657374223a6e756c6c7d2c22636f6d7061746962696c697479223a7b226f70656e6170695f76657273696f6e223a22312e362e30222c2270726f746f636f6c5f6d6178223a22312e392e30222c2270726f746f636f6c5f6d696e223a22312e392e30227d2c226465706c6f7965645f6174223a22323032362d30372d32395431363a35343a31335a222c226465706c6f796d656e745f6b696e64223a227368617265645f686f7374696e67222c226469726563746f7279223a7b22666c61766f72223a22706870222c2272656c656173655f746167223a2276312e31302e38312e32222c2272756e74696d655f76657273696f6e223a2276312e31302e38312e32222c22736f757263655f636f6d6d6974223a2261616161616161616161616161616161616161616161616161616161616161616161616161616161227d2c22726f6f745f6b65795f6964223a226469643a7765623a696963702e6e6574776f726b236b65792d31222c22736368656d61223a22696963702e6465706c6f796d656e742d7265636f72642e7631227d",
+    "valid_record": {
+        "schema": "iicp.deployment-record.v1",
+        "deployment_kind": "shared_hosting",
+        "directory": {
+            "flavor": "php",
+            "runtime_version": "v1.10.81.2",
+            "release_tag": "v1.10.81.2",
+            "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "artifact": {
+            "build_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "image_digest": null,
+            "sbom_digest": null
+        },
+        "compatibility": {
+            "openapi_version": "1.6.0",
+            "protocol_min": "1.9.0",
+            "protocol_max": "1.9.0"
+        },
+        "deployed_at": "2026-07-29T16:54:13Z",
+        "root_key_id": "did:web:iicp.network#key-1",
+        "signature": {
+            "algorithm": "Ed25519",
+            "purpose": "iicp-deployment-record-v1",
+            "key_id": "did:web:iicp.network#key-1",
+            "value": "ODiLdEif34bJeLn6fowoNvAFOdMbhXRXhdixjtDzSUqHSXQ6QUxWsM3V2w_gjulAs4WnPcJb7M4XDTfFv-GzBA"
+        }
+    },
+    "negative_cases": [
+        {
+            "name": "tampered_build_digest",
+            "mutation": "artifact.build_digest",
+            "expected": "invalid_signature"
+        },
+        {
+            "name": "stale_record",
+            "verification_time": "2026-08-05T16:54:14Z",
+            "max_age_seconds": 604800,
+            "expected": "stale"
+        },
+        {
+            "name": "wrong_purpose",
+            "mutation": "signature.purpose",
+            "value": "iicp-event-v1",
+            "expected": "wrong_purpose"
+        },
+        {
+            "name": "rotated_key_without_history",
+            "mutation": "signature.key_id",
+            "value": "did:web:iicp.network#key-2",
+            "expected": "unknown_key"
+        }
+    ]
+}
