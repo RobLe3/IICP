@@ -23,6 +23,13 @@ def main() -> int:
     registry = json.loads((ROOT / "registry/intents.json").read_text())
     if registry.get("version") != manifest["registry_version"]:
         errors.append("registry version differs from release manifest")
+    ecosystem = json.loads((ROOT / "ecosystem/repositories.json").read_text())
+    specification = next(
+        (item for item in ecosystem["repositories"] if item["id"] == "specification"),
+        None,
+    )
+    if specification is None or specification.get("release") != manifest["protocol_suite_version"]:
+        errors.append("ecosystem specification release differs from suite version")
     for relative, expected in manifest["files"].items():
         path = ROOT / relative
         if not path.is_file():
@@ -31,6 +38,7 @@ def main() -> int:
             errors.append(f"digest mismatch: {relative}")
     required = {
         "CHANGELOG.md",
+        "ecosystem/repositories.json",
         "SPEC_STATUS.md",
         "VERSIONING.md",
         "registry/intents.json",
