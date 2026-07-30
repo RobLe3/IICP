@@ -29,6 +29,19 @@ def main() -> int:
             errors.append(f"missing required file: {relative}")
         elif digest(path) != expected:
             errors.append(f"digest mismatch: {relative}")
+    required = {
+        "CHANGELOG.md",
+        "SPEC_STATUS.md",
+        "VERSIONING.md",
+        "registry/intents.json",
+        "spec/v1.9/VERSION",
+        "spec/v1.9/iicp-core.md",
+        "spec/v1.9/iicp-framing.md",
+        "spec/v1.9/conformance-test-suite.md",
+    }
+    missing_pins = sorted(required - set(manifest["files"]))
+    if missing_pins:
+        errors.append("required release artifacts are not pinned: " + ", ".join(missing_pins))
     if errors:
         print("spec release integrity check failed:", *errors, sep="\n- ", file=sys.stderr)
         return 1

@@ -1,7 +1,7 @@
 # S.13 — IICP Federated Directory Protocol
 
-**Version**: 0.3.7 (Draft)  
-**Date**: 2026-06-06  
+**Version**: 0.3.8 (Draft)
+**Date**: 2026-07-30
 **Status**: draft  
 **Authority**: Federation Coordinator + Protocol Steward  
 **Linked ADR**: ADR-013 (Federated Control Plane — Vision)  
@@ -243,8 +243,12 @@ reordering any event is detectable by cascade.
 
 ```
 GET /v1/events?since_seq=<N>&limit=<M>
-Authorization: Bearer <replica_token>
 ```
+
+`GET /v1/events` is a public, rate-limited, signed transparency and
+federation tail. A bearer token is not required. Implementations MUST keep the
+federated event payload set closed and MUST NOT include credentials, task
+payloads, private contact data or private operator configuration.
 
 | Parameter | Required | Default | Notes |
 |-----------|---------|---------|-------|
@@ -456,7 +460,7 @@ that lets replica storage stay bounded forever (independent of node-count
 
 - `snapshot_seq` is the highest `seq` value that has been emitted to the
   event log at the moment the snapshot was generated. Replicas MUST
-  call `GET /v1/events?since_seq=<snapshot_seq>` immediately afterwards
+  call the public `GET /v1/events?since_seq=<snapshot_seq>` immediately afterwards
   to catch events that landed during snapshot generation. The seed
   MUST NOT delete events with `seq > snapshot_seq` before serving the
   snapshot.
@@ -686,7 +690,7 @@ v0.2.0, iter-1347 per Phase 6 charter P6-1.1), then the bootstrap + advertise st
 
 1. **Declare**: Publish own DID document at `https://<replica-domain>/.well-known/did.json` (W3C DID v1; Ed25519 verification method)
 2. **Register** (§7.1): `POST /v1/replicas/register` — handshake; receive `replica_id` + `replica_token` + initial `since_seq` + `genesis_hash`
-3. **Bootstrap**: Replay all events from `since_seq=0` (use the issued `replica_token` for `GET /v1/events`)
+3. **Bootstrap**: Fetch the authenticated snapshot, then replay the public event tail from `snapshot_seq`
 4. **Verify**: For each event: verify sig per DIR-FED-01..04
 5. **Advertise**: Listed in `/.well-known/iicp-replicas.json` at trust tier `low` (default on first registration); trust tier upgrades over time via uptime + audit
 
@@ -694,7 +698,7 @@ v0.2.0, iter-1347 per Phase 6 charter P6-1.1), then the bootstrap + advertise st
 
 **Endpoint**: `POST /v1/replicas/register` (Genesis Seed only; replicas do NOT serve this endpoint)
 
-**Authentication**: unauthenticated for the handshake itself — the Genesis Seed validates the replica's DID resolves and that its endpoint is reachable. Subsequent `/v1/events` access uses the `replica_token` returned by this handshake.
+**Authentication**: unauthenticated for the handshake itself — the Genesis Seed validates the replica's DID resolves and that its endpoint is reachable. The returned `replica_token` authorizes `GET /v1/snapshot`; `GET /v1/events` remains public and signed.
 
 **Request body** (JSON):
 ```json
@@ -723,7 +727,7 @@ v0.2.0, iter-1347 per Phase 6 charter P6-1.1), then the bootstrap + advertise st
 ```json
 {
   "replica_id":   "uuid-v4",
-  "replica_token": "<JWT, role: replica, scoped to GET /v1/events>",
+  "replica_token": "<JWT, role: replica, scoped to GET /v1/snapshot>",
   "since_seq":    0,
   "genesis_hash": "<hex>",
   "did_acknowledged": true,
@@ -735,7 +739,7 @@ v0.2.0, iter-1347 per Phase 6 charter P6-1.1), then the bootstrap + advertise st
 | Field | Notes |
 |---|---|
 | `replica_id` | UUIDv4 assigned by Genesis Seed; persisted; used as `signer_did` for replica-side event annotations in future federation |
-| `replica_token` | Scoped JWT for `GET /v1/events`; expires after 90 days; rotated on re-registration |
+| `replica_token` | Scoped JWT for `GET /v1/snapshot`; expires after 90 days; rotated on re-registration |
 | `since_seq` | Always `0` for first-time registration (full bootstrap); on re-registration may be the replica's last-acknowledged seq if the replica supplied a `last_seen_seq` query param |
 | `genesis_hash` | Same `genesis_hash` field surfaced by `GET /v1/events` (DIR-FED-07) — pin-on-first-use to detect chain forks |
 | `expires_at` | Issued `replica_token` expiry; replica MUST re-register before this date to maintain access |
@@ -800,6 +804,7 @@ v0.2.0, iter-1347 per Phase 6 charter P6-1.1), then the bootstrap + advertise st
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3.8 | 2026-07-30 | Reconciled the deployed read contract: the signed, content-bounded `GET /v1/events` tail is public and rate-limited; `GET /v1/snapshot` requires the rotating replica JWT. New tokens are scoped to snapshot bootstrap. Implementations may accept the legacy events scope for one documented compatibility window. |
 | 0.3.7 | 2026-06-06 | §3 DIR-FED-21 (Normative): Ed25519-availability requirement — a directory that emits/verifies signed events, the replica handshake, or operator delegations MUST have a working Ed25519 impl and MUST NOT assume the host provides one; PHP directories MUST ship `paragonie/sodium_compat` when `ext-sodium` is absent; cannot-verify → fail closed (grounded in the 2026-06-06 prod no-ext-sodium incident). §3.4 federated event list: explicit founder-events cross-note — `FOUNDER_LOCKIN`/`FOUNDER_SUCCESSION` (iicp-recognition §5.4) are NOT federated (dedicated non-federated chain; the closed-set DIR-FED-16 side of the relationship recognition.md already references). |
 | 0.3.6 | 2026-05-26 | §6.5 Replica Response Signing (Normative) + §8 DIR-FED-20 added per Phase 6 charter P6-4.2b. Replicas MUST sign discovery responses with Ed25519 (`X-IICP-Replica-Sig` + `X-IICP-Replica-DID` + `X-IICP-Snapshot-Seq` headers); signing input matches §3.4 event log pattern (method:path:query:snapshot_seq:body_hash). Clients MUST verify against replica's published DID key; failure logs IICP-SEC-REPLICA-01. Genesis Seed exempt (TLS+DNS trust). Replicas more than 5min behind seed (`replica_lag_ms`) MUST be treated as untrusted regardless of sig validity. |
 | 0.3.5 | 2026-05-26 | §5.1 + §5.4 + §8 DIR-FED-16: `OPERATOR_OBSERVED` event type added per Phase 6 charter P6-2.2 + W-033 (null/self-reported field manipulation audit trail). Replicas MUST record but MUST NOT mutate state — trust auditor on seed is sole authority. Closed federation type list expands from 5 → 6 types. |

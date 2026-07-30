@@ -1,5 +1,26 @@
 # IICP Changelog
 
+## v1.9.1 — 2026-07-30
+
+### Summary
+
+Governance and transport-status errata for a citable specification release.
+This release defines the project status taxonomy and version namespaces,
+corrects inaccurate IANA language, and removes invalid CBOR-tag claims.
+It also reconciles the federation read contract: the signed event tail remains
+public while replica snapshots require a scoped bootstrap token.
+
+### Compatibility
+
+No wire behavior is added or removed. Port 9484 remains a provisional native
+TCP default, not an IANA assignment. QUIC/UDP, candidate media types and future
+registry requests remain draft work.
+
+### Unreleased profiles
+
+The lifecycle, policy-detail and registry candidates listed below remain
+unreleased and are not incorporated into v1.9.1.
+
 ## Unreleased — lifecycle identity and audit candidate 2026-07-16
 
 Added fixture-gated task ownership, revocation-epoch, cross-task concealment and

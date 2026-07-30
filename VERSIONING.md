@@ -1,6 +1,6 @@
 # IICP Versioning Canon
 
-**One source of truth. Three independent version axes. Never conflate them.**
+**One source of truth. Six independent version axes. Never conflate them.**
 
 ---
 
@@ -21,7 +21,8 @@ the entire IICP specification suite (core, CIP, framing, identity, telemetry, et
 | v1.6.0 | 2026-05-23 | Phase 5 CIP spec added; binary framing stubs; recognition, telemetry, MCP binding, billing extension |
 | v1.7.0 | 2026-05-24 | §5.1.1 tier structure and §5.1.2 bootstrap floor ratified; all 13 Phase-5 research tracks closed |
 | v1.8.0 | 2026-05-25 | S.13 ephemeral-by-design federation (ADR-033); snapshot+event-tail bootstrap |
-| **v1.9.0** | **2026-05-30** | **Current** — RT-01/RT-05 reputation caps (§11.2/§11.5) + directory drift closeout (audit-report, public stats, free-credit, NODELIST fields, credit-endpoint/SCORE_UPDATE/tier reconciliations) |
+| v1.9.0 | 2026-05-30 | RT-01/RT-05 reputation caps and directory drift closeout |
+| **v1.9.1** | **2026-07-30** | **Current** — status/version governance and transport/IANA errata; no new profile promoted |
 
 **Rules:**
 - Bump MINOR for new normative content (new sections, new specs added to suite)
@@ -54,7 +55,16 @@ which version of a sub-document contains which normative text.
 
 ---
 
-## 3. Reference Implementation Version (software)
+## 3. OpenAPI Contract Version
+
+The OpenAPI `info.version` versions one HTTP contract projection. It is not the
+Protocol Suite version and it is not a directory release number. An OpenAPI
+document MUST state the protocol compatibility range and implementation
+releases MAY implement the same OpenAPI version.
+
+---
+
+## 4. Reference Implementation Version (software)
 
 **Format**: `vMAJOR.MINOR.PATCH`  
 **Scope**: Each software component has its own version  
@@ -66,7 +76,7 @@ implements Protocol Suite v1.9.0).
 
 | Component | Current version | Location |
 |-----------|----------------|----------|
-| Directory (PHP Genesis) | v1.10.80.1 | Public runtime release; see `IMPLEMENTATIONS.md` |
+| Directory (PHP Genesis) | Check `IMPLEMENTATIONS.md` and the release registry | Current Genesis implementation |
 | Directory (Rust preview) | v0.1.0 | Independent pre-1.0 implementation version |
 | Adapter (Python) | v1.x — check adapter/VERSION or pyproject.toml | |
 | Proxy (Python) | v1.x | |
@@ -79,7 +89,23 @@ implements Protocol Suite v1.9.0).
 
 ---
 
-## 4. Display Rules (website, docs, PRs)
+## 5. Package Version
+
+SDK and tool packages use their own semantic versions. A package release MUST
+declare its supported Protocol Suite range; matching package versions across
+languages indicate a coordinated release, not protocol ratification.
+
+---
+
+## 6. Deployment Version
+
+A website build or deployed directory instance has a deployment/build
+identifier. It MUST be labelled as a build or deployment version and MUST NOT
+be displayed as the Protocol Suite, OpenAPI or package version.
+
+---
+
+## 7. Display Rules (website, docs, PRs)
 
 | Surface | What to display | Example |
 |---------|----------------|---------|
@@ -98,7 +124,7 @@ implements Protocol Suite v1.9.0).
 
 ---
 
-## 5. Version Update Procedure
+## 8. Version Update Procedure
 
 When making spec changes that warrant a version bump:
 

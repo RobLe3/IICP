@@ -1,7 +1,7 @@
 # IICP Binary Framing Layer
 
 **Document**: `spec/iicp-framing.md`  
-**Version**: 0.1.6-draft
+**Version**: 0.1.7-draft
 **Date**: 2026-07-14
 **Status**: Draft — NOT YET RATIFIED (see §12)  
 **Authority**: Protocol Steward  
@@ -842,35 +842,29 @@ TELEMETRY (0x0E).
 
 ### 11.1 Port assignment
 
-IICP uses port **9484** (TCP and UDP) as its canonical port.
+The implemented native TCP profile provisionally defaults to port **9484**.
+IANA has not assigned or reserved this port for IICP.
 
-**IANA status**: Port 9484 is **confirmed IANA-unassigned** (direct verification 2026-05-20:
-queried `https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.csv`
-for ports 9480–9490; zero rows returned — no service registered on any port in this range).
-No conflicts found. This closes issue #239.
+**IANA status**: Port 9484 was unassigned when rechecked on 2026-07-29.
+Unassigned status is temporary registry state, not permission or a reservation.
+The live registry MUST be checked again before any application.
 
 **Registration path** (RFC 6335):
 
-Port 9484 is in the registered user ports range (1024–49151), which requires
-"IETF Review" or "IESG Approval" for standards-track registration. The path:
+Port 9484 is in the User Port range (1024–49151). RFC 6335 permits a
+direct Expert Review request; a Standards-Track RFC is not a prerequisite.
+Early allocation under RFC 7120 is a separate, temporary path available only
+through an adopted IETF working group and its chair.
 
-1. Produce a stable IICP Internet-Draft (individual submission or WG adoption)
-2. Include this IANA Considerations section in the draft
-3. Request IANA early allocation via the IETF process once the draft is WG-adopted
-4. Registration granted at or before RFC publication
+**Until registration is granted**: implementations MAY use 9484/TCP as a
+project default while it remains available and MUST advertise the actual port.
+They MUST NOT describe the port as assigned to IICP.
 
-This mirrors the process used by MQTT (RFC 9431, port 1883) and CoAP (RFC 7252, port 5683).
-
-**Until registration is granted**: implementations SHOULD listen on port 9484 by
-default and MUST advertise it in registered `endpoint` URLs when no other port is
-specified.
-
-**Design rationale**: Port 9484 is in the registered range (not ephemeral, not dynamic),
-appears unassigned, and is not known to appear in ISP or enterprise firewall block lists.
-Port 443 (QUIC/HTTPS piggyback via ALPN) was explicitly rejected — IICP requires a
-distinct port for clean firewall identity, IANA registration, and protocol visibility
-without ALPN negotiation overhead. This aligns with MQTT and CoAP precedent over the
-QUIC-sharing approach.
+**Decision still required**: Before requesting a dedicated port, the project
+must show why signed dynamic endpoint advertisement, DNS discovery, an
+application protocol over port 443, or a service name without an assigned port
+is insufficient. UPnP, tunnels and auto-increment are deployment mechanisms;
+they do not establish a registry requirement.
 
 **Alternatives considered**: 9800 (clean but arbitrary), 8494 (IICP reversed — novelty not
 a strong rationale), 4994, 7878. All rejected in favor of 9484 which was already in use
@@ -884,18 +878,18 @@ default, nothing more, until the RFC 6335 registration path above completes.)
 | Ports | Role | Allocation |
 |-------|------|------------|
 | 9480–9483 | Local client-side services (e.g. the OpenAI/Ollama/Anthropic-compat **proxy** on 9483, its CIP-PL1 model-provider plugin on 9482) | grow **downward** from 9483 |
-| **9484** | Canonical IICP node wire port (this section) | fixed |
+| **9484** | Provisional native TCP default | fixed when selected |
 | 9485–9490+ | Additional node instances on the same host | grow **upward** from 9484 (auto-increment) |
 
-This is a deployment convention, not a wire-format requirement: the 9484 node port is the
-only normative port in this spec (§11.1 above). The proxy's listen port is a local 127.0.0.1
+This is a deployment convention, not a wire-format or IANA allocation. The proxy's listen port is a local 127.0.0.1
 compat surface (not IICP wire traffic) and defaults to 9483 purely to avoid both the node
 auto-increment range and the common Ollama default (11434); it is freely overridable. See
 ADR-049 and `proxy/` (iicp-proxy ≥ 0.2.0).
 
 ### 11.2 Media types
 
-IICP registers the following media types (registration pending):
+The following media types are candidate registrations. This document does not
+register them:
 
 | Media type | Use |
 |-----------|-----|
@@ -904,17 +898,9 @@ IICP registers the following media types (registration pending):
 
 ### 11.3 CBOR tags
 
-IICP has pending CBOR tag registrations (issue #35):
-
-| Tag | Name |
-|-----|------|
-| 65535 | `iicp-task` |
-| 65534 | `iicp-response` |
-| 65533 | `iicp-node` |
-| 65532 | `iicp-nodelist` |
-
-Until IANA numbers are allocated, implementations MUST accept both tagged and
-untagged versions of each message type.
+No CBOR tag is assigned by this specification. Tag 65535 is defined by the
+IANA registry as always invalid and MUST NOT be emitted. The previously listed
+values 65532–65534 are not claimed. Current IICP messages use untagged maps.
 
 ---
 
@@ -927,8 +913,7 @@ ratification:
   #236 (FRAME5), #237 (FRAME6), #238 (FRAME7) resolved; no open blocking findings
   — FRAME5 closed: §10.4-10.6 (QUIC profile, CBOR constraints) 2026-05-20
   — FRAME7 closed: §13 (interoperability, dual-mode design) 2026-05-20
-- [x] Port 9484 IANA research (#239) complete; port confirmed — direct IANA CSV query
-  verified ports 9480–9490 unassigned (§11.1; closed 2026-05-20).
+- [ ] Fixed-port need and RFC 6335 application reviewed; current use of 9484 is provisional.
 - [x] Adversarial review (#242, FRAME8) complete; all persona findings resolved. The
   reassembly memory-amplification finding ("memory factor at 1000 concurrent incomplete
   frames") is resolved by the per-connection `MAX_INCOMPLETE_FRAMES` (64) and
@@ -1070,3 +1055,4 @@ mechanisms are complementary.
 | 0.1.4-draft | 2026-06-06 | PS | §10.3 FRAME8 reassembly caps (#242): per-connection `MAX_INCOMPLETE_FRAMES`=64 + `MAX_REASSEMBLY_BYTES`=64 MiB (CLOSE `reassembly_limit_exceeded`, §9.6 row added) — bounds reassembly memory to O(1) per connection, resolving the adversarial-review amplification finding. §12: flipped #239 (IANA, closed 2026-05-20) and #242 (adversarial review, closed 2026-05-24) ratification gates to complete. Header version reconciled to 0.1.4 (it trailed the changelog, which already carried 0.1.1–0.1.3). |
 | 0.1.4-draft | 2026-05-20 | PS | §10.4-10.6 QUIC transport profile — stream mapping (stream-per-request), fragmentation over QUIC (OPTIONAL, QUIC segments natively), CBOR encoding constraints (deterministic encoding for signed messages, no indefinite-length). §13 Interoperability — dual-mode design selected, HTTP↔native translation table, CUSTOM frame gateway behavior, OBSERVE SSE bridge, directory control-plane constraint. Issues #236 #238 closed. |
 | 0.1.6-draft | 2026-07-14 | Protocol Steward | Corrected a pre-ratification editorial arithmetic error: the declared field layout has always occupied 12 bytes, not 11. The implementation-backed disposition and canonical vectors are recorded in `research/native-ai-infrastructure/FRAMING_ROOT_CAUSE_2026-07-14.md` and `fixtures/native-framing-v1.json`. No wire behavior changed. |
+| 0.1.7-draft | 2026-07-30 | Protocol Steward | Corrected IANA procedure and provisional port wording; limited current port convention to TCP; removed invalid/unassigned CBOR-tag claims; left media types pending. No wire behavior changed. |

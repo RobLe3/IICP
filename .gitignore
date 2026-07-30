@@ -1,2 +1,8 @@
 .DS_Store
 ruvector.db
+build/
+.venv-ietf/
+.bundle-ietf/
+.bundle/
+.refcache/
+__pycache__/
