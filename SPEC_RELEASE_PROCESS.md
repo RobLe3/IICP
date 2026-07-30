@@ -22,6 +22,8 @@ implementation worktree.
    silently overwrite canonical text through a generic copy script.
 6. Bump the Protocol Suite version only through its explicit versioning process.
    A draft profile or fixture update does not by itself ratify a suite release.
+7. Build the release archive from a clean detached tag. Publish only immutable
+   assets with SHA-256 checksums; never rebuild or replace an existing tag.
 
 ## Promotion checklist
 
@@ -32,6 +34,9 @@ implementation worktree.
 - Record compatibility, deprecation and successor behavior where applicable.
 - Ratify only after the required independent implementations pass the pinned
   fixture; otherwise retain the artifact's draft status.
+- Verify that status terms follow `SPEC_STATUS.md` and version axes follow
+  `VERSIONING.md`.
+- Recheck every external registry claim immediately before publishing.
 
 ## Boundaries
 

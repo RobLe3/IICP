@@ -4,9 +4,9 @@
 
 *Building the HTTP for the Age of Generative AI*
 
-**Current version**: v1.9.0  
-**Reference implementation**: [iicp.network](https://iicp.network)  
-**Status**: Active development — Phase 5 (Cooperative Inference Protocol)
+**Current version**: v1.9.1
+**Reference implementation**: [iicp.network](https://iicp.network)
+**Status**: Project-normative beta suite; individual profiles retain their own status
 
 ---
 
@@ -20,6 +20,11 @@ their current visibility, maturity and ownership boundaries.
 
 No paid GitHub feature is required to build, test, implement or participate in
 the protocol.
+
+The terms **project-normative**, **stable**, **active draft**, **experimental**
+and **externally ratified** have distinct meanings. See
+[`SPEC_STATUS.md`](SPEC_STATUS.md). IICP has not been ratified by the IETF or
+assigned a service port by IANA.
 
 ---
 

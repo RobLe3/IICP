@@ -1,6 +1,6 @@
 # IICP Core — Wire Format and Mandatory Requirements
 
-**Version**: 1.3.2
+**Version**: 1.3.3
 **Date**: 2026-07-09
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
@@ -382,15 +382,16 @@ MUST requirements:
 
 ## 6. Transport
 
-**Port assignment**: Port **9484** is the canonical IICP protocol port (TCP and UDP). All
-node-to-node and node-to-directory communication MUST use port 9484 unless an alternative
-is explicitly negotiated during registration. See §11.3 for address-learning requirements.
+**Provisional native-port convention**: Native TCP implementations commonly
+listen on port **9484**, but IANA has not assigned that port to IICP. Endpoints
+MUST advertise the port they actually use. Directory control-plane traffic uses
+the HTTPS endpoint configured by the operator and is not required to use 9484.
 
 | Aspect | Phase 1 (deployed) | Phase 2 (deployed) | Phase 3 (target) | Phase 4+ (roadmap) |
 |--------|-------------------|--------------------|-------------------|---------------------|
-| Port | 9484 TCP (MUST) | 9484 TCP (MUST) | 9484 TCP (MUST) | 9484 TCP + UDP (MUST) |
+| Port | Advertised HTTPS port | Advertised HTTPS port | Advertised task/native port | TCP profile implemented; QUIC/UDP remains a draft |
 | Encoding | JSON | JSON + CBOR optional | CBOR preferred (`application/cbor`) | CBOR (default) |
-| Transport | HTTPS/1.1 or HTTPS/2 | HTTPS/2 | HTTP/2 on port 9484 | QUIC on port 9484 UDP |
+| Transport | HTTPS/1.1 or HTTPS/2 | HTTPS/2 | HTTP or negotiated native TCP | QUIC mapping is future work |
 | Framing | REST (no custom framing) | REST + HMAC-SHA256 envelope | REST (IICP binary framing optional) | Native IICP binary framing |
 | TLS version | TLS 1.3 MUST [→ SEC-TLS-01] | TLS 1.3 MUST | TLS 1.3 MUST | TLS 1.3 + PQ option |
 | Auth | Bearer node_token | JWT HS256 | W3C DID (Phase 3+) | PQ — Dilithium3 |
@@ -400,17 +401,13 @@ is explicitly negotiated during registration. See §11.3 for address-learning re
 tooling compatibility and minimise implementation risk at PoC scale. CBOR and QUIC were
 deferred explicitly to Phase 3 (see `project/decisions/ADR-002-phase1-transport.md`).
 
-**Phase 3 transport resolution**: Phase 3 is now deployed. HTTP/2 on port 9484 TCP is
-the current mandatory transport for node-to-node CALL/RESPONSE exchanges. CBOR is accepted
-as an alternative encoding when the client sends `Content-Type: application/cbor` — the
-directory and adapter MUST respond in CBOR if the request was CBOR-encoded. QUIC on port
-9484 UDP is the Phase 4 target and is tracked in issue #230.
+**Current transport evidence**: Maintained implementations support HTTP task
+endpoints and a native framed TCP profile. Deployment metadata can negotiate or
+advertise ports other than 9484. The QUIC mapping remains an active draft and is
+not a mandatory conformance requirement.
 
-**Network standard intent**: IICP is designed to become a network-level standard for
-AI-to-AI communication — analogous to HTTP for web resources or SQL for data. The
-IETF Standards Track intent from v1.4.2 (QUIC + CBOR + QuDAG + port 9484) was never
-abandoned; it was phased. All implementations SHOULD register on port 9484 to build the
-network effect needed for standardisation.
+**Standards intent**: IICP is being prepared for external review. This project
+intent is not IETF endorsement, IANA assignment or external ratification.
 
 All components MUST validate TLS certificates on outbound connections.
 
@@ -590,10 +587,11 @@ status or health command (e.g., `iicp-proxy status`).
 
 ### 11.3 Default Port
 
-Port **9484** (TCP and UDP) is the default IICP port for node-to-directory
-and node-to-node communication. This port is IANA-unassigned and is reserved
-for IICP use. Implementations SHOULD listen on port 9484 by default and MUST
-advertise it in registered `endpoint` URLs when no other port is specified.
+Port **9484/TCP** is the provisional default for the native peer profile. It is
+IANA-unassigned and is not reserved for IICP. Implementations MAY use it while
+it remains available, but MUST advertise the actual selected port. Directory
+HTTPS endpoints and HTTP task endpoints use their advertised ports. No IICP
+UDP service port is specified by this release.
 
 ---
 
@@ -601,6 +599,7 @@ advertise it in registered `endpoint` URLs when no other port is specified.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3.3 | 2026-07-30 | Corrected transport and registry status: 9484 is an unassigned provisional TCP convention, not an IANA reservation; directory HTTPS and advertised endpoint ports are separate; QUIC/UDP remains draft. |
 | 1.3.2 | 2026-07-09 | #614 adds optional `generated_by_ai` response metadata and the compatibility-proxy header rule; it is a transparency notice, not authenticity proof. |
 | 1.3.1 | 2026-06-28 | §8 replaces the stale blanket "plaintext HTTP rejected" wording with an endpoint scheme matrix: directory control plane is HTTPS/TLS-only; node task endpoints may be routable `http://` for native consumers where IICP-DIR permits and probes them; browser consumers require HTTPS/relay/WebRTC-safe paths; native data plane uses `iicp://`/`iicpsec://`. |
 | 1.0.0 | 2026-05-15 | Initial draft — extracted from IICP_draft_1.4.2.txt and IICP-core-phase1-profile.md as part of S.5 spec split |
