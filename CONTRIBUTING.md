@@ -10,6 +10,11 @@ Run the repository checks before proposing a change:
 python3 tools/generate_implementations.py --check
 ```
 
+Coordinated releases must update `ecosystem/releases.json` with their wire,
+conformance, compatibility, upgrade, migration and rollback semantics. The
+private integration repository validates that record against component
+manifests, tags and public registries.
+
 Implementation bugs belong in the owning repository listed in
 `IMPLEMENTATIONS.md`. Never include production credentials, private topology or
 real task data.

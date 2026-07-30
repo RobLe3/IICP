@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-30",
+  "releases": [
+    {
+      "id": "specification",
+      "version": "1.9.2",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "unchanged",
+      "profiles": [],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "optional",
+      "migration": "none",
+      "rollback": "Continue using the previous immutable specification release."
+    },
+    {
+      "id": "directory-php",
+      "version": "1.10.82",
+      "wire_behavior": "additive",
+      "conformance_impact": "changed",
+      "profiles": [
+        "deployment-provenance-v1",
+        "replica-snapshot-auth-v1"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "No schema migration; configure signed deployment metadata and rotate newly issued replica tokens to snapshot scope.",
+      "rollback": "Restore the previous immutable release and its configuration; the former replica token scope remains accepted for one compatibility window."
+    },
+    {
+      "id": "directory-rust",
+      "version": "0.1.3",
+      "wire_behavior": "additive",
+      "conformance_impact": "changed",
+      "profiles": [
+        "deployment-provenance-v1",
+        "replica-snapshot-auth-v1"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "No schema migration; rotate newly issued replica tokens to snapshot scope.",
+      "rollback": "Restore the previous immutable operator-preview release and retained database backup; this release does not authorize Genesis cutover."
+    },
+    {
+      "id": "client-python",
+      "version": "0.7.98",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "changed",
+      "profiles": [
+        "transactional-model-health-v1"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "Preserve node identity, cached node token and CX key state across the supervised restart.",
+      "rollback": "Install the previous immutable package version and restart through the same supervisor with the retained state."
+    },
+    {
+      "id": "client-typescript",
+      "version": "0.7.98",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "changed",
+      "profiles": [
+        "transactional-model-health-v1"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "Preserve node identity, cached node token and CX key state across the supervised restart.",
+      "rollback": "Install the previous immutable package version and restart through the same supervisor with the retained state."
+    },
+    {
+      "id": "client-rust",
+      "version": "0.7.98",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "changed",
+      "profiles": [
+        "transactional-model-health-v1"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "Preserve node identity, cached node token and CX key state across the supervised restart.",
+      "rollback": "Install the previous immutable crate version and restart through the same supervisor with the retained state."
+    },
+    {
+      "id": "web-node",
+      "version": "0.2.2",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "unchanged",
+      "profiles": [],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "Rebuild the browser package and preserve existing encrypted provider state.",
+      "rollback": "Redeploy the previous immutable browser package; do not enable plaintext fallback."
+    }
+  ]
+}
