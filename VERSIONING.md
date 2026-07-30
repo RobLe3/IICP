@@ -22,7 +22,8 @@ the entire IICP specification suite (core, CIP, framing, identity, telemetry, et
 | v1.7.0 | 2026-05-24 | §5.1.1 tier structure and §5.1.2 bootstrap floor ratified; all 13 Phase-5 research tracks closed |
 | v1.8.0 | 2026-05-25 | S.13 ephemeral-by-design federation (ADR-033); snapshot+event-tail bootstrap |
 | v1.9.0 | 2026-05-30 | RT-01/RT-05 reputation caps and directory drift closeout |
-| **v1.9.1** | **2026-07-30** | **Current** — status/version governance and transport/IANA errata; no new profile promoted |
+| v1.9.1 | 2026-07-30 | Status/version governance and transport/IANA errata; superseded because its bundled implementation index was stale |
+| **v1.9.2** | **2026-07-30** | **Current** — corrective immutable release with synchronized implementation/package references and a version-truth gate |
 
 **Rules:**
 - Bump MINOR for new normative content (new sections, new specs added to suite)

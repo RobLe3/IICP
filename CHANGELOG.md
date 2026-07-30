@@ -1,5 +1,16 @@
 # IICP Changelog
 
+## v1.9.2 — 2026-07-30
+
+Corrective immutable release. The v1.9.1 archive was internally consistent
+against its integrity manifest but bundled a generated implementation index
+that still reported protocol v1.9.0 and SDK v0.7.97. The v1.9.1 tag and assets
+remain immutable and are superseded.
+
+This release synchronizes the implementation registry and README with protocol
+v1.9.2 and SDK v0.7.98, and extends the integrity gate so that the specification
+registry release must equal `spec/v1.9/VERSION`. No wire behavior changes.
+
 ## v1.9.1 — 2026-07-30
 
 ### Summary
