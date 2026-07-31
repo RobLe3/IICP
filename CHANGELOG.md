@@ -1,5 +1,17 @@
 # IICP Changelog
 
+## v1.10.0 — 2026-07-31
+
+Adds the authenticated S.13 replica lifecycle contract. An active replica may
+decommission itself with its current bearer credential; the operation invalidates
+that credential, emits a signed `REPLICA_DEREGISTERED` event, and removes the
+replica from discovery. A later registration using the same directory DID
+reactivates the stable replica identity with a rotated credential and low trust.
+
+The release adds content-free lifecycle fixtures and conformance requirements
+DIR-FED-22 through DIR-FED-25. It does not change task-payload routing, make
+Rust the Genesis authority, authorize a Rust cutover, or deprecate PHP.
+
 ## v1.9.3 — 2026-07-31
 
 Corrective immutable release. This release updates the generated implementation
