@@ -4,7 +4,7 @@
 
 *Building the HTTP for the Age of Generative AI*
 
-**Current version**: v1.10.0
+**Current version**: v1.10.1
 **Reference implementation**: [iicp.network](https://iicp.network)
 **Status**: Project-normative beta suite; individual profiles retain their own status
 
@@ -281,7 +281,8 @@ Follow this repo or [iicp.network](https://iicp.network) for announcements.
 
 | Version | Date | Notes |
 |---------|------|-------|
-| **v1.10.0** | 2026-07-31 | Adds authenticated replica decommissioning, credential invalidation, signed lifecycle propagation and same-DID reactivation. |
+| **v1.10.1** | 2026-07-31 | Corrective immutable release: pins synchronized structured release metadata in the integrity manifest; no wire change. |
+| v1.10.0 | 2026-07-31 | Adds authenticated replica decommissioning, credential invalidation, signed lifecycle propagation and same-DID reactivation. |
 | v1.9.3 | 2026-07-31 | Corrective immutable release: records Rust directory v0.1.4 snapshot-bootstrap correction; no protocol wire change. |
 | v1.9.2 | 2026-07-30 | Corrective immutable release: aligns the generated implementation index and SDK references with the released source/package state; adds a fail-closed version-truth check. |
 | v1.9.1 | 2026-07-30 | Status/version governance and transport/IANA errata. Superseded by v1.9.2 because its bundled implementation index still reported the preceding release versions. |
