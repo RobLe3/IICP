@@ -14,7 +14,7 @@
       "authority": "normative protocol, registries and reviewed research",
       "language": "specification",
       "protocol": "1.9",
-      "release": "1.9.2"
+      "release": "1.9.3"
     },
     {
       "id": "project-hub",
@@ -80,7 +80,7 @@
       "authority": "pre-1.0 Rust directory operator preview; not the production Genesis authority",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.1.3"
+      "release": "0.1.4"
     },
     {
       "id": "client-python",

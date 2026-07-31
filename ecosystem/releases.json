@@ -4,7 +4,7 @@
   "releases": [
     {
       "id": "specification",
-      "version": "1.9.2",
+      "version": "1.9.3",
       "wire_behavior": "unchanged",
       "conformance_impact": "unchanged",
       "profiles": [],
@@ -29,17 +29,16 @@
     },
     {
       "id": "directory-rust",
-      "version": "0.1.3",
-      "wire_behavior": "additive",
+      "version": "0.1.4",
+      "wire_behavior": "unchanged",
       "conformance_impact": "changed",
       "profiles": [
-        "deployment-provenance-v1",
         "replica-snapshot-auth-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No schema migration; rotate newly issued replica tokens to snapshot scope.",
-      "rollback": "Restore the previous immutable operator-preview release and retained database backup; this release does not authorize Genesis cutover."
+      "migration": "No schema migration; upgrade before any authenticated Genesis snapshot preflight.",
+      "rollback": "Stop the replica before restoring v0.1.3; v0.1.3 must not perform an authenticated production snapshot preflight."
     },
     {
       "id": "client-python",

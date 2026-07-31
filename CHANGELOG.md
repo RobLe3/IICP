@@ -1,5 +1,15 @@
 # IICP Changelog
 
+## v1.9.3 — 2026-07-31
+
+Corrective immutable release. This release updates the generated implementation
+registry from Rust directory `v0.1.3` to the published `v0.1.4` operator preview.
+The Rust correction requires a complete authenticated S.13 snapshot before
+verified event-tail replay and does not change the protocol wire contract.
+
+No normative protocol behavior, Genesis deployment, replica registration,
+persistent shadow, cutover or PHP deprecation is authorized by this release.
+
 ## v1.9.2 — 2026-07-30
 
 Corrective immutable release. The v1.9.1 archive was internally consistent
