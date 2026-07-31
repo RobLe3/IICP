@@ -1,0 +1,93 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "profile_id": "iicp.mcp.era-negotiation.v0",
+  "purpose": "Content-free cases for MCP revision negotiation and the IICP-to-MCP authorization boundary. These cases do not change SDK defaults or production behavior.",
+  "supported_revisions": [
+    "2025-11-25",
+    "2026-07-28"
+  ],
+  "cases": [
+    {
+      "id": "MCP-ERA-01",
+      "name": "legacy_initialize_supported",
+      "input": {
+        "offered_revision": "2025-11-25",
+        "peer_supported_revisions": ["2025-11-25"]
+      },
+      "expected": {"accepted": true, "era": "legacy", "session_mode": "negotiated"}
+    },
+    {
+      "id": "MCP-ERA-02",
+      "name": "modern_stateless_supported",
+      "input": {
+        "offered_revision": "2026-07-28",
+        "peer_supported_revisions": ["2025-11-25", "2026-07-28"],
+        "protocol_header_matches": true,
+        "method_header_matches": true,
+        "name_header_matches": true,
+        "reserved_meta_valid": true
+      },
+      "expected": {"accepted": true, "era": "modern", "session_mode": "stateless"}
+    },
+    {
+      "id": "MCP-ERA-03",
+      "name": "modern_protocol_header_missing",
+      "input": {"offered_revision": "2026-07-28", "protocol_header_present": false},
+      "expected": {"accepted": false, "reason": "missing_protocol_version"}
+    },
+    {
+      "id": "MCP-ERA-04",
+      "name": "method_header_body_mismatch",
+      "input": {"offered_revision": "2026-07-28", "method_header_matches": false},
+      "expected": {"accepted": false, "reason": "header_body_mismatch"}
+    },
+    {
+      "id": "MCP-ERA-05",
+      "name": "explicit_secure_downgrade",
+      "input": {
+        "offered_revision": "2026-07-28",
+        "peer_supported_revisions": ["2025-11-25"],
+        "legacy_revision_explicitly_offered": true,
+        "security_requirements_preserved": true
+      },
+      "expected": {"accepted": true, "era": "legacy", "reason": "explicit_mutual_downgrade"}
+    },
+    {
+      "id": "MCP-ERA-06",
+      "name": "unauthenticated_fallback_rejected",
+      "input": {"modern_request_failed": true, "legacy_authentication_available": false},
+      "expected": {"accepted": false, "reason": "unauthenticated_downgrade"}
+    },
+    {
+      "id": "MCP-ERA-07",
+      "name": "caller_credential_passthrough_rejected",
+      "input": {"downstream_credential_source": "caller"},
+      "expected": {"accepted": false, "reason": "credential_passthrough_prohibited"}
+    },
+    {
+      "id": "MCP-ERA-08",
+      "name": "server_identity_change_rejected",
+      "input": {"server_identity_matches_selected_endpoint": false},
+      "expected": {"accepted": false, "reason": "server_identity_mismatch"}
+    },
+    {
+      "id": "MCP-ERA-09",
+      "name": "explicit_request_state_accepted",
+      "input": {"offered_revision": "2026-07-28", "request_state_explicit": true},
+      "expected": {"accepted": true, "state_source": "request"}
+    },
+    {
+      "id": "MCP-ERA-10",
+      "name": "unsupported_extension_rejected",
+      "input": {"offered_revision": "2026-07-28", "extension": "example-unsupported"},
+      "expected": {"accepted": false, "reason": "unsupported_extension"}
+    },
+    {
+      "id": "MCP-ERA-11",
+      "name": "malformed_reserved_meta_rejected",
+      "input": {"offered_revision": "2026-07-28", "reserved_meta_valid": false},
+      "expected": {"accepted": false, "reason": "malformed_reserved_metadata"}
+    }
+  ]
+}

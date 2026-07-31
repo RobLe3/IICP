@@ -1,12 +1,12 @@
 {
   "files": {
     "CHANGELOG.md": "d3e2306ac490e8da5cc78ee458803afa23da3a2b7250a0cde4e5372616368409",
-    "IMPLEMENTATIONS.md": "403c10976379ead7d7575cbf891d41da2f4d4312626a5fb5745c69619dbabe04",
-    "README.md": "b1292dc8679a6c8f26392862eae017a7a3ea7c655bb1c9c40f182c35d0c05679",
+    "IMPLEMENTATIONS.md": "68fffee3721c9807ca42bb7aa6711904e367a0277bb6ab455af6a95695ecd4b1",
+    "README.md": "174f755e18e95efebb9c75f8d8f99374bf8c52e05f2ee2a340582354f74ee9ca",
     "SPEC_RELEASE_PROCESS.md": "8145897d8b3768bcfdab1121fcd081af98f2a52044fbe8835240b0059a07c1fd",
     "SPEC_STATUS.md": "90935da47e9a249aceb01213011b8aa4f031613b6d14a532da693005992025b4",
     "VERSIONING.md": "1603d440423796ba3867ff1bf5095016b78c2548b3cb9bd789ea1fe70564ef71",
-    "ecosystem/repositories.json": "e9fdec061cceea08ebb20f5771726beffc7711415ce541d4de3c4c3d9e111d3a",
+    "ecosystem/repositories.json": "d232ec93117ca5828ef4f9783cad03d85207a6808575b296bd6bc55f30c0414d",
     "registry/intents.json": "4a0ad7b2a9dc5d5d7516223b6c06573701662f22b25efcb4dabbc7a3106db5a4",
     "research/native-ai-infrastructure/fixtures/native-framing-fixture-manifest-v1.json": "a162b83304cc10cf07a73a70204a3fb7fc543a2c4f2f6585f6c58de92ab01245",
     "research/native-ai-infrastructure/fixtures/native-framing-v1.json": "e73a871c069f194c42716f462d2bde04fb79d769e1e98249c2d17c9af50bcfc1",
@@ -32,7 +32,7 @@
     "spec/v1.9/iicp-federated-directory.md": "8112bf4f773145294041cadb9110c4d0ce96bd3a8f5fd7e3d19448c299362371",
     "spec/v1.9/iicp-framing.md": "cb1966e5f286d54b46231cc70b223cfd96746e920d1bac034e847d4b10a0cc2a",
     "spec/v1.9/iicp-identity-slot.md": "9c993178135f5e4a341c7f1cec36e27a9d26573f9dba35b215d9ef63132d7f9c",
-    "spec/v1.9/iicp-mcp-binding.md": "0d1f06be5d52b99e68ccd420286c16715457a10cc4d5fcde168bef22dd6e080d",
+    "spec/v1.9/iicp-mcp-binding.md": "a6ba6055671711fb4f9eab453a379c2428c7df6d9422339dd8711a4b55774754",
     "spec/v1.9/iicp-provider-admission-profile.md": "3d20f8df593b16f2faf757c904e8a501e89f8bf71ba5bd9e8e1a4d414c60b28b",
     "spec/v1.9/iicp-recognition.md": "1241527a18a293dfd00089e77b120fc2dee482d53ea71b10a2d381b00fed48a6",
     "spec/v1.9/iicp-sdk-request-projection-profile.md": "cf90a3938547a33a9bdac0c6c213cfab002af36b5f9f729a38135af2a6e336bd",
@@ -41,7 +41,7 @@
     "spec/v1.9/iicp-telemetry.md": "4fbb2eb32654186c0f05d749261795635e7051f5d07ee52beedb6715cb977f9d",
     "spec/v1.9/iicp-v1.5-draft.md": "b4966af81bd9a7e0318144346a308591e7a2e67170c98c823d23981f50f9b625",
     "spec/v1.9/iicp-v1.5-overview.md": "012f693a7848ad7755e7688da676c36d793a75e56e4acecbd7d6a0ae18b7f658",
-    "spec/v1.9/node-capability-format.md": "0fa4a6ca4005bc984a18c539faf8c4877938840fa8baed566c3466d35280209b",
+    "spec/v1.9/node-capability-format.md": "abd48860484f3e110ec5149f3354bb1ca365b76aada6a859587cb62d509e51a4",
     "spec/v1.9/validation-methodology.md": "78693a12a47ed74e72db6b27d23e956bca9a00544ab8637ebebeeb827e39f635"
   },
   "manifest_version": "1.2.0",

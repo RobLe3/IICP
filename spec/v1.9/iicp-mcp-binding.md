@@ -1,7 +1,7 @@
 # IICP-MCP Binding Specification
 
-**Version**: 0.1.2  
-**Date**: 2026-06-06  
+**Version**: 0.2.0
+**Date**: 2026-07-31
 **Status**: draft  
 **Issue**: #15  
 **Authority**: Protocol Steward  
@@ -105,14 +105,27 @@ Slashes in tool names are permitted per ADR-007 (action field allows `/`).
 
 ---
 
-## 4. SUB_PROTOCOL Session Binding (Phase 2)
+## 4. Protocol-Era Binding (Phase 2)
+
+An implementation MUST declare the MCP revisions it supports and MUST NOT silently
+reinterpret one revision as another. This binding defines two eras:
+
+| Era | MCP revision | Bootstrap and state |
+|---|---|---|
+| legacy | `2025-11-25` | `initialize` / `initialized`; an MCP session MAY be used |
+| modern | `2026-07-28` | stateless, self-contained requests; `server/discover` MAY be used before invocation |
+
+Support for either era is optional. Advertising MCP capability without advertising a
+supported revision does not authorize tool execution.
+
+### 4.1 Legacy session binding
 
 For IICP-compliant sessions (Phase 2+), an MCP-capable node signals this in INIT:
 
 ```json
 {
   "sub_protocol": "mcp",
-  "sub_protocol_version": "2025-03-26"
+  "sub_protocol_version": "2025-11-25"
 }
 ```
 
@@ -126,6 +139,44 @@ MCP tool calls ride inside `SUB_PROTOCOL` payloads:
 
 The `SUB_PROTOCOL` payload is a JSON-RPC 2.0 object as defined by the MCP specification.
 
+### 4.2 Modern stateless binding
+
+For MCP `2026-07-28`, each request is independently versioned and authorized. An HTTP
+adapter MUST validate `MCP-Protocol-Version`, `Mcp-Method`, and, when the method names a
+specific object such as a tool, `Mcp-Name`. Header values and the JSON-RPC body MUST agree.
+Equivalent metadata carried inside native IICP `SUB_PROTOCOL` messages MUST be represented
+in the request `_meta` object.
+
+The request `_meta` MUST identify the negotiated protocol revision and MAY carry client
+identity, capabilities, W3C Trace Context, and extension negotiation data defined by MCP.
+IICP routing metadata, dispatch tickets, node tokens, provider credentials, and private
+policy evidence MUST NOT be copied into `_meta` unless a separately versioned binding
+defines a specific, audience-bound field.
+
+The modern era has no implicit MCP connection session. Stateful application workflows MUST
+use explicit MCP request state, a modern MCP Task handle, or an application argument. IICP
+`task_id` remains the IICP idempotency and receipt correlation identifier; it MUST NOT be
+treated as an MCP bearer credential.
+
+### 4.3 Negotiation and downgrade
+
+- Explicit operator or caller configuration wins over automatic negotiation.
+- An `auto` client MAY offer modern and legacy support, but MUST select only a revision the
+  peer explicitly supports.
+- Failure of a modern request MUST NOT trigger an unauthenticated legacy retry.
+- A downgrade MUST preserve audience, issuer, resource, consent, tool-risk, and sandbox
+  requirements. If that is impossible, the call fails closed.
+- Unknown `_meta` members are ignored only where the selected MCP revision permits them;
+  malformed reserved members are rejected.
+
+### 4.4 Optional extensions
+
+Tasks, Skills over MCP, and MCP Apps are separate opt-in extensions in the modern era.
+IICP discovery MAY report their availability through a versioned capability profile, but
+an extension is usable only after both endpoints explicitly negotiate it. Extension
+advertisement does not bypass IICP intent-risk, tool-risk, policy, authorization, or
+confidentiality gates.
+
 ---
 
 ## 5. Discovery
@@ -136,7 +187,8 @@ An MCP-capable node includes its MCP tool list in the REGISTER `capabilities` ar
 {
   "intent": "urn:iicp:intent:mcp:tools/call:v1",
   "mcp_tools": ["bash", "read_file", "web_search"],
-  "mcp_version": "2025-03-26"
+  "mcp_version": "2026-07-28",
+  "mcp_versions": ["2025-11-25", "2026-07-28"]
 }
 ```
 
@@ -163,15 +215,41 @@ MCP tool errors are wrapped in the IICP RESPONSE error structure:
 The raw MCP error is preserved in `error.mcp_error` for debugging, but internal
 details MUST NOT be exposed to untrusted callers.
 
+Adapters MUST distinguish at least unsupported protocol revision, header/body mismatch,
+malformed reserved metadata, unsupported extension, authentication failure, authorization
+failure, policy refusal, cancellation, and backend failure. A legacy retry MUST not replace
+or hide the original modern-era failure.
+
 ---
 
-## 7. Phase Mapping
+## 7. Authorization and Trust Boundary
+
+MCP authorization and IICP dispatch authorization are separate. Implementations MUST:
+
+- validate OAuth issuer, resource and audience binding for the selected MCP endpoint;
+- use protected-resource metadata and PKCE where the selected MCP profile requires them;
+- prohibit token passthrough: an IICP token or caller token is never forwarded as the MCP
+  server's downstream credential;
+- store downstream credentials outside model, tool, IICP task, receipt, and audit payloads;
+- retain explicit user/operator consent and the IICP dangerous-tool policy;
+- bind any server identity returned in MCP response metadata to the selected endpoint and
+  fail on an unexpected identity change;
+- use HTTPS for remote MCP HTTP endpoints.
+
+MCP capability or tool annotations are untrusted input unless separately authenticated.
+Tool-name risk classification is a conservative baseline, not sufficient authorization.
+
+---
+
+## 8. Phase Mapping
 
 | Feature | Phase |
 |---------|-------|
 | `urn:iicp:intent:mcp:tools/call:v1` in registry | Phase 1 (reserved) |
 | MCP→IICP proxy translation | Phase 2 |
 | IICP SUB_PROTOCOL MCP session | Phase 2 |
+| MCP 2026-07-28 stateless request binding | Phase 2 draft |
+| Tasks / Skills / Apps extension profiles | Phase 3 draft |
 | Bidirectional MCP↔IICP node | Phase 3 |
 | MCP server discovery via IICP-DIR | Phase 3 |
 
@@ -192,7 +270,8 @@ details MUST NOT be exposed to untrusted callers.
 |---------|------|--------|
 | 0.1.0 | 2026-05-14 | Initial draft — MCP tool-call to IICP CALL translation, SUB_PROTOCOL binding, Phase 1 REST form; closes issue #15 |
 | 0.1.1 | 2026-05-15 | Added Changelog section (A6 spec cleanup) |
-| 0.1.2 | 2026-06-06 | §7: added reserved-status note — the MCP intent URN is registry-reserved in Phase 1; directories MUST accept it in capability arrays without implementing translation, MUST NOT reject on it; clients MUST NOT assume tool execution until the Phase-2 binding ships. Header reconciled to 0.1.2 (it trailed the changelog at 0.1.1). |
+| 0.1.2 | 2026-06-06 | Added reserved-status note — the MCP intent URN is registry-reserved in Phase 1; directories MUST accept it in capability arrays without implementing translation, MUST NOT reject on it; clients MUST NOT assume tool execution until the Phase-2 binding ships. Header reconciled to 0.1.2 (it trailed the changelog at 0.1.1). |
+| 0.2.0 | 2026-07-31 | Added explicit MCP 2025-11-25 legacy and 2026-07-28 modern eras, stateless request metadata, downgrade rules, optional extension negotiation, authorization boundaries, server identity binding, and shared conformance requirements. Remains draft; no SDK default or production behavior changed. |
 
 ---
 

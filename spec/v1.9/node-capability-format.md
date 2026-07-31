@@ -1,7 +1,7 @@
 # IICP Node Capability Format
 
-**Version**: 0.1.1  
-**Date**: 2026-05-14  
+**Version**: 0.1.3
+**Date**: 2026-07-31
 **Status**: draft  
 **Issue**: #19  
 **Authority**: Protocol Steward  
@@ -139,7 +139,8 @@ For nodes that execute MCP tool calls (see `iicp-mcp-binding.md`).
 {
   "intent": "urn:iicp:intent:mcp:tools/call:v1",
   "mcp_tools": ["bash", "read_file", "web_search"],
-  "mcp_version": "2025-03-26",
+  "mcp_version": "2026-07-28",
+  "mcp_versions": ["2025-11-25", "2026-07-28"],
   "sandboxed": true,
   "allowed_domains": ["*.wikipedia.org"]
 }
@@ -148,7 +149,8 @@ For nodes that execute MCP tool calls (see `iicp-mcp-binding.md`).
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
 | `mcp_tools` | string[] | MUST | Tool names the node can execute |
-| `mcp_version` | string | MUST | MCP spec date (ISO 8601) |
+| `mcp_version` | string | MUST | Preferred MCP spec date (ISO 8601); retained for compatibility |
+| `mcp_versions` | string[] | MAY | Supported MCP revisions; when present it MUST contain `mcp_version` |
 | `sandboxed` | bool | SHOULD | Whether execution is sandboxed |
 | `allowed_domains` | string[] | MAY | Network domain allow-list for web tools |
 
@@ -200,7 +202,8 @@ A single node MAY declare multiple capabilities:
     {
       "intent": "urn:iicp:intent:mcp:tools/call:v1",
       "mcp_tools": ["bash"],
-      "mcp_version": "2025-03-26"
+      "mcp_version": "2026-07-28",
+      "mcp_versions": ["2025-11-25", "2026-07-28"]
     }
   ]
 }
@@ -332,6 +335,7 @@ protocol version.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.1.3 | 2026-07-31 | MCP capabilities retain singular `mcp_version` as the preferred revision and may add `mcp_versions` for explicit multi-revision negotiation. |
 | 0.1.2 | 2026-05-17 | §9 policy block: added `minimum_reputation` and `max_concurrent_remote` fields with IICP-E020/E021 error references; closes #72 |
 | 0.1.0 | 2026-05-14 | Initial draft — capability object schema, intent URN format, policy block (Phase 5 reserved); closes issue #19 |
 | 0.1.1 | 2026-05-15 | Added Changelog section (A6 spec cleanup) |
