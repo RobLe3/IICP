@@ -260,7 +260,7 @@ splits into:
 directory** (DIRECTORY-AUTHORITATIVE), each carrying a per-event Ed25519 signature + `prev_hash` chain
 link as §3.4 defines. **They ride a *dedicated, non-federated* signed chain — NOT the federated
 `node_events` stream.** Rationale: the federated event set is closed (S.13 `DIR-FED-16` =
-`{REGISTER, DEREGISTER, CREDIT_AWARD, REPLICA_REGISTERED, REPUTATION_DECAY, OPERATOR_OBSERVED}`), and
+`{REGISTER, DEREGISTER, CREDIT_AWARD, REPLICA_REGISTERED, REPLICA_DEREGISTERED, REPUTATION_DECAY, OPERATOR_OBSERVED}`), and
 `GET /v1/events` returns all node-events, so emitting founder events there would both violate the closed
 list and leak operator references to every replica. **Implementation status:** the shipped detector
 persists the immutable `ordinal`/`tier`/`badge` to the authoritative `operators` table (which the

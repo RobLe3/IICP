@@ -1,0 +1,25 @@
+{
+  "schema": "iicp.replica_lifecycle_contract.v1",
+  "specification": "S.13-0.3.9",
+  "deregister": {
+    "method": "POST",
+    "path": "/v1/replicas/deregister",
+    "authentication": "current_active_replica_bearer",
+    "success_status": 200,
+    "success_body": {"status": "decommissioned"},
+    "event_type": "REPLICA_DEREGISTERED",
+    "event_payload_fields": ["did"]
+  },
+  "persistent_auth_rejections": ["expired", "dormant", "archived", "decommissioned"],
+  "same_did_reregistration": {
+    "reuse_replica_id": true,
+    "rotate_bearer": true,
+    "status": "active",
+    "trust_tier": "low"
+  },
+  "privacy": {
+    "contains_credentials": false,
+    "contains_endpoints": false,
+    "contains_node_ids": false
+  }
+}
