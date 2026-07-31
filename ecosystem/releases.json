@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-30",
+  "generated_at": "2026-07-31",
   "releases": [
     {
       "id": "specification",
@@ -43,42 +43,36 @@
     },
     {
       "id": "client-python",
-      "version": "0.7.98",
+      "version": "0.7.99",
       "wire_behavior": "unchanged",
-      "conformance_impact": "changed",
-      "profiles": [
-        "transactional-model-health-v1"
-      ],
+      "conformance_impact": "unchanged",
+      "profiles": [],
       "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "recommended",
-      "migration": "Preserve node identity, cached node token and CX key state across the supervised restart.",
-      "rollback": "Install the previous immutable package version and restart through the same supervisor with the retained state."
+      "upgrade": "optional",
+      "migration": "No runtime or wire migration is required.",
+      "rollback": "Install the previous immutable package version; runtime behavior and persisted node state are unchanged."
     },
     {
       "id": "client-typescript",
-      "version": "0.7.98",
+      "version": "0.7.99",
       "wire_behavior": "unchanged",
-      "conformance_impact": "changed",
-      "profiles": [
-        "transactional-model-health-v1"
-      ],
+      "conformance_impact": "unchanged",
+      "profiles": [],
       "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "recommended",
-      "migration": "Preserve node identity, cached node token and CX key state across the supervised restart.",
-      "rollback": "Install the previous immutable package version and restart through the same supervisor with the retained state."
+      "upgrade": "optional",
+      "migration": "No runtime or wire migration is required.",
+      "rollback": "Install the previous immutable package version; runtime behavior and persisted node state are unchanged."
     },
     {
       "id": "client-rust",
-      "version": "0.7.98",
+      "version": "0.7.99",
       "wire_behavior": "unchanged",
-      "conformance_impact": "changed",
-      "profiles": [
-        "transactional-model-health-v1"
-      ],
+      "conformance_impact": "unchanged",
+      "profiles": [],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Preserve node identity, cached node token and CX key state across the supervised restart.",
-      "rollback": "Install the previous immutable crate version and restart through the same supervisor with the retained state."
+      "migration": "No runtime or wire migration is required.",
+      "rollback": "Install the previous immutable crate version; this restores its earlier dependency graph without changing persisted node state."
     },
     {
       "id": "web-node",
