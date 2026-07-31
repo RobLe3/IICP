@@ -1,5 +1,14 @@
 # IICP Changelog
 
+## v1.10.1 — 2026-07-31
+
+Corrective immutable release. The v1.10.0 normative archive is valid, but its
+separate structured ecosystem release record still named the previous component
+versions. This release synchronizes those records and makes
+`ecosystem/releases.json` part of the fail-closed integrity manifest.
+
+No protocol, conformance, migration, deployment or task-data-plane behavior changes.
+
 ## v1.10.0 — 2026-07-31
 
 Adds the authenticated S.13 replica lifecycle contract. An active replica may

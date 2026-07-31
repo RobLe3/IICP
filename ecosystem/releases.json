@@ -4,41 +4,40 @@
   "releases": [
     {
       "id": "specification",
-      "version": "1.9.3",
+      "version": "1.10.1",
       "wire_behavior": "unchanged",
       "conformance_impact": "unchanged",
       "profiles": [],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "none",
-      "rollback": "Continue using the previous immutable specification release."
+      "migration": "No wire or runtime migration is required.",
+      "rollback": "Continue using the immutable v1.10.0 normative archive; only structured ecosystem metadata is corrected."
     },
     {
       "id": "directory-php",
-      "version": "1.10.82",
+      "version": "1.10.83",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
-        "deployment-provenance-v1",
-        "replica-snapshot-auth-v1"
+        "replica-lifecycle-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No schema migration; configure signed deployment metadata and rotate newly issued replica tokens to snapshot scope.",
-      "rollback": "Restore the previous immutable release and its configuration; the former replica token scope remains accepted for one compatibility window."
+      "migration": "No schema migration is required; active replicas may adopt authenticated decommissioning and same-DID reactivation.",
+      "rollback": "Restore PHP directory v1.10.82; replicas should re-register to rotate credentials before resuming protected snapshot access."
     },
     {
       "id": "directory-rust",
-      "version": "0.1.4",
-      "wire_behavior": "unchanged",
+      "version": "0.1.5",
+      "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
-        "replica-snapshot-auth-v1"
+        "replica-lifecycle-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No schema migration; upgrade before any authenticated Genesis snapshot preflight.",
-      "rollback": "Stop the replica before restoring v0.1.3; v0.1.3 must not perform an authenticated production snapshot preflight."
+      "migration": "No schema migration is required; configure a stable replica DID and HTTPS endpoint before replica-mode use.",
+      "rollback": "Stop the preview and restore v0.1.4; re-register before protected snapshot bootstrap. Do not treat rollback as Genesis cutover authority."
     },
     {
       "id": "client-python",

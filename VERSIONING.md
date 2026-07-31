@@ -24,7 +24,8 @@ the entire IICP specification suite (core, CIP, framing, identity, telemetry, et
 | v1.9.0 | 2026-05-30 | RT-01/RT-05 reputation caps and directory drift closeout |
 | v1.9.1 | 2026-07-30 | Status/version governance and transport/IANA errata; superseded because its bundled implementation index was stale |
 | v1.9.2 | 2026-07-30 | Corrective immutable release with synchronized implementation/package references and a version-truth gate |
-| **v1.10.0** | **2026-07-31** | **Current** — authenticated replica decommissioning, signed lifecycle propagation and same-DID reactivation |
+| **v1.10.1** | **2026-07-31** | **Current** — corrective structured-release metadata pin; no wire change |
+| v1.10.0 | 2026-07-31 | Authenticated replica decommissioning, signed lifecycle propagation and same-DID reactivation |
 | v1.9.3 | 2026-07-31 | Records the Rust directory v0.1.4 snapshot-bootstrap correction; no wire change |
 
 **Rules:**
