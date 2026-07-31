@@ -1526,7 +1526,7 @@ concerns or live in a separate sub-spec:
 | `GET /metrics` | Prometheus text/plain exposition. Metrics semantics and label names are defined by ADR-014 (OTel/Prometheus) and `iicp-telemetry.md §T5`; not repeated here. |
 | `GET /v1/probe` | External reachability SSRF guard. Defined in `iicp-dir.md §3.3e` + REACH conformance test DIR-PROBE-01/02; operator reference in ADR-022. |
 | `GET /v1/conformance/…`, `GET /v1/badge/{tier}` | Conformance badge pipeline (submit, verify, SVG shield). Defined in S.14 `iicp-recognition.md §10` + `conformance-badges.md`; not duplicated here. |
-| `POST /v1/replicas/register`, `GET /v1/snapshot` | Phase 6 federation handshake and snapshot bootstrap. Defined in S.13 `iicp-federated-directory.md §7.1/§5.5` (ADR-013 gated). |
+| `POST /v1/replicas/register`, `POST /v1/replicas/deregister`, `GET /v1/snapshot` | Phase 6 federation handshake, authenticated lifecycle cleanup and snapshot bootstrap. Defined in S.13 `iicp-federated-directory.md §7.1/§7.2/§5.5` (ADR-013 gated). |
 | `POST /_deploy/migrate` | Operator-only HMAC-gated database migration endpoint. **Out of protocol scope** — deploy tooling, not part of the IICP wire contract. |
 
 ---

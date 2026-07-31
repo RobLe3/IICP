@@ -495,8 +495,15 @@ Replicas bootstrap via `GET /v1/snapshot` then catch up via `GET /v1/events?sinc
 | Test ID | Requirement | Spec ref | REACH probe |
 |---------|-------------|---------|-------------|
 | `DIR-FED-15` | `GET /v1/snapshot` MUST return current state with `snapshot_seq` = highest emitted event seq at generation time | S.13 §5.5 + §8 DIR-FED-15 | `SnapshotEndpointTest::test_returns_snapshot_for_authenticated_replica` (verifies snapshot_seq = max event.seq) |
-| `DIR-FED-16` | Federated event log MUST emit ONLY {REGISTER, DEREGISTER, CREDIT_AWARD, REPLICA_REGISTERED, REPUTATION_DECAY} — closed type list | S.13 §5.1 + §8 DIR-FED-16 | Probe extending `probe_dir_fed_10` to assert no HEARTBEAT/SCORE_UPDATE/REPUTATION_UPDATE rows appear within a 5-min sample window |
+| `DIR-FED-16` | Federated event log MUST emit ONLY {REGISTER, DEREGISTER, CREDIT_AWARD, REPLICA_REGISTERED, REPLICA_DEREGISTERED, REPUTATION_DECAY, OPERATOR_OBSERVED} — closed type list | S.13 §5.1 + §8 DIR-FED-16 | Probe extending `probe_dir_fed_10` to assert no HEARTBEAT/SCORE_UPDATE/REPUTATION_UPDATE rows appear within a 5-min sample window |
 | `DIR-FED-17` | Snapshot response `genesis_hash` MUST match `GET /v1/events` (parity with DIR-FED-07) | S.13 §5.5 + §8 DIR-FED-17 | `SnapshotEndpointTest::test_genesis_hash_matches_events_endpoint` |
+| `DIR-FED-22` | Authenticated deregistration atomically decommissions the replica, invalidates its bearer, removes its advertisement, and emits `REPLICA_DEREGISTERED` | S.13 §7.2 + §8 DIR-FED-22 | PHP/Rust lifecycle contract tests |
+| `DIR-FED-23` | Persistent expired/dormant/archived/decommissioned rows are rejected independently of JWT validity | S.13 §7.2 + §8 DIR-FED-23 | PHP/Rust auth contract tests |
+| `DIR-FED-24` | Same-DID re-registration reuses identity, rotates bearer, reactivates, and resets trust to low | S.13 §7.1 + §8 DIR-FED-24 | PHP/Rust lifecycle contract tests |
+| `DIR-FED-25` | Replicas apply `REPLICA_DEREGISTERED` as a decommissioning tombstone | S.13 §7.2 + §8 DIR-FED-25 | PHP/Rust event-application tests |
+
+The content-free executable contract for DIR-FED-22..25 is
+[`replica-lifecycle-contract-v1.json`](replica-lifecycle-contract-v1.json).
 
 ### 11.6 Chain-of-Custody (MUST, Phase 6 — added 2026-05-25, S.13 v0.3.2)
 

@@ -1,7 +1,7 @@
 # S.13 — IICP Federated Directory Protocol
 
-**Version**: 0.3.8 (Draft)
-**Date**: 2026-07-30
+**Version**: 0.3.9 (Draft)
+**Date**: 2026-07-31
 **Status**: draft  
 **Authority**: Federation Coordinator + Protocol Steward  
 **Linked ADR**: ADR-013 (Federated Control Plane — Vision)  
@@ -148,7 +148,7 @@ GET https://iicp.network/.well-known/did.json
 ```json
 {
   "event_id": "uuid-v4",
-  "event_type": "REGISTER | DEREGISTER | CREDIT_AWARD | REPLICA_REGISTERED | REPUTATION_DECAY",
+  "event_type": "REGISTER | DEREGISTER | CREDIT_AWARD | REPLICA_REGISTERED | REPLICA_DEREGISTERED | REPUTATION_DECAY | OPERATOR_OBSERVED",
   "seq": 1042,
   "ts_ms": 1715644800000,
   "payload": { "...event-specific fields..." },
@@ -167,6 +167,7 @@ canonical `nodes` row:
 | `DEREGISTER` | node leaves cleanly | state removal, must federate |
 | `CREDIT_AWARD` | CIP receipt processed | audit-load-bearing (HMAC-signed); must federate |
 | `REPLICA_REGISTERED` | replica registers via §7.1 handshake | trust-chain event; must federate |
+| `REPLICA_DEREGISTERED` | replica decommissions via §7.2 | immediate trust and routing-state removal; must federate |
 | `REPUTATION_DECAY` | automated hourly decay cron | distinguishable from task-driven updates; audit-load-bearing |
 | `OPERATOR_OBSERVED` | seed observes a discrepancy between a node's self-reported claim and externally-observable signal (region vs IP geolocation, model declaration vs `/iicp/health` response, etc.) | audit-trail extension per W-033; replicas record but do not act |
 
@@ -720,8 +721,8 @@ v0.2.0, iter-1347 per Phase 6 charter P6-1.1), then the bootstrap + advertise st
 1. **DID resolution**: HTTP GET `https://<did-domain>/.well-known/did.json` over TLS ≥ 1.3 with timeout ≤ 5s. The response MUST be a valid DID document per W3C DID v1 with at least one `Ed25519VerificationKey2020` (or equivalent) verification method.
 2. **Endpoint reachability**: HTTP GET `https://<endpoint>/iicp/health` over TLS ≥ 1.3 with timeout ≤ 5s. MUST return 200.
 3. **Scheme + address guard**: `endpoint` MUST be `https://`; MUST NOT resolve to RFC-1918 / loopback / link-local (existing SSRF guard from /v1/probe).
-4. **Idempotency**: if a replica with this `did` is already registered, return the existing `replica_id` + a freshly-rotated `replica_token` (200 OK); do not create a duplicate row.
-5. **Event log emission**: on first-time registration, emit a `REPLICA_REGISTERED` event with payload `{did, endpoint, trust_tier}` so subsequent replicas mirror the registration.
+4. **Idempotency and reactivation**: if a replica with this `did` is already registered, return the existing `replica_id` + a freshly-rotated `replica_token` (200 OK); do not create a duplicate row. Re-registration MUST set lifecycle status to `active` and reset trust to `low`, including after decommissioning.
+5. **Event log emission**: on every successful registration or re-registration, emit a `REPLICA_REGISTERED` event with payload `{did, endpoint, trust_tier}` so other replicas mirror endpoint rotation and lifecycle reactivation.
 
 **Response body** (200 on success; 422 on validation failure):
 ```json
@@ -758,6 +759,33 @@ v0.2.0, iter-1347 per Phase 6 charter P6-1.1), then the bootstrap + advertise st
 
 **Off-protocol governance** (preserved from v0.1.0): the Genesis Seed operator MAY still curate the `iicp-replicas.json` advertisement list; the handshake creates the protocol-level relationship, but inclusion in the trusted-replicas roster remains a governance act for non-`low` trust tiers.
 
+### 7.2 Replica Deregistration (Normative, v0.3.9)
+
+**Endpoint**: `POST /v1/replicas/deregister` (Genesis Seed only)
+
+**Authentication**: the current replica bearer issued by §7.1. The seed MUST
+validate both the JWT and the persistent replica row. Expired credentials and
+rows in `dormant`, `archived`, or `decommissioned` state MUST be rejected.
+
+On success, the Genesis Seed MUST perform one atomic lifecycle operation:
+
+1. set the authenticated replica's lifecycle status to `decommissioned`;
+2. expire and invalidate its bearer credential;
+3. exclude it immediately from the public trusted-replica registry; and
+4. append a signed `REPLICA_DEREGISTERED` event carrying the `replica_id` and
+   payload `{did}`.
+
+The retained database row is an audit tombstone, not an active registration.
+The endpoint returns `200` with:
+
+```json
+{"status":"decommissioned"}
+```
+
+The previous bearer MUST fail all subsequent authenticated requests. The same
+DID MAY later re-register through §7.1; this reuses its `replica_id`, rotates
+the credential, sets status to `active`, and resets trust to `low`.
+
 ---
 
 ## 8. Conformance Requirements
@@ -777,11 +805,15 @@ v0.2.0, iter-1347 per Phase 6 charter P6-1.1), then the bootstrap + advertise st
 | DIR-FED-13 | `POST /v1/replicas/register` MUST be idempotent on `did`: re-registration returns the same `replica_id` with a freshly rotated `replica_token` | Genesis Seed |
 | DIR-FED-14 | Response MUST include `genesis_hash` matching the value surfaced by `GET /v1/events` (DIR-FED-07 parity) so replicas can pin-on-first-use | Genesis Seed |
 | DIR-FED-15 | `GET /v1/snapshot` MUST return current state with `snapshot_seq` = highest emitted event `seq` at generation time | Genesis Seed |
-| DIR-FED-16 | Federated event log MUST emit ONLY {REGISTER, DEREGISTER, CREDIT_AWARD, REPLICA_REGISTERED, REPUTATION_DECAY, OPERATOR_OBSERVED} (v0.3.5 closed federation type list; OPERATOR_OBSERVED added per P6-2.2 / W-033) | Genesis Seed |
+| DIR-FED-16 | Federated event log MUST emit ONLY {REGISTER, DEREGISTER, CREDIT_AWARD, REPLICA_REGISTERED, REPLICA_DEREGISTERED, REPUTATION_DECAY, OPERATOR_OBSERVED} | Genesis Seed |
 | DIR-FED-17 | Snapshot response `genesis_hash` MUST match the value returned by `GET /v1/events` (parity with DIR-FED-07) | Genesis Seed |
 | DIR-FED-19 | Genesis Seed MUST serve a valid v2-schema document at `/.well-known/iicp-replicas.json` (per §6.4 trusted-replicas registry). Required entry fields: `replica_id`, `did`, `endpoint`, `trust_tier`, `registered_at`. Discovery clients MAY use this for bootstrap-without-seed; MUST validate every field against the schema before acting on entries. | Genesis Seed |
 | DIR-FED-20 | Replica directories MUST sign every discovery response (`GET /v1/discover`, `/v1/node/{id}`, `/v1/bootstrap`) with their own Ed25519 key and include `X-IICP-Replica-Sig` + `X-IICP-Replica-DID` + `X-IICP-Snapshot-Seq` headers per §6.5. Clients MUST verify the signature against the replica's published DID key before using returned nodes; failure → log IICP-SEC-REPLICA-01 + reject response. Genesis Seed responses are exempt (TLS+DNS trust). | Replica / Client |
 | DIR-FED-21 | A directory that emits/verifies signed events, the replica handshake, or operator delegations MUST have a working Ed25519 implementation and MUST NOT assume the host provides one (§3 Trust Model). PHP directories MUST depend on a pure-PHP polyfill (`paragonie/sodium_compat`) when `ext-sodium` is absent. A directory that cannot verify a required signature MUST fail closed. | Genesis Seed / Replica |
+| DIR-FED-22 | `POST /v1/replicas/deregister` MUST require the current active, unexpired replica credential and atomically decommission the row, invalidate the credential, remove public advertisement, and emit `REPLICA_DEREGISTERED` | Genesis Seed |
+| DIR-FED-23 | Replica authentication MUST reject expired, dormant, archived, and decommissioned persistent rows even when the presented JWT is otherwise valid | Genesis Seed |
+| DIR-FED-24 | Re-registration of the same DID MUST reuse `replica_id`, rotate the credential, reactivate the row, and reset trust to `low` | Genesis Seed |
+| DIR-FED-25 | Replicas MUST apply `REPLICA_DEREGISTERED` by decommissioning the matching replica registry entry and excluding it from service | Replica |
 | DIR-FED-18 | Replicas (`IICP_REPLICA_MODE=true`) MUST 307-redirect every unsafe HTTP method (POST/PUT/PATCH/DELETE) to the configured seed at `IICP_SEED_URL`, preserving path + query. Replicas with missing or non-https `IICP_SEED_URL` MUST refuse writes with `503 IICP-E047 replica_mode_misconfigured`. Reads (GET/HEAD/OPTIONS) and the replica-mirror apply path are unaffected. | Replica |
 | DIR-FED-EVENTCHAIN-01 | Federated event log MUST be append-only — past events MUST NOT mutate: for any (`seq`, `event_id`) pair observed in two successive `GET /v1/events` responses, every field (`event_type`, `ts_ms`, `signer_did`, `payload`, `sig`) MUST be byte-identical, and `genesis_hash` MUST match across calls. Tampering, re-ordering, or tombstoning a past event causes undetectable replica divergence. | Genesis Seed |
 
@@ -804,6 +836,7 @@ v0.2.0, iter-1347 per Phase 6 charter P6-1.1), then the bootstrap + advertise st
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.3.9 | 2026-07-31 | §7.2 defines authenticated replica deregistration, credential invalidation, signed `REPLICA_DEREGISTERED`, and same-DID low-trust reactivation. DIR-FED-22..25 added; DIR-FED-16 closed event set updated. |
 | 0.3.8 | 2026-07-30 | Reconciled the deployed read contract: the signed, content-bounded `GET /v1/events` tail is public and rate-limited; `GET /v1/snapshot` requires the rotating replica JWT. New tokens are scoped to snapshot bootstrap. Implementations may accept the legacy events scope for one documented compatibility window. |
 | 0.3.7 | 2026-06-06 | §3 DIR-FED-21 (Normative): Ed25519-availability requirement — a directory that emits/verifies signed events, the replica handshake, or operator delegations MUST have a working Ed25519 impl and MUST NOT assume the host provides one; PHP directories MUST ship `paragonie/sodium_compat` when `ext-sodium` is absent; cannot-verify → fail closed (grounded in the 2026-06-06 prod no-ext-sodium incident). §3.4 federated event list: explicit founder-events cross-note — `FOUNDER_LOCKIN`/`FOUNDER_SUCCESSION` (iicp-recognition §5.4) are NOT federated (dedicated non-federated chain; the closed-set DIR-FED-16 side of the relationship recognition.md already references). |
 | 0.3.6 | 2026-05-26 | §6.5 Replica Response Signing (Normative) + §8 DIR-FED-20 added per Phase 6 charter P6-4.2b. Replicas MUST sign discovery responses with Ed25519 (`X-IICP-Replica-Sig` + `X-IICP-Replica-DID` + `X-IICP-Snapshot-Seq` headers); signing input matches §3.4 event log pattern (method:path:query:snapshot_seq:body_hash). Clients MUST verify against replica's published DID key; failure logs IICP-SEC-REPLICA-01. Genesis Seed exempt (TLS+DNS trust). Replicas more than 5min behind seed (`replica_lag_ms`) MUST be treated as untrusted regardless of sig validity. |
