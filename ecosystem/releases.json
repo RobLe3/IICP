@@ -4,81 +4,82 @@
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.2",
+      "version": "1.10.3",
       "wire_behavior": "additive",
-      "conformance_impact": "unchanged",
+      "conformance_impact": "changed",
       "profiles": [
+        "mcp-era-negotiation-v0",
         "discovery-evidence-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No wire or runtime migration is required; the discovery-evidence profile remains additive and pre-normative.",
-      "rollback": "Continue using the immutable v1.10.1 archive; implementations may ignore the additive evidence profile."
+      "migration": "No wire or runtime migration is required; the modern MCP era remains explicit and the discovery evidence profile remains additive.",
+      "rollback": "Continue using the immutable v1.10.2 archive; gateways retain the legacy MCP default and implementations may ignore additive evidence metadata."
     },
     {
       "id": "directory-php",
-      "version": "1.10.84",
-      "wire_behavior": "additive",
-      "conformance_impact": "changed",
+      "version": "1.10.85",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "unchanged",
       "profiles": [
         "discovery-evidence-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No schema migration is required; discovery responses add content-free explanatory evidence.",
-      "rollback": "Restore the preceding immutable release; older clients and directories may omit the additive evidence fields."
+      "migration": "No database migration is required; SDK release-currency evidence advances to 0.7.101.",
+      "rollback": "Restore the immutable v1.10.84 release; routing and compatibility behavior are unchanged."
     },
     {
       "id": "directory-rust",
-      "version": "0.1.6",
-      "wire_behavior": "additive",
-      "conformance_impact": "changed",
+      "version": "0.1.7",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "unchanged",
       "profiles": [
         "discovery-evidence-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No schema migration is required; discovery responses add content-free explanatory evidence.",
-      "rollback": "Restore the preceding immutable release; older clients and directories may omit the additive evidence fields."
+      "migration": "No database migration is required; SDK release-currency evidence advances to 0.7.101.",
+      "rollback": "Restore the immutable v0.1.6 preview; no Genesis or schema change is involved."
     },
     {
       "id": "client-python",
-      "version": "0.7.100",
+      "version": "0.7.101",
       "wire_behavior": "additive",
-      "conformance_impact": "unchanged",
+      "conformance_impact": "changed",
       "profiles": [
-        "discovery-evidence-v1"
+        "mcp-era-negotiation-v0"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No persisted-state migration is required; clients tolerate directories that omit the additive evidence fields.",
-      "rollback": "Install the preceding immutable package; discovery remains compatible and additive fields are no longer exposed by the client model."
+      "migration": "No persisted-state migration is required; MCP 2025-11-25 remains the default and 2026-07-28 is explicit.",
+      "rollback": "Install the preceding immutable 0.7.100 package; existing legacy MCP gateway behavior remains available."
     },
     {
       "id": "client-typescript",
-      "version": "0.7.100",
+      "version": "0.7.101",
       "wire_behavior": "additive",
-      "conformance_impact": "unchanged",
+      "conformance_impact": "changed",
       "profiles": [
-        "discovery-evidence-v1"
+        "mcp-era-negotiation-v0"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No persisted-state migration is required; clients tolerate directories that omit the additive evidence fields.",
-      "rollback": "Install the preceding immutable package; discovery remains compatible and additive fields are no longer exposed by the client model."
+      "migration": "No persisted-state migration is required; MCP 2025-11-25 remains the default and 2026-07-28 is explicit.",
+      "rollback": "Install the preceding immutable 0.7.100 package; existing legacy MCP gateway behavior remains available."
     },
     {
       "id": "client-rust",
-      "version": "0.7.100",
+      "version": "0.7.101",
       "wire_behavior": "additive",
-      "conformance_impact": "unchanged",
+      "conformance_impact": "changed",
       "profiles": [
-        "discovery-evidence-v1"
+        "mcp-era-negotiation-v0"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No persisted-state migration is required; clients tolerate directories that omit the additive evidence fields.",
-      "rollback": "Install the preceding immutable package; discovery remains compatible and additive fields are no longer exposed by the client model."
+      "migration": "No persisted-state migration is required; MCP 2025-11-25 remains the default and 2026-07-28 is explicit.",
+      "rollback": "Install the preceding immutable 0.7.100 package; existing legacy MCP gateway behavior remains available."
     },
     {
       "id": "web-node",
