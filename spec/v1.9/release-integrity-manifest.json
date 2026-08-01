@@ -1,17 +1,18 @@
 {
   "files": {
-    "CHANGELOG.md": "9ef8f93cf187feffd0a38680538c0609a8ce0f9813999fa965f6fe14b97f5610",
-    "IMPLEMENTATIONS.md": "585689de5e964a8dd759e9d307c503d33e30a6077e21821d76ad3858a8b10b21",
-    "README.md": "2071d85bcabf796de9c9226e3a782111fd6b3a65c52cbfecb12465d7686b8ecf",
+    "CHANGELOG.md": "ffe25360df566a8ebf4d320b2360b306723219e329a298e37fb5d945305552a5",
+    "IMPLEMENTATIONS.md": "dda9e4e32ef15df92370598476efb2f50fcc5a322c397fb04e4caa2f9ae2e925",
+    "README.md": "a12e07409e315703f7499281e3aa275c9545f9ab1489091dbfdf7a7e7c559407",
     "SPEC_RELEASE_PROCESS.md": "8145897d8b3768bcfdab1121fcd081af98f2a52044fbe8835240b0059a07c1fd",
     "SPEC_STATUS.md": "90935da47e9a249aceb01213011b8aa4f031613b6d14a532da693005992025b4",
     "VERSIONING.md": "964d1df96374c8159fc9ab26276e8ac6135ec3d51d2dae2ce2b18e1ddbaed56e",
-    "ecosystem/releases.json": "063dfe1afea507374c2dffbe5b7d07d24719c8dcb132499bc03a3ef4e0ed772a",
-    "ecosystem/repositories.json": "f494a2c69b3801f41925ce525e533b92b9142874be949e4508014470fa45a4b3",
+    "ecosystem/releases.json": "9dd47faa1845ec7141e7ecfb6b30cc8f41d496653dea1e5abb840cc34494bb0a",
+    "ecosystem/repositories.json": "7fa09405fa346c0ff21c572f55e3b0af2f04d592d7bcf558cdd5e7588574c464",
     "registry/intents.json": "4a0ad7b2a9dc5d5d7516223b6c06573701662f22b25efcb4dabbc7a3106db5a4",
     "research/native-ai-infrastructure/fixtures/native-framing-fixture-manifest-v1.json": "a162b83304cc10cf07a73a70204a3fb7fc543a2c4f2f6585f6c58de92ab01245",
     "research/native-ai-infrastructure/fixtures/native-framing-v1.json": "e73a871c069f194c42716f462d2bde04fb79d769e1e98249c2d17c9af50bcfc1",
     "research/native-ai-infrastructure/fixtures/service-profiles-v1.json": "963049b5652df2cbb6d1bd1a80e2e39535a280560c5ab9c928fdc7958114d031",
+    "research/pre-normative-profiles/fixtures/discovery-evidence-v1.json": "de652ce2b39626729afba93576a69d894c837631e341f3d352586b5eb4d041cd",
     "schemas/conformance-badge.json": "eb5a2524344cd7895e9aea930ea86af1883816529b9f08aa1a71904b95437139",
     "schemas/feedback-envelope.json": "d8365ad8adfacaf95a027153e8cfbb08ff940b4e3479fe73377d4cea70960a39",
     "schemas/iicp-deployment-record-v1.json": "e110259313e7dd6e3910e4786bc7b41191802b54ec84b8fbd3f1db07ccee5dcc",
@@ -19,7 +20,7 @@
     "schemas/task.json": "2afaf4ec1a786b0fa6eefcd1c5ea4006604a6df531594e67d24290366a5d4885",
     "spec/v1.9/IICP-core-phase1-profile.md": "59b8096b20358b5c5272c92726779d04896d49ed8ef7668b1dc0fd321fc947c3",
     "spec/v1.9/README.md": "83d9b0f5ab956ee73cceb84d30d556f2838b2b85b940f98e1de734ec4a3eddb5",
-    "spec/v1.9/VERSION": "118705d21506adb8d7c06a51156bb59497679f644fb4ae3d14bbbfc366643124",
+    "spec/v1.9/VERSION": "50020f5178d4e42fca05b2455fbe25f0a8a19b7537bab9fa87429ec5ebe20de1",
     "spec/v1.9/conformance-badges.md": "1837103fa0f19f825413869a1d2415b3122afca09b0b58511ddef5dc5b1df05d",
     "spec/v1.9/conformance-test-suite.md": "c77688810e44a0f6a213d5446edd6eebad3baa2eb1f74448ad253ac85e600095",
     "spec/v1.9/iicp-billing-extension.md": "e4a29fc1af8762988b340c060e0b327df1172a6af3ae7524c81c171e4dd30018",
@@ -47,7 +48,7 @@
     "spec/v1.9/validation-methodology.md": "78693a12a47ed74e72db6b27d23e956bca9a00544ab8637ebebeeb827e39f635"
   },
   "manifest_version": "1.3.0",
-  "protocol_suite_version": "1.10.1",
+  "protocol_suite_version": "1.10.2",
   "registry_version": "1.3.0",
   "status": "immutable canonical release candidate"
 }

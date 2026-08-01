@@ -4,7 +4,7 @@
 
 *Building the HTTP for the Age of Generative AI*
 
-**Current version**: v1.10.1
+**Current version**: v1.10.2
 **Reference implementation**: [iicp.network](https://iicp.network)
 **Status**: Project-normative beta suite; individual profiles retain their own status
 
@@ -131,7 +131,7 @@ Read [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) for th
 
 ## Client SDKs
 
-Three official client SDKs (current release: **v0.7.99**) implement
+Three official client SDKs (current release: **v0.7.100**) implement
 both sides of the protocol — the consumer (discovery, routing, retry, fallback, CIP
 consumer) and the provider (`iicp-node` runtime with backend auto-detection, NAT
 escalation, relay worker/server modes, and a built-in MCP gateway). All are open-source
@@ -245,7 +245,7 @@ See [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) SEC-* test 
 
 **Cooperative Inference and routing hardening (active)**
 
-The [iicp.network](https://iicp.network) directory is live and the **client SDKs are published at v0.7.99** (PyPI / npm / crates.io). Each includes the `iicp-node` provider runtime, so a participant can use the mesh first and provide capacity later. Live node availability, installed-version adoption and encryption evidence change over time; consult the [live stats page](https://iicp.network/stats) before treating any network condition as current.
+The [iicp.network](https://iicp.network) directory is live and the **client SDKs are published at v0.7.100** (PyPI / npm / crates.io). Each includes the `iicp-node` provider runtime, so a participant can use the mesh first and provide capacity later. Live node availability, installed-version adoption and encryption evidence change over time; consult the [live stats page](https://iicp.network/stats) before treating any network condition as current.
 
 The mesh is usable for its current capabilities, while relay hardening, broader privacy evidence and public federation remain separate maturity gates. Remote execution still means the selected provider can read the task it executes.
 
@@ -254,7 +254,7 @@ The mesh is usable for its current capabilities, while relay hardening, broader 
 | Core protocol — register / discover / route | ✅ Live | Current evidence is published on the live stats page |
 | CIP coordinator (multi-node dispatch) | ✅ Implemented | Credit receipts, response integrity verification |
 | Reputation scoring | ✅ Ratified | Tier structure (§5.1.1) + bootstrap floor (§5.1.2) ratified 2026-05-24 — normative |
-| Published SDKs (Python / TypeScript / Rust) | ✅ Published v0.7.99 | Shared protocol baseline; see [Client SDKs](#client-sdks) |
+| Published SDKs (Python / TypeScript / Rust) | ✅ Published v0.7.100 | Shared protocol baseline; see [Client SDKs](#client-sdks) |
 | Node runtime (`iicp-node`) | ✅ Published | Ships inside every SDK (`pip install iicp-client` → `iicp-node serve`) |
 | Relay transport for unreachable workers | ✅ Shipped (v0.7.56) | HTTP long-poll worker transport — browsers and CGNAT operators bind outbound to a relay-capable node; consumers route through path-scoped relay endpoints with zero client changes |
 | **Browser node** (WebGPU, zero install) | ✅ Live | [iicp.network/browser-node](https://iicp.network/browser-node) — runs a real model in the browser via WebLLM, queries the live mesh as an IICP consumer (with a wire-level connection console), and can serve into the mesh via a relay. First **directory-listed browser node** verified end-to-end on 2026-06-12 |
@@ -281,7 +281,8 @@ Follow this repo or [iicp.network](https://iicp.network) for announcements.
 
 | Version | Date | Notes |
 |---------|------|-------|
-| **v1.10.1** | 2026-07-31 | Corrective immutable release: pins synchronized structured release metadata in the integrity manifest; no wire change. |
+| **v1.10.2** | 2026-08-01 | Additive pre-normative discovery evidence: health reasons, Gold progress, latency basis, SDK currency and aggregate operator diversity; no ranking change. |
+| v1.10.1 | 2026-07-31 | Corrective immutable release: pins synchronized structured release metadata in the integrity manifest; no wire change. |
 | v1.10.0 | 2026-07-31 | Adds authenticated replica decommissioning, credential invalidation, signed lifecycle propagation and same-DID reactivation. |
 | v1.9.3 | 2026-07-31 | Corrective immutable release: records Rust directory v0.1.4 snapshot-bootstrap correction; no protocol wire change. |
 | v1.9.2 | 2026-07-30 | Corrective immutable release: aligns the generated implementation index and SDK references with the released source/package state; adds a fail-closed version-truth check. |
