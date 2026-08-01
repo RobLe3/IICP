@@ -1,5 +1,13 @@
 # IICP Changelog
 
+## Unreleased — additive discovery evidence candidate 2026-08-01
+
+Added a content-free fixture for explaining health dimensions, Gold threshold
+state, latency basis, SDK compatibility versus release currency, and aggregate
+operator diversity. The profile is additive and pre-normative. It does not
+change ranking, expose operator identity material, attest failure domains, or
+authorize a directory release or deployment.
+
 ## v1.10.1 — 2026-07-31
 
 Corrective immutable release. The v1.10.0 normative archive is valid, but its

@@ -28,6 +28,7 @@ Tracking: `iicp.network#619` and spec-source synchronization
 The shared fixture set contains
 [`fixtures/profile-compatibility-v0.json`](./fixtures/profile-compatibility-v0.json)
 [`fixtures/dispatch-route-ticket-v1.json`](./fixtures/dispatch-route-ticket-v1.json),
+[`fixtures/discovery-evidence-v1.json`](./fixtures/discovery-evidence-v1.json),
 and [`fixtures/endpoint-security-v1.json`](./fixtures/endpoint-security-v1.json).
 Its manifest pins both digests and it is consumed by maintained SDK, directory
 and browser checks. The profile compatibility evaluator is additive and

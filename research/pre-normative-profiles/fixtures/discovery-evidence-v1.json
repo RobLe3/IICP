@@ -1,0 +1,55 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "profile_id": "iicp.discovery.evidence.v1",
+  "content_free": true,
+  "invariants": {
+    "gold_min_tasks": 100,
+    "gold_min_reputation_score": 0.65,
+    "sdk_compatibility_baseline": "0.7.68",
+    "sdk_latest_known_version": "0.7.99",
+    "failure_domain_basis": "not_attested",
+    "identity_material_exposed": false
+  },
+  "cases": [
+    {
+      "id": "DIR-EVIDENCE-01",
+      "input": {"completed_tasks": 104, "reputation_score": 0.60},
+      "expected": {
+        "gold_task_threshold_met": true,
+        "gold_reputation_threshold_met": false,
+        "remaining_gold_requirements": ["reputation_score"]
+      }
+    },
+    {
+      "id": "DIR-EVIDENCE-02",
+      "input": {"observed_latency_ms": 142.5},
+      "expected": {"estimate_ms": 143, "basis": "multi_proxy_ema"}
+    },
+    {
+      "id": "DIR-EVIDENCE-03",
+      "input": {"observed_latency_ms": null},
+      "expected": {"estimate_ms": null, "basis": "none"}
+    },
+    {
+      "id": "DIR-EVIDENCE-04",
+      "input": {"sdk_version": "0.7.98"},
+      "expected": {"compatibility": "current", "relation": "behind_known"}
+    },
+    {
+      "id": "DIR-EVIDENCE-05",
+      "input": {
+        "nodes": 2,
+        "verified_operator_groups": ["operator-a", "operator-a"],
+        "regions": ["eu-test", "eu-test"]
+      },
+      "expected": {
+        "nodes_with_verified_operator": 2,
+        "distinct_verified_operators": 1,
+        "distinct_regions": 1,
+        "failure_domain_count": null,
+        "identity_material_exposed": false
+      }
+    }
+  ]
+}

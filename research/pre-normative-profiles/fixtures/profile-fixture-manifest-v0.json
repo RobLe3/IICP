@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.11.0-draft",
+  "manifest_version": "0.12.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -86,6 +86,11 @@
       "path": "mcp-era-negotiation-v0.json",
       "fixture_version": "0.1.0-draft",
       "sha256": "b0ee4dfcd07a94f62548cf8e34ab030ab2fa8d30a8bc0179831eb18b31d13924"
+    },
+    {
+      "path": "discovery-evidence-v1.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "de652ce2b39626729afba93576a69d894c837631e341f3d352586b5eb4d041cd"
     }
   ]
 }
