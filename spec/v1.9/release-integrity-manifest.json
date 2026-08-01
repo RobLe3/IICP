@@ -1,6 +1,6 @@
 {
   "files": {
-    "CHANGELOG.md": "ffe25360df566a8ebf4d320b2360b306723219e329a298e37fb5d945305552a5",
+    "CHANGELOG.md": "e47f16db9b582b02c816cb5fd834c653a110f562c15434f9b133af5bc8f441fa",
     "IMPLEMENTATIONS.md": "dda9e4e32ef15df92370598476efb2f50fcc5a322c397fb04e4caa2f9ae2e925",
     "README.md": "a12e07409e315703f7499281e3aa275c9545f9ab1489091dbfdf7a7e7c559407",
     "SPEC_RELEASE_PROCESS.md": "8145897d8b3768bcfdab1121fcd081af98f2a52044fbe8835240b0059a07c1fd",
@@ -12,7 +12,7 @@
     "research/native-ai-infrastructure/fixtures/native-framing-fixture-manifest-v1.json": "a162b83304cc10cf07a73a70204a3fb7fc543a2c4f2f6585f6c58de92ab01245",
     "research/native-ai-infrastructure/fixtures/native-framing-v1.json": "e73a871c069f194c42716f462d2bde04fb79d769e1e98249c2d17c9af50bcfc1",
     "research/native-ai-infrastructure/fixtures/service-profiles-v1.json": "963049b5652df2cbb6d1bd1a80e2e39535a280560c5ab9c928fdc7958114d031",
-    "research/pre-normative-profiles/fixtures/discovery-evidence-v1.json": "de652ce2b39626729afba93576a69d894c837631e341f3d352586b5eb4d041cd",
+    "research/pre-normative-profiles/fixtures/discovery-evidence-v1.json": "da1717b40ec012487574b4772b040cfaba2a59488377b39a69acbe62539a018b",
     "schemas/conformance-badge.json": "eb5a2524344cd7895e9aea930ea86af1883816529b9f08aa1a71904b95437139",
     "schemas/feedback-envelope.json": "d8365ad8adfacaf95a027153e8cfbb08ff940b4e3479fe73377d4cea70960a39",
     "schemas/iicp-deployment-record-v1.json": "e110259313e7dd6e3910e4786bc7b41191802b54ec84b8fbd3f1db07ccee5dcc",
