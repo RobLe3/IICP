@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Added a release-truth gate that derives the current official SDK version from
+  the ecosystem catalog and rejects stale discovery-evidence defaults in both
+  directory flavours. This is a contract correction, not a ranking change.
+
 ## v1.10.2 — 2026-08-01
 
 Added a content-free fixture for explaining health dimensions, Gold threshold
