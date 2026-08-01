@@ -1,6 +1,8 @@
 # IICP Changelog
 
-## Unreleased — additive discovery evidence candidate 2026-08-01
+## Unreleased
+
+## v1.10.2 — 2026-08-01
 
 Added a content-free fixture for explaining health dimensions, Gold threshold
 state, latency basis, SDK compatibility versus release currency, and aggregate

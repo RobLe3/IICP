@@ -1,76 +1,84 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-31",
+  "generated_at": "2026-08-01",
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.1",
-      "wire_behavior": "unchanged",
+      "version": "1.10.2",
+      "wire_behavior": "additive",
       "conformance_impact": "unchanged",
-      "profiles": [],
+      "profiles": [
+        "discovery-evidence-v1"
+      ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No wire or runtime migration is required.",
-      "rollback": "Continue using the immutable v1.10.0 normative archive; only structured ecosystem metadata is corrected."
+      "migration": "No wire or runtime migration is required; the discovery-evidence profile remains additive and pre-normative.",
+      "rollback": "Continue using the immutable v1.10.1 archive; implementations may ignore the additive evidence profile."
     },
     {
       "id": "directory-php",
-      "version": "1.10.83",
+      "version": "1.10.84",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
-        "replica-lifecycle-v1"
+        "discovery-evidence-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No schema migration is required; active replicas may adopt authenticated decommissioning and same-DID reactivation.",
-      "rollback": "Restore PHP directory v1.10.82; replicas should re-register to rotate credentials before resuming protected snapshot access."
+      "migration": "No schema migration is required; discovery responses add content-free explanatory evidence.",
+      "rollback": "Restore the preceding immutable release; older clients and directories may omit the additive evidence fields."
     },
     {
       "id": "directory-rust",
-      "version": "0.1.5",
+      "version": "0.1.6",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
-        "replica-lifecycle-v1"
+        "discovery-evidence-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No schema migration is required; configure a stable replica DID and HTTPS endpoint before replica-mode use.",
-      "rollback": "Stop the preview and restore v0.1.4; re-register before protected snapshot bootstrap. Do not treat rollback as Genesis cutover authority."
+      "migration": "No schema migration is required; discovery responses add content-free explanatory evidence.",
+      "rollback": "Restore the preceding immutable release; older clients and directories may omit the additive evidence fields."
     },
     {
       "id": "client-python",
-      "version": "0.7.99",
-      "wire_behavior": "unchanged",
+      "version": "0.7.100",
+      "wire_behavior": "additive",
       "conformance_impact": "unchanged",
-      "profiles": [],
+      "profiles": [
+        "discovery-evidence-v1"
+      ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No runtime or wire migration is required.",
-      "rollback": "Install the previous immutable package version; runtime behavior and persisted node state are unchanged."
+      "migration": "No persisted-state migration is required; clients tolerate directories that omit the additive evidence fields.",
+      "rollback": "Install the preceding immutable package; discovery remains compatible and additive fields are no longer exposed by the client model."
     },
     {
       "id": "client-typescript",
-      "version": "0.7.99",
-      "wire_behavior": "unchanged",
+      "version": "0.7.100",
+      "wire_behavior": "additive",
       "conformance_impact": "unchanged",
-      "profiles": [],
+      "profiles": [
+        "discovery-evidence-v1"
+      ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No runtime or wire migration is required.",
-      "rollback": "Install the previous immutable package version; runtime behavior and persisted node state are unchanged."
+      "migration": "No persisted-state migration is required; clients tolerate directories that omit the additive evidence fields.",
+      "rollback": "Install the preceding immutable package; discovery remains compatible and additive fields are no longer exposed by the client model."
     },
     {
       "id": "client-rust",
-      "version": "0.7.99",
-      "wire_behavior": "unchanged",
+      "version": "0.7.100",
+      "wire_behavior": "additive",
       "conformance_impact": "unchanged",
-      "profiles": [],
+      "profiles": [
+        "discovery-evidence-v1"
+      ],
       "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "recommended",
-      "migration": "No runtime or wire migration is required.",
-      "rollback": "Install the previous immutable crate version; this restores its earlier dependency graph without changing persisted node state."
+      "upgrade": "optional",
+      "migration": "No persisted-state migration is required; clients tolerate directories that omit the additive evidence fields.",
+      "rollback": "Install the preceding immutable package; discovery remains compatible and additive fields are no longer exposed by the client model."
     },
     {
       "id": "web-node",
