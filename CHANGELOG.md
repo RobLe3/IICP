@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v1.10.3 — 2026-08-01
+
+Adds the reviewed dual-era MCP gateway compatibility profile across the official SDKs while keeping MCP `2025-11-25` as the default and `2026-07-28` explicit and fail-closed. It also advances coordinated SDK release currency to `0.7.101` through the release-derived cross-directory gate.
+
+No directory ranking, eligibility, route exposure, database schema, Genesis deployment, Rust cutover or strict-E050 activation is authorized.
+
 - Added a release-truth gate that derives the current official SDK version from
   the ecosystem catalog and rejects stale discovery-evidence defaults in both
   directory flavours. This is a contract correction, not a ranking change.

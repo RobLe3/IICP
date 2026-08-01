@@ -14,7 +14,7 @@
       "authority": "normative protocol, registries and reviewed research",
       "language": "specification",
       "protocol": "1.9",
-      "release": "1.10.2"
+      "release": "1.10.3"
     },
     {
       "id": "project-hub",
@@ -69,7 +69,7 @@
       "authority": "PHP reference directory implementation and current Genesis Seed code line",
       "language": "php",
       "protocol": "1.9",
-      "release": "1.10.84"
+      "release": "1.10.85"
     },
     {
       "id": "directory-rust",
@@ -80,7 +80,7 @@
       "authority": "pre-1.0 Rust directory operator preview; not the production Genesis authority",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.1.6"
+      "release": "0.1.7"
     },
     {
       "id": "client-python",
@@ -91,7 +91,7 @@
       "authority": "Python consumer and provider SDK",
       "language": "python",
       "protocol": "1.9",
-      "release": "0.7.100",
+      "release": "0.7.101",
       "package": "pypi:iicp-client"
     },
     {
@@ -103,7 +103,7 @@
       "authority": "TypeScript consumer and provider SDK",
       "language": "typescript",
       "protocol": "1.9",
-      "release": "0.7.100",
+      "release": "0.7.101",
       "package": "npm:@iicp/client"
     },
     {
@@ -115,7 +115,7 @@
       "authority": "Rust consumer and provider SDK",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.7.100",
+      "release": "0.7.101",
       "package": "crates:iicp-client"
     },
     {
