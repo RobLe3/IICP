@@ -1,0 +1,8 @@
+Metadata-Version: 2.4
+Name: iicp-conformance
+Version: 0.1.0
+Summary: Standalone, content-free black-box conformance runner for IICP
+License: Apache-2.0
+Requires-Python: >=3.11
+Provides-Extra: signing
+Requires-Dist: cryptography>=42; extra == "signing"

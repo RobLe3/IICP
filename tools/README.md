@@ -8,6 +8,10 @@ Validation and analysis tools for the IICP specification.
 | `quick_validation.py` | Quick syntax + field validation against IICP v1.4.2 message schemas |
 | `validation_results_v1.4.2.json` | Archived validation results for v1.4.2 |
 
+The separately installable preview under `conformance-runner/` exercises a
+bounded public-directory profile and emits content-free machine-readable
+results. It does not replace the complete conformance environment.
+
 ## Usage
 
 ```bash

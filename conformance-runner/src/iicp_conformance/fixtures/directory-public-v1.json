@@ -1,0 +1,17 @@
+{
+  "schema": "iicp.conformance_test_manifest.v1",
+  "suite_version": "4.45.0",
+  "profile": "directory-public-v1",
+  "tests": [
+    {"id": "DIR-DISC-01", "method": "GET", "path": "/api/v1/discover?intent=urn:iicp:intent:llm:chat:v1", "status": 200, "assertion": "discovery_shape"},
+    {"id": "DIR-DISC-04", "method": "GET", "path": "/api/v1/discover?intent=urn:iicp:intent:llm:chat:v1", "status": 200, "assertion": "score_range"},
+    {"id": "DIR-DISC-09", "method": "GET", "path": "/api/v1/discover?intent=urn:iicp:intent:llm:chat:v1&min_reputation=2.0", "status": 422, "assertion": "none"},
+    {"id": "DIR-DISC-10", "method": "GET", "path": "/api/v1/discover", "status": 422, "assertion": "none"},
+    {"id": "DIR-PROBE-01", "method": "GET", "path": "/api/v1/probe?host=127.0.0.1&port=9484", "status": 422, "assertion": "none"},
+    {"id": "DIR-PROBE-02", "method": "GET", "path": "/api/v1/probe?host=10.0.0.1&port=9484", "status": 422, "assertion": "none"},
+    {"id": "DIR-CRED-01", "method": "GET", "path": "/api/v1/credits/balance", "status": 401, "assertion": "none"},
+    {"id": "DIR-CRED-02", "method": "GET", "path": "/api/v1/credits/transactions", "status": 401, "assertion": "none"},
+    {"id": "DIR-CRED-03", "method": "POST", "path": "/api/v1/credits/award", "status": 401, "assertion": "none"},
+    {"id": "DIR-TEL-01", "method": "POST", "path": "/api/v1/telemetry", "status": 401, "assertion": "none"}
+  ]
+}

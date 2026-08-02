@@ -1,0 +1,3 @@
+
+[signing]
+cryptography>=42

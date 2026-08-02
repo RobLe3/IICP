@@ -1,0 +1,14 @@
+README.md
+pyproject.toml
+src/iicp_conformance/__init__.py
+src/iicp_conformance/__main__.py
+src/iicp_conformance/cli.py
+src/iicp_conformance/runner.py
+src/iicp_conformance.egg-info/PKG-INFO
+src/iicp_conformance.egg-info/SOURCES.txt
+src/iicp_conformance.egg-info/dependency_links.txt
+src/iicp_conformance.egg-info/entry_points.txt
+src/iicp_conformance.egg-info/requires.txt
+src/iicp_conformance.egg-info/top_level.txt
+src/iicp_conformance/fixtures/directory-public-v1.json
+tests/test_runner.py
