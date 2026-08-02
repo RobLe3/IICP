@@ -1,2 +1,0 @@
-[console_scripts]
-iicp-conformance = iicp_conformance.cli:main

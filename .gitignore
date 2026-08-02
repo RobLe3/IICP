@@ -6,3 +6,5 @@ build/
 .bundle/
 .refcache/
 __pycache__/
+
+*.egg-info/
