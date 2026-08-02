@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/conformance-result-v1.json",
+  "title": "IICP content-free conformance result",
+  "type": "object",
+  "required": [
+    "schema",
+    "runner_version",
+    "suite_version",
+    "fixture_digest",
+    "target_role",
+    "evidence_class",
+    "started_at",
+    "finished_at",
+    "summary",
+    "results",
+    "content_free"
+  ],
+  "properties": {
+    "schema": {"const": "iicp.conformance_result.v1"},
+    "runner_version": {"type": "string"},
+    "suite_version": {"type": "string"},
+    "fixture_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "target_role": {"enum": ["directory", "provider", "client"]},
+    "evidence_class": {"enum": ["self-attested", "project-verified", "independent"]},
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": "string", "format": "date-time"},
+    "summary": {
+      "type": "object",
+      "required": ["total", "passed", "failed"],
+      "properties": {
+        "total": {"type": "integer", "minimum": 0},
+        "passed": {"type": "integer", "minimum": 0},
+        "failed": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["test_id", "outcome", "reason", "observed_status", "duration_ms"],
+        "properties": {
+          "test_id": {"type": "string"},
+          "outcome": {"enum": ["pass", "fail"]},
+          "reason": {"enum": ["passed", "request_failed", "unexpected_status", "assertion_failed"]},
+          "observed_status": {"type": ["integer", "null"], "minimum": 100, "maximum": 599},
+          "duration_ms": {"type": "number", "minimum": 0}
+        },
+        "additionalProperties": false
+      }
+    },
+    "content_free": {"const": true},
+    "signature": {
+      "type": "object",
+      "required": ["algorithm", "canonicalization", "public_key", "value"],
+      "properties": {
+        "algorithm": {"const": "Ed25519"},
+        "canonicalization": {"type": "string"},
+        "public_key": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "value": {"type": "string", "pattern": "^[0-9a-f]{128}$"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
