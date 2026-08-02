@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## v1.10.7 — 2026-08-02
+
+Corrects the conformance-suite version authority and adds the isolated
+`directory-dispatch-v1` runner profile. The suite now has one header and one
+changelog sequence: discovery-cache behavior is 4.46, native framing vectors
+are 4.47, service-profile vectors are 4.48, and dispatch safety is 4.49.
+Existing 4.45 `directory-public-v1` result bundles remain verifiable.
+
+The new profile is loopback-only because a passing case issues short-lived
+route material and may increment aggregate adoption counters. Published results
+remain content-free. No directory, SDK, wire, deployment or routing-default
+behavior changes.
+
 ## v1.10.6 — 2026-08-02
 
 Corrective documentation and release-integrity release. It generates the

@@ -17,7 +17,7 @@ from iicp_conformance.runner import (
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
-        if self.headers.get("User-Agent") != "iicp-conformance/0.1.0":
+        if self.headers.get("User-Agent") != "iicp-conformance/0.2.0":
             self.reply(403, {})
             return
         if self.path.startswith("/api/v1/discover?"):
@@ -35,8 +35,25 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(404, {})
 
     def do_POST(self) -> None:
-        if self.headers.get("User-Agent") != "iicp-conformance/0.1.0":
+        if self.headers.get("User-Agent") != "iicp-conformance/0.2.0":
             self.reply(403, {})
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        body = json.loads(self.rfile.read(length) or b"{}")
+        if self.path == "/api/v1/dispatch/ticket":
+            if set(body) == {"intent"} and body["intent"] == "urn:iicp:intent:llm:chat:v1":
+                self.reply(
+                    201,
+                    {
+                        "ticket": "fixture-ticket",
+                        "route": {"endpoint": "https://fixture.invalid"},
+                        "data_class": "ticketed_route_dispatch",
+                        "route_fields_present": True,
+                        "prompt_payload_accepted": False,
+                    },
+                )
+            else:
+                self.reply(422, {"error": {"code": "validation_error"}})
             return
         self.reply(401, {"error": {"code": "unauthorized"}})
 
@@ -79,6 +96,35 @@ class RunnerTest(unittest.TestCase):
         manifest["suite_version"] = "different"
         with self.assertRaisesRegex(ValueError, "mixed or unsupported"):
             load_manifest(json.dumps(manifest).encode())
+        manifest = json.loads(bundled_manifest_bytes())
+        manifest["profile"] = "unknown"
+        with self.assertRaisesRegex(ValueError, "unsupported conformance profile"):
+            load_manifest(json.dumps(manifest).encode())
+
+    def test_dispatch_profile_is_loopback_only_content_free_and_verifiable(self) -> None:
+        target = f"http://127.0.0.1:{self.server.server_port}"
+        result = run(target, profile="directory-dispatch-v1")
+        self.assertEqual(result["profile"], "directory-dispatch-v1")
+        self.assertEqual(result["summary"], {"total": 5, "passed": 5, "failed": 0})
+        encoded = json.dumps(result)
+        self.assertNotIn(target, encoded)
+        self.assertNotIn("fixture-ticket", encoded)
+        self.assertNotIn("fixture-only", encoded)
+        self.assertTrue(verify_result(result)["valid"])
+        with self.assertRaisesRegex(ValueError, "restricted to loopback"):
+            run("https://directory.example", profile="directory-dispatch-v1")
+
+    def test_legacy_public_result_without_profile_still_verifies(self) -> None:
+        target = f"http://127.0.0.1:{self.server.server_port}"
+        result = run(target)
+        result.pop("profile")
+        self.assertTrue(verify_result(result)["valid"])
+        try:
+            import rfc8785  # noqa: F401
+        except ImportError:
+            return
+        signed = sign_result(result, "22" * 32)
+        self.assertTrue(verify_result(signed, require_signature=True)["valid"])
 
     def test_unsigned_result_verifies_and_signature_can_be_required(self) -> None:
         target = f"http://127.0.0.1:{self.server.server_port}"

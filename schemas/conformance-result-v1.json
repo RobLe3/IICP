@@ -19,6 +19,7 @@
   "properties": {
     "schema": {"const": "iicp.conformance_result.v1"},
     "runner_version": {"type": "string"},
+    "profile": {"type": "string"},
     "suite_version": {"type": "string"},
     "fixture_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "target_role": {"enum": ["directory", "provider", "client"]},

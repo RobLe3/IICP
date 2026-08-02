@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 
-from .runner import run, sign_result, verify_result
+from .runner import DEFAULT_PROFILE, PROFILE_FILES, run, sign_result, verify_result
 
 
 def parser() -> argparse.ArgumentParser:
@@ -13,6 +13,12 @@ def parser() -> argparse.ArgumentParser:
     commands = result.add_subparsers(dest="command", required=True)
     run_parser = commands.add_parser("run", help="Run a black-box conformance profile")
     run_parser.add_argument("--target", required=True, help="Directory base URL")
+    run_parser.add_argument(
+        "--profile",
+        choices=tuple(PROFILE_FILES),
+        default=DEFAULT_PROFILE,
+        help="Bundled digest-addressed profile to execute",
+    )
     run_parser.add_argument("--output", type=Path, help="Write the content-free JSON result")
     run_parser.add_argument(
         "--evidence-class",
@@ -40,6 +46,7 @@ def main(argv: list[str] | None = None) -> int:
         args.target,
         evidence_class=args.evidence_class,
         timeout=args.timeout,
+        profile=args.profile,
     )
     if args.signing_key_file:
         result = sign_result(result, args.signing_key_file.read_text(encoding="utf-8"))

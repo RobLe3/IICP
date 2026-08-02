@@ -9,6 +9,7 @@
     "signed",
     "signer_key_fingerprint",
     "suite_version",
+    "profile",
     "fixture_digest",
     "errors",
     "content_free"
@@ -22,6 +23,7 @@
       "pattern": "^sha256:[0-9a-f]{64}$"
     },
     "suite_version": {"type": ["string", "null"]},
+    "profile": {"type": "string"},
     "fixture_digest": {"type": ["string", "null"]},
     "errors": {"type": "array", "items": {"type": "string"}},
     "content_free": {"const": true}

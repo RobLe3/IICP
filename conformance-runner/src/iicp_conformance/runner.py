@@ -8,12 +8,21 @@ from datetime import datetime, timezone
 from importlib.resources import files
 from typing import Any
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
 EXPECTED_SCHEMA = "iicp.conformance_test_manifest.v1"
-EXPECTED_SUITE = "4.45.0"
 RESULT_SCHEMA = "iicp.conformance_result.v1"
 VERIFICATION_SCHEMA = "iicp.conformance_verification.v1"
+DEFAULT_PROFILE = "directory-public-v1"
+PROFILE_FILES = {
+    DEFAULT_PROFILE: "directory-public-v1.json",
+    "directory-dispatch-v1": "directory-dispatch-v1.json",
+}
+PROFILE_SUITES = {
+    DEFAULT_PROFILE: "4.45.0",
+    "directory-dispatch-v1": "4.49.0",
+}
 EVIDENCE_CLASSES = {"self-attested", "project-verified", "independent"}
 PROHIBITED_KEYS = {
     "bindings",
@@ -49,10 +58,14 @@ def canonical_json(value: Any) -> bytes:
         raise ValueError("result cannot be represented by RFC 8785 JCS") from error
 
 
-def bundled_manifest_bytes() -> bytes:
+def bundled_manifest_bytes(profile: str = DEFAULT_PROFILE) -> bytes:
+    try:
+        fixture = PROFILE_FILES[profile]
+    except KeyError as error:
+        raise ValueError("unsupported conformance profile") from error
     return (
         files("iicp_conformance")
-        .joinpath("fixtures/directory-public-v1.json")
+        .joinpath(f"fixtures/{fixture}")
         .read_bytes()
     )
 
@@ -61,7 +74,10 @@ def load_manifest(raw: bytes) -> dict[str, Any]:
     manifest = json.loads(raw)
     if manifest.get("schema") != EXPECTED_SCHEMA:
         raise ValueError("unsupported conformance manifest schema")
-    if manifest.get("suite_version") != EXPECTED_SUITE:
+    profile = manifest.get("profile")
+    if profile not in PROFILE_FILES:
+        raise ValueError("unsupported conformance profile")
+    if manifest.get("suite_version") != PROFILE_SUITES[profile]:
         raise ValueError("mixed or unsupported conformance suite version")
     tests = manifest.get("tests")
     if not isinstance(tests, list) or not tests:
@@ -73,7 +89,11 @@ def load_manifest(raw: bytes) -> dict[str, Any]:
 
 def request(target: str, case: dict[str, Any], timeout: float) -> Response:
     url = f"{target.rstrip('/')}{case['path']}"
-    body = b"{}" if case["method"] == "POST" else None
+    body = (
+        json.dumps(case.get("body", {}), separators=(",", ":")).encode()
+        if case["method"] == "POST"
+        else None
+    )
     req = Request(
         url,
         data=body,
@@ -81,7 +101,7 @@ def request(target: str, case: dict[str, Any], timeout: float) -> Response:
         headers={
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "User-Agent": "iicp-conformance/0.1.0",
+            "User-Agent": "iicp-conformance/0.2.0",
         },
     )
     try:
@@ -115,7 +135,47 @@ def assertion_passes(name: str, body: bytes) -> bool:
             and 0.1 <= node["score"] <= 1.0
             for node in nodes
         )
+    if name.startswith("error_code:"):
+        expected = name.split(":", 1)[1]
+        return (
+            isinstance(value, dict)
+            and isinstance(value.get("error"), dict)
+            and value["error"].get("code") == expected
+        )
+    if name == "json_error":
+        return (
+            isinstance(value, dict)
+            and isinstance(value.get("error"), dict)
+            and isinstance(value["error"].get("code"), str)
+        )
+    if name == "json_error_without_fixture_content":
+        return (
+            isinstance(value, dict)
+            and isinstance(value.get("error"), dict)
+            and isinstance(value["error"].get("code"), str)
+            and b"fixture-only" not in body
+        )
+    if name == "dispatch_ticket_shape":
+        return (
+            isinstance(value, dict)
+            and isinstance(value.get("ticket"), str)
+            and bool(value["ticket"])
+            and isinstance(value.get("route"), dict)
+            and value.get("data_class") == "ticketed_route_dispatch"
+            and value.get("route_fields_present") is True
+            and value.get("prompt_payload_accepted") is False
+        )
     return False
+
+
+def _is_loopback_target(target: str) -> bool:
+    parsed = urlsplit(target)
+    return (
+        parsed.scheme in {"http", "https"}
+        and parsed.hostname in {"127.0.0.1", "::1", "localhost"}
+        and parsed.username is None
+        and parsed.password is None
+    )
 
 
 def run(
@@ -124,9 +184,14 @@ def run(
     evidence_class: str = "self-attested",
     timeout: float = 5.0,
     manifest_raw: bytes | None = None,
+    profile: str = DEFAULT_PROFILE,
 ) -> dict[str, Any]:
-    raw = manifest_raw if manifest_raw is not None else bundled_manifest_bytes()
+    raw = manifest_raw if manifest_raw is not None else bundled_manifest_bytes(profile)
     manifest = load_manifest(raw)
+    if manifest.get("profile") != profile:
+        raise ValueError("manifest profile does not match requested profile")
+    if manifest.get("loopback_only") is True and not _is_loopback_target(target):
+        raise ValueError("this conformance profile is restricted to loopback targets")
     results: list[dict[str, Any]] = []
     started = datetime.now(timezone.utc)
     for case in manifest["tests"]:
@@ -159,8 +224,9 @@ def run(
     passed = sum(item["outcome"] == "pass" for item in results)
     return {
         "schema": RESULT_SCHEMA,
-        "runner_version": "0.1.0",
+        "runner_version": "0.2.0",
         "suite_version": manifest["suite_version"],
+        "profile": manifest["profile"],
         "fixture_digest": f"sha256:{hashlib.sha256(raw).hexdigest()}",
         "target_role": "directory",
         "evidence_class": evidence_class,
@@ -213,9 +279,16 @@ def _prohibited_keys(value: Any) -> set[str]:
 def verify_result(
     result: dict[str, Any], *, require_signature: bool = False
 ) -> dict[str, Any]:
-    raw = bundled_manifest_bytes()
-    manifest = load_manifest(raw)
-    errors: list[str] = []
+    profile = result.get("profile", DEFAULT_PROFILE)
+    try:
+        raw = bundled_manifest_bytes(profile)
+        manifest = load_manifest(raw)
+    except ValueError as error:
+        raw = b""
+        manifest = {"tests": []}
+        errors = [str(error)]
+    else:
+        errors = []
     required = {
         "schema",
         "runner_version",
@@ -229,7 +302,7 @@ def verify_result(
         "results",
         "content_free",
     }
-    allowed = required | {"signature"}
+    allowed = required | {"profile", "signature"}
     missing = sorted(required - result.keys())
     unknown = sorted(result.keys() - allowed)
     if missing:
@@ -238,7 +311,7 @@ def verify_result(
         errors.append(f"unknown fields: {','.join(unknown)}")
     if result.get("schema") != RESULT_SCHEMA:
         errors.append("unsupported result schema")
-    if result.get("suite_version") != EXPECTED_SUITE:
+    if result.get("suite_version") != manifest.get("suite_version"):
         errors.append("mixed or unsupported suite version")
     expected_digest = f"sha256:{hashlib.sha256(raw).hexdigest()}"
     if result.get("fixture_digest") != expected_digest:
@@ -328,6 +401,7 @@ def verify_result(
         "signed": signed,
         "signer_key_fingerprint": signer_fingerprint,
         "suite_version": result.get("suite_version"),
+        "profile": profile,
         "fixture_digest": result.get("fixture_digest"),
         "errors": errors,
         "content_free": True,

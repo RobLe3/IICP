@@ -1,0 +1,52 @@
+{
+  "schema": "iicp.conformance_test_manifest.v1",
+  "suite_version": "4.49.0",
+  "profile": "directory-dispatch-v1",
+  "loopback_only": true,
+  "tests": [
+    {
+      "id": "DIR-DISPATCH-01",
+      "method": "POST",
+      "path": "/api/v1/dispatch/ticket",
+      "body": {"intent": "urn:iicp:intent:llm:chat:v1"},
+      "status": 201,
+      "assertion": "dispatch_ticket_shape"
+    },
+    {
+      "id": "DIR-DISPATCH-02",
+      "method": "POST",
+      "path": "/api/v1/dispatch/ticket",
+      "body": {"intent": "urn:iicp:intent:credit:decision:v1"},
+      "status": 422,
+      "assertion": "json_error"
+    },
+    {
+      "id": "DIR-DISPATCH-03",
+      "method": "POST",
+      "path": "/api/v1/dispatch/ticket",
+      "body": {"intent": "urn:iicp:intent:llm:chat:v1", "prompt": "fixture-only"},
+      "status": 422,
+      "assertion": "json_error_without_fixture_content"
+    },
+    {
+      "id": "DIR-DISPATCH-04",
+      "method": "POST",
+      "path": "/api/v1/dispatch/ticket",
+      "body": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "node_id": "fixture-node",
+        "node_id_prefix": "fixt"
+      },
+      "status": 422,
+      "assertion": "error_code:validation_error"
+    },
+    {
+      "id": "DIR-DISPATCH-05",
+      "method": "POST",
+      "path": "/api/v1/dispatch/ticket",
+      "body": {"intent": "urn:iicp:intent:llm:chat:v1", "qos": "invalid"},
+      "status": 422,
+      "assertion": "error_code:validation_error"
+    }
+  ]
+}
