@@ -1,7 +1,7 @@
 # IICP-DIR — Directory Sub-Protocol Specification
 
-**Version**: 1.1.23
-**Date**: 2026-07-18
+**Version**: 1.1.24
+**Date**: 2026-08-02
 **Status**: draft
 **Issue**: #14
 **Authority**: Protocol Steward
@@ -55,6 +55,11 @@ Registers a node's identity, capabilities, and resource limits.
     "max_concurrent": 4,
     "tokens_per_min": 20000
   },
+  "sdk_language": "typescript",
+  "sdk_version": "0.7.101",
+  "implementation_name": "@iicp/web-node",
+  "implementation_version": "0.2.2",
+  "sdk_compatibility_version": "0.7.101",
   "availability": [
     { "start": "00:00", "end": "08:00", "share": 0.8 }
   ],
@@ -82,7 +87,41 @@ Registers a node's identity, capabilities, and resource limits.
 ```
 
 **Required fields**: `endpoint`, `region`, `capabilities[].intent`, `limits.max_concurrent`
-**Optional**: `node_id` (directory assigns if absent), `availability`, `limits.tokens_per_min`, `transport_endpoint`, `capabilities[].input_modalities`, `operator_delegation`, `policy_manifest`
+**Optional**: `node_id` (directory assigns if absent), `availability`, `limits.tokens_per_min`, `transport_endpoint`, `capabilities[].input_modalities`, `operator_delegation`, `policy_manifest`, `sdk_language`, `sdk_version`, `implementation_name`, `implementation_version`, `sdk_compatibility_version`
+
+**Implementation and SDK-compatibility metadata (v1.1.24):** Provider software
+identity and protocol compatibility are separate, OPTIONAL axes:
+
+| Field | Grammar | Meaning |
+|-------|---------|---------|
+| `implementation_name` | 1–64 ASCII characters matching `^[A-Za-z0-9@][A-Za-z0-9._/@+-]{0,63}$` | Self-reported software/runtime identity, for example `@iicp/web-node` or `iicp-client-rust`. |
+| `implementation_version` | 1–32 ASCII characters matching `^[0-9A-Za-z][0-9A-Za-z._+-]{0,31}$` | That implementation's own release version. |
+| `sdk_compatibility_version` | null or the same 1–32 version grammar | IICP SDK behavior baseline implemented by the runtime. |
+| `sdk_version` | legacy string\|null | Backward-compatible alias for SDK behavior compatibility. |
+
+The effective compatibility version is
+`sdk_compatibility_version ?? sdk_version`. If both fields are non-null, their
+values MUST be identical; a directory MUST reject a conflicting registration
+with its ordinary 422 validation response rather than guess. `sdk_status`,
+upgrade guidance and adoption telemetry MUST use the effective compatibility
+version. `sdk_language` remains advisory language provenance and is not an
+implementation identity.
+
+Directories MUST accept legacy registrations that send only `sdk_version` and
+MUST accept new registrations that send only `sdk_compatibility_version`.
+During the pre-1.0 transition, official providers SHOULD send both fields with
+the same value so older directories retain compatibility evidence. Unknown
+registration fields remain ignorable for forward compatibility.
+
+These fields are public, self-attested provenance. They MUST NOT contain host
+names, local paths, account names, node identifiers, credentials or private
+build details, and MUST NOT by themselves affect trust, policy, health or route
+eligibility. Directory projections SHOULD expose all three new fields without
+renaming implementation release versions as SDK versions. `sdk_version` remains
+supported through the pre-1.0 directory line and for at least one published
+protocol minor after official clients adopt the new fields; removal requires a
+separate breaking release and measured adoption evidence. The executable cases
+are in `fixtures/directory-implementation-metadata-v1.json`.
 
 **`input_modalities` (v1.10.0, ADR-046 — multimodal)**: an OPTIONAL array on each capability object
 declaring the input modalities that capability accepts; one of `text`, `image`, `audio`, `video`.
@@ -580,7 +619,9 @@ risk-reduction measures, not legal compliance proof.
 | `address_family` | string\|null | `"ipv4"`, `"ipv6"`, or `"dual"` (maintainer directive 2026-05-27). Lets IPv6-only clients filter. |
 | `relay_capable` | boolean | `true` if the node can act as a relay for NAT-bound peers (Tier-3 reachability). |
 | `cx_public_key` | object\|null | Canonical IICP-CX confidentiality key (iicp-confidentiality §3.2): `{algorithm, encoding, key, key_id, not_after, hybrid_pq, features}`. `features` is an optional additive string list; `response_encryption_v1` negotiates authenticated encrypted responses without claiming the complete `cx_tier: 2` bundle. Unknown features are ignored. Present when the node advertises E2E payload encryption support. `null` = node accepts plaintext only. Clients MUST use this to encrypt payloads when `X-IICP-Require-E2E` is set. |
-| `sdk_language` / `sdk_version` | string\|null | Advisory provenance of the serving node's SDK (#338). Informational only. |
+| `sdk_language` / `sdk_version` | string\|null | Advisory SDK language and legacy compatibility alias. Informational only. |
+| `implementation_name` / `implementation_version` | string\|null | Public self-attested software identity and its own release version. These are not SDK compatibility fields and do not affect routing or trust. |
+| `sdk_compatibility_version` | string\|null | Preferred SDK behavior baseline. When absent, `sdk_version` remains the compatibility fallback; conflicting dual values are invalid at registration. |
 | `sdk_status` / `sdk_baseline_version` / `upgrade_required` | string/string/boolean | Directory-computed SDK-baseline posture. `sdk_status` is `"current"`, `"downlevel"`, or `"unknown"` against the directory's current baseline. Downlevel/unknown nodes remain visible during transition but are demoted and SHOULD NOT be preferred for privacy-sensitive routing. |
 | `key_ready` / `privacy_routing_status` | boolean/string | `key_ready=true` when the node advertises canonical `cx_public_key`. `privacy_routing_status` is `"key_ready"` or `"transitional"`; transitional nodes can serve legacy/plaintext paths but MUST NOT be treated as fully CX-ready. |
 | `auto_update` | object | Optional self-reported updater evidence: `{enabled, interval_s, latest_seen, last_checked_at, error_class, evidence}`. Advisory only; the directory still computes routing/compliance from observed `sdk_version` and `cx_public_key`. |
@@ -1130,7 +1171,7 @@ A registered node (the *reporter*) submits a peer-divergence finding about a *ta
 | `credit_schedule.evaluation_grant` | Free-tier allocation mirror of §3.10 (5 credits / 21600s = 6h). |
 | `mesh_health` | ADR-044 node-aggregate (median over active provider nodes). `score`/`mean`/`p10` are floats in **[0.0, 1.0]** (v1.10.6+; internal computation uses 0–100 scale then normalises). `label` thresholds: `healthy` ≥0.85, `degraded` ≥0.65, `impaired` ≥0.40, `critical` <0.40. `insufficient_sample` when sample <3; `unavailable` (score 0.0) when no active nodes. |
 | `directory_health` | Directory-infrastructure signal: `0.6·discover_latency + 0.4·conformance` (the signal REACH probes feed). Distinct from `mesh_health`. |
-| `sdk_adoption` | **Adoption telemetry (#531)** for the §6.1 capability-migration framework: `total_active` (count of active nodes), `by_language` (`{rust,python,typescript,browser,unknown}` → count), `by_version` (`sdk_version` → count, descending). Self-reported provenance (advisory), but the objective input that gates adoption-thresholded hard-enforcement stages. SHOULD be exposed per DIR-MIG-01. |
+| `sdk_adoption` | **Adoption telemetry (#531)** for the §6.1 capability-migration framework: `total_active` (count of active nodes), `by_language` (`{rust,python,typescript,browser,unknown}` → count), `by_version` (effective `sdk_compatibility_version ?? sdk_version` → count, descending). Self-reported provenance (advisory), but the objective input that gates adoption-thresholded hard-enforcement stages. SHOULD be exposed per DIR-MIG-01. |
 
 **Directory DB retention (operational, non-payload):** implementations SHOULD bound raw operational telemetry so the directory database grows slowly without weakening control-plane evidence. The reference directory retains raw `iicp_telemetry_probes` for 14 days, detailed `iicp_telemetry_aggregates` for 30 days, `proxy_telemetry` for 30 days, and high-volume `HEARTBEAT` events for 1 day by default. Retention jobs MUST NOT drop credits, reputation, node/operator records or signed ledger events, and they MUST NOT export prompt payloads. Production migrations or pruning runs SHOULD be surrounded by pre- and post-change database backups.
 
@@ -1560,7 +1601,7 @@ five stages, in order:
    The directory MUST accept requests both with and without it (accept-but-do-
    not-require).
 3. **Measured adoption** — the directory measures real-world uptake via the
-   recorded `sdk_version` of active nodes (see below). Adoption is **measured,
+   recorded effective SDK compatibility version of active nodes (see below). Adoption is **measured,
    not assumed**.
 4. **Soft-enforce** — the directory **uses the capability when present** but
    MUST NOT reject a request for lacking it.
@@ -1571,8 +1612,8 @@ five stages, in order:
    distinct, documented upgrade error (`IICP-Exxx`, message naming the required
    capability and minimum version).
 
-**Adoption measurement (SHOULD)**: a directory SHOULD expose the `sdk_version`
-(and `sdk_language`) distribution of active nodes (e.g. in the Public Stats
+**Adoption measurement (SHOULD)**: a directory SHOULD expose the effective
+`sdk_compatibility_version ?? sdk_version` (and `sdk_language`) distribution of active nodes (e.g. in the Public Stats
 endpoint or an operator-only endpoint) so the Stage-3 threshold can be
 evaluated objectively.
 

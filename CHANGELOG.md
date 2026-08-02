@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## v1.10.4 — 2026-08-02
+
+- Separate provider implementation identity from SDK behavior compatibility.
+  REGISTER may now carry `implementation_name`, `implementation_version`, and
+  `sdk_compatibility_version`; `sdk_version` remains the pre-1.0 legacy alias.
+  Matching dual values are accepted, conflicts fail with 422, and directory
+  status/adoption calculations use the effective compatibility value. The
+  change is additive for legacy providers and includes shared executable cases.
+
 ## v1.10.3 — 2026-08-01
 
 Adds the reviewed dual-era MCP gateway compatibility profile across the official SDKs while keeping MCP `2025-11-25` as the default and `2026-07-28` explicit and fail-closed. It also advances coordinated SDK release currency to `0.7.101` through the release-derived cross-directory gate.

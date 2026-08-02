@@ -1,0 +1,51 @@
+{
+  "schema": "iicp.directory.implementation-metadata.v1",
+  "field_grammar": {
+    "implementation_name": "^[A-Za-z0-9@][A-Za-z0-9._/@+-]{0,63}$",
+    "implementation_version": "^[0-9A-Za-z][0-9A-Za-z._+-]{0,31}$",
+    "sdk_compatibility_version": "^[0-9A-Za-z][0-9A-Za-z._+-]{0,31}$"
+  },
+  "cases": [
+    {
+      "name": "legacy_alias_only",
+      "input": {"sdk_version": "0.7.101"},
+      "accepted": true,
+      "effective_sdk_compatibility_version": "0.7.101"
+    },
+    {
+      "name": "preferred_field_only",
+      "input": {"sdk_compatibility_version": "0.7.101"},
+      "accepted": true,
+      "effective_sdk_compatibility_version": "0.7.101"
+    },
+    {
+      "name": "matching_dual_fields",
+      "input": {
+        "sdk_version": "0.7.101",
+        "sdk_compatibility_version": "0.7.101",
+        "implementation_name": "@iicp/web-node",
+        "implementation_version": "0.2.2"
+      },
+      "accepted": true,
+      "effective_sdk_compatibility_version": "0.7.101"
+    },
+    {
+      "name": "conflicting_dual_fields",
+      "input": {
+        "sdk_version": "0.7.100",
+        "sdk_compatibility_version": "0.7.101"
+      },
+      "accepted": false,
+      "status": 422
+    },
+    {
+      "name": "invalid_private_path_identity",
+      "input": {
+        "implementation_name": "/Users/operator/private-build",
+        "implementation_version": "0.2.2"
+      },
+      "accepted": false,
+      "status": 422
+    }
+  ]
+}

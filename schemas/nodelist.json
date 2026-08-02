@@ -206,7 +206,23 @@
           "type": ["string", "null"]
         },
         "sdk_version": {
-          "type": ["string", "null"]
+          "type": ["string", "null"],
+          "description": "Legacy SDK-compatibility alias retained during the pre-1.0 transition."
+        },
+        "implementation_name": {
+          "type": ["string", "null"],
+          "pattern": "^[A-Za-z0-9@][A-Za-z0-9._/@+-]{0,63}$",
+          "description": "Self-reported software/runtime identity; public provenance only."
+        },
+        "implementation_version": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z._+-]{0,31}$",
+          "description": "The implementation's own release version, distinct from SDK compatibility."
+        },
+        "sdk_compatibility_version": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9A-Za-z][0-9A-Za-z._+-]{0,31}$",
+          "description": "Preferred SDK behavior baseline; sdk_version is the legacy fallback."
         },
         "models": {
           "type": ["array", "null"],
