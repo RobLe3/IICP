@@ -1,0 +1,74 @@
+{
+  "schema": "iicp.conformance_test_manifest.v1",
+  "suite_version": "4.50.0",
+  "profile": "directory-lifecycle-v1",
+  "loopback_only": true,
+  "tests": [
+    {
+      "id": "DIR-LIFECYCLE-01",
+      "method": "POST",
+      "path": "/api/v1/register",
+      "body": {
+        "endpoint": "https://node.example.com",
+        "region": "eu-central",
+        "capabilities": [{"intent": "urn:iicp:intent:llm:chat:v1", "models": ["fixture-model"], "max_tokens": 4096}],
+        "limits": {"max_concurrent": 1, "tokens_per_min": 1000}
+      },
+      "status": 201,
+      "assertion": "registration_shape",
+      "capture": {"node_id": "node_id", "stale_node_token": "node_token"}
+    },
+    {
+      "id": "DIR-LIFECYCLE-02",
+      "method": "POST",
+      "path": "/api/v1/heartbeat",
+      "headers": {"Authorization": "Bearer ${stale_node_token}"},
+      "body": {"node_id": "${node_id}"},
+      "status": 200,
+      "assertion": "heartbeat_shape"
+    },
+    {
+      "id": "DIR-LIFECYCLE-03",
+      "method": "POST",
+      "path": "/api/v1/register",
+      "body": {
+        "node_id": "${node_id}",
+        "current_node_token": "${stale_node_token}",
+        "endpoint": "https://node.example.com",
+        "region": "eu-central",
+        "capabilities": [{"intent": "urn:iicp:intent:llm:chat:v1", "models": ["fixture-model"], "max_tokens": 4096}],
+        "limits": {"max_concurrent": 1, "tokens_per_min": 1000}
+      },
+      "status": 201,
+      "assertion": "registration_shape",
+      "capture": {"node_token": "node_token"}
+    },
+    {
+      "id": "DIR-LIFECYCLE-04",
+      "method": "POST",
+      "path": "/api/v1/heartbeat",
+      "headers": {"Authorization": "Bearer ${stale_node_token}"},
+      "body": {"node_id": "${node_id}"},
+      "status": 401,
+      "assertion": "json_error"
+    },
+    {
+      "id": "DIR-LIFECYCLE-05",
+      "method": "POST",
+      "path": "/api/v1/heartbeat",
+      "headers": {"Authorization": "Bearer ${node_token}"},
+      "body": {"node_id": "${node_id}"},
+      "status": 200,
+      "assertion": "heartbeat_shape"
+    },
+    {
+      "id": "DIR-LIFECYCLE-06",
+      "method": "DELETE",
+      "path": "/api/v1/register",
+      "headers": {"Authorization": "Bearer ${node_token}"},
+      "body": {"node_id": "${node_id}"},
+      "status": 200,
+      "assertion": "deregister_shape"
+    }
+  ]
+}

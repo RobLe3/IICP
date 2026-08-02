@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+## v1.10.8 — 2026-08-02
+
+Adds the isolated `directory-lifecycle-v1` conformance profile and runner 0.3.0.
+The six cases cover registration, authenticated heartbeat, authenticated
+registration refresh, stale-token rejection, replacement-token acceptance and
+deregistration against a disposable loopback directory.
+
+Captured node identifiers and tokens remain in memory for one run. The runner
+rejects unresolved variables before making a request and emits only test IDs,
+outcomes, status codes and timings. Existing public and dispatch result bundles
+remain verifiable. No directory runtime, SDK, production deployment or wire
+behavior changes.
+
 ## v1.10.7 — 2026-08-02
 
 Corrects the conformance-suite version authority and adds the isolated

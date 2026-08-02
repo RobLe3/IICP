@@ -5,7 +5,7 @@ version different contracts and do not need to match.
 
 | Axis or component | Current value | Lifecycle |
 |---|---:|---|
-| Protocol-suite release | 1.10.7 | project-normative beta |
+| Protocol-suite release | 1.10.8 | project-normative beta |
 | Wire compatibility baseline | 1.9.0 | stable v1.9 line |
 | iicp-directory-php | 1.10.86 | active |
 | iicp-directory-rust | 0.1.8 | operator-preview |

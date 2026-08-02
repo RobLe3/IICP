@@ -16,8 +16,11 @@ from iicp_conformance.runner import (
 
 
 class Handler(BaseHTTPRequestHandler):
+    node_id = "fixture-node-id"
+    current_token: str | None = None
+
     def do_GET(self) -> None:
-        if self.headers.get("User-Agent") != "iicp-conformance/0.2.0":
+        if self.headers.get("User-Agent") != "iicp-conformance/0.3.0":
             self.reply(403, {})
             return
         if self.path.startswith("/api/v1/discover?"):
@@ -35,11 +38,34 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(404, {})
 
     def do_POST(self) -> None:
-        if self.headers.get("User-Agent") != "iicp-conformance/0.2.0":
+        if self.headers.get("User-Agent") != "iicp-conformance/0.3.0":
             self.reply(403, {})
             return
         length = int(self.headers.get("Content-Length", "0"))
         body = json.loads(self.rfile.read(length) or b"{}")
+        if self.path == "/api/v1/register":
+            if "node_id" not in body:
+                Handler.current_token = "fixture-stale-token"
+            elif (
+                body.get("node_id") == Handler.node_id
+                and body.get("current_node_token") == Handler.current_token
+            ):
+                Handler.current_token = "fixture-current-token"
+            else:
+                self.reply(401, {"error": {"code": "unauthorized"}})
+                return
+            self.reply(
+                201,
+                {"node_id": Handler.node_id, "node_token": Handler.current_token},
+            )
+            return
+        if self.path == "/api/v1/heartbeat":
+            token = self.headers.get("Authorization", "").removeprefix("Bearer ")
+            if body.get("node_id") != Handler.node_id or token != Handler.current_token:
+                self.reply(401, {"error": {"code": "unauthorized"}})
+            else:
+                self.reply(200, {"ok": True, "next_heartbeat_ms": 30000})
+            return
         if self.path == "/api/v1/dispatch/ticket":
             if set(body) == {"intent"} and body["intent"] == "urn:iicp:intent:llm:chat:v1":
                 self.reply(
@@ -56,6 +82,23 @@ class Handler(BaseHTTPRequestHandler):
                 self.reply(422, {"error": {"code": "validation_error"}})
             return
         self.reply(401, {"error": {"code": "unauthorized"}})
+
+    def do_DELETE(self) -> None:
+        if self.headers.get("User-Agent") != "iicp-conformance/0.3.0":
+            self.reply(403, {})
+            return
+        length = int(self.headers.get("Content-Length", "0"))
+        body = json.loads(self.rfile.read(length) or b"{}")
+        token = self.headers.get("Authorization", "").removeprefix("Bearer ")
+        if (
+            self.path == "/api/v1/register"
+            and body.get("node_id") == Handler.node_id
+            and token == Handler.current_token
+        ):
+            Handler.current_token = None
+            self.reply(200, {"deregistered": True})
+        else:
+            self.reply(401, {"error": {"code": "unauthorized"}})
 
     def reply(self, status: int, value: dict) -> None:
         body = json.dumps(value).encode()
@@ -113,6 +156,53 @@ class RunnerTest(unittest.TestCase):
         self.assertTrue(verify_result(result)["valid"])
         with self.assertRaisesRegex(ValueError, "restricted to loopback"):
             run("https://directory.example", profile="directory-dispatch-v1")
+
+    def test_lifecycle_profile_rotates_credentials_without_retaining_them(self) -> None:
+        Handler.current_token = None
+        target = f"http://127.0.0.1:{self.server.server_port}"
+        result = run(target, profile="directory-lifecycle-v1")
+        self.assertEqual(result["runner_version"], "0.3.0")
+        self.assertEqual(result["suite_version"], "4.50.0")
+        self.assertEqual(result["summary"], {"total": 6, "passed": 6, "failed": 0})
+        encoded = json.dumps(result)
+        for prohibited in (
+            target,
+            Handler.node_id,
+            "fixture-stale-token",
+            "fixture-current-token",
+            "node.example.com",
+            "urn:iicp",
+        ):
+            self.assertNotIn(prohibited, encoded)
+        self.assertTrue(verify_result(result)["valid"])
+        with self.assertRaisesRegex(ValueError, "restricted to loopback"):
+            run("https://directory.example", profile="directory-lifecycle-v1")
+
+    def test_manifest_rejects_unresolved_state_and_invalid_capture(self) -> None:
+        manifest = json.loads(bundled_manifest_bytes("directory-lifecycle-v1"))
+        manifest["tests"][0]["headers"] = {"Authorization": "Bearer ${missing}"}
+        with self.assertRaisesRegex(ValueError, "unresolved state variable"):
+            load_manifest(json.dumps(manifest).encode())
+
+        manifest = json.loads(bundled_manifest_bytes("directory-lifecycle-v1"))
+        manifest["tests"][0]["capture"] = {"Invalid-Name": "node_token"}
+        with self.assertRaisesRegex(ValueError, "invalid capture name"):
+            load_manifest(json.dumps(manifest).encode())
+
+        manifest = json.loads(bundled_manifest_bytes("directory-lifecycle-v1"))
+        manifest["tests"][0]["capture"] = {"node_token": "node-token"}
+        with self.assertRaisesRegex(ValueError, "invalid capture path"):
+            load_manifest(json.dumps(manifest).encode())
+
+        manifest = json.loads(bundled_manifest_bytes("directory-lifecycle-v1"))
+        manifest["tests"][1]["headers"]["Host"] = "fixture.invalid"
+        with self.assertRaisesRegex(ValueError, "unsupported request header"):
+            load_manifest(json.dumps(manifest).encode())
+
+        manifest = json.loads(bundled_manifest_bytes("directory-lifecycle-v1"))
+        manifest["tests"][2]["capture"] = {"node_id": "node_id"}
+        with self.assertRaisesRegex(ValueError, "must not be reused"):
+            load_manifest(json.dumps(manifest).encode())
 
     def test_legacy_public_result_without_profile_still_verifies(self) -> None:
         target = f"http://127.0.0.1:{self.server.server_port}"

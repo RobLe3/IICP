@@ -4,17 +4,18 @@
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.7",
+      "version": "1.10.8",
       "wire_behavior": "unchanged",
       "conformance_impact": "changed",
       "profiles": [
         "directory-public-v1",
-        "directory-dispatch-v1"
+        "directory-dispatch-v1",
+        "directory-lifecycle-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "Existing directory-public-v1 result bundles remain valid; dispatch-profile runs require runner 0.2.0 and a disposable loopback directory.",
-      "rollback": "Continue verifying existing 4.45.0 public-profile results with v1.10.6; do not emit the new dispatch profile."
+      "migration": "Existing public and dispatch results remain valid; lifecycle runs require runner 0.3.0, a disposable loopback directory and the fixed fixture health response.",
+      "rollback": "Continue verifying existing 4.45.0 public and 4.49.0 dispatch results with v1.10.7; do not emit the lifecycle profile."
     },
     {
       "id": "directory-php",

@@ -1,6 +1,6 @@
 # IICP Conformance Test Suite
 
-**Version**: 4.49.0
+**Version**: 4.50.0
 **Date**: 2026-08-02
 **Status**: draft
 **Issue**: #22
@@ -207,6 +207,24 @@ NOT retain requests, responses, routes, tickets, node IDs or endpoints.
 | `DIR-DISPATCH-03` | A request containing `prompt` or another payload-like field is refused. | 422; the submitted value is absent from the response and result bundle |
 | `DIR-DISPATCH-04` | A request cannot combine `node_id` and `node_id_prefix`. | 422 validation error |
 | `DIR-DISPATCH-05` | An unsupported QoS value is refused. | 422 validation error |
+
+### 3.3l Authenticated Registration Lifecycle (Phase 6 — profile)
+
+The digest-addressed `directory-lifecycle-v1` profile is restricted to a
+loopback directory backed by a disposable database. The test environment MUST
+provide the fixed fixture node's valid HTTPS health response without disabling
+the directory's endpoint-validation policy. The runner keeps captured node IDs
+and tokens in memory for the duration of one run and MUST NOT include them in
+the result bundle.
+
+| Test ID | Requirement | Expected |
+|---|---|---|
+| `DIR-LIFECYCLE-01` | Register a disposable provider with the minimum valid capability and limits. | 201 with non-empty `node_id` and `node_token` |
+| `DIR-LIFECYCLE-02` | Authenticate a heartbeat with the issued node token. | 200 with `ok=true` and a positive heartbeat interval |
+| `DIR-LIFECYCLE-03` | Refresh the same registration using `current_node_token`. | 201 with a replacement `node_token` |
+| `DIR-LIFECYCLE-04` | Reuse the pre-refresh token after rotation. | 401 structured error |
+| `DIR-LIFECYCLE-05` | Authenticate a heartbeat with the replacement token. | 200 with `ok=true` and a positive heartbeat interval |
+| `DIR-LIFECYCLE-06` | Deregister with the replacement token. | 200 with `deregistered=true` |
 
 
 ### 3.4 Rate Limiting (MUST)
@@ -943,6 +961,7 @@ change Phase 1 conformance or the fixed native frame. The canonical fixture is
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.50.0 | 2026-08-02 | §3.3l registers DIR-LIFECYCLE-01..06 for registration, authenticated heartbeat, token-authenticated refresh, stale-token rejection and deregistration. Runner state is ephemeral and result bundles remain content-free. Existing public and dispatch fixtures remain immutable. |
 | 4.49.0 | 2026-08-02 | §3.3k registers the loopback-only DIR-DISPATCH-01..05 ticket-safety profile and reconciles the suite header and single changelog authority. Existing 4.45 result manifests remain immutable and verifiable. |
 | 4.48.0 | 2026-07-14 | §17 adds proposed service-lifecycle and provider-admission vectors. They are additive draft profiles and do not alter base-wire or Phase 1 conformance. This corrects the previously colliding 4.47 label. |
 | 4.47.0 | 2026-07-14 | §16 adds NATIVE-FRAME-BASE-01..04: implementation-backed 12-byte native framing vectors, manifest digest gate, and explicit draft boundary. This corrects the previously colliding 4.46 label; no wire behavior changed. |
