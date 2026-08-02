@@ -1,0 +1,43 @@
+name: Protocol or conformance proposal
+description: Propose an interoperability change, clarification, registry entry, or conformance requirement.
+title: "[proposal] "
+labels: ["proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: Describe the interoperability problem before proposing a mechanism. Do not include credentials, private topology, or task data.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Interoperability problem
+      description: What independently implemented or operated components cannot do consistently today?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and scope
+      description: Link public specifications, fixtures, implementation results, or reproducible observations. Separate implemented facts from assumptions.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Include reuse of existing standards, an extension/profile, and no change where relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility, security, and privacy effects
+      description: State wire, deployment, migration, downgrade, security, privacy, and rollback consequences.
+    validations:
+      required: true
+  - type: textarea
+    id: conformance
+    attributes:
+      label: Proposed conformance evidence
+      description: Identify positive and negative vectors, independent implementation evidence, or explain why they do not apply.
+    validations:
+      required: true

@@ -12,9 +12,19 @@ IICP is stewarded as an open protocol rather than a proprietary platform.
   grant authority to redefine the protocol.
 
 Until a multi-person governance body is formally appointed, the original
-maintainer acts as protocol chair and final release steward. Contributors may
+maintainer acts as protocol chair and final release steward. This founder-led
+model reflects the present participation level; the project will not create
+nominal roles merely to simulate distributed governance. Contributors may
 review, implement, research and propose changes without receiving access to
 private production systems.
+
+Shared authority is earned through sustained, competent contribution. The
+project must nevertheless remain ready to share responsibility: decisions and
+release evidence are public, contribution boundaries are documented, and a
+qualified contributor can progress from review and implementation work toward
+maintainer responsibility. Stewardship legitimacy, participation level and
+continuity readiness are separate questions; a lack of outside participation
+is not itself an engineering defect.
 
 ## Change process
 
