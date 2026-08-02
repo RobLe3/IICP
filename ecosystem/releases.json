@@ -1,46 +1,49 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-01",
+  "generated_at": "2026-08-02",
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.3",
+      "version": "1.10.4",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
+        "directory-implementation-metadata-v1",
         "mcp-era-negotiation-v0",
         "discovery-evidence-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No wire or runtime migration is required; the modern MCP era remains explicit and the discovery evidence profile remains additive.",
-      "rollback": "Continue using the immutable v1.10.2 archive; gateways retain the legacy MCP default and implementations may ignore additive evidence metadata."
+      "migration": "Providers may add separate implementation identity/version and SDK compatibility fields; sdk_version remains a compatibility alias.",
+      "rollback": "Continue using the immutable v1.10.3 archive; legacy sdk_version-only registrations remain valid."
     },
     {
       "id": "directory-php",
-      "version": "1.10.85",
-      "wire_behavior": "unchanged",
-      "conformance_impact": "unchanged",
+      "version": "1.10.86",
+      "wire_behavior": "additive",
+      "conformance_impact": "changed",
       "profiles": [
+        "directory-implementation-metadata-v1",
         "discovery-evidence-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No database migration is required; SDK release-currency evidence advances to 0.7.101.",
-      "rollback": "Restore the immutable v1.10.84 release; routing and compatibility behavior are unchanged."
+      "migration": "Run the reversible node implementation metadata migration before serving the release.",
+      "rollback": "Roll back the application, then drop the three additive metadata columns after confirming no newer provider registrations depend on them."
     },
     {
       "id": "directory-rust",
-      "version": "0.1.7",
-      "wire_behavior": "unchanged",
-      "conformance_impact": "unchanged",
+      "version": "0.1.8",
+      "wire_behavior": "additive",
+      "conformance_impact": "changed",
       "profiles": [
+        "directory-implementation-metadata-v1",
         "discovery-evidence-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No database migration is required; SDK release-currency evidence advances to 0.7.101.",
-      "rollback": "Restore the immutable v0.1.6 preview; no Genesis or schema change is involved."
+      "migration": "Apply migration 020 to an existing preview schema; empty preview databases use the updated baseline.",
+      "rollback": "Restore v0.1.7 and drop the three additive metadata columns; Genesis cutover remains unauthorized."
     },
     {
       "id": "client-python",

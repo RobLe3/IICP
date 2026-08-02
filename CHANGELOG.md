@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.10.4 — 2026-08-02
+
 - Separate provider implementation identity from SDK behavior compatibility.
   REGISTER may now carry `implementation_name`, `implementation_version`, and
   `sdk_compatibility_version`; `sdk_version` remains the pre-1.0 legacy alias.
