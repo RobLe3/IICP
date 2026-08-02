@@ -14,7 +14,7 @@
       "authority": "normative protocol, registries and reviewed research",
       "language": "specification",
       "protocol": "1.9",
-      "release": "1.10.4"
+      "release": "1.10.5"
     },
     {
       "id": "project-hub",
@@ -127,7 +127,7 @@
       "authority": "browser-native IICP consumer and provider implementation",
       "language": "typescript",
       "protocol": "1.9",
-      "release": "0.2.2",
+      "release": "0.2.3",
       "package": "npm:@iicp/web-node"
     }
   ]

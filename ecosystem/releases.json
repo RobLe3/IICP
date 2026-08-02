@@ -4,18 +4,16 @@
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.4",
-      "wire_behavior": "additive",
-      "conformance_impact": "changed",
+      "version": "1.10.5",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "unchanged",
       "profiles": [
-        "directory-implementation-metadata-v1",
-        "mcp-era-negotiation-v0",
-        "discovery-evidence-v1"
+        "directory-implementation-metadata-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "Providers may add separate implementation identity/version and SDK compatibility fields; sdk_version remains a compatibility alias.",
-      "rollback": "Continue using the immutable v1.10.3 archive; legacy sdk_version-only registrations remain valid."
+      "migration": "No protocol migration is required; this corrective release records the browser implementation publication.",
+      "rollback": "Continue using the immutable v1.10.4 archive; protocol behavior is identical."
     },
     {
       "id": "directory-php",
@@ -86,14 +84,16 @@
     },
     {
       "id": "web-node",
-      "version": "0.2.2",
-      "wire_behavior": "unchanged",
-      "conformance_impact": "unchanged",
-      "profiles": [],
+      "version": "0.2.3",
+      "wire_behavior": "additive",
+      "conformance_impact": "changed",
+      "profiles": [
+        "directory-implementation-metadata-v1"
+      ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Rebuild the browser package and preserve existing encrypted provider state.",
-      "rollback": "Redeploy the previous immutable browser package; do not enable plaintext fallback."
+      "migration": "Rebuild or install the browser package; existing encrypted provider state remains compatible.",
+      "rollback": "Restore v0.2.2; older directories continue to consume the legacy sdk_version compatibility alias."
     }
   ]
 }

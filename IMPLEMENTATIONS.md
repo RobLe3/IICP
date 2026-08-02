@@ -6,7 +6,7 @@ Git submodules. Visibility describes source access, not protocol maturity.
 
 | Component | Authority | Language | Visibility | Lifecycle | Release |
 |---|---|---|---|---|---|
-| [IICP](https://github.com/RobLe3/IICP) | normative protocol, registries and reviewed research | specification | public | active | 1.10.4 |
+| [IICP](https://github.com/RobLe3/IICP) | normative protocol, registries and reviewed research | specification | public | active | 1.10.5 |
 | iicp.network (source private) | cross-component issues, integration, conformance and project history | mixed | private | restructuring | — |
 | iicp-network-ops (source private) | reviewed deployment, rollback, REACH and community operational source; no live credentials or production data | mixed | private | active | — |
 | iicp-network-internal (source private) | FORGE, agent, project-management and reviewed private-history material; never a public build dependency | mixed | private | active | — |
@@ -16,7 +16,7 @@ Git submodules. Visibility describes source access, not protocol maturity.
 | [iicp-client-python](https://github.com/RobLe3/iicp-client-python) | Python consumer and provider SDK | python | public | active | 0.7.101 |
 | [iicp-client-typescript](https://github.com/RobLe3/iicp-client-typescript) | TypeScript consumer and provider SDK | typescript | public | active | 0.7.101 |
 | [iicp-client-rust](https://github.com/RobLe3/iicp-client-rust) | Rust consumer and provider SDK | rust | public | active | 0.7.101 |
-| [iicp-web-node](https://github.com/RobLe3/iicp-web-node) | browser-native IICP consumer and provider implementation | typescript | public | experimental | 0.2.2 |
+| [iicp-web-node](https://github.com/RobLe3/iicp-web-node) | browser-native IICP consumer and provider implementation | typescript | public | experimental | 0.2.3 |
 
 ## Governance boundary
 
