@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## v1.10.5 — 2026-08-02
+
+Corrective ecosystem release. It records browser node `v0.2.3`, whose provider
+registration now uses the already released implementation/SDK compatibility
+metadata contract. No normative wire, directory, SDK, ranking, routing,
+encryption or deployment behavior changes.
+
 ## v1.10.4 — 2026-08-02
 
 - Separate provider implementation identity from SDK behavior compatibility.
