@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/conformance-verification-v1.json",
+  "title": "IICP content-free conformance verification",
+  "type": "object",
+  "required": [
+    "schema",
+    "valid",
+    "signed",
+    "signer_key_fingerprint",
+    "suite_version",
+    "fixture_digest",
+    "errors",
+    "content_free"
+  ],
+  "properties": {
+    "schema": {"const": "iicp.conformance_verification.v1"},
+    "valid": {"type": "boolean"},
+    "signed": {"type": "boolean"},
+    "signer_key_fingerprint": {
+      "type": ["string", "null"],
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "suite_version": {"type": ["string", "null"]},
+    "fixture_digest": {"type": ["string", "null"]},
+    "errors": {"type": "array", "items": {"type": "string"}},
+    "content_free": {"const": true}
+  },
+  "additionalProperties": false
+}

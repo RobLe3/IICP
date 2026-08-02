@@ -5,7 +5,14 @@ import threading
 import unittest
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from iicp_conformance.runner import bundled_manifest_bytes, load_manifest, run
+from iicp_conformance.runner import (
+    bundled_manifest_bytes,
+    canonical_json,
+    load_manifest,
+    run,
+    sign_result,
+    verify_result,
+)
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -72,6 +79,52 @@ class RunnerTest(unittest.TestCase):
         manifest["suite_version"] = "different"
         with self.assertRaisesRegex(ValueError, "mixed or unsupported"):
             load_manifest(json.dumps(manifest).encode())
+
+    def test_unsigned_result_verifies_and_signature_can_be_required(self) -> None:
+        target = f"http://127.0.0.1:{self.server.server_port}"
+        result = run(target)
+        self.assertTrue(verify_result(result)["valid"])
+        required = verify_result(result, require_signature=True)
+        self.assertFalse(required["valid"])
+        self.assertIn("signature is required", required["errors"])
+
+    def test_tampering_and_prohibited_fields_fail_verification(self) -> None:
+        target = f"http://127.0.0.1:{self.server.server_port}"
+        result = run(target)
+        result["summary"]["passed"] = 9
+        result["target_url"] = target
+        verification = verify_result(result)
+        self.assertFalse(verification["valid"])
+        self.assertIn("summary does not match result outcomes", verification["errors"])
+        self.assertIn("prohibited fields: target_url", verification["errors"])
+
+    def test_rfc8785_ed25519_signature_round_trip_and_tamper_rejection(self) -> None:
+        try:
+            import rfc8785  # noqa: F401
+        except ImportError:
+            self.skipTest("signing extra not installed")
+        target = f"http://127.0.0.1:{self.server.server_port}"
+        signed = sign_result(run(target), "11" * 32)
+        verification = verify_result(signed, require_signature=True)
+        self.assertTrue(verification["valid"])
+        self.assertTrue(verification["signed"])
+        self.assertRegex(verification["signer_key_fingerprint"], r"^sha256:[0-9a-f]{64}$")
+        signed["results"][0]["outcome"] = "fail"
+        self.assertFalse(verify_result(signed, require_signature=True)["valid"])
+
+    def test_rfc8785_vectors_cover_utf16_order_and_negative_zero(self) -> None:
+        try:
+            import rfc8785  # noqa: F401
+        except ImportError:
+            self.skipTest("signing extra not installed")
+        self.assertEqual(
+            canonical_json({"\ue000": 2, "😀": 1}),
+            '{"😀":1,"\ue000":2}'.encode(),
+        )
+        self.assertEqual(
+            canonical_json({"z": -0.0, "a": {"β": "café", "a": None}}),
+            '{"a":{"a":null,"β":"café"},"z":0}'.encode(),
+        )
 
 
 if __name__ == "__main__":

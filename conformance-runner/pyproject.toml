@@ -11,7 +11,7 @@ license = {text = "Apache-2.0"}
 dependencies = []
 
 [project.optional-dependencies]
-signing = ["cryptography>=42"]
+signing = ["cryptography>=42", "rfc8785>=0.1.4"]
 
 [project.scripts]
 iicp-conformance = "iicp_conformance.cli:main"
