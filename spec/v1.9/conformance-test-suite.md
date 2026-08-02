@@ -1,7 +1,7 @@
 # IICP Conformance Test Suite
 
-**Version**: 4.45.0
-**Date**: 2026-06-28
+**Version**: 4.49.0
+**Date**: 2026-08-02
 **Status**: draft
 **Issue**: #22
 **Authority**: Protocol Steward + Integration Validator
@@ -192,6 +192,22 @@ payloads MUST remain off-directory.
 | `DIR-SIGNAL-03` | Expired mailboxes/messages are not returned | Poll after TTL returns empty/404; cleanup removes expired records | Future PHP/Rust directory tests |
 | `DIR-SIGNAL-04` | Mailbox never accepts task payload message types | `CALL`, `RESPONSE`, prompt/file/tool payload fields are rejected with 422 | Future PHP/Rust directory tests |
 | `DIR-SIGNAL-05` | Discover metadata for `webrtc_datachannel` includes live `mailbox_id`, `expires_at`, and `datachannel_protocol` | Consumers can decide whether to attempt WebRTC without a second metadata fetch | Future discover contract tests |
+
+### 3.3k Ticketed Dispatch Safety (Phase 6 — profile)
+
+This profile runs only against a disposable loopback directory because a passing
+case issues short-lived route material and may increment aggregate adoption
+counters. Published result bundles contain status and test IDs only; they MUST
+NOT retain requests, responses, routes, tickets, node IDs or endpoints.
+
+| Test ID | Requirement | Expected |
+|---------|-------------|----------|
+| `DIR-DISPATCH-01` | A prompt-free request for an eligible intent issues one route ticket. | 201; ticketed route shape, `prompt_payload_accepted=false` |
+| `DIR-DISPATCH-02` | A prohibited or high-risk public-mesh intent is refused before selection. | 422 with a structured JSON error |
+| `DIR-DISPATCH-03` | A request containing `prompt` or another payload-like field is refused. | 422; the submitted value is absent from the response and result bundle |
+| `DIR-DISPATCH-04` | A request cannot combine `node_id` and `node_id_prefix`. | 422 validation error |
+| `DIR-DISPATCH-05` | An unsupported QoS value is refused. | 422 validation error |
+
 
 ### 3.4 Rate Limiting (MUST)
 
@@ -391,25 +407,6 @@ Applies to all official IICP SDKs: Python `iicp-client`, TypeScript `@iicp/clien
 
 Run with the SDK test harness: `iicp-conformance-sdk --sdk python --directory http://localhost:8010`
 
----
-
-## 11. Changelog
-
-| Version | Date | Change |
-|---------|------|--------|
-| 4.46.0 | 2026-07-13 | `DIR-DISC-08` now verifies the short live-route discovery cache contract: `public, max-age=5, s-maxage=10, stale-while-revalidate=5`. This preserves prompt-free discovery freshness across relay and tunnel endpoint rotation; historical 30/60-second expectations are retired. |
-| 4.45.0 | 2026-06-28 | §10.4 adds SDK-NODE-03..05 for SDK 0.7.75 external-tunnel guardrails: persistent provider-rate-limit cooldown, host-wide creation pacing/lease, and fallback to safe reachability methods rather than tunnel-create loops or unverified endpoint advertisement. §3.2/§3.3b/§7 reconcile peer-exchange conformance rows with Ed25519 gossip signatures instead of node-token/HMAC auth. |
-| 4.44.0 | 2026-06-21 | §3.3j DIR-SIGNAL-01..05 draft SHOULD tests added for optional WebRTC signaling mailbox (#523): auth, TTL/cleanup, size/type caps, no task payloads, and discover metadata shape. |
-| 4.42.0 | 2026-06-01 | §3.3i DIR-PROBE-NODE-01 added: active per-node reachability probing (#373 Phase B). Directory autonomously probes registered node endpoints (TCP/HTTP, SSRF-guarded, 5s timeout, 5-min interval). Records `test_id='DIR-PROBE-NODE-01'` in iicp_telemetry_probes. NodeHealthService uses independently observed signal when recent probe exists. PHP: `ProbeNodesCommandTest` 7 tests; Rust: `run_probe_nodes_loop`. IPv6 REACH probing requires IPv6-capable origin egress or a signed external probe worker; the current df.eu shared production server does not provide this. |
-| 4.41.0 | 2026-06-01 | §13.6 REP-04..07 added: security hardening bypass mitigations (#380-383, 2026-06-01). REP-04: per-node hourly velocity ceiling (RT-01b, MAX_HOURLY_GAIN=0.20). REP-05: IP-level free credit gate (RT-02b). REP-06: Sybil quorum reporter independence — min age 3d + rep ≥0.55 (RT-03b). REP-07: audit-report reporter eligibility — same age+reputation gate (RT-05b). Tests added to CreditHarvestRegressionTest, ReputationServiceTest, ProxyTelemetryTest, AuditReportTest. |
-| 4.40.0 | 2026-05-31 | §3.3d DIR-CIP-03: valid `reputation_tier` set updated to include `"bronze"` (CIP spec v0.6.9, 2026-05-30 reconciliation). `bronze` is the floor tier for all sub-Silver nodes; `none` retained transitionally. Probe `valid_tiers` updated; PHP NodeScorer `none`→`bronze` for `score < 0.40`; Rust `tier_from_score` floor updated. REACH unit test updated (bronze PASS, `"probation"` used as the invalid-tier test case). |
-| 4.39.0 | 2026-05-26 | §11.9 Trust Precedence added per Phase 6 charter P6-4.3: DIR-FED-TRUST-01 (S.13 §3.2) — proxy resolves conflicting node-state per strict precedence Seed > Replica-by-seq > Tier-tiebreaker > Gossip; field-level (not row-level). 14 unit tests in proxy/tests/test_trust_resolver.py + INFO-skip REACH probe (activates when replica deployed); reach run_all 39→40. |
-| 4.38.0 | 2026-05-26 | §11.8 Replica Response Signing added per Phase 6 charter P6-4.2b: DIR-FED-20 (S.13 v0.3.6 §6.5) requires replicas to sign discovery responses with Ed25519 + X-IICP-Replica-Sig header. Proxy verifier helper `proxy/src/proxy/clients/replica_sig_verifier.py` ships with 16 unit tests. New `cryptography>=42` dep added to proxy. |
-| 4.37.0 | 2026-05-26 | §11.7 Trusted-Replicas Registry added per Phase 6 charter P6-3.2: DIR-FED-19 probe (S.13 v0.3.4 §6.4) validates v2-schema `/.well-known/iicp-replicas.json` with required entry fields (replica_id, did, endpoint, trust_tier, registered_at). 5 unit tests added; run_all count 38→39. |
-| 4.36.0 | 2026-05-25 | §11.6 Chain-of-Custody added per Phase 6 charter P6-2.1: DIR-FED-EVENTCHAIN-01 probe (S.13 v0.3.2) verifies the federated event log is append-only — past events MUST NOT mutate across successive `GET /v1/events` calls; mismatched (seq, event_id) tuples or `genesis_hash` drift fail the probe. 4 unit tests added. |
-| 1.7.0 | 2026-05-21 | §3.1–3.3g: Added REACH probe column to all directory conformance sections (traceability parity with §4–7); REACH test mock fix (coroutine warning eliminated) |
-| 0.2.1 | 2026-05-20 | §3.1: Added DIR-REG-08/DIR-REG-09 for advisory capability field MUST NOT constraints (iicp-core.md §2.1 v1.2.4, #118) |
-| 0.2.0 | 2026-05-14 | §3.3b–3.3e: Added Phase 2 mesh bootstrap, credit endpoints auth, CIP conformance, SSRF guard probes; §7: SEC-RN-01/02, SEC-LOG-01 |
 
 ### 10.1 Submit Behavior (MUST)
 
@@ -946,8 +943,10 @@ change Phase 1 conformance or the fixed native frame. The canonical fixture is
 
 | Version | Date | Change |
 |---------|------|--------|
-| 4.47.0 | 2026-07-14 | §17 adds proposed service-lifecycle and provider-admission vectors. They are additive draft profiles and do not alter base-wire or Phase 1 conformance. |
-| 4.46.0 | 2026-07-14 | §16 adds NATIVE-FRAME-BASE-01..04: implementation-backed 12-byte native framing vectors, manifest digest gate, and explicit draft boundary. No wire behavior changed. |
+| 4.49.0 | 2026-08-02 | §3.3k registers the loopback-only DIR-DISPATCH-01..05 ticket-safety profile and reconciles the suite header and single changelog authority. Existing 4.45 result manifests remain immutable and verifiable. |
+| 4.48.0 | 2026-07-14 | §17 adds proposed service-lifecycle and provider-admission vectors. They are additive draft profiles and do not alter base-wire or Phase 1 conformance. This corrects the previously colliding 4.47 label. |
+| 4.47.0 | 2026-07-14 | §16 adds NATIVE-FRAME-BASE-01..04: implementation-backed 12-byte native framing vectors, manifest digest gate, and explicit draft boundary. This corrects the previously colliding 4.46 label; no wire behavior changed. |
+| 4.46.0 | 2026-07-13 | DIR-DISC-08 adopts the short live-route cache contract: `public, max-age=5, s-maxage=10, stale-while-revalidate=5`. |
 | 4.45.0 | 2026-06-28 | §10.4 adds SDK-NODE-03..05 for SDK 0.7.75 external-tunnel guardrails: persistent provider-rate-limit cooldown, host-wide creation pacing/lease, and fallback to safe reachability methods rather than tunnel-create loops or unverified endpoint advertisement. §3.2/§3.3b/§7 reconcile peer-exchange conformance rows with Ed25519 gossip signatures instead of node-token/HMAC auth. |
 | 4.44.0 | 2026-06-09 | §3.5b Per-Node Health Vector (ADR-044 / #492): DIR-NODE-HEALTH-01..04 registered. Formula W_REACHABILITY=0.70 + W_LATENCY=0.30; success_rate + reputation absent. Key test: DIR-NODE-HEALTH-03 — new reachable node with no task history MUST score ≥85 ("healthy"). PHP: `NodeDetailHealthTest` (3 tests); Rust: `health.rs` (27 tests including `new_reachable_node_with_no_task_history_is_healthy`). |
 | 4.43.0 | 2026-06-06 | §15.8 Founder ordinals — register RECOG-FND-01..06 (claimed registered in iicp-recognition §10 but absent here). Reconciled to the shipped #310 detector + iicp-recognition v0.6.0 (operator_pubkey keying, genuine-served-node gate, #1 reserved/gate-exempt, GENESIS_MS, founder events on a dedicated non-federated chain). SPEC_UPDATE_PLAN Unit A tail. |

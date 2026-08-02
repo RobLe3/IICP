@@ -4,16 +4,17 @@
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.6",
+      "version": "1.10.7",
       "wire_behavior": "unchanged",
-      "conformance_impact": "unchanged",
+      "conformance_impact": "changed",
       "profiles": [
-        "documentation-version-truth-v1"
+        "directory-public-v1",
+        "directory-dispatch-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No protocol migration is required; regenerate or consume the catalog-derived current-version projection.",
-      "rollback": "Continue using the immutable v1.10.5 archive; protocol behavior is identical."
+      "migration": "Existing directory-public-v1 result bundles remain valid; dispatch-profile runs require runner 0.2.0 and a disposable loopback directory.",
+      "rollback": "Continue verifying existing 4.45.0 public-profile results with v1.10.6; do not emit the new dispatch profile."
     },
     {
       "id": "directory-php",

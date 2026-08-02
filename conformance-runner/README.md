@@ -9,6 +9,8 @@ evidence, not independent verification.
 python3 -m venv .venv
 .venv/bin/pip install .
 .venv/bin/iicp-conformance run --target http://127.0.0.1:8010 --output result.json
+.venv/bin/iicp-conformance run --profile directory-dispatch-v1 \
+  --target http://127.0.0.1:8010 --output dispatch-result.json
 .venv/bin/iicp-conformance verify result.json
 ```
 
@@ -18,7 +20,11 @@ locally and is never included in the result. Verification checks the schema,
 fixture digest, test inventory, summary, prohibited-field boundary and signature;
 use `--require-signature` when unsigned evidence is not acceptable.
 
-The initial `directory-public-v1` profile covers public discovery validation,
-SSRF refusal and unauthenticated credit and telemetry boundaries. Registration,
-stateful lifecycle, ticket, replay, downgrade, policy-refusal and federation
-profiles remain tracked by issue #62 and must be added as isolated profiles.
+The `directory-public-v1` profile covers public discovery validation, SSRF
+refusal and unauthenticated credit and telemetry boundaries. The
+`directory-dispatch-v1` profile covers prompt-free ticket issuance and negative
+policy/validation cases. It is restricted to loopback targets because a passing
+case issues route material and may update aggregate adoption counters. Run it
+only against a disposable directory database. Registration lifecycle, replay,
+downgrade, canonical ticket verification and federation profiles remain tracked
+by issue #62 and must be added as isolated profiles.
