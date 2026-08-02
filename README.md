@@ -4,7 +4,8 @@
 
 *Building the HTTP for the Age of Generative AI*
 
-**Current version**: v1.10.2
+**Protocol-suite release**: v1.10.6<br>
+**Wire compatibility baseline**: v1.9.0<br>
 **Reference implementation**: [iicp.network](https://iicp.network)
 **Status**: Project-normative beta suite; individual profiles retain their own status
 
@@ -17,6 +18,8 @@ submodules. This repository remains authoritative for protocol semantics and
 publishes the machine-readable ecosystem registry. See
 [`IMPLEMENTATIONS.md`](IMPLEMENTATIONS.md) for the official implementations,
 their current visibility, maturity and ownership boundaries.
+[`ecosystem/CURRENT_VERSIONS.md`](ecosystem/CURRENT_VERSIONS.md) presents every
+current release axis from the same machine-readable catalog.
 
 No paid GitHub feature is required to build, test, implement or participate in
 the protocol.
@@ -131,7 +134,8 @@ Read [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) for th
 
 ## Client SDKs
 
-Three official client SDKs (current release: **v0.7.100**) implement
+Three official client SDKs (see the generated
+[current-version projection](ecosystem/CURRENT_VERSIONS.md)) implement
 both sides of the protocol — the consumer (discovery, routing, retry, fallback, CIP
 consumer) and the provider (`iicp-node` runtime with backend auto-detection, NAT
 escalation, relay worker/server modes, and a built-in MCP gateway). All are open-source
@@ -245,7 +249,14 @@ See [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) SEC-* test 
 
 **Cooperative Inference and routing hardening (active)**
 
-The [iicp.network](https://iicp.network) directory is live and the **client SDKs are published at v0.7.100** (PyPI / npm / crates.io). Each includes the `iicp-node` provider runtime, so a participant can use the mesh first and provide capacity later. Live node availability, installed-version adoption and encryption evidence change over time; consult the [live stats page](https://iicp.network/stats) before treating any network condition as current.
+The [iicp.network](https://iicp.network) directory is live and the client SDK
+release line is recorded in the generated
+[current-version projection](ecosystem/CURRENT_VERSIONS.md). Each SDK includes
+the `iicp-node` provider runtime, so a participant can use the mesh first and
+provide capacity later. Live node availability, installed-version adoption and
+encryption evidence change over time; consult the
+[live stats page](https://iicp.network/stats) before treating any network
+condition as current.
 
 The mesh is usable for its current capabilities, while relay hardening, broader privacy evidence and public federation remain separate maturity gates. Remote execution still means the selected provider can read the task it executes.
 

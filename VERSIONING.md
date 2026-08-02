@@ -24,7 +24,12 @@ the entire IICP specification suite (core, CIP, framing, identity, telemetry, et
 | v1.9.0 | 2026-05-30 | RT-01/RT-05 reputation caps and directory drift closeout |
 | v1.9.1 | 2026-07-30 | Status/version governance and transport/IANA errata; superseded because its bundled implementation index was stale |
 | v1.9.2 | 2026-07-30 | Corrective immutable release with synchronized implementation/package references and a version-truth gate |
-| **v1.10.1** | **2026-07-31** | **Current** — corrective structured-release metadata pin; no wire change |
+| **v1.10.6** | **2026-08-02** | **Current** — generated current-version projection and prose-quality tooling; no normative wire change |
+| v1.10.5 | 2026-08-02 | Records browser node 0.2.3; no normative wire change |
+| v1.10.4 | 2026-08-02 | Separate provider implementation identity from SDK compatibility |
+| v1.10.3 | 2026-08-01 | Dual-era MCP profile and coordinated SDK 0.7.101 currency |
+| v1.10.2 | 2026-08-01 | Additive discovery evidence explanations |
+| v1.10.1 | 2026-07-31 | Corrective structured-release metadata pin; no wire change |
 | v1.10.0 | 2026-07-31 | Authenticated replica decommissioning, signed lifecycle propagation and same-DID reactivation |
 | v1.9.3 | 2026-07-31 | Records the Rust directory v0.1.4 snapshot-bootstrap correction; no wire change |
 
@@ -81,7 +86,7 @@ implements Protocol Suite v1.9.0).
 | Component | Current version | Location |
 |-----------|----------------|----------|
 | Directory (PHP Genesis) | Check `IMPLEMENTATIONS.md` and the release registry | Current Genesis implementation |
-| Directory (Rust preview) | v0.1.0 | Independent pre-1.0 implementation version |
+| Directory (Rust preview) | Check `IMPLEMENTATIONS.md` and the release registry | Official second flavour; operator preview |
 | Adapter (Python) | v1.x — check adapter/VERSION or pyproject.toml | |
 | Proxy (Python) | v1.x | |
 | Rust node | v0.x | `iicp-node/Cargo.toml` |

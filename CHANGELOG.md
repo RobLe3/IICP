@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## v1.10.6 — 2026-08-02
+
+Corrective documentation and release-integrity release. It generates the
+human- and machine-readable current-version projection from the ecosystem
+catalog, removes stale duplicated current-version claims, and adds an
+evidence-aware public prose quality checker. The checker identifies objective
+citation artifacts and provides advisory editing prompts; it does not classify
+authorship.
+
+No normative wire, conformance, directory, SDK, routing, encryption or
+deployment behavior changes.
+
 ## v1.10.5 — 2026-08-02
 
 Corrective ecosystem release. It records browser node `v0.2.3`, whose provider

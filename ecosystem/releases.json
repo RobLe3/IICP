@@ -4,16 +4,16 @@
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.5",
+      "version": "1.10.6",
       "wire_behavior": "unchanged",
       "conformance_impact": "unchanged",
       "profiles": [
-        "directory-implementation-metadata-v1"
+        "documentation-version-truth-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No protocol migration is required; this corrective release records the browser implementation publication.",
-      "rollback": "Continue using the immutable v1.10.4 archive; protocol behavior is identical."
+      "migration": "No protocol migration is required; regenerate or consume the catalog-derived current-version projection.",
+      "rollback": "Continue using the immutable v1.10.5 archive; protocol behavior is identical."
     },
     {
       "id": "directory-php",
