@@ -1,0 +1,30 @@
+{
+  "schema": "iicp.release-candidate-evidence.v1",
+  "candidate_id": "sdk-0.7.102-rc.1",
+  "generated_at": "2026-08-02T12:00:00Z",
+  "state": "candidate",
+  "overall_status": "pass",
+  "published": false,
+  "components": [
+    {
+      "id": "client-rust",
+      "repository": "RobLe3/iicp-client-rust",
+      "commit": "0123456789abcdef0123456789abcdef01234567",
+      "version": "0.7.102",
+      "worktree_clean": true,
+      "checks": [
+        { "name": "version-truth", "status": "pass" },
+        { "name": "clean-install", "status": "pass" }
+      ],
+      "artifacts": [
+        {
+          "name": "crate",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "second_build_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "byte_equivalent": true
+        }
+      ]
+    }
+  ],
+  "review_checkpoint": { "required": true, "status": "pending" }
+}
