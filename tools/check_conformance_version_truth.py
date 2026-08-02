@@ -54,9 +54,9 @@ def check() -> list[str]:
             errors.append(
                 f"{path.name}: suite version {suite_version} is absent from the changelog"
             )
-        if profile == "directory-dispatch-v1" and suite_version != header_version:
+        if profile == "directory-lifecycle-v1" and suite_version != header_version:
             errors.append(
-                f"{path.name}: current dispatch profile must use suite {header_version}"
+                f"{path.name}: current lifecycle profile must use suite {header_version}"
             )
 
     return errors

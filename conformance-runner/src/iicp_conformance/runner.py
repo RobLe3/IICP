@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -15,14 +16,20 @@ EXPECTED_SCHEMA = "iicp.conformance_test_manifest.v1"
 RESULT_SCHEMA = "iicp.conformance_result.v1"
 VERIFICATION_SCHEMA = "iicp.conformance_verification.v1"
 DEFAULT_PROFILE = "directory-public-v1"
+RUNNER_VERSION = "0.3.0"
 PROFILE_FILES = {
     DEFAULT_PROFILE: "directory-public-v1.json",
     "directory-dispatch-v1": "directory-dispatch-v1.json",
+    "directory-lifecycle-v1": "directory-lifecycle-v1.json",
 }
 PROFILE_SUITES = {
     DEFAULT_PROFILE: "4.45.0",
     "directory-dispatch-v1": "4.49.0",
+    "directory-lifecycle-v1": "4.50.0",
 }
+STATE_NAME = re.compile(r"^[a-z][a-z0-9_]{0,63}$")
+STATE_REFERENCE = re.compile(r"\$\{([a-z][a-z0-9_]{0,63})\}")
+CAPTURE_PATH = re.compile(r"^[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)*$")
 EVIDENCE_CLASSES = {"self-attested", "project-verified", "independent"}
 PROHIBITED_KEYS = {
     "bindings",
@@ -84,25 +91,84 @@ def load_manifest(raw: bytes) -> dict[str, Any]:
         raise ValueError("conformance manifest has no tests")
     if len({case.get("id") for case in tests}) != len(tests):
         raise ValueError("conformance manifest test IDs must be unique")
+    available_state: set[str] = set()
+    for case in tests:
+        if not isinstance(case, dict):
+            raise ValueError("conformance manifest test must be an object")
+        if case.get("method") not in {"GET", "POST", "PUT", "PATCH", "DELETE"}:
+            raise ValueError("conformance manifest has an unsupported method")
+        path = case.get("path")
+        if not isinstance(path, str) or not path.startswith("/") or path.startswith("//"):
+            raise ValueError("conformance manifest has an invalid relative path")
+        headers = case.get("headers", {})
+        if not isinstance(headers, dict) or any(
+            key != "Authorization" or not isinstance(value, str)
+            for key, value in headers.items()
+        ):
+            raise ValueError("conformance manifest has an unsupported request header")
+        references = _state_references(
+            {key: case.get(key) for key in ("path", "headers", "body")}
+        )
+        unresolved = references - available_state
+        if unresolved:
+            raise ValueError("conformance manifest contains an unresolved state variable")
+        capture = case.get("capture", {})
+        if not isinstance(capture, dict):
+            raise ValueError("conformance manifest capture must be an object")
+        for name, path in capture.items():
+            if not isinstance(name, str) or not STATE_NAME.fullmatch(name):
+                raise ValueError("conformance manifest has an invalid capture name")
+            if not isinstance(path, str) or not CAPTURE_PATH.fullmatch(path):
+                raise ValueError("conformance manifest has an invalid capture path")
+            if name in available_state:
+                raise ValueError("conformance manifest capture names must not be reused")
+        available_state.update(capture)
     return manifest
+
+
+def _state_references(value: Any) -> set[str]:
+    if isinstance(value, str):
+        return set(STATE_REFERENCE.findall(value))
+    if isinstance(value, dict):
+        return set().union(*(_state_references(child) for child in value.values()), set())
+    if isinstance(value, list):
+        return set().union(*(_state_references(child) for child in value), set())
+    return set()
+
+
+def _resolve_state(value: Any, state: dict[str, str]) -> Any:
+    if isinstance(value, str):
+        def replace(match: re.Match[str]) -> str:
+            try:
+                return state[match.group(1)]
+            except KeyError as error:
+                raise RuntimeError("request state is unavailable") from error
+        return STATE_REFERENCE.sub(replace, value)
+    if isinstance(value, dict):
+        return {key: _resolve_state(child, state) for key, child in value.items()}
+    if isinstance(value, list):
+        return [_resolve_state(child, state) for child in value]
+    return value
 
 
 def request(target: str, case: dict[str, Any], timeout: float) -> Response:
     url = f"{target.rstrip('/')}{case['path']}"
     body = (
         json.dumps(case.get("body", {}), separators=(",", ":")).encode()
-        if case["method"] == "POST"
+        if case["method"] in {"POST", "PUT", "PATCH", "DELETE"}
         else None
     )
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "User-Agent": f"iicp-conformance/{RUNNER_VERSION}",
+    }
+    headers.update(case.get("headers", {}))
     req = Request(
         url,
         data=body,
         method=case["method"],
-        headers={
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-            "User-Agent": "iicp-conformance/0.2.0",
-        },
+        headers=headers,
     )
     try:
         with urlopen(req, timeout=timeout) as response:
@@ -165,7 +231,44 @@ def assertion_passes(name: str, body: bytes) -> bool:
             and value.get("route_fields_present") is True
             and value.get("prompt_payload_accepted") is False
         )
+    if name == "registration_shape":
+        return (
+            isinstance(value, dict)
+            and isinstance(value.get("node_id"), str)
+            and bool(value["node_id"])
+            and isinstance(value.get("node_token"), str)
+            and bool(value["node_token"])
+        )
+    if name == "heartbeat_shape":
+        return (
+            isinstance(value, dict)
+            and value.get("ok") is True
+            and isinstance(value.get("next_heartbeat_ms"), int)
+            and value["next_heartbeat_ms"] > 0
+        )
+    if name == "deregister_shape":
+        return isinstance(value, dict) and value.get("deregistered") is True
     return False
+
+
+def _capture_response(body: bytes, capture: dict[str, str]) -> dict[str, str]:
+    if not capture:
+        return {}
+    try:
+        value = json.loads(body)
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise RuntimeError("response capture failed") from error
+    captured: dict[str, str] = {}
+    for name, path in capture.items():
+        current: Any = value
+        for part in path.split("."):
+            if not isinstance(current, dict) or part not in current:
+                raise RuntimeError("response capture failed")
+            current = current[part]
+        if not isinstance(current, str) or not current:
+            raise RuntimeError("response capture failed")
+        captured[name] = current
+    return captured
 
 
 def _is_loopback_target(target: str) -> bool:
@@ -193,6 +296,7 @@ def run(
     if manifest.get("loopback_only") is True and not _is_loopback_target(target):
         raise ValueError("this conformance profile is restricted to loopback targets")
     results: list[dict[str, Any]] = []
+    state: dict[str, str] = {}
     started = datetime.now(timezone.utc)
     for case in manifest["tests"]:
         began = time.monotonic()
@@ -200,13 +304,15 @@ def run(
         outcome = "fail"
         reason = "request_failed"
         try:
-            response = request(target, case, timeout)
+            resolved_case = _resolve_state(case, state)
+            response = request(target, resolved_case, timeout)
             observed_status = response.status
             if response.status != case["status"]:
                 reason = "unexpected_status"
             elif not assertion_passes(case["assertion"], response.body):
                 reason = "assertion_failed"
             else:
+                state.update(_capture_response(response.body, case.get("capture", {})))
                 outcome = "pass"
                 reason = "passed"
         except RuntimeError:
@@ -224,7 +330,7 @@ def run(
     passed = sum(item["outcome"] == "pass" for item in results)
     return {
         "schema": RESULT_SCHEMA,
-        "runner_version": "0.2.0",
+        "runner_version": RUNNER_VERSION,
         "suite_version": manifest["suite_version"],
         "profile": manifest["profile"],
         "fixture_digest": f"sha256:{hashlib.sha256(raw).hexdigest()}",
