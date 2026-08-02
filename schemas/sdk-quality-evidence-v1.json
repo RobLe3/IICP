@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/sdk-quality-evidence-v1.json",
+  "title": "IICP SDK quality evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "sdk", "version", "commit", "generated_at", "status", "runtimes", "gates"],
+  "properties": {
+    "schema": { "const": "iicp.sdk-quality-evidence.v1" },
+    "sdk": { "enum": ["python", "typescript", "rust"] },
+    "version": { "type": "string", "minLength": 1 },
+    "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["pass", "fail"] },
+    "runtimes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "status"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["pass", "fail"] }
+        }
+      }
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["static_analysis", "coverage", "dependency_audit", "locked_build", "clean_install"],
+      "properties": {
+        "static_analysis": { "$ref": "#/$defs/status" },
+        "dependency_audit": { "$ref": "#/$defs/status" },
+        "locked_build": { "$ref": "#/$defs/status" },
+        "clean_install": { "$ref": "#/$defs/status" },
+        "coverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "percent", "minimum_percent"],
+          "properties": {
+            "status": { "enum": ["pass", "fail"] },
+            "percent": { "type": "number", "minimum": 0, "maximum": 100 },
+            "minimum_percent": { "type": "number", "minimum": 0, "maximum": 100 }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": { "status": { "enum": ["pass", "fail"] } }
+    }
+  }
+}
