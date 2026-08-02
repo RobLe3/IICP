@@ -8,7 +8,14 @@ Run the repository checks before proposing a change:
 
 ```bash
 python3 tools/generate_implementations.py --check
+python3 tools/check_public_prose.py --strict README.md GOVERNANCE.md CONTRIBUTING.md
 ```
+
+The prose check blocks objective citation artifacts and reports stylistic or
+substance heuristics for human review. It checks writing quality, not whether a
+person or a model wrote the text. Do not replace flagged words mechanically;
+remove unsupported claims, add the concrete evidence, or keep clear wording
+when the warning does not apply in context.
 
 Coordinated releases must update `ecosystem/releases.json` with their wire,
 conformance, compatibility, upgrade, migration and rollback semantics. The
