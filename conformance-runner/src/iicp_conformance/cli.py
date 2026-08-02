@@ -5,25 +5,35 @@ import json
 import sys
 from pathlib import Path
 
-from .runner import run, sign_result
+from .runner import run, sign_result, verify_result
 
 
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(prog="iicp-conformance")
-    result.add_argument("--target", required=True, help="Directory base URL")
-    result.add_argument("--output", type=Path, help="Write the content-free JSON result")
-    result.add_argument(
+    commands = result.add_subparsers(dest="command", required=True)
+    run_parser = commands.add_parser("run", help="Run a black-box conformance profile")
+    run_parser.add_argument("--target", required=True, help="Directory base URL")
+    run_parser.add_argument("--output", type=Path, help="Write the content-free JSON result")
+    run_parser.add_argument(
         "--evidence-class",
         choices=("self-attested", "project-verified", "independent"),
         default="self-attested",
     )
-    result.add_argument("--timeout", type=float, default=5.0)
-    result.add_argument("--signing-key-file", type=Path)
+    run_parser.add_argument("--timeout", type=float, default=5.0)
+    run_parser.add_argument("--signing-key-file", type=Path)
+    verify_parser = commands.add_parser("verify", help="Verify a result bundle offline")
+    verify_parser.add_argument("result", type=Path)
+    verify_parser.add_argument("--require-signature", action="store_true")
     return result
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
+    if args.command == "verify":
+        value = json.loads(args.result.read_text(encoding="utf-8"))
+        verification = verify_result(value, require_signature=args.require_signature)
+        sys.stdout.write(json.dumps(verification, indent=2, sort_keys=True) + "\n")
+        return 0 if verification["valid"] else 1
     if args.timeout <= 0:
         parser().error("--timeout must be greater than zero")
     result = run(

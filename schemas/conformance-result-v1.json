@@ -56,7 +56,7 @@
       "required": ["algorithm", "canonicalization", "public_key", "value"],
       "properties": {
         "algorithm": {"const": "Ed25519"},
-        "canonicalization": {"type": "string"},
+        "canonicalization": {"const": "RFC8785-JCS"},
         "public_key": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "value": {"type": "string", "pattern": "^[0-9a-f]{128}$"}
       },
