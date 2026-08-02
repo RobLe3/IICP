@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security report
+    url: https://github.com/RobLe3/IICP/security/advisories/new
+    about: Report a vulnerability privately. Do not put secrets or exploit details in a public issue.
+  - name: Community discussion
+    url: https://iicp.network/forum/
+    about: Discuss use cases, implementation experience, and questions that do not yet require a tracked specification change.

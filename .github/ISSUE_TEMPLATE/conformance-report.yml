@@ -1,0 +1,38 @@
+name: Conformance or interoperability report
+description: Submit reproducible results from an implementation or operator.
+title: "[conformance] "
+labels: ["conformance"]
+body:
+  - type: input
+    id: implementation
+    attributes:
+      label: Implementation and released version
+    validations:
+      required: true
+  - type: input
+    id: specification
+    attributes:
+      label: Protocol-suite release and wire baseline
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Test environment
+      description: Give enough non-sensitive detail to reproduce the result. Do not include endpoints, node IDs, credentials, or user data.
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: Results and artifacts
+      description: List conformance IDs, failures, signed result artifacts, and verification commands.
+    validations:
+      required: true
+  - type: textarea
+    id: independence
+    attributes:
+      label: Independence and limitations
+      description: State who authored, operated, and verified each component and any limits on the evidence.
+    validations:
+      required: true

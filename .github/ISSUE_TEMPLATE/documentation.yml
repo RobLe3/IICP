@@ -1,0 +1,25 @@
+name: Specification documentation defect
+description: Report unclear, inconsistent, stale, or inaccessible normative documentation.
+title: "[docs] "
+labels: ["documentation"]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Document and section
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Explain the ambiguity, contradiction, stale fact, broken reference, or accessibility issue.
+    validations:
+      required: true
+  - type: textarea
+    id: effect
+    attributes:
+      label: Effect on implementers
+      description: Describe the concrete decision or behavior that becomes unclear.
+    validations:
+      required: true
