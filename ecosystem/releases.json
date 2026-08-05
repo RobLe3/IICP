@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-02",
+  "generated_at": "2026-08-05",
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.8",
+      "version": "1.10.9",
       "wire_behavior": "unchanged",
-      "conformance_impact": "changed",
+      "conformance_impact": "unchanged",
       "profiles": [
         "directory-public-v1",
         "directory-dispatch-v1",
@@ -14,22 +14,22 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "Existing public and dispatch results remain valid; lifecycle runs require runner 0.3.0, a disposable loopback directory and the fixed fixture health response.",
-      "rollback": "Continue verifying existing 4.45.0 public and 4.49.0 dispatch results with v1.10.7; do not emit the lifecycle profile."
+      "migration": "No protocol, schema or persisted-state migration is required; this release synchronizes the PHP security-patch release record.",
+      "rollback": "Continue using v1.10.8 protocol artifacts; do not describe PHP 1.10.86 as the current patched implementation."
     },
     {
       "id": "directory-php",
-      "version": "1.10.86",
-      "wire_behavior": "additive",
-      "conformance_impact": "changed",
+      "version": "1.10.87",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "unchanged",
       "profiles": [
         "directory-implementation-metadata-v1",
         "discovery-evidence-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "recommended",
-      "migration": "Run the reversible node implementation metadata migration before serving the release.",
-      "rollback": "Roll back the application, then drop the three additive metadata columns after confirming no newer provider registrations depend on them."
+      "upgrade": "required",
+      "migration": "No database migration is required; install the immutable 1.10.87 artifact and retain the existing environment and schema.",
+      "rollback": "Restore 1.10.86 only as an emergency runtime rollback; it contains the affected Guzzle dependency and should not remain deployed."
     },
     {
       "id": "directory-rust",

@@ -21,7 +21,7 @@
     "directory-php": {
       "lifecycle": "active",
       "name": "iicp-directory-php",
-      "release": "1.10.86",
+      "release": "1.10.87",
       "visibility": "public"
     },
     "directory-rust": {
@@ -33,7 +33,7 @@
     "specification": {
       "lifecycle": "active",
       "name": "IICP",
-      "release": "1.10.8",
+      "release": "1.10.9",
       "visibility": "public"
     },
     "web-node": {
@@ -49,8 +49,8 @@
       "visibility": "private"
     }
   },
-  "generated_at": "2026-08-02",
-  "protocol_suite_release": "1.10.8",
+  "generated_at": "2026-08-05",
+  "protocol_suite_release": "1.10.9",
   "schema": "iicp.ecosystem-current-versions.v1",
   "wire_compatibility_baseline": "1.9.0"
 }
