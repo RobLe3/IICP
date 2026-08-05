@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## v1.10.9 — 2026-08-05
+
+Corrective ecosystem metadata release recording PHP Genesis implementation
+`v1.10.87`, which updates Guzzle to 7.15.2 for the reviewed host and cookie
+canonicalization advisories. The protocol, OpenAPI projection, conformance
+suite, directory schema, routing and SDK contracts are unchanged.
+
 ## v1.10.8 — 2026-08-02
 
 Adds the isolated `directory-lifecycle-v1` conformance profile and runner 0.3.0.
