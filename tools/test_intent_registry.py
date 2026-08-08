@@ -56,6 +56,19 @@ class IntentRegistryTest(unittest.TestCase):
         entry["status"] = "active"
         self.assertTrue(any("invalid lifecycle transition" in error for error in validate(document)))
 
+    def test_schema_rejects_wrong_scalar_and_unknown_property(self) -> None:
+        document = copy.deepcopy(self.document)
+        document["intents"][0]["phase"] = "one"
+        document["intents"][0]["unexpected"] = True
+        errors = validate(document)
+        self.assertTrue(any("phase" in error for error in errors))
+        self.assertTrue(any("unexpected" in error for error in errors))
+
+    def test_fixture_pointer_must_resolve_for_declaring_intent(self) -> None:
+        document = copy.deepcopy(self.document)
+        document["intents"][0]["fixtures"] = ["registry/fixtures/intent-payloads-v1.json#/cases/2"]
+        self.assertTrue(any("does not identify a case" in error for error in validate(document)))
+
     def test_active_intent_requires_evidence(self) -> None:
         document = copy.deepcopy(self.document)
         active = next(item for item in document["intents"] if item["status"] == "active")

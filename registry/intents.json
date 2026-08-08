@@ -43,7 +43,8 @@
         "spec/v1.9/iicp-dir.md"
       ],
       "fixtures": [
-        "registry/fixtures/intent-payloads-v1.json#llm-chat-v1"
+        "registry/fixtures/intent-payloads-v1.json#/cases/0",
+        "registry/fixtures/intent-payloads-v1.json#/cases/1"
       ],
       "implementation_evidence": [
         {
@@ -110,7 +111,8 @@
         "spec/v1.9/iicp-dir.md"
       ],
       "fixtures": [
-        "registry/fixtures/intent-payloads-v1.json#llm-completion-v1"
+        "registry/fixtures/intent-payloads-v1.json#/cases/2",
+        "registry/fixtures/intent-payloads-v1.json#/cases/3"
       ],
       "implementation_evidence": [
         {
@@ -175,7 +177,8 @@
         "spec/v1.9/iicp-dir.md"
       ],
       "fixtures": [
-        "registry/fixtures/intent-payloads-v1.json#llm-embedding-v1"
+        "registry/fixtures/intent-payloads-v1.json#/cases/4",
+        "registry/fixtures/intent-payloads-v1.json#/cases/5"
       ],
       "implementation_evidence": [
         {
@@ -789,7 +792,8 @@
         "spec/v1.9/iicp-dir.md"
       ],
       "fixtures": [
-        "registry/fixtures/intent-payloads-v1.json#audio-transcribe-v1"
+        "registry/fixtures/intent-payloads-v1.json#/cases/6",
+        "registry/fixtures/intent-payloads-v1.json#/cases/7"
       ],
       "implementation_evidence": [
         {
@@ -863,7 +867,8 @@
         "spec/v1.9/iicp-dir.md"
       ],
       "fixtures": [
-        "registry/fixtures/intent-payloads-v1.json#audio-speech-v1"
+        "registry/fixtures/intent-payloads-v1.json#/cases/8",
+        "registry/fixtures/intent-payloads-v1.json#/cases/9"
       ],
       "implementation_evidence": [
         {
@@ -932,7 +937,8 @@
         "spec/v1.9/iicp-dir.md"
       ],
       "fixtures": [
-        "registry/fixtures/intent-payloads-v1.json#safety-moderate-v1"
+        "registry/fixtures/intent-payloads-v1.json#/cases/10",
+        "registry/fixtures/intent-payloads-v1.json#/cases/11"
       ],
       "implementation_evidence": [
         {
@@ -962,6 +968,5 @@
         }
       ]
     }
-  ],
-  "schema": "https://iicp.network/registry/schemas/intent-registry-v1.4.json"
+  ]
 }

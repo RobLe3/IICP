@@ -86,7 +86,7 @@ def classify(urn: str, canonical: set[str]) -> tuple[str, str]:
     if ":x." in lowered or ":x:" in lowered or "acme" in lowered or "my-platform" in lowered:
         return "custom-example", "implementation-defined namespace example; not promoted"
     if any(part in lowered for part in NEGATIVE_PARTS) or not re.fullmatch(
-        r"urn:iicp:intent:[a-z0-9_:/.-]+:v[1-9][0-9]*", urn
+        r"urn:iicp:intent:[a-z0-9_.-]+(?::[a-z0-9_./-]+)*:v[1-9][0-9]*", urn
     ):
         return "negative-test", "invalid, unknown or rejection-path fixture"
     return "candidate-unregistered", "observed outside the canonical registry; requires separate review and evidence"

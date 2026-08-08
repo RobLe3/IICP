@@ -10,9 +10,10 @@ import re
 import sys
 from typing import Any
 
+
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "registry/intents.json"
-URN = re.compile(r"^urn:iicp:intent:[a-z0-9_:/.-]+:v[1-9][0-9]*$")
+URN = re.compile(r"^urn:iicp:intent:[a-z0-9_.-]+(?::[a-z0-9_./-]+)*:v[1-9][0-9]*$")
 SEMVER = re.compile(r"^[1-9][0-9]*\.[0-9]+\.[0-9]+$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 STATUSES = {"active", "experimental", "reserved", "deprecated", "withdrawn"}
@@ -25,6 +26,12 @@ KINDS = {
     "representation",
     "tool",
     "transformation",
+}
+ENTRY_KEYS = {
+    "urn", "name", "description", "payload_schema", "result_schema", "phase", "status", "kind",
+    "declaration_version", "owner", "created", "updated", "review_by", "schemas", "compatibility",
+    "references", "fixtures", "implementation_evidence", "status_history", "deprecated_by",
+    "deprecated_since", "withdrawn_reason",
 }
 ALLOWED_TRANSITIONS = {
     "reserved": {"reserved", "experimental", "active", "withdrawn"},
@@ -44,6 +51,51 @@ def parse_date(value: object, field: str, errors: list[str]) -> date | None:
     except ValueError:
         errors.append(f"{field} must be an ISO 8601 date")
         return None
+
+
+def resolve_json_pointer(document: object, pointer: str) -> object:
+    if not pointer.startswith("/"):
+        raise ValueError("fragment must be a JSON Pointer")
+    current = document
+    for raw in pointer[1:].split("/"):
+        token = raw.replace("~1", "/").replace("~0", "~")
+        if isinstance(current, list):
+            if not token.isdigit():
+                raise ValueError("array token must be an index")
+            current = current[int(token)]
+        elif isinstance(current, dict):
+            current = current[token]
+        else:
+            raise ValueError("pointer traverses a scalar")
+    return current
+
+
+def validate_fixture_refs(entry: dict[str, Any], prefix: str, errors: list[str]) -> None:
+    seen_validity: set[bool] = set()
+    for index, value in enumerate(entry.get("fixtures", [])):
+        field = f"{prefix}.fixtures[{index}]"
+        if not isinstance(value, str) or "#" not in value:
+            errors.append(f"{field} must be a fixture JSON Pointer URI")
+            continue
+        relative, fragment = value.split("#", 1)
+        path = ROOT / relative
+        if not path.is_file():
+            errors.append(f"{field} does not exist: {relative}")
+            continue
+        try:
+            case = resolve_json_pointer(json.loads(path.read_text()), fragment)
+        except (OSError, UnicodeError, json.JSONDecodeError, KeyError, IndexError, ValueError):
+            errors.append(f"{field} does not resolve to a JSON resource")
+            continue
+        if not isinstance(case, dict) or case.get("intent") != entry.get("urn"):
+            errors.append(f"{field} does not identify a case for {entry.get('urn')}")
+            continue
+        if not isinstance(case.get("valid"), bool):
+            errors.append(f"{field} must identify a case with boolean valid")
+            continue
+        seen_validity.add(case["valid"])
+    if entry.get("status") == "active" and seen_validity != {True, False}:
+        errors.append(f"active intent {entry.get('urn')} must cite one positive and one negative fixture case")
 
 
 def validate_schema_ref(value: object, field: str, errors: list[str]) -> None:
@@ -130,6 +182,11 @@ def validate(document: object, *, today: date | None = None) -> list[str]:
         if not isinstance(entry, dict):
             errors.append(f"{prefix} must be an object")
             continue
+        unexpected = sorted(set(entry) - ENTRY_KEYS)
+        if unexpected:
+            errors.append(f"{prefix} has unknown properties: {', '.join(unexpected)}")
+        if not isinstance(entry.get("phase"), int) or isinstance(entry.get("phase"), bool) or entry["phase"] < 1:
+            errors.append(f"{prefix}.phase must be a positive integer")
         urn = entry.get("urn")
         if not isinstance(urn, str) or not URN.fullmatch(urn):
             errors.append(f"{prefix}.urn is not a canonical versioned intent URN")
@@ -169,9 +226,8 @@ def validate(document: object, *, today: date | None = None) -> list[str]:
         for field in ("references", "fixtures", "implementation_evidence"):
             if not isinstance(entry.get(field), list):
                 errors.append(f"{prefix}.{field} must be an array")
+        validate_fixture_refs(entry, prefix, errors)
         if status == "active":
-            if not entry.get("fixtures"):
-                errors.append(f"active intent {urn} must cite conformance fixtures")
             if not entry.get("implementation_evidence"):
                 errors.append(f"active intent {urn} must cite a released implementation")
         if status == "deprecated":

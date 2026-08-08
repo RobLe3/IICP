@@ -14,9 +14,15 @@
   "records": [
     {
       "urn": "urn:iicp:intent::chat:v1",
-      "classification": "candidate-unregistered",
-      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "classification": "negative-test",
+      "disposition": "invalid, unknown or rejection-path fixture",
       "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "tools/test_audit_intent_sources.py"
+          ]
+        },
         {
           "repository": "iicp-directory-rust",
           "paths": [
@@ -1660,6 +1666,19 @@
           "repository": "iicp-directory-rust",
           "paths": [
             "parity/profile-compatibility-v0.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:vendor:chat:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "tools/test_audit_intent_sources.py"
           ]
         }
       ]
