@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Reconciled the remaining directory and conformance references for REGISTER
+  rate limiting with SYB-01 and both maintained implementations: reject after
+  60 requests in a rolling 60-second window per source IP using HTTP 429 and
+  `IICP-E034`. This corrects contradictory normative text; it does not change
+  shipped directory behavior.
+
 ## v1.10.9 — 2026-08-05
 
 Corrective ecosystem metadata release recording PHP Genesis implementation

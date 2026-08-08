@@ -320,7 +320,9 @@ Rules:
 
 **Invariants**:
 - Directory MUST perform a liveness check (`GET {endpoint}/iicp/health`) before issuing a token. [→ DIR-REG-04]
-- Directory MUST rate-limit: 10 REGISTER requests per minute per source IP. [→ DIR-RL-01]
+- Directory MUST reject REGISTER requests after 60 requests in a rolling
+  60-second window from the same source IP. Rejections use HTTP 429 and
+  `IICP-E034`. [→ DIR-RL-01]
 
 ---
 
@@ -1575,7 +1577,8 @@ concerns or live in a separate sub-spec:
 ## 6. Security Requirements
 
 - TLS 1.3 MUST be enforced on all IICP-DIR endpoints. [→ SEC-TLS-01]
-- REGISTER MUST be rate-limited (10/min/IP). [→ DIR-RL-01]
+- REGISTER MUST be rate-limited after 60 requests per 60 seconds per source IP.
+  [→ DIR-RL-01]
 - node_token MUST be 32+ bytes cryptographically random. [→ DIR-REG-05]
 - node_token MUST be stored hashed (bcrypt) by the directory. [→ DIR-REG-07]
 - HEARTBEAT MUST validate node_token on every request. [→ DIR-HB-02]

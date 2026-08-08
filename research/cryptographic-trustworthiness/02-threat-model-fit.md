@@ -53,7 +53,7 @@
 3. Inflate reputation scores by reporting completed tasks to each other
 4. Exhaust the CIP worker pool for a specific intent, forcing legitimate coordinators to use only Sybil-controlled workers
 
-**Current defense**: Registration requires passing a liveness check (the directory pings the registered endpoint). This provides weak Sybil resistance — registering N nodes requires N publicly reachable endpoints. Rate limiting (10 REGISTERs per minute per IP, spec DIR-RL-01) provides partial protection. Identity age gating on the Platinum reputation tier (§5.1.1) provides some long-term Sybil resistance.
+**Current defense**: Registration requires passing a liveness check (the directory pings the registered endpoint). This provides weak Sybil resistance — registering N nodes requires N publicly reachable endpoints. Rate limiting (60 REGISTER requests per rolling 60-second window per source IP, spec DIR-RL-01) provides partial protection. Identity age gating on the Platinum reputation tier (§5.1.1) provides some long-term Sybil resistance.
 
 **Gap**: Nothing prevents an operator with multiple public IP addresses (e.g., cloud instances) from registering many nodes cheaply.
 
@@ -123,7 +123,7 @@
 **Description**: An operator controls N nodes, all registered with different identities. In majority-vote CIP mode, they vote as a bloc. In best-of-N mode, they all return the same (bad) response, which wins by "best quality" if they collude to report high quality scores.
 
 **Current defense**:
-- Registration rate limiting (10/min/IP). Partial mitigation.
+- Registration rate limiting (60 requests per rolling 60-second window per source IP). Partial mitigation.
 - Identity age Platinum gate (720 hours). Prevents new Sybil nodes from immediately reaching highest routing priority.
 - Reputation decay for idle nodes: idle nodes lose routing priority over time.
 

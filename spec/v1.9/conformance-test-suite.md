@@ -231,7 +231,7 @@ the result bundle.
 
 | Test ID | Requirement | Expected |
 |---------|-------------|---------|
-| `DIR-RL-01` | > 10 `POST /v1/register` requests per minute per IP → 429 | `error.code = "rate_limited"` |
+| `DIR-RL-01` | More than 60 `POST /v1/register` requests in a rolling 60-second window from one source IP → 429 | `error.code = "rate_limited"` (`IICP-E034`) |
 
 ### 3.5 Node Detail (SHOULD)
 
