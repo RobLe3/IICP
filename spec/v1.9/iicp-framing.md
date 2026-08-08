@@ -235,6 +235,7 @@ ADR-024 envelope signing rather than a standalone hash field.
 | 10 | credits_charged | uint | MAY | Credits deducted for this call |
 | 11 | node_id | tstr | SHOULD | Responding node UUID |
 | 12 | is_final | bool | SHOULD | Base responses are terminal (`true` or absent); profile partials MUST use `false` and the terminal response MUST use `true` |
+| 13 | lifecycle | map | Profile-only | Present only after `urn:iicp:profile:service-lifecycle:v1` negotiation; envelope defined in §4.4.2 |
 
 #### 4.4.1 Base response and negotiated streaming lifecycle
 
@@ -265,10 +266,42 @@ Progressive output is available only when both peers negotiate
   ambiguous failed outcome to the caller. Cancellation and idempotent state
   recovery follow `iicp-service-lifecycle-profile.md`.
 
-The profile envelope's `sequence` field is required for lifecycle events. It is
-not added to the base RESPONSE map: TCP and an individual QUIC request stream
-already preserve frame order, while the negotiated lifecycle envelope provides
-duplicate and replay diagnostics. Stream resumption remains out of scope.
+The profile envelope's `sequence` field is required for lifecycle events. TCP and
+an individual QUIC request stream already preserve frame order, but the
+negotiated lifecycle envelope provides duplicate and replay diagnostics. Stream
+resumption remains out of scope.
+
+#### 4.4.2 Service-lifecycle profile envelope
+
+After `urn:iicp:profile:service-lifecycle:v1` negotiation, every partial or
+terminal lifecycle RESPONSE MUST carry key 13 (`lifecycle`). An `accepted`
+lifecycle event MAY be emitted through OBSERVE before the first RESPONSE. Key
+13 is not a required base-frame field and MUST NOT be sent by an unnegotiated
+peer. Its map uses these integer
+keys:
+
+| Key | Name | CBOR type | Requirement | Constraint |
+|---|---|---|---|---|
+| 1 | task_id | tstr | MUST | Original task identifier from the CALL. |
+| 2 | sequence | uint | MUST | Zero-based and strictly increasing for this `task_id`. |
+| 3 | event | tstr | MUST | `accepted`, `partial`, `completed`, `failed`, `cancelled`, or `timed_out`. |
+| 4 | is_final | bool | MUST | MUST equal RESPONSE key 12. |
+| 5 | receipt | map | SHOULD on terminal | Redacted terminal evidence when another negotiated profile requires it. |
+
+The RESPONSE `session_id` and `call_id` MUST echo the CALL. The envelope
+`task_id` MUST identify that CALL's submitted task. RESPONSE status maps to the
+envelope event as follows: `partial` to `partial`; `success` to `completed`;
+`error` to `failed` or `cancelled`; and `timeout` to `timed_out`. A receiver
+MUST reject a contradictory status, finality, session, call, task, or sequence
+value. `result`, `error`, and `tokens_used` retain the §4.4 semantics; they are
+not duplicated inside the envelope.
+
+For an OBSERVE lifecycle event, the base OBSERVE map remains unchanged: it MUST
+use `subject=call`, `subject_id` equal to the submitted `task_id`, key 5 as the
+same lifecycle sequence, and key 4 (`data`) as the key-13 envelope map above.
+An OBSERVE event is advisory only; a terminal RESPONSE remains the authoritative
+CALL outcome. An OBSERVE event MUST NOT authorize billing or replace the
+terminal RESPONSE requirement.
 
 ### 4.5 INIT message schema (0x01)
 
@@ -1101,3 +1134,4 @@ mechanisms are complementary.
 | 0.1.6-draft | 2026-07-14 | Protocol Steward | Corrected a pre-ratification editorial arithmetic error: the declared field layout has always occupied 12 bytes, not 11. The implementation-backed disposition and canonical vectors are recorded in `research/native-ai-infrastructure/FRAMING_ROOT_CAUSE_2026-07-14.md` and `fixtures/native-framing-v1.json`. No wire behavior changed. |
 | 0.1.7-draft | 2026-07-30 | Protocol Steward | Corrected IANA procedure and provisional port wording; limited current port convention to TCP; removed invalid/unassigned CBOR-tag claims; left media types pending. No wire behavior changed. |
 | 0.1.8-draft | 2026-08-08 | Protocol Steward | Resolved the base-versus-profile RESPONSE contradiction: base CALLs remain buffered and single-terminal; negotiated service-lifecycle streaming uses incremental partials plus one terminal response. Clarified accounting, HTTP fallback, QUIC closure, sequence ownership and fragmentation terminology. No base-frame or required-field change. |
+| 0.1.9-draft | 2026-08-08 | Protocol Steward | Specifies the negotiated lifecycle-envelope location in RESPONSE key 13 and OBSERVE `data`, including call/task correlation, status/finality mapping and native negative vectors. Key 13 remains profile-only; no base-frame or required-field change. |

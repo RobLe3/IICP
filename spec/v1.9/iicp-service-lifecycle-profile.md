@@ -1,6 +1,6 @@
 # IICP Service Lifecycle Profile
 
-**Version:** 0.1.1-draft
+**Version:** 0.1.2-draft
 **Status:** proposed semantic profile; not required for base IICP conformance
 **Authority:** Protocol Steward
 **Relation:** `iicp-core.md`, `iicp-framing.md`, `iicp-semantics.md`, `iicp-cooperative-inference.md`
@@ -106,21 +106,28 @@ explicitly negotiates resumption.
 ## 6. Transport mapping
 
 Native TCP/QUIC uses the existing CALL, RESPONSE, CONTROL, and OBSERVE message
-families. Base HTTP `POST /v1/task` remains a single buffered response. A
-provider that claims this profile exposes the accepted task's ordered events
-through its documented lifecycle event-stream resource and cancellation through
-its documented cancellation control resource; both resources MUST be
-advertised as profile capabilities. This draft does not assign a universal
-HTTP path, so a client MUST NOT infer streaming from chunked transfer or
-`Accept: text/event-stream` alone. Implementations MAY choose transport-specific
-delivery mechanics, but the state table, ordering, finality, and idempotency
-requirements above remain identical.
+families. On native RESPONSE, the envelope in §4 is carried in framing
+RESPONSE key 13; RESPONSE `session_id`, `call_id`, status and `is_final` MUST
+agree with that envelope as specified by `iicp-framing.md` §4.4.2. On native
+OBSERVE, it is carried in OBSERVE key 4 (`data`), with `subject=call`,
+`subject_id=task_id`, and OBSERVE key 5 equal to the envelope sequence.
+OBSERVE is advisory; the terminal RESPONSE remains authoritative.
+
+Base HTTP `POST /v1/task` remains a single buffered response. A provider that
+claims this profile exposes the accepted task's ordered events through its
+documented lifecycle event-stream resource and cancellation through its
+documented cancellation control resource; both resources MUST be advertised as
+profile capabilities. This draft does not assign a universal HTTP path, so a
+client MUST NOT infer streaming from chunked transfer or `Accept:
+text/event-stream` alone. Implementations MAY choose transport-specific delivery
+mechanics, but the state table, ordering, finality, and idempotency requirements
+above remain identical.
 
 ## 7. Conformance
 
 `research/native-ai-infrastructure/fixtures/service-profiles-v1.json` defines
 the minimum state-transition vectors. Implementations claiming this profile
-MUST pass `SERVICE-LIFECYCLE-01` through `SERVICE-LIFECYCLE-13` in the
+MUST pass `SERVICE-LIFECYCLE-01` through `SERVICE-LIFECYCLE-20` in the
 conformance suite.
 
 ## 8. Security and privacy

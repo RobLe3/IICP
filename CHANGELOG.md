@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Corrects the proposed service-lifecycle profile's native envelope mapping:
+  negotiated partial and terminal RESPONSE frames carry the additive key-13
+  lifecycle envelope; advisory OBSERVE events carry the same envelope in
+  `data`. Adds call-ID, sequence, finality and post-terminal native negative
+  vectors. This is an additive draft-profile clarification, not a base-wire,
+  implementation-release or protocol-line change.
+
 ## v1.10.11 — 2026-08-08
 
 Additive registry and implementation-evidence release on the existing protocol

@@ -11,6 +11,47 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "research/native-ai-infrastructure/fixtures/service-profiles-v1.json"
 TERMINAL = {"completed", "failed", "cancelled", "timed_out", "rejected"}
+NATIVE_STATUS = {
+    "partial": "partial",
+    "success": "completed",
+    "error": {"failed", "cancelled"},
+    "timeout": "timed_out",
+}
+
+
+def native_lifecycle_errors(vector: dict) -> list[str]:
+    """Return deterministic validation errors for a native lifecycle history."""
+    request = vector["input"]
+    errors: list[str] = []
+    terminal_seen = False
+    expected_sequence = 0
+    for index, frame in enumerate(vector["native_frames"]):
+        envelope = frame.get("lifecycle", {})
+        if frame.get("session_id") != request["session_id"]:
+            errors.append(f"frame {index}: session_id drift")
+        if frame.get("call_id") != request["call_id"]:
+            errors.append(f"frame {index}: call_id drift")
+        if envelope.get("task_id") != request["task_id"]:
+            errors.append(f"frame {index}: task_id drift")
+        if envelope.get("sequence") != expected_sequence:
+            errors.append(f"frame {index}: non-contiguous lifecycle sequence")
+        expected_sequence += 1
+        if frame.get("is_final") != envelope.get("is_final"):
+            errors.append(f"frame {index}: finality disagreement")
+        expected_event = NATIVE_STATUS.get(frame.get("status"))
+        if isinstance(expected_event, set):
+            status_matches = envelope.get("event") in expected_event
+        else:
+            status_matches = envelope.get("event") == expected_event
+        if not status_matches:
+            errors.append(f"frame {index}: status/event disagreement")
+        if terminal_seen:
+            errors.append(f"frame {index}: response after terminal")
+        if envelope.get("is_final"):
+            terminal_seen = True
+    if not terminal_seen:
+        errors.append("missing terminal response")
+    return errors
 
 
 class ServiceLifecycleFixtureTest(unittest.TestCase):
@@ -23,7 +64,7 @@ class ServiceLifecycleFixtureTest(unittest.TestCase):
         ids = [item["id"] for item in self.data["lifecycle_vectors"]]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(
-            {f"SERVICE-LIFECYCLE-{number:02d}" for number in range(1, 14)},
+            {f"SERVICE-LIFECYCLE-{number:02d}" for number in range(1, 21)},
             set(ids),
         )
 
@@ -45,10 +86,7 @@ class ServiceLifecycleFixtureTest(unittest.TestCase):
         ]:
             with self.subTest(vector_id=vector_id):
                 events = self.vectors[vector_id]["events"]
-                self.assertEqual(
-                    list(range(len(events))),
-                    [event["sequence"] for event in events],
-                )
+                self.assertEqual(list(range(len(events))), [event["sequence"] for event in events])
                 terminals = [event for event in events if event["event"] in TERMINAL]
                 self.assertEqual(1, len(terminals))
                 self.assertTrue(terminals[0]["is_final"])
@@ -68,6 +106,23 @@ class ServiceLifecycleFixtureTest(unittest.TestCase):
         self.assertFalse(any(event["event"] in TERMINAL for event in missing_terminal))
         self.assertEqual("partial", partial_final[-1]["event"])
         self.assertTrue(partial_final[-1]["is_final"])
+
+    def test_native_lifecycle_envelope_accepts_valid_terminal_histories(self) -> None:
+        for vector_id in ("SERVICE-LIFECYCLE-14", "SERVICE-LIFECYCLE-15", "SERVICE-LIFECYCLE-16"):
+            with self.subTest(vector_id=vector_id):
+                self.assertEqual([], native_lifecycle_errors(self.vectors[vector_id]))
+
+    def test_native_lifecycle_envelope_rejects_drift_and_invalid_terminality(self) -> None:
+        expected_error = {
+            "SERVICE-LIFECYCLE-17": "call_id drift",
+            "SERVICE-LIFECYCLE-18": "non-contiguous lifecycle sequence",
+            "SERVICE-LIFECYCLE-19": "finality disagreement",
+            "SERVICE-LIFECYCLE-20": "response after terminal",
+        }
+        for vector_id, expected in expected_error.items():
+            with self.subTest(vector_id=vector_id):
+                errors = native_lifecycle_errors(self.vectors[vector_id])
+                self.assertTrue(any(expected in error for error in errors), errors)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 {
-  "fixture_version": "1.1.0-draft",
-  "purpose": "Implementation-neutral conformance vectors for the proposed IICP service-lifecycle and provider-admission profiles. These vectors do not modify the base wire frame.",
+  "fixture_version": "1.2.0-draft",
+  "purpose": "Implementation-neutral conformance vectors for the proposed IICP service-lifecycle and provider-admission profiles, including native lifecycle-envelope correlation. These vectors do not modify the base wire frame.",
   "profiles": [
     "urn:iicp:profile:service-lifecycle:v1",
     "urn:iicp:profile:provider-admission:v1"
@@ -9,170 +9,629 @@
     {
       "id": "SERVICE-LIFECYCLE-01",
       "name": "accepted task completes once",
-      "input": {"task_id": "t-01", "required_profiles": ["urn:iicp:profile:service-lifecycle:v1"]},
+      "input": {
+        "task_id": "t-01",
+        "required_profiles": [
+          "urn:iicp:profile:service-lifecycle:v1"
+        ]
+      },
       "events": [
-        {"sequence": 0, "event": "accepted", "is_final": false},
-        {"sequence": 1, "event": "completed", "is_final": true}
+        {
+          "sequence": 0,
+          "event": "accepted",
+          "is_final": false
+        },
+        {
+          "sequence": 1,
+          "event": "completed",
+          "is_final": true
+        }
       ],
       "expected": "accept events in order; one terminal outcome"
     },
     {
       "id": "SERVICE-LIFECYCLE-02",
       "name": "streaming events are ordered",
-      "input": {"task_id": "t-02"},
+      "input": {
+        "task_id": "t-02"
+      },
       "events": [
-        {"sequence": 0, "event": "accepted", "is_final": false},
-        {"sequence": 1, "event": "partial", "is_final": false, "result": "hel", "tokens_used": 1},
-        {"sequence": 2, "event": "partial", "is_final": false, "result": "lo", "tokens_used": 2},
-        {"sequence": 3, "event": "completed", "is_final": true, "result": "!", "tokens_used": 3}
+        {
+          "sequence": 0,
+          "event": "accepted",
+          "is_final": false
+        },
+        {
+          "sequence": 1,
+          "event": "partial",
+          "is_final": false,
+          "result": "hel",
+          "tokens_used": 1
+        },
+        {
+          "sequence": 2,
+          "event": "partial",
+          "is_final": false,
+          "result": "lo",
+          "tokens_used": 2
+        },
+        {
+          "sequence": 3,
+          "event": "completed",
+          "is_final": true,
+          "result": "!",
+          "tokens_used": 3
+        }
       ],
       "expected": "accept incremental chunks in strictly increasing sequence order; reconstructed result is hello!; terminal tokens_used is authoritative"
     },
     {
       "id": "SERVICE-LIFECYCLE-03",
       "name": "duplicate partial event is discarded",
-      "input": {"task_id": "t-03"},
+      "input": {
+        "task_id": "t-03"
+      },
       "events": [
-        {"sequence": 0, "event": "accepted", "is_final": false},
-        {"sequence": 1, "event": "partial", "is_final": false},
-        {"sequence": 1, "event": "partial", "is_final": false},
-        {"sequence": 2, "event": "completed", "is_final": true}
+        {
+          "sequence": 0,
+          "event": "accepted",
+          "is_final": false
+        },
+        {
+          "sequence": 1,
+          "event": "partial",
+          "is_final": false
+        },
+        {
+          "sequence": 1,
+          "event": "partial",
+          "is_final": false
+        },
+        {
+          "sequence": 2,
+          "event": "completed",
+          "is_final": true
+        }
       ],
       "expected": "discard duplicate sequence 1; retain one terminal outcome"
     },
     {
       "id": "SERVICE-LIFECYCLE-04",
       "name": "cancellation before acceptance rejects",
-      "input": {"task_id": "t-04", "cancel_before_acceptance": true},
-      "events": [{"sequence": 0, "event": "rejected", "is_final": true}],
+      "input": {
+        "task_id": "t-04",
+        "cancel_before_acceptance": true
+      },
+      "events": [
+        {
+          "sequence": 0,
+          "event": "rejected",
+          "is_final": true
+        }
+      ],
       "expected": "no execution and no billable acceptance"
     },
     {
       "id": "SERVICE-LIFECYCLE-05",
       "name": "accepted cancellation is terminal",
-      "input": {"task_id": "t-05", "cancel_after_acceptance": true},
+      "input": {
+        "task_id": "t-05",
+        "cancel_after_acceptance": true
+      },
       "events": [
-        {"sequence": 0, "event": "accepted", "is_final": false},
-        {"sequence": 1, "event": "cancelled", "is_final": true}
+        {
+          "sequence": 0,
+          "event": "accepted",
+          "is_final": false
+        },
+        {
+          "sequence": 1,
+          "event": "cancelled",
+          "is_final": true
+        }
       ],
       "expected": "no later completed event"
     },
     {
       "id": "SERVICE-LIFECYCLE-06",
       "name": "deadline expires after acceptance",
-      "input": {"task_id": "t-06", "timeout_ms": 1},
+      "input": {
+        "task_id": "t-06",
+        "timeout_ms": 1
+      },
       "events": [
-        {"sequence": 0, "event": "accepted", "is_final": false},
-        {"sequence": 1, "event": "timed_out", "is_final": true}
+        {
+          "sequence": 0,
+          "event": "accepted",
+          "is_final": false
+        },
+        {
+          "sequence": 1,
+          "event": "timed_out",
+          "is_final": true
+        }
       ],
       "expected": "one final timeout without payload echo"
     },
     {
       "id": "SERVICE-LIFECYCLE-07",
       "name": "same idempotent retry returns known state",
-      "input": {"task_id": "t-07", "idempotency_key": "k-07", "same_request": true},
+      "input": {
+        "task_id": "t-07",
+        "idempotency_key": "k-07",
+        "same_request": true
+      },
       "expected": "return the existing accepted or terminal state; do not execute or bill twice"
     },
     {
       "id": "SERVICE-LIFECYCLE-08",
       "name": "different request reusing task id conflicts",
-      "input": {"task_id": "t-08", "idempotency_key": "k-08", "same_request": false},
+      "input": {
+        "task_id": "t-08",
+        "idempotency_key": "k-08",
+        "same_request": false
+      },
       "expected": "conflict before execution"
     },
     {
       "id": "SERVICE-LIFECYCLE-09",
       "name": "error after partial output is terminal failure",
-      "input": {"task_id": "t-09"},
+      "input": {
+        "task_id": "t-09"
+      },
       "events": [
-        {"sequence": 0, "event": "accepted", "is_final": false},
-        {"sequence": 1, "event": "partial", "is_final": false, "result": "incomplete"},
-        {"sequence": 2, "event": "failed", "is_final": true, "error": {"code": "backend_error", "message": "generation failed"}}
+        {
+          "sequence": 0,
+          "event": "accepted",
+          "is_final": false
+        },
+        {
+          "sequence": 1,
+          "event": "partial",
+          "is_final": false,
+          "result": "incomplete"
+        },
+        {
+          "sequence": 2,
+          "event": "failed",
+          "is_final": true,
+          "error": {
+            "code": "backend_error",
+            "message": "generation failed"
+          }
+        }
       ],
       "expected": "retain partial output only as incomplete evidence; do not report successful result or accept later events"
     },
     {
       "id": "SERVICE-LIFECYCLE-10",
       "name": "partial after terminal is rejected",
-      "input": {"task_id": "t-10"},
+      "input": {
+        "task_id": "t-10"
+      },
       "events": [
-        {"sequence": 0, "event": "accepted", "is_final": false},
-        {"sequence": 1, "event": "completed", "is_final": true, "result": "done"},
-        {"sequence": 2, "event": "partial", "is_final": false, "result": "late"}
+        {
+          "sequence": 0,
+          "event": "accepted",
+          "is_final": false
+        },
+        {
+          "sequence": 1,
+          "event": "completed",
+          "is_final": true,
+          "result": "done"
+        },
+        {
+          "sequence": 2,
+          "event": "partial",
+          "is_final": false,
+          "result": "late"
+        }
       ],
       "expected": "reject event after terminal"
     },
     {
       "id": "SERVICE-LIFECYCLE-11",
       "name": "multiple terminal events are rejected",
-      "input": {"task_id": "t-11"},
+      "input": {
+        "task_id": "t-11"
+      },
       "events": [
-        {"sequence": 0, "event": "accepted", "is_final": false},
-        {"sequence": 1, "event": "completed", "is_final": true, "result": "done"},
-        {"sequence": 2, "event": "failed", "is_final": true, "error": {"code": "late_error", "message": "late terminal"}}
+        {
+          "sequence": 0,
+          "event": "accepted",
+          "is_final": false
+        },
+        {
+          "sequence": 1,
+          "event": "completed",
+          "is_final": true,
+          "result": "done"
+        },
+        {
+          "sequence": 2,
+          "event": "failed",
+          "is_final": true,
+          "error": {
+            "code": "late_error",
+            "message": "late terminal"
+          }
+        }
       ],
       "expected": "accept exactly one terminal event and reject the second terminal"
     },
     {
       "id": "SERVICE-LIFECYCLE-12",
       "name": "stream close without terminal is ambiguous failure",
-      "input": {"task_id": "t-12", "stream_closed": true},
+      "input": {
+        "task_id": "t-12",
+        "stream_closed": true
+      },
       "events": [
-        {"sequence": 0, "event": "accepted", "is_final": false},
-        {"sequence": 1, "event": "partial", "is_final": false, "result": "incomplete"}
+        {
+          "sequence": 0,
+          "event": "accepted",
+          "is_final": false
+        },
+        {
+          "sequence": 1,
+          "event": "partial",
+          "is_final": false,
+          "result": "incomplete"
+        }
       ],
       "expected": "caller records ambiguous failed outcome; partial output is not successful"
     },
     {
       "id": "SERVICE-LIFECYCLE-13",
       "name": "partial marked final is invalid",
-      "input": {"task_id": "t-13"},
+      "input": {
+        "task_id": "t-13"
+      },
       "events": [
-        {"sequence": 0, "event": "accepted", "is_final": false},
-        {"sequence": 1, "event": "partial", "is_final": true, "result": "invalid"}
+        {
+          "sequence": 0,
+          "event": "accepted",
+          "is_final": false
+        },
+        {
+          "sequence": 1,
+          "event": "partial",
+          "is_final": true,
+          "result": "invalid"
+        }
       ],
       "expected": "reject invalid status/finality combination"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-14",
+      "name": "native lifecycle responses correlate one CALL",
+      "input": {
+        "task_id": "t-14",
+        "session_id": "s-14",
+        "call_id": "c-14"
+      },
+      "native_frames": [
+        {
+          "session_id": "s-14",
+          "call_id": "c-14",
+          "status": "partial",
+          "is_final": false,
+          "lifecycle": {
+            "task_id": "t-14",
+            "sequence": 0,
+            "event": "partial",
+            "is_final": false
+          },
+          "result": "hel"
+        },
+        {
+          "session_id": "s-14",
+          "call_id": "c-14",
+          "status": "success",
+          "is_final": true,
+          "lifecycle": {
+            "task_id": "t-14",
+            "sequence": 1,
+            "event": "completed",
+            "is_final": true
+          },
+          "result": "lo"
+        }
+      ],
+      "expected": "accept correlated incremental native responses and one terminal success"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-15",
+      "name": "native error after partial is terminal",
+      "input": {
+        "task_id": "t-15",
+        "session_id": "s-15",
+        "call_id": "c-15"
+      },
+      "native_frames": [
+        {
+          "session_id": "s-15",
+          "call_id": "c-15",
+          "status": "partial",
+          "is_final": false,
+          "lifecycle": {
+            "task_id": "t-15",
+            "sequence": 0,
+            "event": "partial",
+            "is_final": false
+          },
+          "result": "incomplete"
+        },
+        {
+          "session_id": "s-15",
+          "call_id": "c-15",
+          "status": "error",
+          "is_final": true,
+          "lifecycle": {
+            "task_id": "t-15",
+            "sequence": 1,
+            "event": "failed",
+            "is_final": true
+          },
+          "error": {
+            "code": "backend_error"
+          }
+        }
+      ],
+      "expected": "retain partial output as incomplete and terminate with failure"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-16",
+      "name": "native timeout after partial is terminal",
+      "input": {
+        "task_id": "t-16",
+        "session_id": "s-16",
+        "call_id": "c-16"
+      },
+      "native_frames": [
+        {
+          "session_id": "s-16",
+          "call_id": "c-16",
+          "status": "partial",
+          "is_final": false,
+          "lifecycle": {
+            "task_id": "t-16",
+            "sequence": 0,
+            "event": "partial",
+            "is_final": false
+          },
+          "result": "incomplete"
+        },
+        {
+          "session_id": "s-16",
+          "call_id": "c-16",
+          "status": "timeout",
+          "is_final": true,
+          "lifecycle": {
+            "task_id": "t-16",
+            "sequence": 1,
+            "event": "timed_out",
+            "is_final": true
+          }
+        }
+      ],
+      "expected": "retain partial output as incomplete and terminate with timeout"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-17",
+      "name": "native call identifier drift is rejected",
+      "input": {
+        "task_id": "t-17",
+        "session_id": "s-17",
+        "call_id": "c-17"
+      },
+      "native_frames": [
+        {
+          "session_id": "s-17",
+          "call_id": "c-17",
+          "status": "partial",
+          "is_final": false,
+          "lifecycle": {
+            "task_id": "t-17",
+            "sequence": 0,
+            "event": "partial",
+            "is_final": false
+          }
+        },
+        {
+          "session_id": "s-17",
+          "call_id": "c-drift",
+          "status": "success",
+          "is_final": true,
+          "lifecycle": {
+            "task_id": "t-17",
+            "sequence": 1,
+            "event": "completed",
+            "is_final": true
+          }
+        }
+      ],
+      "expected": "reject call_id drift before accepting terminal output"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-18",
+      "name": "native lifecycle sequence drift is rejected",
+      "input": {
+        "task_id": "t-18",
+        "session_id": "s-18",
+        "call_id": "c-18"
+      },
+      "native_frames": [
+        {
+          "session_id": "s-18",
+          "call_id": "c-18",
+          "status": "partial",
+          "is_final": false,
+          "lifecycle": {
+            "task_id": "t-18",
+            "sequence": 0,
+            "event": "partial",
+            "is_final": false
+          }
+        },
+        {
+          "session_id": "s-18",
+          "call_id": "c-18",
+          "status": "success",
+          "is_final": true,
+          "lifecycle": {
+            "task_id": "t-18",
+            "sequence": 2,
+            "event": "completed",
+            "is_final": true
+          }
+        }
+      ],
+      "expected": "reject missing lifecycle sequence"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-19",
+      "name": "native finality disagreement is rejected",
+      "input": {
+        "task_id": "t-19",
+        "session_id": "s-19",
+        "call_id": "c-19"
+      },
+      "native_frames": [
+        {
+          "session_id": "s-19",
+          "call_id": "c-19",
+          "status": "success",
+          "is_final": true,
+          "lifecycle": {
+            "task_id": "t-19",
+            "sequence": 0,
+            "event": "completed",
+            "is_final": false
+          }
+        }
+      ],
+      "expected": "reject contradictory response and lifecycle finality"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-20",
+      "name": "native response after terminal is rejected",
+      "input": {
+        "task_id": "t-20",
+        "session_id": "s-20",
+        "call_id": "c-20"
+      },
+      "native_frames": [
+        {
+          "session_id": "s-20",
+          "call_id": "c-20",
+          "status": "success",
+          "is_final": true,
+          "lifecycle": {
+            "task_id": "t-20",
+            "sequence": 0,
+            "event": "completed",
+            "is_final": true
+          }
+        },
+        {
+          "session_id": "s-20",
+          "call_id": "c-20",
+          "status": "partial",
+          "is_final": false,
+          "lifecycle": {
+            "task_id": "t-20",
+            "sequence": 1,
+            "event": "partial",
+            "is_final": false
+          }
+        }
+      ],
+      "expected": "reject response after terminal"
     }
   ],
   "admission_vectors": [
     {
       "id": "ADMISSION-01",
       "name": "ready provider accepts bounded work",
-      "provider": {"availability": "ready", "deadline_support": true},
-      "request": {"timeout_ms": 1000},
-      "expected": {"outcome": "accepted"}
+      "provider": {
+        "availability": "ready",
+        "deadline_support": true
+      },
+      "request": {
+        "timeout_ms": 1000
+      },
+      "expected": {
+        "outcome": "accepted"
+      }
     },
     {
       "id": "ADMISSION-02",
       "name": "unknown required profile rejects before execution",
-      "provider": {"supported_profiles": []},
-      "request": {"required_profiles": ["urn:iicp:profile:unknown:v1"]},
-      "expected": {"outcome": "unsupported_profile", "billable_execution": false}
+      "provider": {
+        "supported_profiles": []
+      },
+      "request": {
+        "required_profiles": [
+          "urn:iicp:profile:unknown:v1"
+        ]
+      },
+      "expected": {
+        "outcome": "unsupported_profile",
+        "billable_execution": false
+      }
     },
     {
       "id": "ADMISSION-03",
       "name": "capacity exhaustion is bounded",
-      "provider": {"availability": "ready", "slot_available": false},
+      "provider": {
+        "availability": "ready",
+        "slot_available": false
+      },
       "request": {},
-      "expected": {"outcome": "capacity_exceeded", "http_status": 429, "billable_execution": false}
+      "expected": {
+        "outcome": "capacity_exceeded",
+        "http_status": 429,
+        "billable_execution": false
+      }
     },
     {
       "id": "ADMISSION-04",
       "name": "draining provider accepts no new work",
-      "provider": {"availability": "draining"},
+      "provider": {
+        "availability": "draining"
+      },
       "request": {},
-      "expected": {"outcome": "temporarily_unavailable", "billable_execution": false}
+      "expected": {
+        "outcome": "temporarily_unavailable",
+        "billable_execution": false
+      }
     },
     {
       "id": "ADMISSION-05",
       "name": "unachievable deadline rejects before acceptance",
-      "provider": {"availability": "ready", "deadline_support": true, "can_meet_deadline": false},
-      "request": {"timeout_ms": 1},
-      "expected": {"outcome": "deadline_unachievable", "billable_execution": false}
+      "provider": {
+        "availability": "ready",
+        "deadline_support": true,
+        "can_meet_deadline": false
+      },
+      "request": {
+        "timeout_ms": 1
+      },
+      "expected": {
+        "outcome": "deadline_unachievable",
+        "billable_execution": false
+      }
     },
     {
       "id": "ADMISSION-06",
       "name": "advertisement remains topology-redacted",
-      "provider": {"availability": "ready", "capacity_class": "standard", "deadline_support": true},
+      "provider": {
+        "availability": "ready",
+        "capacity_class": "standard",
+        "deadline_support": true
+      },
       "expected": "advertise only availability, capacity_class, deadline_support, and supported_profiles; omit queue, peer, route, shard, and scheduler fields"
     }
   ]

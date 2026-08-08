@@ -948,6 +948,18 @@ change Phase 1 conformance or the fixed native frame. The canonical fixture is
 | `SERVICE-LIFECYCLE-06` | An accepted task honors its deadline with one terminal timeout. | Service lifecycle / `t-06` |
 | `SERVICE-LIFECYCLE-07` | Same-idempotency retry returns existing state without double execution or billing. | Service lifecycle / `t-07` |
 | `SERVICE-LIFECYCLE-08` | Reusing a task ID for different content conflicts before execution. | Service lifecycle / `t-08` |
+| `SERVICE-LIFECYCLE-09` | Error after partial output is terminal and never becomes a successful result. | Service lifecycle / `t-09` |
+| `SERVICE-LIFECYCLE-10` | A partial event after a terminal event is rejected. | Service lifecycle / `t-10` |
+| `SERVICE-LIFECYCLE-11` | Multiple terminal events are rejected. | Service lifecycle / `t-11` |
+| `SERVICE-LIFECYCLE-12` | Stream closure without a terminal event is an ambiguous failure. | Service lifecycle / `t-12` |
+| `SERVICE-LIFECYCLE-13` | A partial event marked final is rejected. | Service lifecycle / `t-13` |
+| `SERVICE-LIFECYCLE-14` | Native lifecycle responses retain one session, call, task and contiguous sequence. | Native lifecycle / `t-14` |
+| `SERVICE-LIFECYCLE-15` | Native error after partial output is terminal. | Native lifecycle / `t-15` |
+| `SERVICE-LIFECYCLE-16` | Native timeout after partial output is terminal. | Native lifecycle / `t-16` |
+| `SERVICE-LIFECYCLE-17` | Native `call_id` drift is rejected. | Native lifecycle / `t-17` |
+| `SERVICE-LIFECYCLE-18` | Native lifecycle sequence gaps are rejected. | Native lifecycle / `t-18` |
+| `SERVICE-LIFECYCLE-19` | Native RESPONSE/envelope finality disagreement is rejected. | Native lifecycle / `t-19` |
+| `SERVICE-LIFECYCLE-20` | Native output after the terminal response is rejected. | Native lifecycle / `t-20` |
 | `ADMISSION-01` | A ready provider accepts bounded work. | Provider admission / `ADMISSION-01` |
 | `ADMISSION-02` | An unknown required profile rejects before execution. | Provider admission / `ADMISSION-02` |
 | `ADMISSION-03` | Capacity exhaustion rejects without unbounded queueing or billing. | Provider admission / `ADMISSION-03` |
