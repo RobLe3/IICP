@@ -91,6 +91,13 @@ a CBOR `Content-Type` is sent in a request, with body:
 | `GET /v1/discover` | REQUIRED | OPTIONAL |
 | `POST /v1/peers` | REQUIRED | OPTIONAL |
 
+`POST /v1/task` returns one complete `IicpTaskResponse` in the base HTTP/CBOR
+profile. HTTP chunked transfer does not turn that response into logical IICP
+output streaming. Progressive task events require explicit negotiation of
+`urn:iicp:profile:service-lifecycle:v1` and a provider-advertised lifecycle
+event resource; see `iicp-framing.md` §4.4.1 and
+`iicp-service-lifecycle-profile.md`.
+
 ---
 
 ## 3. CBOR Tag Registry

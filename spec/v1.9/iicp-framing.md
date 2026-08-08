@@ -1,8 +1,8 @@
 # IICP Binary Framing Layer
 
 **Document**: `spec/iicp-framing.md`  
-**Version**: 0.1.7-draft
-**Date**: 2026-07-14
+**Version**: 0.1.8-draft
+**Date**: 2026-08-08
 **Status**: Draft — NOT YET RATIFIED (see §12)  
 **Authority**: Protocol Steward  
 **Issue**: #231  
@@ -145,7 +145,7 @@ The 256-value type byte is partitioned as follows:
 | `0x03` | DISCOVER | client → server | Node discovery query by intent URN |
 | `0x04` | SUB_PROTOCOL | bidirectional | Sub-protocol extension negotiation |
 | `0x05` | CALL | client → server | Task invocation (the primary protocol message) |
-| `0x06` | RESPONSE | server → client | Task result or streaming update |
+| `0x06` | RESPONSE | server → client | Terminal task result; ordered updates only under the negotiated service-lifecycle profile |
 | `0x07` | CLOSE | bidirectional | Graceful session teardown with optional error |
 | `0x08` | FEEDBACK | client → server | Quality signal and outcome report |
 | `0x09` | PING | bidirectional | Keepalive request |
@@ -226,15 +226,49 @@ ADR-024 envelope signing rather than a standalone hash field.
 | 1 | protocol_version | uint | MUST | |
 | 2 | session_id | tstr | MUST | Echo of CALL session_id |
 | 3 | call_id | tstr | MUST | Echo of CALL call_id |
-| 4 | status | tstr | MUST | `success` \| `error` \| `timeout` \| `partial` |
-| 5 | result | bstr or map | COND | Present when status = `success` or `partial` |
+| 4 | status | tstr | MUST | Base: `success` \| `error` \| `timeout`; negotiated service-lifecycle profile also permits `partial` |
+| 5 | result | bstr or map | COND | Present when status = `success` or `partial`; profile partials are incremental chunks |
 | 6 | error | map | COND | Present when status = `error`; `{1: code(tstr), 2: message(tstr)}` |
 | 7 | tokens_used | uint | SHOULD | Output tokens consumed |
 | 8 | duration_ms | uint | SHOULD | Wall-clock time at server in ms |
 | 9 | trace_id | bstr | SHOULD | 16 bytes; echo of CALL trace_id |
 | 10 | credits_charged | uint | MAY | Credits deducted for this call |
 | 11 | node_id | tstr | SHOULD | Responding node UUID |
-| 12 | is_final | bool | SHOULD | `true` when streaming is complete |
+| 12 | is_final | bool | SHOULD | Base responses are terminal (`true` or absent); profile partials MUST use `false` and the terminal response MUST use `true` |
+
+#### 4.4.1 Base response and negotiated streaming lifecycle
+
+Base IICP CALL handling is buffered: a provider emits exactly one terminal
+RESPONSE with status `success`, `error`, or `timeout`. An absent `is_final` on a
+base response is interpreted as `true`. A base client MUST NOT wait for another
+RESPONSE after the terminal response.
+
+Progressive output is available only when both peers negotiate
+`urn:iicp:profile:service-lifecycle:v1`. Under that profile:
+
+- a provider MAY aggregate any number of model tokens, bytes, or application
+  events into one partial RESPONSE; one frame per generated token is neither
+  required nor recommended;
+- every RESPONSE for one CALL MUST carry the same `session_id` and `call_id`;
+- each `partial` result is an **incremental** chunk, not the full output so far;
+- zero or more partial responses are followed by exactly one terminal
+  `success`, `error`, or `timeout` response with `is_final=true`;
+- a terminal success result contains only its final incremental chunk, which
+  MAY be empty; concatenating successful result chunks in profile sequence
+  order produces the complete output;
+- a terminal error or timeout contains no result chunk. Previously delivered
+  chunks remain incomplete output and MUST NOT be represented as successful;
+- `tokens_used`, when present on a partial, is cumulative through that partial.
+  The terminal value is authoritative for accounting. Credits and receipts are
+  committed only by the terminal outcome;
+- closing or resetting the request stream before a terminal response is an
+  ambiguous failed outcome to the caller. Cancellation and idempotent state
+  recovery follow `iicp-service-lifecycle-profile.md`.
+
+The profile envelope's `sequence` field is required for lifecycle events. It is
+not added to the base RESPONSE map: TCP and an individual QUIC request stream
+already preserve frame order, while the negotiated lifecycle envelope provides
+duplicate and replay diagnostics. Stream resumption remains out of scope.
 
 ### 4.5 INIT message schema (0x01)
 
@@ -442,6 +476,7 @@ are semantically equivalent but structurally distinct.
 | Session state | Stateless; each request independent | Stateful connection | Use `session_id` field for correlation |
 | Ordering | HTTP/1.1 head-of-line; HTTP/2 streams | QUIC streams; ordered per-stream | Not a concern for request/response pairs |
 | Streaming OBSERVE | Server-Sent Events (SSE) | Native OBSERVE frames | SSE is the HTTP fallback for streaming |
+| Streaming CALL result | Buffered single response in base HTTP | Buffered single response in base native mode; ordered RESPONSE frames only with the negotiated service-lifecycle profile | HTTP lifecycle streaming is profile-specific, not an implicit property of chunked transfer |
 | CLOSE | Implicit (4xx, connection close, timeout) | Explicit CLOSE frame | Servers MUST return meaningful 4xx codes |
 | Fragmentation | Handled by HTTP chunked transfer | IICP fragmentation protocol (§10) | No action needed; HTTP handles it |
 | Custom frames 0xF0–0xFE | POST /v1/custom/{urn} | Custom type byte | Endpoint MUST return 404 for unsupported URNs |
@@ -708,6 +743,13 @@ The TLS 1.3 handshake already prevents MITM version tampering for native-transpo
 
 ## 10. Fragmentation Protocol
 
+Streaming and fragmentation are different layers. Streaming sends multiple
+logical RESPONSE messages that progressively carry an inference result.
+Fragmentation splits one logical IICP frame into transport fragments and
+reassembles it before the message is processed. A large partial RESPONSE may
+itself be fragmented; its fragments remain one partial response and MUST NOT be
+exposed as output chunks.
+
 ### 10.1 When to fragment
 
 Implementations SHOULD fragment frames whose payload exceeds 65,536 bytes. Over
@@ -769,10 +811,12 @@ head-of-line blocking.
 - One QUIC connection per peer pair (as for TCP).
 - Session control (INIT, ACK, CLOSE): carried on **stream 0** (bidirectional,
   client-initiated).
-- Request/response pairs: each CALL/RESPONSE pair occupies a dedicated
+- Request/response pairs: each CALL/RESPONSE exchange occupies a dedicated
   **client-initiated bidirectional stream**. The client opens a stream, sends one
-  CALL frame, and waits for one RESPONSE frame; both endpoints close the stream
-  after RESPONSE delivery.
+  CALL frame, and waits for one terminal RESPONSE in base mode. When the
+  service-lifecycle profile is negotiated, it accepts zero or more ordered
+  partial RESPONSE frames followed by exactly one terminal RESPONSE. Both
+  endpoints close the stream only after terminal delivery.
 - Push messages (OBSERVE, TELEMETRY, ADVERTISE): carried on **server-initiated
   unidirectional streams**.
 
@@ -1056,3 +1100,4 @@ mechanisms are complementary.
 | 0.1.4-draft | 2026-05-20 | PS | §10.4-10.6 QUIC transport profile — stream mapping (stream-per-request), fragmentation over QUIC (OPTIONAL, QUIC segments natively), CBOR encoding constraints (deterministic encoding for signed messages, no indefinite-length). §13 Interoperability — dual-mode design selected, HTTP↔native translation table, CUSTOM frame gateway behavior, OBSERVE SSE bridge, directory control-plane constraint. Issues #236 #238 closed. |
 | 0.1.6-draft | 2026-07-14 | Protocol Steward | Corrected a pre-ratification editorial arithmetic error: the declared field layout has always occupied 12 bytes, not 11. The implementation-backed disposition and canonical vectors are recorded in `research/native-ai-infrastructure/FRAMING_ROOT_CAUSE_2026-07-14.md` and `fixtures/native-framing-v1.json`. No wire behavior changed. |
 | 0.1.7-draft | 2026-07-30 | Protocol Steward | Corrected IANA procedure and provisional port wording; limited current port convention to TCP; removed invalid/unassigned CBOR-tag claims; left media types pending. No wire behavior changed. |
+| 0.1.8-draft | 2026-08-08 | Protocol Steward | Resolved the base-versus-profile RESPONSE contradiction: base CALLs remain buffered and single-terminal; negotiated service-lifecycle streaming uses incremental partials plus one terminal response. Clarified accounting, HTTP fallback, QUIC closure, sequence ownership and fragmentation terminology. No base-frame or required-field change. |

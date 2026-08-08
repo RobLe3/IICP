@@ -1,5 +1,5 @@
 {
-  "fixture_version": "1.0.0-draft",
+  "fixture_version": "1.1.0-draft",
   "purpose": "Implementation-neutral conformance vectors for the proposed IICP service-lifecycle and provider-admission profiles. These vectors do not modify the base wire frame.",
   "profiles": [
     "urn:iicp:profile:service-lifecycle:v1",
@@ -22,11 +22,11 @@
       "input": {"task_id": "t-02"},
       "events": [
         {"sequence": 0, "event": "accepted", "is_final": false},
-        {"sequence": 1, "event": "partial", "is_final": false},
-        {"sequence": 2, "event": "partial", "is_final": false},
-        {"sequence": 3, "event": "completed", "is_final": true}
+        {"sequence": 1, "event": "partial", "is_final": false, "result": "hel", "tokens_used": 1},
+        {"sequence": 2, "event": "partial", "is_final": false, "result": "lo", "tokens_used": 2},
+        {"sequence": 3, "event": "completed", "is_final": true, "result": "!", "tokens_used": 3}
       ],
-      "expected": "accept strictly increasing sequence numbers"
+      "expected": "accept incremental chunks in strictly increasing sequence order; reconstructed result is hello!; terminal tokens_used is authoritative"
     },
     {
       "id": "SERVICE-LIFECYCLE-03",
@@ -78,6 +78,59 @@
       "name": "different request reusing task id conflicts",
       "input": {"task_id": "t-08", "idempotency_key": "k-08", "same_request": false},
       "expected": "conflict before execution"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-09",
+      "name": "error after partial output is terminal failure",
+      "input": {"task_id": "t-09"},
+      "events": [
+        {"sequence": 0, "event": "accepted", "is_final": false},
+        {"sequence": 1, "event": "partial", "is_final": false, "result": "incomplete"},
+        {"sequence": 2, "event": "failed", "is_final": true, "error": {"code": "backend_error", "message": "generation failed"}}
+      ],
+      "expected": "retain partial output only as incomplete evidence; do not report successful result or accept later events"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-10",
+      "name": "partial after terminal is rejected",
+      "input": {"task_id": "t-10"},
+      "events": [
+        {"sequence": 0, "event": "accepted", "is_final": false},
+        {"sequence": 1, "event": "completed", "is_final": true, "result": "done"},
+        {"sequence": 2, "event": "partial", "is_final": false, "result": "late"}
+      ],
+      "expected": "reject event after terminal"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-11",
+      "name": "multiple terminal events are rejected",
+      "input": {"task_id": "t-11"},
+      "events": [
+        {"sequence": 0, "event": "accepted", "is_final": false},
+        {"sequence": 1, "event": "completed", "is_final": true, "result": "done"},
+        {"sequence": 2, "event": "failed", "is_final": true, "error": {"code": "late_error", "message": "late terminal"}}
+      ],
+      "expected": "accept exactly one terminal event and reject the second terminal"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-12",
+      "name": "stream close without terminal is ambiguous failure",
+      "input": {"task_id": "t-12", "stream_closed": true},
+      "events": [
+        {"sequence": 0, "event": "accepted", "is_final": false},
+        {"sequence": 1, "event": "partial", "is_final": false, "result": "incomplete"}
+      ],
+      "expected": "caller records ambiguous failed outcome; partial output is not successful"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-13",
+      "name": "partial marked final is invalid",
+      "input": {"task_id": "t-13"},
+      "events": [
+        {"sequence": 0, "event": "accepted", "is_final": false},
+        {"sequence": 1, "event": "partial", "is_final": true, "result": "invalid"}
+      ],
+      "expected": "reject invalid status/finality combination"
     }
   ],
   "admission_vectors": [
