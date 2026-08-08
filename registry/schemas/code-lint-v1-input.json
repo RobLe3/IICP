@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/code-lint-v1-input.json",
+  "title": "Code Lint and Analysis input",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "language"
+  ]
+}

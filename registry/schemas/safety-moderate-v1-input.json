@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/safety-moderate-v1-input.json",
+  "title": "Content Moderation input",
+  "type": "object",
+  "properties": {
+    "input": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "model": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "input"
+  ]
+}

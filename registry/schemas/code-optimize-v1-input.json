@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/code-optimize-v1-input.json",
+  "title": "Code Optimization input",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "target": {
+      "type": "string",
+      "enum": [
+        "performance",
+        "readability",
+        "size"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "language"
+  ]
+}

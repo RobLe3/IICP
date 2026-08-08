@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/education-tutor-v1-input.json",
+  "title": "Educational Tutoring input",
+  "type": "object",
+  "properties": {
+    "topic": {
+      "type": "string"
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    "question": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "topic",
+    "question"
+  ]
+}

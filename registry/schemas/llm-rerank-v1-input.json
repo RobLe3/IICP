@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/llm-rerank-v1-input.json",
+  "title": "LLM Reranking input",
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string"
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "top_k": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "return_scores": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "query",
+    "candidates"
+  ]
+}

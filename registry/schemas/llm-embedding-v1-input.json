@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/llm-embedding-v1-input.json",
+  "title": "Text Embedding input",
+  "type": "object",
+  "properties": {
+    "input": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "input"
+  ]
+}

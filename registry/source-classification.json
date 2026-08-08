@@ -1,0 +1,1817 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2026-08-08",
+  "repositories": [
+    "IICP",
+    "iicp-directory-php",
+    "iicp-directory-rust",
+    "iicp-client-python",
+    "iicp-client-typescript",
+    "iicp-client-rust",
+    "iicp-web-node"
+  ],
+  "description": "Reviewed source inventory. Observation does not grant registry status.",
+  "records": [
+    {
+      "urn": "urn:iicp:intent::chat:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/validate.rs"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:LLM:chat:v1",
+      "classification": "negative-test",
+      "disposition": "invalid, unknown or rejection-path fixture",
+      "sources": [
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/validate.rs"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:acme:custom-task:v1",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/policy.rs"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:ai-assistant:chat:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Unit/Services/IntentPolicyGuardTest.php"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/policy.rs"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:audio:speech:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/fixtures/intent-payloads-v1.json",
+            "registry/intents.json",
+            "spec/v1.9/node-capability-format.md"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "src/iicp_client/backends/base.py",
+            "tests/test_backends.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "src/backends/openai_compat.rs",
+            "tests/backends_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "src/backends/base.ts",
+            "tests/backends.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:audio:transcribe:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "README.md",
+            "registry/fixtures/intent-payloads-v1.json",
+            "registry/intents.json",
+            "spec/v1.9/node-capability-format.md"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "src/iicp_client/backends/base.py",
+            "tests/test_backends.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "src/backends/openai_compat.rs",
+            "tests/backends_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "src/backends/base.ts",
+            "tests/backends.test.ts"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/ReplicaEventApplierTest.php"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/federation.rs"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:bbs:thread:read:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "research/community-platform/04-dogfood-angle.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:biometric:protected-trait-classification:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/iicp-dir.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:biometric:protected-trait:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/RegisterTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:bogus:v1",
+      "classification": "negative-test",
+      "disposition": "invalid, unknown or rejection-path fixture",
+      "sources": [
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "tests/test_backends.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "tests/backends_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "tests/backends.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:build:python:v3",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "tools/protocol_integrity_analysis.py"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:build:rust:v2",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "tools/protocol_integrity_analysis.py"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:cip:inference/embed/rerank:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/iicp-extensions.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:classify:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/intents.json",
+            "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "spec/proposals/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:code:complete:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/iicp-semantics.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:code:lint:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/intents.json",
+            "spec/archived/IICP_draft_1.4.2.txt",
+            "tools/protocol_integrity_analysis.py"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/DiscoverTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:code:optimize:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/intents.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:code:review:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/DispatchRouteTicketTest.php",
+            "tests/Unit/Services/IntentPolicyGuardTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:community:bbs:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "research/community-platform/04-dogfood-angle.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:compute:batch:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/node-capability-format.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:creative:generate-public:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Unit/Services/IntentPolicyGuardTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:credit:decision:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "conformance-runner/src/iicp_conformance/fixtures/directory-dispatch-v1.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "tests/test_client.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "tests/client_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "tests/client.test.ts"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/DispatchRouteTicketTest.php",
+            "tests/Feature/RegisterTest.php",
+            "tests/Unit/Services/IntentPolicyGuardTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:criminal-risk-prediction:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Unit/Services/IntentPolicyGuardTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:data:retrieval:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/node-capability-format.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:doc:summarize:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/archived/IICP_draft_1.4.2.txt",
+            "tools/protocol_integrity_analysis.py"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:education:tutor:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/intents.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:embedding:multimodal:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/intents.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:embedding:text:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-web-node",
+          "paths": [
+            "tests/client.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:emotion:workplace-monitoring:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/RegisterTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:employment:hiring-decision:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/DiscoverTest.php",
+            "tests/Unit/Services/IntentPolicyGuardTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:employment:hiring:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "iicp-web-node",
+          "paths": [
+            "tests/client.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:fraud:detect:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "tools/protocol_integrity_analysis.py"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:image:generate:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/iicp-semantics.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:llm:chat:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "README.md",
+            "conformance-runner/src/iicp_conformance/fixtures/directory-dispatch-v1.json",
+            "conformance-runner/src/iicp_conformance/fixtures/directory-lifecycle-v1.json",
+            "conformance-runner/src/iicp_conformance/fixtures/directory-public-v1.json",
+            "conformance-runner/tests/test_runner.py",
+            "docs/agent-bootstrap.md",
+            "registry/fixtures/intent-payloads-v1.json",
+            "registry/intents.json",
+            "research/aiospf/fixtures/cip-consumer-cosignature-transcript-v1.json",
+            "research/aiospf/fixtures/cip-consumer-cosignature-v1.json",
+            "research/credit-economy/04-premium-credit-design.md",
+            "research/findings/REP3-premium-services-taxonomy.md",
+            "research/findings/r1r7/R3-discovery-layer-2026-05-18.md",
+            "research/inbound-adapters/01-adapter-priority-matrix.md",
+            "research/mesh-telemetry/01-tier-definitions.md",
+            "research/native-ai-infrastructure/IICP_BENCHMARK_RESULTS.md",
+            "research/pre-normative-profiles/fixtures/cip-consumer-cosignature-transcript-v1.json",
+            "research/pre-normative-profiles/fixtures/cip-consumer-cosignature-v1.json",
+            "research/pre-normative-profiles/fixtures/dispatch-admission-v2.json",
+            "research/pre-normative-profiles/fixtures/dispatch-route-ticket-v1.json",
+            "research/pre-normative-profiles/fixtures/dispatch-ticket-trust-v2-crypto.json",
+            "research/pre-normative-profiles/fixtures/policy-detail-disclosure-v0.json",
+            "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json",
+            "schemas/nodelist.json",
+            "schemas/samples/task-invalid-missing-auth.json",
+            "schemas/samples/task-valid.json",
+            "schemas/task.json",
+            "spec/v1.9/IICP-core-phase1-profile.md",
+            "spec/v1.9/conformance-test-suite.md",
+            "spec/v1.9/iicp-billing-extension.md",
+            "spec/v1.9/iicp-cbor-wire.md",
+            "spec/v1.9/iicp-confidentiality.md",
+            "spec/v1.9/iicp-cooperative-inference.md",
+            "spec/v1.9/iicp-core.md",
+            "spec/v1.9/iicp-dir.md",
+            "spec/v1.9/iicp-extensions.md",
+            "spec/v1.9/iicp-federated-directory.md",
+            "spec/v1.9/iicp-identity-slot.md",
+            "spec/v1.9/iicp-mcp-binding.md",
+            "spec/v1.9/iicp-semantics.md",
+            "spec/v1.9/node-capability-format.md"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "Dockerfile",
+            "README.md",
+            "examples/anthropic_node.py",
+            "examples/node.py",
+            "parity/cip-consumer-cosignature-transcript-v1.json",
+            "parity/cip-consumer-cosignature-v1.json",
+            "parity/dispatch-admission-v2.json",
+            "parity/dispatch-route-ticket-v1.json",
+            "parity/dispatch-ticket-trust-v2-crypto.json",
+            "parity/policy-detail-disclosure-v0.json",
+            "parity/profile-compatibility-v0.json",
+            "src/iicp_client/backends/anthropic.py",
+            "src/iicp_client/backends/base.py",
+            "src/iicp_client/backends/meshllm.py",
+            "src/iicp_client/cli.py",
+            "src/iicp_client/client.py",
+            "src/iicp_client/conformance.py",
+            "src/iicp_client/identity.py",
+            "src/iicp_client/iicp_tcp.py",
+            "src/iicp_client/node.py",
+            "src/iicp_client/proxy/anthropic_compat/translator.py",
+            "src/iicp_client/proxy/ollama_compat/translator.py",
+            "src/iicp_client/proxy/openai_compat/translator.py",
+            "src/iicp_client/proxy/plugin/iicp_provider.py",
+            "src/iicp_client/relay_worker_client.py",
+            "src/iicp_client/trust_auditor.py",
+            "tests/proxy/test_aggregator.py",
+            "tests/proxy/test_anthropic_compat.py",
+            "tests/proxy/test_coverage_gates.py",
+            "tests/proxy/test_directory_client.py",
+            "tests/proxy/test_directory_redirect_trust.py",
+            "tests/proxy/test_directory_sig_verify.py",
+            "tests/proxy/test_fallback.py",
+            "tests/proxy/test_node_client.py",
+            "tests/proxy/test_node_client_fallback.py",
+            "tests/proxy/test_ollama_compat.py",
+            "tests/proxy/test_otel_proxy_spans.py",
+            "tests/proxy/test_peer_cache.py",
+            "tests/proxy/test_router.py",
+            "tests/proxy/test_translator.py",
+            "tests/test_backends.py",
+            "tests/test_capabilities.py",
+            "tests/test_cip_policy.py",
+            "tests/test_client.py",
+            "tests/test_concurrency.py",
+            "tests/test_confidentiality.py",
+            "tests/test_conformance.py",
+            "tests/test_consumer_token_client.py",
+            "tests/test_current_node_token.py",
+            "tests/test_discovery_evidence.py",
+            "tests/test_dispatch_admission.py",
+            "tests/test_dispatch_ticket.py",
+            "tests/test_iicp_tcp.py",
+            "tests/test_integration.py",
+            "tests/test_model_drift_reregister.py",
+            "tests/test_pricing.py",
+            "tests/test_profile_negotiation.py",
+            "tests/test_region_default.py",
+            "tests/test_register_operator_wiring.py",
+            "tests/test_relay_http_poll.py",
+            "tests/test_relay_session.py",
+            "tests/test_relay_worker_client.py",
+            "tests/test_request_projection_fixture.py",
+            "tests/test_serve.py",
+            "tests/test_serve_multiplex.py",
+            "tests/test_task_rate_limit.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "README.md",
+            "examples/node.rs",
+            "parity/cip-consumer-cosignature-transcript-v1.json",
+            "parity/cip-consumer-cosignature-v1.json",
+            "parity/dispatch-admission-v2.json",
+            "parity/dispatch-route-ticket-v1.json",
+            "parity/dispatch-ticket-trust-v2-crypto.json",
+            "parity/policy-detail-disclosure-v0.json",
+            "parity/profile-compatibility-v0.json",
+            "src/backends/anthropic.rs",
+            "src/backends/meshllm.rs",
+            "src/backends/openai_compat.rs",
+            "src/bin/iicp_node.rs",
+            "src/client.rs",
+            "src/confidentiality.rs",
+            "src/conformance.rs",
+            "src/dispatch_ticket.rs",
+            "src/identity.rs",
+            "src/iicp_tcp.rs",
+            "src/node.rs",
+            "src/policy.rs",
+            "src/proxy/mod.rs",
+            "src/relay_session.rs",
+            "src/relay_worker_client.rs",
+            "src/trust_auditor.rs",
+            "tests/backends_tests.rs",
+            "tests/cip_policy_tests.rs",
+            "tests/client_tests.rs",
+            "tests/concurrency_tests.rs",
+            "tests/conformance_tests.rs",
+            "tests/consumer_token_tests.rs",
+            "tests/dispatch_admission_sqlite.rs",
+            "tests/e2e_local.rs",
+            "tests/iicp_tcp_tests.rs",
+            "tests/integration.rs",
+            "tests/node_inference.rs",
+            "tests/node_register_tests.rs",
+            "tests/node_tests.rs",
+            "tests/pricing_tests.rs",
+            "tests/proxy_fixtures.json",
+            "tests/relay_http_poll_tests.rs",
+            "tests/request_projection_fixture.rs",
+            "tests/serve_multiplex_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "README.md",
+            "e2e_local.ts",
+            "examples/anthropic-node.ts",
+            "examples/node.ts",
+            "parity/cip-consumer-cosignature-transcript-v1.json",
+            "parity/cip-consumer-cosignature-v1.json",
+            "parity/dispatch-admission-v2.json",
+            "parity/dispatch-route-ticket-v1.json",
+            "parity/dispatch-ticket-trust-v2-crypto.json",
+            "parity/policy-detail-disclosure-v0.json",
+            "parity/profile-compatibility-v0.json",
+            "src/backends/anthropic.ts",
+            "src/backends/base.ts",
+            "src/backends/meshllm.ts",
+            "src/backends/openai_compat.ts",
+            "src/cli.ts",
+            "src/client.ts",
+            "src/conformance.ts",
+            "src/identity.ts",
+            "src/iicp_tcp.ts",
+            "src/proxy/index.ts",
+            "src/trust_auditor.ts",
+            "tests/backends.test.ts",
+            "tests/capabilities.test.ts",
+            "tests/cip_policy.test.ts",
+            "tests/cli.test.ts",
+            "tests/client.test.ts",
+            "tests/concurrency.test.ts",
+            "tests/confidentiality.test.ts",
+            "tests/conformance.test.ts",
+            "tests/consumer_token.test.ts",
+            "tests/credits.test.ts",
+            "tests/current_node_token.test.ts",
+            "tests/discovery_evidence.test.ts",
+            "tests/dispatch_admission.test.ts",
+            "tests/dispatch_ticket.test.ts",
+            "tests/iicp_tcp.test.ts",
+            "tests/integration.test.ts",
+            "tests/model_drift_reregister.test.ts",
+            "tests/pricing.test.ts",
+            "tests/profile_negotiation.test.ts",
+            "tests/proxy_fixtures.json",
+            "tests/receipt_profile_cli.test.ts",
+            "tests/register_operator_wiring.test.ts",
+            "tests/relay_http_poll.test.ts",
+            "tests/relay_session.test.ts",
+            "tests/relay_worker_client.test.ts",
+            "tests/request_projection_fixture.test.ts",
+            "tests/serve.test.ts",
+            "tests/serve_multiplex.test.ts",
+            "tests/task_rate_limit.test.ts"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "openapi.yaml",
+            "parity/cip-consumer-cosignature-transcript-v1.json",
+            "parity/cip-consumer-cosignature-v1.json",
+            "parity/dispatch-route-ticket-v1.json",
+            "parity/policy-detail-disclosure-v0.json",
+            "scripts/seed_operator_benchmark.py",
+            "spec/proposals/fixtures/profile-compatibility-v0.json",
+            "tests/Feature/AddressObserverTest.php",
+            "tests/Feature/CipPolicyTest.php",
+            "tests/Feature/ConsumerTokenTest.php",
+            "tests/Feature/CreditSummaryTest.php",
+            "tests/Feature/CreditsReadTest.php",
+            "tests/Feature/DiscoverTest.php",
+            "tests/Feature/DispatchRouteTicketTest.php",
+            "tests/Feature/DispatchUsageCounterTest.php",
+            "tests/Feature/EventsTest.php",
+            "tests/Feature/FederationIntegrationTest.php",
+            "tests/Feature/FounderRecognitionE2ETest.php",
+            "tests/Feature/GossipPublicKeyTest.php",
+            "tests/Feature/LoadRedirectTest.php",
+            "tests/Feature/NodeEligibilityCharacterizationTest.php",
+            "tests/Feature/NodeLifecycleReachabilityTest.php",
+            "tests/Feature/NodeRegistrationPersistenceCharacterizationTest.php",
+            "tests/Feature/OperatorRecordTest.php",
+            "tests/Feature/PolicyManifestLifecycleTest.php",
+            "tests/Feature/PricingDeclarationTest.php",
+            "tests/Feature/ProbationTierTest.php",
+            "tests/Feature/RegisterTest.php",
+            "tests/Feature/RegistryTest.php",
+            "tests/Feature/RelayBindTicketTest.php",
+            "tests/Feature/ReplicaEventApplierTest.php",
+            "tests/Feature/SharedBehaviorContractTest.php",
+            "tests/Feature/SignReplicaResponseTest.php",
+            "tests/Feature/SnapshotEndpointTest.php",
+            "tests/Unit/ConsumerTokenServiceTest.php",
+            "tests/Unit/OtelTracerTest.php",
+            "tests/Unit/Services/IntentPolicyGuardTest.php"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "parity/cip-consumer-cosignature-transcript-v1.json",
+            "parity/cip-consumer-cosignature-v1.json",
+            "parity/dispatch-route-ticket-v1.json",
+            "parity/policy-detail-disclosure-v0.json",
+            "parity/profile-compatibility-v0.json",
+            "src/federation.rs",
+            "src/main.rs",
+            "src/policy.rs",
+            "src/replica.rs",
+            "src/repo.rs",
+            "src/validate.rs"
+          ]
+        },
+        {
+          "repository": "iicp-web-node",
+          "paths": [
+            "README.md",
+            "src/browserNodeProvider.ts",
+            "src/iicpConsumer.ts",
+            "tests/client.test.ts",
+            "tests/cx.test.ts",
+            "tests/provider.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:llm:chat:v2",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "spec/proposals/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:llm:classify:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/intents.json",
+            "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json",
+            "spec/v1.9/node-capability-format.md"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "spec/proposals/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:llm:code:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "research/mesh-track/MESH1-role-assignment-algorithm-2026-05-18.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:llm:completion:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/fixtures/intent-payloads-v1.json",
+            "registry/intents.json",
+            "schemas/samples/task-batch.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "src/iicp_client/backends/base.py",
+            "tests/test_backends.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "src/backends/openai_compat.rs",
+            "tests/backends_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "src/backends/base.ts",
+            "src/backends/openai_compat.ts",
+            "tests/backends.test.ts"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/RegistryTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:llm:embed:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/iicp-semantics.md",
+            "spec/v1.9/node-capability-format.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:llm:embedding:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "README.md",
+            "registry/fixtures/intent-payloads-v1.json",
+            "registry/intents.json",
+            "research/pre-normative-profiles/fixtures/dispatch-admission-v2.json",
+            "research/pre-normative-profiles/fixtures/dispatch-route-ticket-v1.json",
+            "research/pre-normative-profiles/fixtures/policy-detail-disclosure-v0.json",
+            "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "parity/dispatch-admission-v2.json",
+            "parity/dispatch-route-ticket-v1.json",
+            "parity/policy-detail-disclosure-v0.json",
+            "parity/profile-compatibility-v0.json",
+            "src/iicp_client/backends/base.py",
+            "src/iicp_client/node.py",
+            "tests/test_backends.py",
+            "tests/test_capabilities.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "parity/dispatch-admission-v2.json",
+            "parity/dispatch-route-ticket-v1.json",
+            "parity/policy-detail-disclosure-v0.json",
+            "parity/profile-compatibility-v0.json",
+            "src/backends/anthropic.rs",
+            "src/backends/openai_compat.rs",
+            "src/node.rs",
+            "tests/backends_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "parity/dispatch-admission-v2.json",
+            "parity/dispatch-route-ticket-v1.json",
+            "parity/policy-detail-disclosure-v0.json",
+            "parity/profile-compatibility-v0.json",
+            "src/backends/base.ts",
+            "src/backends/openai_compat.ts",
+            "src/node.ts",
+            "tests/backends.test.ts",
+            "tests/capabilities.test.ts"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "parity/dispatch-route-ticket-v1.json",
+            "parity/policy-detail-disclosure-v0.json",
+            "spec/proposals/fixtures/profile-compatibility-v0.json",
+            "tests/Feature/RegistryTest.php"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "parity/dispatch-route-ticket-v1.json",
+            "parity/policy-detail-disclosure-v0.json",
+            "parity/profile-compatibility-v0.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:llm:fancy:v1",
+      "classification": "negative-test",
+      "disposition": "invalid, unknown or rejection-path fixture",
+      "sources": [
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "tests/test_backends.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "tests/backends_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "tests/backends.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:llm:rerank:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/intents.json",
+            "spec/v1.9/node-capability-format.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:llm:summarise:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "README.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:llm:summarize:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/intents.json",
+            "spec/v1.9/node-capability-format.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:mcp:bash:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "research/aiospf/fixtures/cip-conformance-v0.json",
+            "spec/v1.9/iicp-mcp-binding.md"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "parity/cip-conformance-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "parity/cip-conformance-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "parity/cip-conformance-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "parity/cip-conformance-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "parity/cip-conformance-v0.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:mcp:format_json:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "tests/test_mcp_gateway.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "tests/mcp_gateway.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:mcp:read_file:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/iicp-mcp-binding.md"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "tests/test_mcp_gateway.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "tests/mcp_gateway_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "tests/mcp_gateway.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:mcp:summarize_text:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "tests/test_mcp_gateway.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "tests/mcp_gateway.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:mcp:tools/call:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/intents.json",
+            "spec/v1.9/iicp-mcp-binding.md",
+            "spec/v1.9/node-capability-format.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:mcp:web_search:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/iicp-mcp-binding.md"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "tests/test_mcp_gateway.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "tests/mcp_gateway_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "tests/mcp_gateway.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:mcp:write_file:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "spec/proposals/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:medical:diagnosis:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/main.rs",
+            "src/policy.rs"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:missing:v1",
+      "classification": "negative-test",
+      "disposition": "invalid, unknown or rejection-path fixture",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "tools/test_intent_registry.py"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:nope:x:v1",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/main.rs"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:other:x:v1",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/repo.rs"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:research:summarize:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/intents.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:safety:moderate:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/fixtures/intent-payloads-v1.json",
+            "registry/intents.json",
+            "spec/v1.9/node-capability-format.md"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "src/iicp_client/backends/base.py",
+            "tests/test_backends.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "src/backends/openai_compat.rs",
+            "tests/backends_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "src/backends/base.ts",
+            "tests/backends.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:social-scoring:rank:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/main.rs",
+            "src/policy.rs"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:social-scoring:score:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "tests/test_client.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "src/policy.rs",
+            "tests/client_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "tests/client.test.ts"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/DiscoverTest.php",
+            "tests/Unit/Services/IntentPolicyGuardTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:social-scoring:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "spec/proposals/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-web-node",
+          "paths": [
+            "tests/client.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:tool:shell:v1",
+      "classification": "policy-test",
+      "disposition": "risk/prohibition or authorization-policy example; not registry vocabulary",
+      "sources": [
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "tests/test_cip_policy.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "tests/cip_policy_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "tests/cip_policy.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:translate:v1",
+      "classification": "canonical",
+      "disposition": "present in registry/intents.json",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "registry/intents.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:unregistered:example:v1",
+      "classification": "negative-test",
+      "disposition": "invalid, unknown or rejection-path fixture",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "spec/proposals/fixtures/profile-compatibility-v0.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "parity/profile-compatibility-v0.json"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:vision:describe:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "README.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:x.:action:v1",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/RegisterTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:x.acme:chat:v0",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/OpenApiContractTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:x.acme:chat:v1",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/OpenApiContractTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:x.acme:invoice-classify:v1",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/iicp-semantics.md"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/RegisterTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:x.exp:multimodal-audio:v1",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/iicp-semantics.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:x.hospital-alpha:triage-assist:v2",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/iicp-semantics.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:x.my-platform:sentiment-score:v3",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/RegisterTest.php"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:x.myplatform:sentiment-score:v3",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "spec/v1.9/iicp-semantics.md"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:x:acme-corp:thing:v2",
+      "classification": "custom-example",
+      "disposition": "implementation-defined namespace example; not promoted",
+      "sources": [
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/validate.rs"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:xcustom:action:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/RegisterTest.php"
+          ]
+        }
+      ]
+    }
+  ]
+}

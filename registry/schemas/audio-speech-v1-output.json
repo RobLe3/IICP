@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/audio-speech-v1-output.json",
+  "title": "Text-to-Speech (Speech Synthesis) output",
+  "type": "object",
+  "properties": {
+    "audio": {
+      "type": "string",
+      "contentEncoding": "base64"
+    },
+    "content_type": {
+      "type": "string"
+    },
+    "format": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "audio",
+    "content_type"
+  ]
+}

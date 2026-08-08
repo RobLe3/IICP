@@ -1,8 +1,9 @@
 {
-  "version": "1.3.0",
-  "updated": "2026-06-03",
+  "schema": "https://iicp.network/registry/schemas/intent-registry-v1.4.json",
+  "version": "1.4.0",
+  "updated": "2026-08-08",
   "authority": "https://iicp.network",
-  "description": "Canonical IICP intent vocabulary. This document does not report live provider availability; new standard intents require the public registry review process.",
+  "description": "Canonical IICP intent vocabulary. This document does not report live provider availability; lifecycle and evidence fields describe registry maturity, not current capacity.",
   "intents": [
     {
       "urn": "urn:iicp:intent:llm:chat:v1",
@@ -15,7 +16,62 @@
         "stop": "array of strings (optional)"
       },
       "phase": 1,
-      "status": "active"
+      "status": "active",
+      "kind": "inference",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/llm-chat-v1-input.json",
+          "path": "registry/schemas/llm-chat-v1-input.json",
+          "sha256": "c00512e7c614d94c71825efebc015047bd60fd356bbac8ffee08fc6f762d19aa"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/llm-chat-v1-output.json",
+          "path": "registry/schemas/llm-chat-v1-output.json",
+          "sha256": "536d5cbcffd4c7763c76e5dcf66122c8612c50d7f44fd486bad597a4af7a2249"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [
+        "registry/fixtures/intent-payloads-v1.json#llm-chat-v1"
+      ],
+      "implementation_evidence": [
+        {
+          "component": "client-python",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-python",
+          "evidence": "https://github.com/RobLe3/iicp-client-python/blob/v0.7.101/src/iicp_client/backends/base.py"
+        },
+        {
+          "component": "client-typescript",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-typescript",
+          "evidence": "https://github.com/RobLe3/iicp-client-typescript/blob/v0.7.101/src/backends/base.ts"
+        },
+        {
+          "component": "client-rust",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-rust",
+          "evidence": "https://github.com/RobLe3/iicp-client-rust/blob/v0.7.101/src/backends/openai_compat.rs"
+        }
+      ],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-05-15",
+          "reason": "initial registry classification"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:llm:completion:v1",
@@ -27,7 +83,62 @@
         "temperature": "float 0-2 (optional)"
       },
       "phase": 1,
-      "status": "active"
+      "status": "active",
+      "kind": "inference",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/llm-completion-v1-input.json",
+          "path": "registry/schemas/llm-completion-v1-input.json",
+          "sha256": "98d9b1576b4b1edae94128a96a80c2cf2d5fffac77d6284a01f4c176e70b5f58"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/llm-completion-v1-output.json",
+          "path": "registry/schemas/llm-completion-v1-output.json",
+          "sha256": "1b15efb6ddcd8f7822dd17a804ad18a3d7fa8edbf54bfe7f52ec88313df3f30c"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [
+        "registry/fixtures/intent-payloads-v1.json#llm-completion-v1"
+      ],
+      "implementation_evidence": [
+        {
+          "component": "client-python",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-python",
+          "evidence": "https://github.com/RobLe3/iicp-client-python/blob/v0.7.101/src/iicp_client/backends/base.py"
+        },
+        {
+          "component": "client-typescript",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-typescript",
+          "evidence": "https://github.com/RobLe3/iicp-client-typescript/blob/v0.7.101/src/backends/base.ts"
+        },
+        {
+          "component": "client-rust",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-rust",
+          "evidence": "https://github.com/RobLe3/iicp-client-rust/blob/v0.7.101/src/backends/openai_compat.rs"
+        }
+      ],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-05-15",
+          "reason": "initial registry classification"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:llm:embedding:v1",
@@ -37,7 +148,62 @@
         "input": "string or array of strings"
       },
       "phase": 1,
-      "status": "active"
+      "status": "active",
+      "kind": "representation",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/llm-embedding-v1-input.json",
+          "path": "registry/schemas/llm-embedding-v1-input.json",
+          "sha256": "d40e377327609a8edfaf9b10ccd9c71f35f9e7f41165129606afe1be17c84747"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/llm-embedding-v1-output.json",
+          "path": "registry/schemas/llm-embedding-v1-output.json",
+          "sha256": "f7a882b778282f3607cde79240ccfaa61f44459fdb9219b6bd420d239d3bd2f6"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [
+        "registry/fixtures/intent-payloads-v1.json#llm-embedding-v1"
+      ],
+      "implementation_evidence": [
+        {
+          "component": "client-python",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-python",
+          "evidence": "https://github.com/RobLe3/iicp-client-python/blob/v0.7.101/src/iicp_client/backends/base.py"
+        },
+        {
+          "component": "client-typescript",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-typescript",
+          "evidence": "https://github.com/RobLe3/iicp-client-typescript/blob/v0.7.101/src/backends/base.ts"
+        },
+        {
+          "component": "client-rust",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-rust",
+          "evidence": "https://github.com/RobLe3/iicp-client-rust/blob/v0.7.101/src/backends/openai_compat.rs"
+        }
+      ],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-05-15",
+          "reason": "initial registry classification"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:code:lint:v1",
@@ -49,7 +215,46 @@
         "rules": "array of strings (optional)"
       },
       "phase": 1,
-      "status": "active"
+      "status": "experimental",
+      "kind": "analysis",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/code-lint-v1-input.json",
+          "path": "registry/schemas/code-lint-v1-input.json",
+          "sha256": "d240209f27719addc17f485152349f91bcf1dba43808dcc418e8e4a4264bf4e5"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+          "path": "registry/schemas/generic-json-result-v1.json",
+          "sha256": "4fe064aa137b711ef9cf75676de56224e7df60bb56f77db363b50f27579614d9"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [],
+      "implementation_evidence": [],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-05-15",
+          "reason": "initial compatibility registry classification"
+        },
+        {
+          "status": "experimental",
+          "date": "2026-08-08",
+          "reason": "evidence audit found no intent-specific released adapter or shared conformance fixture"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:code:optimize:v1",
@@ -61,7 +266,46 @@
         "target": "string (optional: performance | readability | size)"
       },
       "phase": 1,
-      "status": "active"
+      "status": "experimental",
+      "kind": "transformation",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/code-optimize-v1-input.json",
+          "path": "registry/schemas/code-optimize-v1-input.json",
+          "sha256": "59040484059edd2d8eb378b567e181b93acb5602f7d521706f2a37052564f370"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+          "path": "registry/schemas/generic-json-result-v1.json",
+          "sha256": "4fe064aa137b711ef9cf75676de56224e7df60bb56f77db363b50f27579614d9"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [],
+      "implementation_evidence": [],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-05-15",
+          "reason": "initial compatibility registry classification"
+        },
+        {
+          "status": "experimental",
+          "date": "2026-08-08",
+          "reason": "evidence audit found no intent-specific released adapter or shared conformance fixture"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:research:summarize:v1",
@@ -73,7 +317,46 @@
         "max_length": "integer (optional)"
       },
       "phase": 1,
-      "status": "active"
+      "status": "experimental",
+      "kind": "transformation",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/research-summarize-v1-input.json",
+          "path": "registry/schemas/research-summarize-v1-input.json",
+          "sha256": "1001d554fc62793ff26d2d2663fbe9a7974c717cbc81ef59c8fe27ba8ca4222e"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+          "path": "registry/schemas/generic-json-result-v1.json",
+          "sha256": "4fe064aa137b711ef9cf75676de56224e7df60bb56f77db363b50f27579614d9"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [],
+      "implementation_evidence": [],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-05-15",
+          "reason": "initial compatibility registry classification"
+        },
+        {
+          "status": "experimental",
+          "date": "2026-08-08",
+          "reason": "evidence audit found no intent-specific released adapter or shared conformance fixture"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:education:tutor:v1",
@@ -85,7 +368,46 @@
         "question": "string"
       },
       "phase": 1,
-      "status": "active"
+      "status": "experimental",
+      "kind": "interactive",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/education-tutor-v1-input.json",
+          "path": "registry/schemas/education-tutor-v1-input.json",
+          "sha256": "f81ccaf2b06696daf23fdd695c1e87cbd6c64f6157b025ade5e334d9b3b8b792"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+          "path": "registry/schemas/generic-json-result-v1.json",
+          "sha256": "4fe064aa137b711ef9cf75676de56224e7df60bb56f77db363b50f27579614d9"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [],
+      "implementation_evidence": [],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-05-15",
+          "reason": "initial compatibility registry classification"
+        },
+        {
+          "status": "experimental",
+          "date": "2026-08-08",
+          "reason": "evidence audit found no intent-specific released adapter or shared conformance fixture"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:translate:v1",
@@ -97,7 +419,46 @@
         "target_language": "string"
       },
       "phase": 1,
-      "status": "active"
+      "status": "experimental",
+      "kind": "transformation",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/translate-v1-input.json",
+          "path": "registry/schemas/translate-v1-input.json",
+          "sha256": "197067000ec2acfeba9ab463c61d733008a302a4a836bebc5ba02eec228823e4"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+          "path": "registry/schemas/generic-json-result-v1.json",
+          "sha256": "4fe064aa137b711ef9cf75676de56224e7df60bb56f77db363b50f27579614d9"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [],
+      "implementation_evidence": [],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-05-15",
+          "reason": "initial compatibility registry classification"
+        },
+        {
+          "status": "experimental",
+          "date": "2026-08-08",
+          "reason": "evidence audit found no intent-specific released adapter or shared conformance fixture"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:classify:v1",
@@ -111,7 +472,46 @@
       "phase": 1,
       "status": "deprecated",
       "deprecated_by": "urn:iicp:intent:llm:classify:v1",
-      "deprecated_since": "2026-05-17"
+      "deprecated_since": "2026-05-17",
+      "kind": "analysis",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/classify-v1-input.json",
+          "path": "registry/schemas/classify-v1-input.json",
+          "sha256": "7367079d0ac3a34db4db6986a5abc3468f13889588ce5593fc853fe8d90cb0cc"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+          "path": "registry/schemas/generic-json-result-v1.json",
+          "sha256": "4fe064aa137b711ef9cf75676de56224e7df60bb56f77db363b50f27579614d9"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [],
+      "implementation_evidence": [],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-05-15",
+          "reason": "initial compatibility registry classification"
+        },
+        {
+          "status": "deprecated",
+          "date": "2026-05-17",
+          "reason": "replaced by the namespaced classification intent"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:embedding:multimodal:v1",
@@ -121,7 +521,46 @@
         "inputs": "array of {type: 'text'|'image_url', content: string}"
       },
       "phase": 1,
-      "status": "active"
+      "status": "experimental",
+      "kind": "representation",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/embedding-multimodal-v1-input.json",
+          "path": "registry/schemas/embedding-multimodal-v1-input.json",
+          "sha256": "512f30dc3fbcd5c434934808f538c528b4581593579d99dbe093bf20b9423c33"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+          "path": "registry/schemas/generic-json-result-v1.json",
+          "sha256": "4fe064aa137b711ef9cf75676de56224e7df60bb56f77db363b50f27579614d9"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [],
+      "implementation_evidence": [],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-05-15",
+          "reason": "initial compatibility registry classification"
+        },
+        {
+          "status": "experimental",
+          "date": "2026-08-08",
+          "reason": "evidence audit found no intent-specific released adapter or shared conformance fixture"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:mcp:tools/call:v1",
@@ -132,7 +571,41 @@
         "arguments": "object"
       },
       "phase": 2,
-      "status": "reserved"
+      "status": "reserved",
+      "kind": "tool",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/mcp-tools-call-v1-input.json",
+          "path": "registry/schemas/mcp-tools-call-v1-input.json",
+          "sha256": "8e4b43793edace0222810309babaeca71d1c2e31fb7480cb34aa5360a7b09a1e"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+          "path": "registry/schemas/generic-json-result-v1.json",
+          "sha256": "4fe064aa137b711ef9cf75676de56224e7df60bb56f77db363b50f27579614d9"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [],
+      "implementation_evidence": [],
+      "status_history": [
+        {
+          "status": "reserved",
+          "date": "2026-05-15",
+          "reason": "initial registry classification"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:llm:summarize:v1",
@@ -140,12 +613,46 @@
       "description": "Summarize a document or long text into a condensed form. Part of the Cooperative Inference Profile (Phase 5).",
       "payload_schema": {
         "text": "string",
-        "max_length": "integer (optional — target word count)",
+        "max_length": "integer (optional \u2014 target word count)",
         "format": "string (optional: bullets | paragraph | headline)",
         "language": "string (optional: ISO 639-1, default source language)"
       },
       "phase": 5,
-      "status": "reserved"
+      "status": "reserved",
+      "kind": "transformation",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/llm-summarize-v1-input.json",
+          "path": "registry/schemas/llm-summarize-v1-input.json",
+          "sha256": "7cadeac7d8e1bf5b012b970b55eef1a42765bc5c9b8b3ab5867275aeda06200d"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+          "path": "registry/schemas/generic-json-result-v1.json",
+          "sha256": "4fe064aa137b711ef9cf75676de56224e7df60bb56f77db363b50f27579614d9"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [],
+      "implementation_evidence": [],
+      "status_history": [
+        {
+          "status": "reserved",
+          "date": "2026-05-15",
+          "reason": "initial registry classification"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:llm:classify:v1",
@@ -155,10 +662,44 @@
         "text": "string",
         "categories": "array of strings",
         "multi_label": "boolean (optional, default false)",
-        "explain": "boolean (optional — return a concise user-facing explanation)"
+        "explain": "boolean (optional \u2014 return a concise user-facing explanation)"
       },
       "phase": 5,
-      "status": "reserved"
+      "status": "reserved",
+      "kind": "analysis",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/llm-classify-v1-input.json",
+          "path": "registry/schemas/llm-classify-v1-input.json",
+          "sha256": "e11c35282b725eb5c3c33a92cb35254d0d8cf47b963d2e20402eb4fc8e5852ae"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+          "path": "registry/schemas/generic-json-result-v1.json",
+          "sha256": "4fe064aa137b711ef9cf75676de56224e7df60bb56f77db363b50f27579614d9"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [],
+      "implementation_evidence": [],
+      "status_history": [
+        {
+          "status": "reserved",
+          "date": "2026-05-15",
+          "reason": "initial registry classification"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:llm:rerank:v1",
@@ -171,23 +712,112 @@
         "return_scores": "boolean (optional, default false)"
       },
       "phase": 5,
-      "status": "reserved"
+      "status": "reserved",
+      "kind": "ranking",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-05-15",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/llm-rerank-v1-input.json",
+          "path": "registry/schemas/llm-rerank-v1-input.json",
+          "sha256": "a09e3a8ccb87a7e2a46a47af968e45513dacfcad377c7e033a87c5819303036b"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+          "path": "registry/schemas/generic-json-result-v1.json",
+          "sha256": "4fe064aa137b711ef9cf75676de56224e7df60bb56f77db363b50f27579614d9"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [],
+      "implementation_evidence": [],
+      "status_history": [
+        {
+          "status": "reserved",
+          "date": "2026-05-15",
+          "reason": "initial registry classification"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:audio:transcribe:v1",
       "name": "Audio Transcription (Speech-to-Text)",
       "description": "Transcribe speech audio to text using OpenAI-compatible transcription payloads and Whisper-class backends. Audio is carried as base64 in the request and posted by SDKs as a multipart upload to compatible backends.",
       "payload_schema": {
-        "audio": "string (base64-encoded audio bytes — wav/mp3/m4a/…)",
-        "filename": "string (optional, default audio.wav — hints the container/codec)",
-        "model": "string (optional — backend default if absent; whisper.cpp ignores it)",
-        "language": "string (optional — ISO 639-1; auto-detect if absent)",
+        "audio": "string (base64-encoded audio bytes \u2014 wav/mp3/m4a/\u2026)",
+        "filename": "string (optional, default audio.wav \u2014 hints the container/codec)",
+        "model": "string (optional \u2014 backend default if absent; whisper.cpp ignores it)",
+        "language": "string (optional \u2014 ISO 639-1; auto-detect if absent)",
         "response_format": "string (optional: json | text, default json)",
-        "prompt": "string (optional — decoding/vocabulary hint)",
+        "prompt": "string (optional \u2014 decoding/vocabulary hint)",
         "temperature": "float 0-1 (optional)"
       },
       "phase": 5,
-      "status": "active"
+      "status": "active",
+      "kind": "transformation",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-07-14",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/audio-transcribe-v1-input.json",
+          "path": "registry/schemas/audio-transcribe-v1-input.json",
+          "sha256": "6015e742826baec20b62ce09bcd397745fc8725668f92927f2fc2247c15dcda2"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/audio-transcribe-v1-output.json",
+          "path": "registry/schemas/audio-transcribe-v1-output.json",
+          "sha256": "a788adfe373b9ffebc08bf6eaead7a45fc7c90e6a522dbf593699ca0754b9856"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [
+        "registry/fixtures/intent-payloads-v1.json#audio-transcribe-v1"
+      ],
+      "implementation_evidence": [
+        {
+          "component": "client-python",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-python",
+          "evidence": "https://github.com/RobLe3/iicp-client-python/blob/v0.7.101/src/iicp_client/backends/base.py"
+        },
+        {
+          "component": "client-typescript",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-typescript",
+          "evidence": "https://github.com/RobLe3/iicp-client-typescript/blob/v0.7.101/src/backends/base.ts"
+        },
+        {
+          "component": "client-rust",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-rust",
+          "evidence": "https://github.com/RobLe3/iicp-client-rust/blob/v0.7.101/src/backends/openai_compat.rs"
+        }
+      ],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-07-14",
+          "reason": "initial registry classification"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:audio:speech:v1",
@@ -195,8 +825,8 @@
       "description": "Synthesize speech audio from text using OpenAI-compatible speech payloads. The backend returns binary audio, and SDKs carry it back as base64 in result.audio for transport through the mesh.",
       "payload_schema": {
         "input": "string (text to synthesize)",
-        "model": "string (optional — backend default if absent)",
-        "voice": "string (optional, default alloy — ignored by engines like espeak-ng)",
+        "model": "string (optional \u2014 backend default if absent)",
+        "voice": "string (optional, default alloy \u2014 ignored by engines like espeak-ng)",
         "response_format": "string (optional: wav | mp3 | opus | flac | aac, backend-dependent)",
         "speed": "float 0.25-4.0 (optional)"
       },
@@ -206,7 +836,62 @@
         "format": "string (container/codec)"
       },
       "phase": 5,
-      "status": "active"
+      "status": "active",
+      "kind": "generation",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-07-14",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/audio-speech-v1-input.json",
+          "path": "registry/schemas/audio-speech-v1-input.json",
+          "sha256": "09d7472fcdd773f9c276423535566f6614ad3d877c8703a1a33bc26e0786704e"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/audio-speech-v1-output.json",
+          "path": "registry/schemas/audio-speech-v1-output.json",
+          "sha256": "49c4c371a0cca1d36124b130143beeac9f59ce18a9642ed253989680ecef21b1"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [
+        "registry/fixtures/intent-payloads-v1.json#audio-speech-v1"
+      ],
+      "implementation_evidence": [
+        {
+          "component": "client-python",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-python",
+          "evidence": "https://github.com/RobLe3/iicp-client-python/blob/v0.7.101/src/iicp_client/backends/base.py"
+        },
+        {
+          "component": "client-typescript",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-typescript",
+          "evidence": "https://github.com/RobLe3/iicp-client-typescript/blob/v0.7.101/src/backends/base.ts"
+        },
+        {
+          "component": "client-rust",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-rust",
+          "evidence": "https://github.com/RobLe3/iicp-client-rust/blob/v0.7.101/src/backends/openai_compat.rs"
+        }
+      ],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-07-14",
+          "reason": "initial registry classification"
+        }
+      ]
     },
     {
       "urn": "urn:iicp:intent:safety:moderate:v1",
@@ -214,13 +899,69 @@
       "description": "Classify text for policy-violating content using OpenAI-compatible moderation payloads or compatible safety classifiers. The request and response are plain JSON; the backend may supply its own fixed moderation model.",
       "payload_schema": {
         "input": "string or array of strings (text to moderate)",
-        "model": "string (optional — backend supplies a fixed moderation model)"
+        "model": "string (optional \u2014 backend supplies a fixed moderation model)"
       },
       "result_schema": {
         "results": "array of {flagged: boolean, categories: {category: boolean}, category_scores: {category: float}}"
       },
       "phase": 5,
-      "status": "active"
+      "status": "active",
+      "kind": "analysis",
+      "declaration_version": "1.0.0",
+      "owner": "iicp-project",
+      "created": "2026-07-14",
+      "updated": "2026-08-08",
+      "review_by": "2027-08-08",
+      "schemas": {
+        "input": {
+          "id": "https://iicp.network/registry/schemas/safety-moderate-v1-input.json",
+          "path": "registry/schemas/safety-moderate-v1-input.json",
+          "sha256": "0df26d42bd9b96597e69397952af84a08fd60fd36a1963a31e1ca95368b63656"
+        },
+        "output": {
+          "id": "https://iicp.network/registry/schemas/safety-moderate-v1-output.json",
+          "path": "registry/schemas/safety-moderate-v1-output.json",
+          "sha256": "2ad76c1f4fbcff037c68e2478c737da7ca879d60917c52369c5c965339bbe1d5"
+        }
+      },
+      "compatibility": {
+        "legacy_payload_schema": true,
+        "existing_urn_preserved": true
+      },
+      "references": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixtures": [
+        "registry/fixtures/intent-payloads-v1.json#safety-moderate-v1"
+      ],
+      "implementation_evidence": [
+        {
+          "component": "client-python",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-python",
+          "evidence": "https://github.com/RobLe3/iicp-client-python/blob/v0.7.101/src/iicp_client/backends/base.py"
+        },
+        {
+          "component": "client-typescript",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-typescript",
+          "evidence": "https://github.com/RobLe3/iicp-client-typescript/blob/v0.7.101/src/backends/base.ts"
+        },
+        {
+          "component": "client-rust",
+          "release": "0.7.101",
+          "repository": "https://github.com/RobLe3/iicp-client-rust",
+          "evidence": "https://github.com/RobLe3/iicp-client-rust/blob/v0.7.101/src/backends/openai_compat.rs"
+        }
+      ],
+      "status_history": [
+        {
+          "status": "active",
+          "date": "2026-07-14",
+          "reason": "initial registry classification"
+        }
+      ]
     }
-  ]
+  ],
+  "schema": "https://iicp.network/registry/schemas/intent-registry-v1.4.json"
 }

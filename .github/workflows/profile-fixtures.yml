@@ -43,6 +43,8 @@ jobs:
       - run: python3 tools/check_profile_fixture_manifest.py
       - run: python3 tools/check_intent_registry.py
       - run: python3 -m unittest discover -s tools -p 'test_intent_registry.py'
+      - run: python3 -m unittest discover -s tools -p 'test_intent_payload_fixture.py'
+      - run: python3 tools/audit_intent_sources.py --check
       - run: python3 -m unittest discover -s tools -p 'test_service_lifecycle_fixture.py'
       - run: python3 tools/check_spec_release_integrity.py
       - run: python3 tools/check_discovery_sdk_currency.py
