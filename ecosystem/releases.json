@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-05",
+  "generated_at": "2026-08-08",
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.9",
+      "version": "1.10.10",
       "wire_behavior": "unchanged",
-      "conformance_impact": "unchanged",
+      "conformance_impact": "changed",
       "profiles": [
         "directory-public-v1",
         "directory-dispatch-v1",
@@ -14,12 +14,12 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No protocol, schema or persisted-state migration is required; this release synchronizes the PHP security-patch release record.",
-      "rollback": "Continue using v1.10.8 protocol artifacts; do not describe PHP 1.10.86 as the current patched implementation."
+      "migration": "No base-wire, directory-schema or persisted-state migration is required. The negotiated lifecycle profile gains explicit incremental streaming sequences, while existing CALL/RESPONSE and HTTP/CBOR behavior remains buffered.",
+      "rollback": "Continue using v1.10.9 artifacts; negotiated lifecycle streaming implementations must not claim the v1.1.0 draft fixture."
     },
     {
       "id": "directory-php",
-      "version": "1.10.87",
+      "version": "1.10.88",
       "wire_behavior": "unchanged",
       "conformance_impact": "unchanged",
       "profiles": [
@@ -28,8 +28,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "required",
-      "migration": "No database migration is required; install the immutable 1.10.87 artifact and retain the existing environment and schema.",
-      "rollback": "Restore 1.10.86 only as an emergency runtime rollback; it contains the affected Guzzle dependency and should not remain deployed."
+      "migration": "No database migration is required; install the immutable 1.10.88 artifact and retain the existing environment and schema.",
+      "rollback": "Restore 1.10.87 only as an emergency runtime rollback; its CommonMark dependency contains the reviewed advisories and should not remain deployed."
     },
     {
       "id": "directory-rust",
