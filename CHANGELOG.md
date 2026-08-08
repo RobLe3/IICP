@@ -2,16 +2,27 @@
 
 ## Unreleased
 
-- Reconciled the remaining directory and conformance references for REGISTER
-  rate limiting with SYB-01 and both maintained implementations: reject after
-  60 requests in a rolling 60-second window per source IP using HTTP 429 and
-  `IICP-E034`. This corrects contradictory normative text; it does not change
-  shipped directory behavior.
-- Clarified that the canonical intent registry is distinct from live provider
-  availability, removed hidden-reasoning language from classification entries,
-  and added fail-closed structural validation for URNs, lifecycle states,
-  duplicate identifiers and deprecated successors. Strict registry v2 remains
-  tracked separately; existing intent URNs and payload fields are unchanged.
+## v1.10.10 — 2026-08-08
+
+Current-line consolidation release. It does not begin a new protocol train and
+does not change the base wire contract.
+
+- Records PHP Genesis directory `v1.10.88`, which updates Laravel and
+  CommonMark for reviewed security advisories without schema, OpenAPI, routing
+  or wire changes.
+- Resolves the REGISTER rate-limit contradiction at 60 requests per rolling
+  60 seconds per source IP, matching both maintained directories.
+- Clarifies that the canonical intent registry and live provider availability
+  are separate datasets, and adds fail-closed structural registry validation.
+- Defines progressive output only inside the negotiated
+  `urn:iicp:profile:service-lifecycle:v1` profile. Base CALL/RESPONSE and HTTP/CBOR
+  remain buffered; lifecycle partial results are incremental and terminate with
+  exactly one final response.
+- Adds negative lifecycle fixtures for post-terminal output, duplicate terminal
+  frames, missing terminal responses, call-ID drift and invalid status/finality
+  combinations.
+- Records the portability and non-capture architecture decision without
+  manufacturing shared governance or changing implementation authority.
 
 ## v1.10.9 — 2026-08-05
 

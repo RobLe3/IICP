@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-05",
+  "generated_at": "2026-08-08",
   "current_namespace": "RobLe3",
   "planned_namespace": "iicp-protocol",
   "organization_plan": "github-free",
@@ -14,7 +14,7 @@
       "authority": "normative protocol, registries and reviewed research",
       "language": "specification",
       "protocol": "1.9",
-      "release": "1.10.9"
+      "release": "1.10.10"
     },
     {
       "id": "project-hub",
@@ -69,7 +69,7 @@
       "authority": "PHP reference directory implementation and current Genesis Seed code line",
       "language": "php",
       "protocol": "1.9",
-      "release": "1.10.87"
+      "release": "1.10.88"
     },
     {
       "id": "directory-rust",
