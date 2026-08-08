@@ -1,6 +1,6 @@
 # IICP Service Lifecycle Profile
 
-**Version:** 0.1.0-draft
+**Version:** 0.1.1-draft
 **Status:** proposed semantic profile; not required for base IICP conformance
 **Authority:** Protocol Steward
 **Relation:** `iicp-core.md`, `iicp-framing.md`, `iicp-semantics.md`, `iicp-cooperative-inference.md`
@@ -63,6 +63,18 @@ Every partial event and terminal event uses this additive result envelope:
 | `error` | MUST on failure | Safe machine-readable error; no stack trace or payload echo. |
 | `receipt` | SHOULD on terminal | Redacted execution/billing evidence when another profile requires it. |
 
+Partial `result` values are incremental chunks. Providers MAY aggregate
+multiple model tokens, bytes, or application events per chunk. A completed
+event contains only its final incremental chunk and MAY omit it when empty;
+receivers reconstruct successful output by consuming result chunks in sequence
+order. Failed, cancelled, and timed-out terminal events carry no successful
+result chunk. Output received before such a terminal event remains explicitly
+incomplete.
+
+When `tokens_used` is exposed, partial values are cumulative and the terminal
+value is authoritative. A receipt or credit charge is terminal evidence; a
+partial event MUST NOT independently commit a charge.
+
 Receivers MUST discard an event whose `sequence` is not greater than the last
 accepted sequence for that `task_id`. This profile does not define stream
 resumption: a missing sequence, disconnect, or ambiguous terminal state is a
@@ -94,8 +106,13 @@ explicitly negotiates resumption.
 ## 6. Transport mapping
 
 Native TCP/QUIC uses the existing CALL, RESPONSE, CONTROL, and OBSERVE message
-families. HTTP uses the existing task response shape plus an event stream and a
-cancellation control resource. Implementations MAY choose transport-specific
+families. Base HTTP `POST /v1/task` remains a single buffered response. A
+provider that claims this profile exposes the accepted task's ordered events
+through its documented lifecycle event-stream resource and cancellation through
+its documented cancellation control resource; both resources MUST be
+advertised as profile capabilities. This draft does not assign a universal
+HTTP path, so a client MUST NOT infer streaming from chunked transfer or
+`Accept: text/event-stream` alone. Implementations MAY choose transport-specific
 delivery mechanics, but the state table, ordering, finality, and idempotency
 requirements above remain identical.
 
@@ -103,7 +120,7 @@ requirements above remain identical.
 
 `research/native-ai-infrastructure/fixtures/service-profiles-v1.json` defines
 the minimum state-transition vectors. Implementations claiming this profile
-MUST pass `SERVICE-LIFECYCLE-01` through `SERVICE-LIFECYCLE-08` in the
+MUST pass `SERVICE-LIFECYCLE-01` through `SERVICE-LIFECYCLE-13` in the
 conformance suite.
 
 ## 8. Security and privacy
