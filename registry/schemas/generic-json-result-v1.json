@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/generic-json-result-v1.json",
+  "title": "IICP generic JSON result",
+  "description": "Any JSON value. This preserves compatibility while an intent-specific result contract remains experimental."
+}

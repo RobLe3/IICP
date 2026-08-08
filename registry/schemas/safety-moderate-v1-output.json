@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/safety-moderate-v1-output.json",
+  "title": "Content Moderation output",
+  "type": "object",
+  "properties": {
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "flagged": {
+            "type": "boolean"
+          },
+          "categories": {
+            "type": "object"
+          },
+          "category_scores": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": true,
+        "required": [
+          "flagged"
+        ]
+      }
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "results"
+  ]
+}

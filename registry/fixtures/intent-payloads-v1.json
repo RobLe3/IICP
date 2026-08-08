@@ -1,0 +1,104 @@
+{
+  "version": "1.0.0",
+  "description": "Content-free positive and negative payload examples for active IICP intent declarations.",
+  "cases": [
+    {
+      "id": "llm-chat-v1-valid",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "valid": true,
+      "payload": {
+        "messages": [
+          {
+            "role": "user",
+            "content": "test"
+          }
+        ]
+      }
+    },
+    {
+      "id": "llm-chat-v1-missing-messages",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "valid": false,
+      "payload": {}
+    },
+    {
+      "id": "llm-completion-v1-valid",
+      "intent": "urn:iicp:intent:llm:completion:v1",
+      "valid": true,
+      "payload": {
+        "prompt": "test"
+      }
+    },
+    {
+      "id": "llm-completion-v1-missing-prompt",
+      "intent": "urn:iicp:intent:llm:completion:v1",
+      "valid": false,
+      "payload": {}
+    },
+    {
+      "id": "llm-embedding-v1-valid",
+      "intent": "urn:iicp:intent:llm:embedding:v1",
+      "valid": true,
+      "payload": {
+        "input": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    {
+      "id": "llm-embedding-v1-empty-array",
+      "intent": "urn:iicp:intent:llm:embedding:v1",
+      "valid": false,
+      "payload": {
+        "input": []
+      }
+    },
+    {
+      "id": "audio-transcribe-v1-valid",
+      "intent": "urn:iicp:intent:audio:transcribe:v1",
+      "valid": true,
+      "payload": {
+        "audio": "dGVzdA==",
+        "filename": "test.wav"
+      }
+    },
+    {
+      "id": "audio-transcribe-v1-missing-audio",
+      "intent": "urn:iicp:intent:audio:transcribe:v1",
+      "valid": false,
+      "payload": {}
+    },
+    {
+      "id": "audio-speech-v1-valid",
+      "intent": "urn:iicp:intent:audio:speech:v1",
+      "valid": true,
+      "payload": {
+        "input": "test"
+      }
+    },
+    {
+      "id": "audio-speech-v1-speed-range",
+      "intent": "urn:iicp:intent:audio:speech:v1",
+      "valid": false,
+      "payload": {
+        "input": "test",
+        "speed": 9
+      }
+    },
+    {
+      "id": "safety-moderate-v1-valid",
+      "intent": "urn:iicp:intent:safety:moderate:v1",
+      "valid": true,
+      "payload": {
+        "input": "test"
+      }
+    },
+    {
+      "id": "safety-moderate-v1-missing-input",
+      "intent": "urn:iicp:intent:safety:moderate:v1",
+      "valid": false,
+      "payload": {}
+    }
+  ]
+}

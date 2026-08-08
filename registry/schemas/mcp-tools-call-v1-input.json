@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/mcp-tools-call-v1-input.json",
+  "title": "MCP Tool Call input",
+  "type": "object",
+  "properties": {
+    "tool_name": {
+      "type": "string"
+    },
+    "arguments": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "tool_name",
+    "arguments"
+  ]
+}

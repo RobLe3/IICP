@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/intent-registry-v1.4.json",
+  "title": "IICP intent registry 1.4",
+  "type": "object",
+  "required": [
+    "schema",
+    "version",
+    "updated",
+    "authority",
+    "description",
+    "intents"
+  ],
+  "properties": {
+    "version": {
+      "const": "1.4.0"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "authority": {
+      "type": "string",
+      "format": "uri"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "intents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "urn",
+          "name",
+          "description",
+          "kind",
+          "declaration_version",
+          "owner",
+          "created",
+          "updated",
+          "review_by",
+          "status",
+          "status_history",
+          "payload_schema",
+          "schemas",
+          "compatibility",
+          "references",
+          "fixtures",
+          "implementation_evidence"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/llm-classify-v1-input.json",
+  "title": "LLM Classification input",
+  "type": "object",
+  "properties": {
+    "text": {
+      "type": "string"
+    },
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "multi_label": {
+      "type": "boolean",
+      "default": false
+    },
+    "explain": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "text",
+    "categories"
+  ]
+}

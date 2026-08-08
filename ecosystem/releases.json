@@ -4,8 +4,8 @@
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.10",
-      "wire_behavior": "unchanged",
+      "version": "1.10.11",
+      "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
         "directory-public-v1",
@@ -14,27 +14,13 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No base-wire, directory-schema or persisted-state migration is required. The negotiated lifecycle profile gains explicit incremental streaming sequences, while existing CALL/RESPONSE and HTTP/CBOR behavior remains buffered.",
-      "rollback": "Continue using v1.10.9 artifacts; negotiated lifecycle streaming implementations must not claim the v1.1.0 draft fixture."
+      "migration": "No base-wire, directory-schema or persisted-state migration is required. Registry 1.4 adds lifecycle, schema and evidence metadata at the existing canonical and well-known paths; legacy payload_schema fields and all existing intent URNs remain available.",
+      "rollback": "Continue using v1.10.10 registry 1.3 artifacts; implementations must not claim registry 1.4 schema or evidence validation."
     },
     {
       "id": "directory-php",
-      "version": "1.10.88",
+      "version": "1.10.89",
       "wire_behavior": "unchanged",
-      "conformance_impact": "unchanged",
-      "profiles": [
-        "directory-implementation-metadata-v1",
-        "discovery-evidence-v1"
-      ],
-      "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "required",
-      "migration": "No database migration is required; install the immutable 1.10.88 artifact and retain the existing environment and schema.",
-      "rollback": "Restore 1.10.87 only as an emergency runtime rollback; its CommonMark dependency contains the reviewed advisories and should not remain deployed."
-    },
-    {
-      "id": "directory-rust",
-      "version": "0.1.8",
-      "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
         "directory-implementation-metadata-v1",
@@ -42,8 +28,22 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Apply migration 020 to an existing preview schema; empty preview databases use the updated baseline.",
-      "rollback": "Restore v0.1.7 and drop the three additive metadata columns; Genesis cutover remains unauthorized."
+      "migration": "No database migration is required. Reputation score, task counters and the hourly positive-gain budget are now committed in one node-locked transaction.",
+      "rollback": "Restore the immutable 1.10.88 artifact; concurrent successful heartbeats can then exceed the intended shared hourly reputation budget, so rollback is for emergency recovery only."
+    },
+    {
+      "id": "directory-rust",
+      "version": "0.1.9",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "changed",
+      "profiles": [
+        "directory-implementation-metadata-v1",
+        "discovery-evidence-v1"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "No database migration is required. Reputation updates now serialize the shared hourly budget and retry bounded transient MySQL lock failures.",
+      "rollback": "Restore v0.1.8; Genesis cutover remains unauthorized and the earlier concurrent reputation behavior is not parity-safe."
     },
     {
       "id": "client-python",

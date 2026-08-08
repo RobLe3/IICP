@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/llm-completion-v1-input.json",
+  "title": "LLM Text Completion input",
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    },
+    "max_tokens": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "temperature": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 2
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "prompt"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/registry/schemas/audio-speech-v1-input.json",
+  "title": "Text-to-Speech (Speech Synthesis) input",
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "voice": {
+      "type": "string"
+    },
+    "response_format": {
+      "type": "string",
+      "enum": [
+        "wav",
+        "mp3",
+        "opus",
+        "flac",
+        "aac"
+      ]
+    },
+    "speed": {
+      "type": "number",
+      "minimum": 0.25,
+      "maximum": 4
+    }
+  },
+  "additionalProperties": true,
+  "required": [
+    "input"
+  ]
+}

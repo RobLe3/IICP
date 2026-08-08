@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+## v1.10.11 — 2026-08-08
+
+Additive registry and implementation-evidence release on the existing protocol
+line. It does not begin a 2.x train and does not change the base wire contract.
+
+- Advances the canonical intent registry from 1.3 to 1.4 at the existing
+  `registry/intents.json` and `/.well-known/iicp-intents.json` paths.
+- Preserves all existing intent URNs and legacy `payload_schema` fields while
+  adding lifecycle history, ownership, review dates, JSON Schema 2020-12 input
+  and output references, digests, fixtures and released-implementation evidence.
+- Classifies 74 intent-like source observations without promoting custom,
+  negative-test, policy-example or unsupported candidate values.
+- Requires active intents to have executable payload fixtures and released
+  implementation evidence, and rejects expired reviews, invalid lifecycle
+  transitions, incorrect schema digests and broken successors.
+- Records PHP directory `v1.10.89` and Rust operator preview `v0.1.9`, which
+  serialize reputation score, task counters and the shared `+0.20` hourly gain
+  budget without changing routes, OpenAPI or the database schema.
+
 ## v1.10.10 — 2026-08-08
 
 Current-line consolidation release. It does not begin a new protocol train and
