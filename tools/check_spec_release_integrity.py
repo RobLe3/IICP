@@ -23,6 +23,8 @@ def main() -> int:
     registry = json.loads((ROOT / "registry/intents.json").read_text())
     if registry.get("version") != manifest["registry_version"]:
         errors.append("registry version differs from release manifest")
+    from check_intent_registry import validate as validate_intent_registry
+    errors.extend(f"intent registry: {error}" for error in validate_intent_registry(registry))
     ecosystem = json.loads((ROOT / "ecosystem/repositories.json").read_text())
     specification = next(
         (item for item in ecosystem["repositories"] if item["id"] == "specification"),
@@ -42,10 +44,13 @@ def main() -> int:
         "SPEC_STATUS.md",
         "VERSIONING.md",
         "registry/intents.json",
+        "registry/README.md",
         "spec/v1.9/VERSION",
         "spec/v1.9/iicp-core.md",
         "spec/v1.9/iicp-framing.md",
         "spec/v1.9/conformance-test-suite.md",
+        "tools/check_intent_registry.py",
+        "tools/test_intent_registry.py",
     }
     missing_pins = sorted(required - set(manifest["files"]))
     if missing_pins:

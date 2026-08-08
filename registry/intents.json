@@ -2,7 +2,7 @@
   "version": "1.3.0",
   "updated": "2026-06-03",
   "authority": "https://iicp.network",
-  "description": "IICP Intent URN Registry — authoritative list of defined intents. New intents require Protocol Steward sign-off.",
+  "description": "Canonical IICP intent vocabulary. This document does not report live provider availability; new standard intents require the public registry review process.",
   "intents": [
     {
       "urn": "urn:iicp:intent:llm:chat:v1",
@@ -102,7 +102,7 @@
     {
       "urn": "urn:iicp:intent:classify:v1",
       "name": "Text Classification (deprecated)",
-      "description": "Classify text into one or more categories from a provided set. DEPRECATED: use urn:iicp:intent:llm:classify:v1 for LLM-based classification with chain-of-thought support. This alias is retained for Phase 1 backward compatibility only.",
+      "description": "Classify text into one or more categories from a provided set. DEPRECATED: use urn:iicp:intent:llm:classify:v1 for model-assisted classification with an optional user-facing explanation. This alias is retained for Phase 1 backward compatibility only.",
       "payload_schema": {
         "text": "string",
         "categories": "array of strings",
@@ -150,12 +150,12 @@
     {
       "urn": "urn:iicp:intent:llm:classify:v1",
       "name": "LLM Classification",
-      "description": "Classify text using an LLM with optional chain-of-thought. Complements urn:iicp:intent:classify:v1 which is label-only. Part of the Cooperative Inference Profile (Phase 5).",
+      "description": "Classify text using a language model with an optional user-facing explanation. Complements urn:iicp:intent:classify:v1, which is label-only. Part of the Cooperative Inference Profile (Phase 5).",
       "payload_schema": {
         "text": "string",
         "categories": "array of strings",
         "multi_label": "boolean (optional, default false)",
-        "explain": "boolean (optional — return reasoning)"
+        "explain": "boolean (optional — return a concise user-facing explanation)"
       },
       "phase": 5,
       "status": "reserved"

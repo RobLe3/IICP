@@ -7,6 +7,11 @@
   60 requests in a rolling 60-second window per source IP using HTTP 429 and
   `IICP-E034`. This corrects contradictory normative text; it does not change
   shipped directory behavior.
+- Clarified that the canonical intent registry is distinct from live provider
+  availability, removed hidden-reasoning language from classification entries,
+  and added fail-closed structural validation for URNs, lifecycle states,
+  duplicate identifiers and deprecated successors. Strict registry v2 remains
+  tracked separately; existing intent URNs and payload fields are unchanged.
 
 ## v1.10.9 — 2026-08-05
 
