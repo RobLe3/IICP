@@ -133,6 +133,14 @@
       "expected": "reject_settlement"
     },
     {
+      "name": "wrong_consumer_signer",
+      "expected": "reject_settlement"
+    },
+    {
+      "name": "legacy_downgrade_while_required",
+      "expected": "reject_settlement"
+    },
+    {
       "name": "operator_binding_mismatch",
       "expected": "reject_settlement"
     },

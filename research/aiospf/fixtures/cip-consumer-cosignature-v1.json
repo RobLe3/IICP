@@ -103,9 +103,9 @@
       }
     },
     {
-      "name": "legacy_optional_missing_consumer",
+      "name": "legacy_missing_consumer",
       "input": {
-        "mode": "optional",
+        "mode": "legacy",
         "provider_signature": "valid",
         "consumer_signature": "missing",
         "binding": "match",
@@ -117,7 +117,7 @@
       },
       "expected": {
         "action": "accept_legacy",
-        "reason": "consumer_signature_missing_optional",
+        "reason": "consumer_signature_missing_legacy",
         "trust_weight": "0.0"
       }
     },
@@ -156,6 +156,44 @@
       "expected": {
         "action": "reject",
         "reason": "consumer_signature_invalid",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "required_wrong_consumer_signer",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "wrong_signer",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "reject",
+        "reason": "consumer_signer_mismatch",
+        "trust_weight": "0.0"
+      }
+    },
+    {
+      "name": "required_rejects_legacy_unsigned_downgrade",
+      "input": {
+        "mode": "required",
+        "provider_signature": "valid",
+        "consumer_signature": "missing",
+        "binding": "match",
+        "nonce": "fresh",
+        "time": "valid",
+        "provider_key": "active",
+        "consumer_key": "active",
+        "relationship": "cross_operator"
+      },
+      "expected": {
+        "action": "reject",
+        "reason": "consumer_signature_required",
         "trust_weight": "0.0"
       }
     },

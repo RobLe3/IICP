@@ -9,8 +9,17 @@ task, intent, serving/querying node, response hash, accounting strings,
 completion/expiry, and dispatch nonce. Raw prompts and responses are excluded.
 
 The shared fixture defines byte-identical JCS vectors, anti-replay and binding
-refusals, key lifecycle, self-dealing exclusions, and terminal settlement
-outcomes. Signatures prove attribution, not answer quality.
+refusals, key lifecycle, wrong-signer and downgrade refusals, self-dealing
+exclusions, and terminal settlement outcomes. Signatures prove attribution, not
+answer quality.
+
+The provider and consumer sign the same domain-separated receipt digest with
+the keys bound respectively to `serving_node_id` and `querying_node_id`. The
+audience is the named provider/consumer pair for the exact `task_id`, `intent`,
+`response_hash`, accounting values, completion/expiry interval and
+`dispatch_nonce`. A signature made by the other role, an unbound key or a key
+outside its validity interval is invalid; signatures are not interchangeable
+merely because they cover the same digest.
 
 The companion
 `fixtures/cip-consumer-cosignature-transcript-v1.json` fixture defines the
@@ -38,7 +47,8 @@ clients remain usable and receive no elevated attribution weight.
 Implementations evaluating this proposal use three named transition states:
 
 - `legacy`: current additive behavior; a missing co-signature remains compatible
-  and receives no elevated trust.
+  and receives no elevated trust. A legacy receipt presented while `required` is
+  selected is a rejected downgrade, not a fallback.
 - `observe`: validate a supplied profile receipt and retain aggregate outcome
   counts, but do not change credits, reputation, routing or task delivery.
 - `required`: refuse economic or reputation gain when the required receipt is
