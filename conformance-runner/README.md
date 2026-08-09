@@ -96,3 +96,8 @@ controls the implementation and result publication; a project-run or
 project-hosted test remains `project-verified` or `self-attested`. Do not put
 credentials, target URLs, node IDs, route data, payloads or personal data in a
 published result bundle.
+
+For a clean-environment installation, offline-first evidence, loopback safety
+boundary and evidence-class decision, follow [the external run guide](EXTERNAL_RUN.md).
+It is intentionally release-artifact based: it does not ask an external operator
+to install a moving repository checkout.
