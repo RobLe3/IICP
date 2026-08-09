@@ -20,6 +20,8 @@ python3 -m venv .venv
   --evidence-class project-verified --output ticket-trust-result.json
 .venv/bin/iicp-conformance verify-dispatch-ticket-trust-v2-semantics-fixture \
   --evidence-class project-verified --output ticket-trust-semantics-result.json
+.venv/bin/iicp-conformance verify-policy-refusal-fixture \
+  --evidence-class project-verified --output policy-refusal-result.json
 .venv/bin/iicp-conformance verify ticket-result.json
 ```
 
@@ -62,6 +64,12 @@ claim, signature, and local-replay outcomes. It emits only case identifiers and
 aggregate outcomes. It does not parse live tickets, alter v1 behavior, enable
 v2, or make any runtime trust-store, federation, or independent-conformance
 claim.
+
+`verify-policy-refusal-fixture` is a separate **pre-normative** offline subset
+of the canonical profile-compatibility fixture. It evaluates only cases that
+declare `policy_refusal`, and emits only their case identifiers and aggregate
+outcomes. It is not a general eligibility engine, live dispatch test, policy
+attestation, or evidence that a provider enforces its declared policy.
 
 The loopback-only `directory-lifecycle-v1` profile registers a disposable node,
 authenticates a heartbeat, refreshes the registration and rotates its token,

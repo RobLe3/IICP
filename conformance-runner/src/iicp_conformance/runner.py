@@ -33,6 +33,7 @@ OFFLINE_PROFILE_FILES = {
     "dispatch-route-ticket-v1": "dispatch-route-ticket-v1.json",
     "dispatch-ticket-trust-v2": "dispatch-ticket-trust-v2.json",
     "dispatch-ticket-trust-v2-crypto": "dispatch-ticket-trust-v2-crypto.json",
+    "profile-compatibility-v0-policy-refusal": "profile-compatibility-v0.json",
 }
 OFFLINE_PROFILE_METADATA = {
     "dispatch-route-ticket-v1": {
@@ -49,6 +50,12 @@ OFFLINE_PROFILE_METADATA = {
         "vector_key": "cases",
         "id_key": "id",
         "target_role": "offline_ticket_trust_semantic_verifier",
+    },
+    "profile-compatibility-v0-policy-refusal": {
+        "vector_key": "scenarios",
+        "id_key": "name",
+        "target_role": "offline_policy_refusal_verifier",
+        "expected_reason": "policy_refusal",
     },
 }
 DISPATCH_TICKET_DOMAIN = b"iicp:dispatch-route-ticket:v1\n"
@@ -416,6 +423,64 @@ def run_dispatch_ticket_trust_v2_semantics_fixture(
     }
 
 
+def run_policy_refusal_fixture(
+    *, evidence_class: str = "self-attested"
+) -> dict[str, Any]:
+    """Execute the canonical profile fixture's explicit policy-refusal cases.
+
+    The runner intentionally does not become a general eligibility engine. It
+    evaluates only scenarios whose canonical expected reason is policy_refusal.
+    """
+    if evidence_class not in EVIDENCE_CLASSES:
+        raise ValueError("unsupported evidence class")
+    profile = "profile-compatibility-v0-policy-refusal"
+    raw = bundled_offline_fixture_bytes(profile)
+    fixture = json.loads(raw)
+    if (
+        fixture.get("fixture_version") != "0.4.0-draft"
+        or fixture.get("status") != "pre-normative"
+    ):
+        raise ValueError("mixed or unsupported policy-refusal fixture version")
+    scenarios = [
+        scenario
+        for scenario in fixture.get("scenarios", [])
+        if scenario.get("expected_reason") == "policy_refusal"
+    ]
+    if not scenarios:
+        raise ValueError("policy-refusal fixture has no refusal scenarios")
+    started = datetime.now(timezone.utc)
+    results: list[dict[str, Any]] = []
+    for scenario in scenarios:
+        began = time.monotonic()
+        request = scenario.get("request", {})
+        observed = "policy_refusal" if request.get("policy") == "deny" else "compatible"
+        results.append(
+            {
+                "test_id": scenario["name"],
+                "outcome": "pass" if observed == "policy_refusal" else "fail",
+                "reason": "passed" if observed == "policy_refusal" else "assertion_failed",
+                "observed_status": None,
+                "duration_ms": round((time.monotonic() - began) * 1000, 3),
+            }
+        )
+    finished = datetime.now(timezone.utc)
+    passed = sum(item["outcome"] == "pass" for item in results)
+    return {
+        "schema": RESULT_SCHEMA,
+        "runner_version": RUNNER_VERSION,
+        "suite_version": fixture["fixture_version"],
+        "profile": profile,
+        "fixture_digest": f"sha256:{hashlib.sha256(raw).hexdigest()}",
+        "target_role": "offline_policy_refusal_verifier",
+        "evidence_class": evidence_class,
+        "started_at": started.isoformat().replace("+00:00", "Z"),
+        "finished_at": finished.isoformat().replace("+00:00", "Z"),
+        "summary": {"total": len(results), "passed": passed, "failed": len(results) - passed},
+        "results": results,
+        "content_free": True,
+    }
+
+
 def load_manifest(raw: bytes) -> dict[str, Any]:
     manifest = json.loads(raw)
     if manifest.get("schema") != EXPECTED_SCHEMA:
@@ -740,6 +805,14 @@ def verify_result(
             vectors = fixture.get(metadata["vector_key"])
             if not isinstance(vectors, list) or not vectors:
                 raise ValueError("offline fixture has no validation vectors")
+            if expected_reason := metadata.get("expected_reason"):
+                vectors = [
+                    vector
+                    for vector in vectors
+                    if vector.get("expected_reason") == expected_reason
+                ]
+            if not vectors:
+                raise ValueError("offline fixture has no matching vectors")
             expected_ids = [vector[metadata["id_key"]] for vector in vectors]
             expected_target_role = metadata["target_role"]
         else:

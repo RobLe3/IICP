@@ -272,6 +272,7 @@
         {
           "repository": "IICP",
           "paths": [
+            "conformance-runner/src/iicp_conformance/fixtures/profile-compatibility-v0.json",
             "registry/intents.json",
             "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
           ]
@@ -606,6 +607,7 @@
             "conformance-runner/src/iicp_conformance/fixtures/directory-public-v1.json",
             "conformance-runner/src/iicp_conformance/fixtures/dispatch-route-ticket-v1.json",
             "conformance-runner/src/iicp_conformance/fixtures/dispatch-ticket-trust-v2-crypto.json",
+            "conformance-runner/src/iicp_conformance/fixtures/profile-compatibility-v0.json",
             "conformance-runner/tests/test_runner.py",
             "docs/agent-bootstrap.md",
             "registry/fixtures/intent-payloads-v1.json",
@@ -899,6 +901,7 @@
         {
           "repository": "IICP",
           "paths": [
+            "conformance-runner/src/iicp_conformance/fixtures/profile-compatibility-v0.json",
             "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
           ]
         },
@@ -942,6 +945,7 @@
         {
           "repository": "IICP",
           "paths": [
+            "conformance-runner/src/iicp_conformance/fixtures/profile-compatibility-v0.json",
             "registry/intents.json",
             "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json",
             "spec/v1.9/node-capability-format.md"
@@ -1059,6 +1063,7 @@
           "paths": [
             "README.md",
             "conformance-runner/src/iicp_conformance/fixtures/dispatch-route-ticket-v1.json",
+            "conformance-runner/src/iicp_conformance/fixtures/profile-compatibility-v0.json",
             "registry/fixtures/intent-payloads-v1.json",
             "registry/intents.json",
             "research/pre-normative-profiles/fixtures/dispatch-admission-v2.json",
@@ -1359,6 +1364,7 @@
         {
           "repository": "IICP",
           "paths": [
+            "conformance-runner/src/iicp_conformance/fixtures/profile-compatibility-v0.json",
             "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
           ]
         },
@@ -1551,6 +1557,7 @@
         {
           "repository": "IICP",
           "paths": [
+            "conformance-runner/src/iicp_conformance/fixtures/profile-compatibility-v0.json",
             "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
           ]
         },
@@ -1638,6 +1645,7 @@
         {
           "repository": "IICP",
           "paths": [
+            "conformance-runner/src/iicp_conformance/fixtures/profile-compatibility-v0.json",
             "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
           ]
         },
