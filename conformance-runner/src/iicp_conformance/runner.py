@@ -31,6 +31,7 @@ PROFILE_SUITES = {
 }
 OFFLINE_PROFILE_FILES = {
     "dispatch-route-ticket-v1": "dispatch-route-ticket-v1.json",
+    "dispatch-ticket-trust-v2": "dispatch-ticket-trust-v2.json",
     "dispatch-ticket-trust-v2-crypto": "dispatch-ticket-trust-v2-crypto.json",
 }
 OFFLINE_PROFILE_METADATA = {
@@ -43,6 +44,11 @@ OFFLINE_PROFILE_METADATA = {
         "vector_key": "vectors",
         "id_key": "id",
         "target_role": "offline_ticket_trust_verifier",
+    },
+    "dispatch-ticket-trust-v2": {
+        "vector_key": "cases",
+        "id_key": "id",
+        "target_role": "offline_ticket_trust_semantic_verifier",
     },
 }
 DISPATCH_TICKET_DOMAIN = b"iicp:dispatch-route-ticket:v1\n"
@@ -316,6 +322,91 @@ def run_dispatch_ticket_trust_v2_fixture(
         "profile": profile,
         "fixture_digest": f"sha256:{hashlib.sha256(raw).hexdigest()}",
         "target_role": "offline_ticket_trust_verifier",
+        "evidence_class": evidence_class,
+        "started_at": started.isoformat().replace("+00:00", "Z"),
+        "finished_at": finished.isoformat().replace("+00:00", "Z"),
+        "summary": {"total": len(results), "passed": passed, "failed": len(results) - passed},
+        "results": results,
+        "content_free": True,
+    }
+
+
+def _dispatch_ticket_trust_v2_semantic_decision(case: dict[str, Any]) -> str:
+    """Evaluate the canonical pre-normative trust decision table.
+
+    This is deliberately a fixture decision evaluator, not an implementation of
+    ticket parsing, persistent trust storage, or global redemption.
+    """
+    mode = case.get("mode")
+    profile = case.get("ticket_profile")
+    if mode == "strict_pinned" and profile != "v2":
+        return "reject_required_profile_downgrade"
+    if mode == "open_compat" and profile == "v1":
+        return (
+            "accept_same_origin_unanchored"
+            if case.get("same_origin_key_valid") is True
+            else "reject_signature"
+        )
+    if mode not in {"strict_pinned", "open_compat"} or profile != "v2":
+        return "reject_required_profile_downgrade"
+    if case.get("key_known") is not True:
+        return "reject_unknown_v2_key" if mode == "open_compat" else "reject_unknown_key"
+    if case.get("bundle_version", 0) < case.get("minimum_bundle_version", 0):
+        return "reject_bundle_rollback"
+    if case.get("key_state") == "revoked":
+        return "reject_key_revoked"
+    if case.get("key_time_valid") is not True:
+        return "reject_key_expired"
+    if case.get("signature_valid") is not True:
+        return "reject_signature"
+    if case.get("claims_match") is not True:
+        return "reject_claim_mismatch"
+    if case.get("jti_seen") is True:
+        return "reject_local_replay"
+    return "accept_anchored"
+
+
+def run_dispatch_ticket_trust_v2_semantics_fixture(
+    *, evidence_class: str = "self-attested"
+) -> dict[str, Any]:
+    """Execute v2 trust downgrade and compatibility semantics offline."""
+    if evidence_class not in EVIDENCE_CLASSES:
+        raise ValueError("unsupported evidence class")
+    profile = "dispatch-ticket-trust-v2"
+    raw = bundled_offline_fixture_bytes(profile)
+    fixture = json.loads(raw)
+    if (
+        fixture.get("fixture_version") != "0.1.0-draft"
+        or not str(fixture.get("status", "")).startswith("pre-normative")
+    ):
+        raise ValueError("mixed or unsupported dispatch ticket trust fixture version")
+    cases = fixture.get("cases")
+    if not isinstance(cases, list) or not cases:
+        raise ValueError("dispatch ticket trust fixture has no cases")
+    started = datetime.now(timezone.utc)
+    results: list[dict[str, Any]] = []
+    for case in cases:
+        began = time.monotonic()
+        observed = _dispatch_ticket_trust_v2_semantic_decision(case)
+        expected = case.get("expected")
+        results.append(
+            {
+                "test_id": case["id"],
+                "outcome": "pass" if observed == expected else "fail",
+                "reason": "passed" if observed == expected else "assertion_failed",
+                "observed_status": None,
+                "duration_ms": round((time.monotonic() - began) * 1000, 3),
+            }
+        )
+    finished = datetime.now(timezone.utc)
+    passed = sum(item["outcome"] == "pass" for item in results)
+    return {
+        "schema": RESULT_SCHEMA,
+        "runner_version": RUNNER_VERSION,
+        "suite_version": fixture["fixture_version"],
+        "profile": profile,
+        "fixture_digest": f"sha256:{hashlib.sha256(raw).hexdigest()}",
+        "target_role": "offline_ticket_trust_semantic_verifier",
         "evidence_class": evidence_class,
         "started_at": started.isoformat().replace("+00:00", "Z"),
         "finished_at": finished.isoformat().replace("+00:00", "Z"),

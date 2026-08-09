@@ -18,6 +18,8 @@ python3 -m venv .venv
   --evidence-class project-verified --output ticket-result.json
 .venv/bin/iicp-conformance verify-dispatch-ticket-trust-v2-fixture \
   --evidence-class project-verified --output ticket-trust-result.json
+.venv/bin/iicp-conformance verify-dispatch-ticket-trust-v2-semantics-fixture \
+  --evidence-class project-verified --output ticket-trust-semantics-result.json
 .venv/bin/iicp-conformance verify ticket-result.json
 ```
 
@@ -52,6 +54,14 @@ vectors. It emits only case identifiers and aggregate outcomes. It does not
 enable v2 at runtime, persist a replay cache or trust bundle, distribute or
 rotate keys, provide global single-use redemption, or prove federation
 behavior. Install `.[signing]` before running it.
+
+`verify-dispatch-ticket-trust-v2-semantics-fixture` is a separate
+**pre-normative** decision-table profile. It verifies strict-mode rejection of
+a v1 fallback, explicit open-compat labeling, bundle rollback, key state,
+claim, signature, and local-replay outcomes. It emits only case identifiers and
+aggregate outcomes. It does not parse live tickets, alter v1 behavior, enable
+v2, or make any runtime trust-store, federation, or independent-conformance
+claim.
 
 The loopback-only `directory-lifecycle-v1` profile registers a disposable node,
 authenticates a heartbeat, refreshes the registration and rotates its token,
