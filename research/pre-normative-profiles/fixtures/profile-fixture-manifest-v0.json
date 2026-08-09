@@ -96,6 +96,11 @@
       "path": "reputation-hourly-velocity-v0.json",
       "fixture_version": "0.1.0-draft",
       "sha256": "5bad81668f405bcc5683712e010d9afe383ce20155a194c50f7ae3c183a40b4f"
+    },
+    {
+      "path": "federation-chain-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "e747af2ff181b2bc1f4b7f4f37a362c99d537a1e6e5fa58b1834f6c5b72f168d"
     }
   ]
 }

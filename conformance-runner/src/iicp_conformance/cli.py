@@ -13,6 +13,7 @@ from .runner import (
     run_dispatch_ticket_trust_v2_fixture,
     run_dispatch_ticket_trust_v2_semantics_fixture,
     run_policy_refusal_fixture,
+    run_federation_chain_fixture,
     sign_result,
     verify_result,
 )
@@ -87,6 +88,10 @@ def parser() -> argparse.ArgumentParser:
         default="self-attested",
     )
     policy_refusal_parser.add_argument("--signing-key-file", type=Path)
+    federation_parser = commands.add_parser("verify-federation-chain-fixture", help="Run offline pre-normative federation-chain vectors")
+    federation_parser.add_argument("--output", type=Path, help="Write the content-free JSON result")
+    federation_parser.add_argument("--evidence-class", choices=("self-attested", "project-verified", "independent"), default="self-attested")
+    federation_parser.add_argument("--signing-key-file", type=Path)
     verify_parser = commands.add_parser("verify", help="Verify a result bundle offline")
     verify_parser.add_argument("result", type=Path)
     verify_parser.add_argument("--require-signature", action="store_true")
@@ -100,6 +105,7 @@ def main(argv: list[str] | None = None) -> int:
         "verify-dispatch-ticket-trust-v2-fixture",
         "verify-dispatch-ticket-trust-v2-semantics-fixture",
         "verify-policy-refusal-fixture",
+        "verify-federation-chain-fixture",
     }:
         result = (
             run_dispatch_ticket_fixture(evidence_class=args.evidence_class)
@@ -113,6 +119,8 @@ def main(argv: list[str] | None = None) -> int:
             )
             if args.command == "verify-dispatch-ticket-trust-v2-semantics-fixture"
             else run_policy_refusal_fixture(evidence_class=args.evidence_class)
+            if args.command == "verify-policy-refusal-fixture"
+            else run_federation_chain_fixture(evidence_class=args.evidence_class)
         )
         if args.signing_key_file:
             result = sign_result(result, args.signing_key_file.read_text(encoding="utf-8"))

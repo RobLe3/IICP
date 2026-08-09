@@ -1,0 +1,221 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "profile": "federation-chain-v0",
+  "genesis_root": "c44802bedf3e63b5a3f1634c5d19263634f92f26dd15401b09b06dd53a80cf9d",
+  "trusted_roots": {
+    "genesis-a": "d04ab232742bb4ab3a1368bd4615e4e6d0224ab71a016baf8520a332c9778737"
+  },
+  "cases": [
+    {
+      "id": "FED-CHAIN-01",
+      "root_id": "genesis-a",
+      "replica_authorization": "active",
+      "events": [
+        {
+          "event_id": "event-0001",
+          "event_type": "REGISTER",
+          "seq": 1,
+          "ts_ms": 1700000000000,
+          "payload": {
+            "region": "eu-central"
+          },
+          "prev_hash": "c44802bedf3e63b5a3f1634c5d19263634f92f26dd15401b09b06dd53a80cf9d",
+          "sig": "de4453e9394770571875b44de82dade625897504a0b50456ae291dcb17df5f096910950fa30f93ccd8a8303592d0a3b958f695175628f30edda0dd92ad666208"
+        },
+        {
+          "event_id": "event-0002",
+          "event_type": "DEREGISTER",
+          "seq": 2,
+          "ts_ms": 1700000001000,
+          "payload": {
+            "reason": "operator_request"
+          },
+          "prev_hash": "361b028723b5076ee86e0c9d6b3f3c505860571897517dea919f0ad853c4503f",
+          "sig": "d546190079e88fddfe40cc746d929ed58746d915066865ae34bc4b3064c54d2e0df3f1f79ae39529e3c8617e349a7a35cc2d5eec310f2877d2200662ba838508"
+        }
+      ],
+      "expected": "accept"
+    },
+    {
+      "id": "FED-CHAIN-02",
+      "root_id": "unknown",
+      "replica_authorization": "active",
+      "events": [
+        {
+          "event_id": "event-0001",
+          "event_type": "REGISTER",
+          "seq": 1,
+          "ts_ms": 1700000000000,
+          "payload": {
+            "region": "eu-central"
+          },
+          "prev_hash": "c44802bedf3e63b5a3f1634c5d19263634f92f26dd15401b09b06dd53a80cf9d",
+          "sig": "de4453e9394770571875b44de82dade625897504a0b50456ae291dcb17df5f096910950fa30f93ccd8a8303592d0a3b958f695175628f30edda0dd92ad666208"
+        },
+        {
+          "event_id": "event-0002",
+          "event_type": "DEREGISTER",
+          "seq": 2,
+          "ts_ms": 1700000001000,
+          "payload": {
+            "reason": "operator_request"
+          },
+          "prev_hash": "361b028723b5076ee86e0c9d6b3f3c505860571897517dea919f0ad853c4503f",
+          "sig": "d546190079e88fddfe40cc746d929ed58746d915066865ae34bc4b3064c54d2e0df3f1f79ae39529e3c8617e349a7a35cc2d5eec310f2877d2200662ba838508"
+        }
+      ],
+      "expected": "reject_untrusted_root"
+    },
+    {
+      "id": "FED-CHAIN-03",
+      "root_id": "genesis-a",
+      "replica_authorization": "active",
+      "events": [
+        {
+          "event_id": "event-0001",
+          "event_type": "REGISTER",
+          "seq": 1,
+          "ts_ms": 1700000000000,
+          "payload": {
+            "region": "eu-central"
+          },
+          "prev_hash": "c44802bedf3e63b5a3f1634c5d19263634f92f26dd15401b09b06dd53a80cf9d",
+          "sig": "de4453e9394770571875b44de82dade625897504a0b50456ae291dcb17df5f096910950fa30f93ccd8a8303592d0a3b958f695175628f30edda0dd92ad666208"
+        },
+        {
+          "event_id": "event-0002",
+          "event_type": "DEREGISTER",
+          "seq": 2,
+          "ts_ms": 1700000001000,
+          "payload": {
+            "reason": "operator_request"
+          },
+          "prev_hash": "361b028723b5076ee86e0c9d6b3f3c505860571897517dea919f0ad853c4503f",
+          "sig": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expected": "reject_signature"
+    },
+    {
+      "id": "FED-CHAIN-04",
+      "root_id": "genesis-a",
+      "replica_authorization": "active",
+      "events": [
+        {
+          "event_id": "event-0001",
+          "event_type": "REGISTER",
+          "seq": 1,
+          "ts_ms": 1700000000000,
+          "payload": {
+            "region": "eu-central"
+          },
+          "prev_hash": "c44802bedf3e63b5a3f1634c5d19263634f92f26dd15401b09b06dd53a80cf9d",
+          "sig": "de4453e9394770571875b44de82dade625897504a0b50456ae291dcb17df5f096910950fa30f93ccd8a8303592d0a3b958f695175628f30edda0dd92ad666208"
+        },
+        {
+          "event_id": "event-0002",
+          "event_type": "DEREGISTER",
+          "seq": 2,
+          "ts_ms": 1700000001000,
+          "payload": {
+            "reason": "operator_request"
+          },
+          "prev_hash": "c44802bedf3e63b5a3f1634c5d19263634f92f26dd15401b09b06dd53a80cf9d",
+          "sig": "d546190079e88fddfe40cc746d929ed58746d915066865ae34bc4b3064c54d2e0df3f1f79ae39529e3c8617e349a7a35cc2d5eec310f2877d2200662ba838508"
+        }
+      ],
+      "expected": "reject_chain_link"
+    },
+    {
+      "id": "FED-CHAIN-05",
+      "root_id": "genesis-a",
+      "replica_authorization": "active",
+      "events": [
+        {
+          "event_id": "event-0001",
+          "event_type": "REGISTER",
+          "seq": 1,
+          "ts_ms": 1700000000000,
+          "payload": {
+            "region": "eu-central"
+          },
+          "prev_hash": "c44802bedf3e63b5a3f1634c5d19263634f92f26dd15401b09b06dd53a80cf9d",
+          "sig": "de4453e9394770571875b44de82dade625897504a0b50456ae291dcb17df5f096910950fa30f93ccd8a8303592d0a3b958f695175628f30edda0dd92ad666208"
+        },
+        {
+          "event_id": "event-0002",
+          "event_type": "DEREGISTER",
+          "seq": 1,
+          "ts_ms": 1700000001000,
+          "payload": {
+            "reason": "operator_request"
+          },
+          "prev_hash": "361b028723b5076ee86e0c9d6b3f3c505860571897517dea919f0ad853c4503f",
+          "sig": "d546190079e88fddfe40cc746d929ed58746d915066865ae34bc4b3064c54d2e0df3f1f79ae39529e3c8617e349a7a35cc2d5eec310f2877d2200662ba838508"
+        }
+      ],
+      "expected": "reject_sequence"
+    },
+    {
+      "id": "FED-CHAIN-06",
+      "root_id": "genesis-a",
+      "replica_authorization": "decommissioned",
+      "events": [
+        {
+          "event_id": "event-0001",
+          "event_type": "REGISTER",
+          "seq": 1,
+          "ts_ms": 1700000000000,
+          "payload": {
+            "region": "eu-central"
+          },
+          "prev_hash": "c44802bedf3e63b5a3f1634c5d19263634f92f26dd15401b09b06dd53a80cf9d",
+          "sig": "de4453e9394770571875b44de82dade625897504a0b50456ae291dcb17df5f096910950fa30f93ccd8a8303592d0a3b958f695175628f30edda0dd92ad666208"
+        },
+        {
+          "event_id": "event-0002",
+          "event_type": "DEREGISTER",
+          "seq": 2,
+          "ts_ms": 1700000001000,
+          "payload": {
+            "reason": "operator_request"
+          },
+          "prev_hash": "361b028723b5076ee86e0c9d6b3f3c505860571897517dea919f0ad853c4503f",
+          "sig": "d546190079e88fddfe40cc746d929ed58746d915066865ae34bc4b3064c54d2e0df3f1f79ae39529e3c8617e349a7a35cc2d5eec310f2877d2200662ba838508"
+        }
+      ],
+      "expected": "reject_replica_authorization"
+    },
+    {
+      "id": "FED-CHAIN-07",
+      "root_id": "genesis-a",
+      "replica_authorization": "expired",
+      "events": [
+        {
+          "event_id": "event-0001",
+          "event_type": "REGISTER",
+          "seq": 1,
+          "ts_ms": 1700000000000,
+          "payload": {
+            "region": "eu-central"
+          },
+          "prev_hash": "c44802bedf3e63b5a3f1634c5d19263634f92f26dd15401b09b06dd53a80cf9d",
+          "sig": "de4453e9394770571875b44de82dade625897504a0b50456ae291dcb17df5f096910950fa30f93ccd8a8303592d0a3b958f695175628f30edda0dd92ad666208"
+        },
+        {
+          "event_id": "event-0002",
+          "event_type": "DEREGISTER",
+          "seq": 2,
+          "ts_ms": 1700000001000,
+          "payload": {
+            "reason": "operator_request"
+          },
+          "prev_hash": "361b028723b5076ee86e0c9d6b3f3c505860571897517dea919f0ad853c4503f",
+          "sig": "d546190079e88fddfe40cc746d929ed58746d915066865ae34bc4b3064c54d2e0df3f1f79ae39529e3c8617e349a7a35cc2d5eec310f2877d2200662ba838508"
+        }
+      ],
+      "expected": "reject_replica_authorization_expired"
+    }
+  ]
+}
