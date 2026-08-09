@@ -10,6 +10,7 @@ Validation and analysis tools for the IICP specification.
 | `audit_mcp_official_sdk.py` | Downloads one pinned official MCP TypeScript SDK tarball into a temporary directory and reports its declared wire revisions without changing IICP behavior |
 | `test_mcp_legacy_official_endpoint.py` | Starts a temporary official MCP SDK loopback server and verifies the reviewed legacy initialization and safe tool-call path |
 | `test_mcp_gateway_official_processes.py` | Runs the actual Python, TypeScript and Rust gateways against the pinned official legacy MCP endpoint; local project verification only |
+| `check_context_event_ownership.py` | Validates unique bounded-context ownership, the closed federated event set, transition ownership, and the non-authoritative `service_id` boundary |
 
 The separately installable preview under `conformance-runner/` exercises a
 bounded public-directory profile and emits content-free machine-readable
@@ -23,6 +24,7 @@ python3 tools/quick_validation.py <message.json>
 python3 tools/audit_mcp_official_sdk.py
 python3 tools/test_mcp_legacy_official_endpoint.py
 python3 tools/test_mcp_gateway_official_processes.py
+python3 tools/check_context_event_ownership.py
 ```
 
 

@@ -323,6 +323,11 @@ repository provides the experimental browser implementation.
 
 The protocol specification in this repository is the authoritative source for building interoperable implementations. Third-party implementations that conform to the spec (see conformance test suite) are fully compatible with the live network.
 
+Directory implementations also share an implementation-neutral
+[context and signed service-event ownership](docs/architecture/context-and-service-event-ownership.md)
+contract. Internal module or service placement cannot redefine public routes,
+event ownership, replication behavior or authorization.
+
 ---
 
 ## Contributing

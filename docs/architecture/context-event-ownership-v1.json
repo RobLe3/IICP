@@ -1,0 +1,116 @@
+{
+  "version": "1.0.0",
+  "status": "architecture-contract",
+  "authority": {
+    "event_profile": "spec/v1.9/iicp-federated-directory.md#5-event-log-protocol",
+    "directory_profile": "spec/v1.9/iicp-dir.md",
+    "recognition_profile": "spec/v1.9/iicp-recognition.md"
+  },
+  "rules": {
+    "event_owner_source": "event_type",
+    "service_id_is_authorization": false,
+    "unknown_valid_service_id_handling": "retain_opaque_metadata",
+    "unknown_event_type_handling": "retain_for_audit_without_state_mutation",
+    "cross_context_data": "stable_ids_and_signed_events",
+    "public_routes_stable_across_internal_extraction": true
+  },
+  "service_identity": {
+    "identifier_pattern": "^[a-z0-9][a-z0-9._-]{0,63}$",
+    "legacy_value": null,
+    "runtime_emission": "dormant",
+    "current_process_label": "directory-monolith",
+    "activation_gates": [
+      "cross-implementation signature and replay evidence",
+      "independently operated service or replica pilot",
+      "context-owned backup and restoration rehearsal",
+      "rollback decision and observation window"
+    ]
+  },
+  "contexts": [
+    {
+      "id": "provider_registry",
+      "owns": ["provider identity binding", "capability advertisement", "provider lifecycle", "current heartbeat snapshot"],
+      "route_families": ["register", "heartbeat", "deregister", "node detail"]
+    },
+    {
+      "id": "selection",
+      "owns": ["discovery views", "eligibility filtering", "ranking", "dispatch route issuance"],
+      "route_families": ["discover", "dispatch ticket"]
+    },
+    {
+      "id": "reachability",
+      "owns": ["reachability observations", "dormancy", "reactivation", "route availability transitions"],
+      "route_families": ["health", "lifecycle probes"]
+    },
+    {
+      "id": "reputation",
+      "owns": ["reputation score", "positive velocity budget", "decay", "reputation archive"],
+      "route_families": ["reputation projection"]
+    },
+    {
+      "id": "ledger",
+      "owns": ["credit transactions", "balances", "operator-wallet projections", "settlement receipts"],
+      "route_families": ["credits"]
+    },
+    {
+      "id": "federation_membership",
+      "owns": ["replica registration", "replica credentials", "replica decommission", "snapshot and event-tail membership"],
+      "route_families": ["replicas", "snapshot", "events"]
+    },
+    {
+      "id": "operator_evidence",
+      "owns": ["operator observations", "audit reports", "evidence-only discrepancies"],
+      "route_families": ["audit report", "operator evidence"]
+    },
+    {
+      "id": "telemetry",
+      "owns": ["probe observations", "health vectors", "aggregated operational evidence"],
+      "route_families": ["telemetry", "stats"]
+    },
+    {
+      "id": "recognition",
+      "owns": ["founder ordinal provenance", "founder succession", "recognition projection"],
+      "route_families": ["leaderboard", "recognition"]
+    }
+  ],
+  "public_state_transitions": [
+    {"id": "provider_registered_or_refreshed", "owner": "provider_registry", "evidence": "REGISTER"},
+    {"id": "provider_heartbeat_snapshot_updated", "owner": "provider_registry", "evidence": "snapshot"},
+    {"id": "provider_deregistered", "owner": "provider_registry", "evidence": "DEREGISTER"},
+    {"id": "provider_became_dormant", "owner": "reachability", "evidence": "EVICT"},
+    {"id": "provider_reactivated", "owner": "reachability", "evidence": "REACTIVATE"},
+    {"id": "direct_reachability_demoted", "owner": "reachability", "evidence": "REACHABILITY_DEMOTE"},
+    {"id": "direct_reachability_restored", "owner": "reachability", "evidence": "REACHABILITY_RESTORE"},
+    {"id": "reputation_updated_from_task_evidence", "owner": "reputation", "evidence": "snapshot"},
+    {"id": "reputation_decayed", "owner": "reputation", "evidence": "REPUTATION_DECAY"},
+    {"id": "credit_balance_changed", "owner": "ledger", "evidence": "ledger event"},
+    {"id": "replica_registered_or_reactivated", "owner": "federation_membership", "evidence": "REPLICA_REGISTERED"},
+    {"id": "replica_decommissioned", "owner": "federation_membership", "evidence": "REPLICA_DEREGISTERED"},
+    {"id": "operator_discrepancy_observed", "owner": "operator_evidence", "evidence": "OPERATOR_OBSERVED"},
+    {"id": "founder_ordinal_locked", "owner": "recognition", "evidence": "FOUNDER_LOCKIN"},
+    {"id": "founder_ordinal_succeeded", "owner": "recognition", "evidence": "FOUNDER_SUCCESSION"}
+  ],
+  "events": [
+    {"type": "REGISTER", "owner": "provider_registry", "scope": "federated", "replication_action": "apply_state", "status": "current"},
+    {"type": "DEREGISTER", "owner": "provider_registry", "scope": "federated", "replication_action": "apply_state", "status": "current"},
+    {"type": "CREDIT_AWARD", "owner": "ledger", "scope": "federated", "replication_action": "apply_state", "status": "current"},
+    {"type": "REPLICA_REGISTERED", "owner": "federation_membership", "scope": "federated", "replication_action": "apply_state", "status": "current"},
+    {"type": "REPLICA_DEREGISTERED", "owner": "federation_membership", "scope": "federated", "replication_action": "apply_state", "status": "current"},
+    {"type": "REPUTATION_DECAY", "owner": "reputation", "scope": "federated", "replication_action": "apply_state", "status": "current"},
+    {"type": "OPERATOR_OBSERVED", "owner": "operator_evidence", "scope": "federated", "replication_action": "record_only", "status": "current"},
+    {"type": "REPUTATION_UPDATE", "owner": "reputation", "scope": "local", "replication_action": "none", "status": "snapshot-derived"},
+    {"type": "HEALTH", "owner": "telemetry", "scope": "local", "replication_action": "none", "status": "current"},
+    {"type": "EVICT", "owner": "reachability", "scope": "local", "replication_action": "none", "status": "current"},
+    {"type": "REACTIVATE", "owner": "reachability", "scope": "local", "replication_action": "none", "status": "current"},
+    {"type": "AUDIT_REPORT", "owner": "operator_evidence", "scope": "local", "replication_action": "none", "status": "current"},
+    {"type": "CREDIT_ALLOCATION", "owner": "ledger", "scope": "local", "replication_action": "none", "status": "current"},
+    {"type": "CREDIT_SPEND", "owner": "ledger", "scope": "local", "replication_action": "none", "status": "current"},
+    {"type": "CREDIT_SPEND_INSUFFICIENT", "owner": "ledger", "scope": "local", "replication_action": "none", "status": "current"},
+    {"type": "REACHABILITY_DEMOTE", "owner": "reachability", "scope": "local", "replication_action": "none", "status": "current"},
+    {"type": "REACHABILITY_RESTORE", "owner": "reachability", "scope": "local", "replication_action": "none", "status": "current"},
+    {"type": "HEARTBEAT", "owner": "provider_registry", "scope": "retired", "replication_action": "none", "status": "snapshot-derived"},
+    {"type": "SCORE_UPDATE", "owner": "selection", "scope": "retired", "replication_action": "none", "status": "snapshot-derived"},
+    {"type": "FOUNDER_LOCKIN", "owner": "recognition", "scope": "dedicated", "replication_action": "none", "status": "planned"},
+    {"type": "FOUNDER_SUCCESSION", "owner": "recognition", "scope": "dedicated", "replication_action": "none", "status": "planned"}
+  ]
+}
