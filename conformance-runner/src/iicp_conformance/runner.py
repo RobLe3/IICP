@@ -31,6 +31,19 @@ PROFILE_SUITES = {
 }
 OFFLINE_PROFILE_FILES = {
     "dispatch-route-ticket-v1": "dispatch-route-ticket-v1.json",
+    "dispatch-ticket-trust-v2-crypto": "dispatch-ticket-trust-v2-crypto.json",
+}
+OFFLINE_PROFILE_METADATA = {
+    "dispatch-route-ticket-v1": {
+        "vector_key": "validation_vectors",
+        "id_key": "name",
+        "target_role": "offline_ticket_verifier",
+    },
+    "dispatch-ticket-trust-v2-crypto": {
+        "vector_key": "vectors",
+        "id_key": "id",
+        "target_role": "offline_ticket_trust_verifier",
+    },
 }
 DISPATCH_TICKET_DOMAIN = b"iicp:dispatch-route-ticket:v1\n"
 DISPATCH_TICKET_AUDIENCE = "iicp.directory.dispatch"
@@ -202,6 +215,107 @@ def run_dispatch_ticket_fixture(
         "profile": profile,
         "fixture_digest": f"sha256:{hashlib.sha256(raw).hexdigest()}",
         "target_role": "offline_ticket_verifier",
+        "evidence_class": evidence_class,
+        "started_at": started.isoformat().replace("+00:00", "Z"),
+        "finished_at": finished.isoformat().replace("+00:00", "Z"),
+        "summary": {"total": len(results), "passed": passed, "failed": len(results) - passed},
+        "results": results,
+        "content_free": True,
+    }
+
+
+def _verify_dispatch_ticket_trust_v2_vector(
+    vector: dict[str, Any], keys: dict[str, dict[str, Any]], domain: bytes
+) -> str:
+    """Evaluate one portable v2 crypto vector without retaining ticket claims.
+
+    This intentionally covers the vector's local replay flag only. It does not
+    implement a persistent trust store, global redemption, or key distribution.
+    """
+    try:
+        from cryptography.exceptions import InvalidSignature
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+    except ImportError as error:
+        raise RuntimeError(
+            "install iicp-conformance[signing] to verify dispatch ticket trust vectors"
+        ) from error
+    claims = vector["claims"]
+    key_id = claims["key_id"]
+    if key_id not in vector["trust_bundle_key_ids"] or key_id not in keys:
+        return "reject_unknown_key"
+    key = keys[key_id]
+    if key["state"] == "revoked":
+        return "reject_key_revoked"
+    if not key["valid_from"] <= vector["now"] <= key["valid_until"]:
+        return "reject_key_expired"
+    try:
+        public_key = Ed25519PublicKey.from_public_bytes(
+            _b64url_decode(key["public_key_b64url"])
+        )
+        public_key.verify(
+            _b64url_decode(vector["signature_b64url"]),
+            domain + json.dumps(
+                claims, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+            ).encode("utf-8"),
+        )
+    except (ValueError, binascii.Error, InvalidSignature, UnicodeEncodeError):
+        return "reject_signature"
+    if vector["jti_seen"]:
+        return "reject_local_replay"
+    return "accept_anchored"
+
+
+def run_dispatch_ticket_trust_v2_fixture(
+    *, evidence_class: str = "self-attested"
+) -> dict[str, Any]:
+    """Execute the pre-normative v2 crypto/replay fixture offline.
+
+    The result carries only vector identifiers and aggregate outcomes. A pass
+    proves fixture execution, not runtime enablement, trust-store persistence,
+    global redemption, or independently operated conformance.
+    """
+    if evidence_class not in EVIDENCE_CLASSES:
+        raise ValueError("unsupported evidence class")
+    profile = "dispatch-ticket-trust-v2-crypto"
+    raw = bundled_offline_fixture_bytes(profile)
+    fixture = json.loads(raw)
+    if (
+        fixture.get("fixture_version") != "0.2.0-draft"
+        or fixture.get("status") != "pre-normative"
+    ):
+        raise ValueError("mixed or unsupported dispatch ticket trust fixture version")
+    vectors = fixture.get("vectors")
+    if not isinstance(vectors, list) or not vectors:
+        raise ValueError("dispatch ticket trust fixture has no vectors")
+    try:
+        domain = _b64url_decode(fixture["domain_separator_b64url"])
+        keys = {key["key_id"]: key for key in fixture["keys"]}
+    except (KeyError, TypeError, binascii.Error) as error:
+        raise ValueError("dispatch ticket trust fixture is malformed") from error
+    started = datetime.now(timezone.utc)
+    results: list[dict[str, Any]] = []
+    for vector in vectors:
+        began = time.monotonic()
+        observed = _verify_dispatch_ticket_trust_v2_vector(vector, keys, domain)
+        expected = vector.get("expected")
+        results.append(
+            {
+                "test_id": vector["id"],
+                "outcome": "pass" if observed == expected else "fail",
+                "reason": "passed" if observed == expected else "assertion_failed",
+                "observed_status": None,
+                "duration_ms": round((time.monotonic() - began) * 1000, 3),
+            }
+        )
+    finished = datetime.now(timezone.utc)
+    passed = sum(item["outcome"] == "pass" for item in results)
+    return {
+        "schema": RESULT_SCHEMA,
+        "runner_version": RUNNER_VERSION,
+        "suite_version": fixture["fixture_version"],
+        "profile": profile,
+        "fixture_digest": f"sha256:{hashlib.sha256(raw).hexdigest()}",
+        "target_role": "offline_ticket_trust_verifier",
         "evidence_class": evidence_class,
         "started_at": started.isoformat().replace("+00:00", "Z"),
         "finished_at": finished.isoformat().replace("+00:00", "Z"),
@@ -531,11 +645,12 @@ def verify_result(
             raw = bundled_offline_fixture_bytes(profile)
             fixture = json.loads(raw)
             expected_version = fixture["fixture_version"]
-            vectors = fixture.get("validation_vectors")
+            metadata = OFFLINE_PROFILE_METADATA[profile]
+            vectors = fixture.get(metadata["vector_key"])
             if not isinstance(vectors, list) or not vectors:
                 raise ValueError("offline fixture has no validation vectors")
-            expected_ids = [vector["name"] for vector in vectors]
-            expected_target_role = "offline_ticket_verifier"
+            expected_ids = [vector[metadata["id_key"]] for vector in vectors]
+            expected_target_role = metadata["target_role"]
         else:
             raise ValueError("unsupported conformance profile")
     except (ValueError, KeyError, json.JSONDecodeError) as error:

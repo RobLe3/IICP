@@ -605,6 +605,7 @@
             "conformance-runner/src/iicp_conformance/fixtures/directory-lifecycle-v1.json",
             "conformance-runner/src/iicp_conformance/fixtures/directory-public-v1.json",
             "conformance-runner/src/iicp_conformance/fixtures/dispatch-route-ticket-v1.json",
+            "conformance-runner/src/iicp_conformance/fixtures/dispatch-ticket-trust-v2-crypto.json",
             "conformance-runner/tests/test_runner.py",
             "docs/agent-bootstrap.md",
             "registry/fixtures/intent-payloads-v1.json",

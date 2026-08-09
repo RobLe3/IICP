@@ -10,6 +10,7 @@ from .runner import (
     PROFILE_FILES,
     run,
     run_dispatch_ticket_fixture,
+    run_dispatch_ticket_trust_v2_fixture,
     sign_result,
     verify_result,
 )
@@ -45,6 +46,19 @@ def parser() -> argparse.ArgumentParser:
         default="self-attested",
     )
     ticket_parser.add_argument("--signing-key-file", type=Path)
+    trust_ticket_parser = commands.add_parser(
+        "verify-dispatch-ticket-trust-v2-fixture",
+        help="Run offline pre-normative v2 dispatch-ticket trust vectors",
+    )
+    trust_ticket_parser.add_argument(
+        "--output", type=Path, help="Write the content-free JSON result"
+    )
+    trust_ticket_parser.add_argument(
+        "--evidence-class",
+        choices=("self-attested", "project-verified", "independent"),
+        default="self-attested",
+    )
+    trust_ticket_parser.add_argument("--signing-key-file", type=Path)
     verify_parser = commands.add_parser("verify", help="Verify a result bundle offline")
     verify_parser.add_argument("result", type=Path)
     verify_parser.add_argument("--require-signature", action="store_true")
@@ -53,8 +67,17 @@ def parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
-    if args.command == "verify-dispatch-ticket-fixture":
-        result = run_dispatch_ticket_fixture(evidence_class=args.evidence_class)
+    if args.command in {
+        "verify-dispatch-ticket-fixture",
+        "verify-dispatch-ticket-trust-v2-fixture",
+    }:
+        result = (
+            run_dispatch_ticket_fixture(evidence_class=args.evidence_class)
+            if args.command == "verify-dispatch-ticket-fixture"
+            else run_dispatch_ticket_trust_v2_fixture(
+                evidence_class=args.evidence_class
+            )
+        )
         if args.signing_key_file:
             result = sign_result(result, args.signing_key_file.read_text(encoding="utf-8"))
         encoded = json.dumps(result, indent=2, sort_keys=True) + "\n"
