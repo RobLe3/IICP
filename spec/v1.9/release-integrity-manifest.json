@@ -60,7 +60,7 @@
     "research/native-ai-infrastructure/fixtures/service-profiles-v1.json": "9e0ee7aca0d7c5d1903528621f2db6f86f04b6230769276ed2244d2c40d4d6f6",
     "research/pre-normative-profiles/fixtures/discovery-evidence-v1.json": "9b7b1302ee68af4a4889074e42e123c380e4e5e5fd0c80b78050c97b13f45f0c",
     "research/pre-normative-profiles/fixtures/federation-chain-v0.json": "e747af2ff181b2bc1f4b7f4f37a362c99d537a1e6e5fa58b1834f6c5b72f168d",
-    "research/pre-normative-profiles/fixtures/profile-fixture-manifest-v0.json": "0e92286ae881c4d104e88cf3024bb946829784f8badcd539ed3c15d9c87995cb",
+    "research/pre-normative-profiles/fixtures/profile-fixture-manifest-v0.json": "240a7da9e1ed551f4df0778ab649c0aa7c2eb6fe0eb1034dd9428f087b3d6a9b",
     "schemas/conformance-badge.json": "eb5a2524344cd7895e9aea930ea86af1883816529b9f08aa1a71904b95437139",
     "schemas/conformance-result-v1.json": "66fb11edf2e5bc3dfa9d0ea1493405d61e9f8e5db95beeb43d5115b4652de379",
     "schemas/conformance-verification-v1.json": "b6488eaf1117de3d04868eb49a9733bdb37156fcc063669a86642cc7fdb82e12",
@@ -110,7 +110,7 @@
     "tools/test_public_prose.py": "39f8488525192780a4cabda0c3b5641208fb7b27c66044bd464693e740fc505f",
     "tools/test_service_lifecycle_fixture.py": "854656521fc302a23cf00f6bceafaabf1561753a5ff8b76b4d49fdd7a9697c73"
   },
-  "manifest_version": "1.9.0",
+  "manifest_version": "1.10.0",
   "protocol_suite_version": "1.10.12",
   "registry_version": "1.4.0",
   "status": "immutable canonical release candidate"

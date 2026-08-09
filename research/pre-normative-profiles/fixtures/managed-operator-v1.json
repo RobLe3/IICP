@@ -1,0 +1,167 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "profile": "urn:iicp:profile:managed-operator:v1",
+  "vectors": [
+    {
+      "name": "convenience_preserves_existing_choices",
+      "input": {
+        "mode": "convenience",
+        "authentication_configured": false,
+        "identity_storage_protected": false,
+        "auto_update_requested": true,
+        "update_authenticated": false,
+        "rollback_verified": false,
+        "upnp_requested": true,
+        "tunnel_requested": true,
+        "upnp_approved": false,
+        "tunnel_approved": false
+      },
+      "expected": {"accepted": true, "reason": "convenience_mode"}
+    },
+    {
+      "name": "managed_safe_baseline",
+      "input": {
+        "mode": "managed",
+        "authentication_configured": true,
+        "identity_storage_protected": true,
+        "auto_update_requested": false,
+        "update_authenticated": false,
+        "rollback_verified": false,
+        "upnp_requested": false,
+        "tunnel_requested": false,
+        "upnp_approved": false,
+        "tunnel_approved": false
+      },
+      "expected": {"accepted": true, "reason": "managed_requirements_met"}
+    },
+    {
+      "name": "managed_requires_authentication",
+      "input": {
+        "mode": "managed",
+        "authentication_configured": false,
+        "identity_storage_protected": true,
+        "auto_update_requested": false,
+        "update_authenticated": false,
+        "rollback_verified": false,
+        "upnp_requested": false,
+        "tunnel_requested": false,
+        "upnp_approved": false,
+        "tunnel_approved": false
+      },
+      "expected": {"accepted": false, "reason": "authentication_required"}
+    },
+    {
+      "name": "managed_requires_protected_identity",
+      "input": {
+        "mode": "managed",
+        "authentication_configured": true,
+        "identity_storage_protected": false,
+        "auto_update_requested": false,
+        "update_authenticated": false,
+        "rollback_verified": false,
+        "upnp_requested": false,
+        "tunnel_requested": false,
+        "upnp_approved": false,
+        "tunnel_approved": false
+      },
+      "expected": {"accepted": false, "reason": "protected_identity_storage_required"}
+    },
+    {
+      "name": "managed_rejects_unsigned_update",
+      "input": {
+        "mode": "managed",
+        "authentication_configured": true,
+        "identity_storage_protected": true,
+        "auto_update_requested": true,
+        "update_authenticated": false,
+        "rollback_verified": true,
+        "upnp_requested": false,
+        "tunnel_requested": false,
+        "upnp_approved": false,
+        "tunnel_approved": false
+      },
+      "expected": {"accepted": false, "reason": "authenticated_update_required"}
+    },
+    {
+      "name": "managed_update_requires_rollback",
+      "input": {
+        "mode": "managed",
+        "authentication_configured": true,
+        "identity_storage_protected": true,
+        "auto_update_requested": true,
+        "update_authenticated": true,
+        "rollback_verified": false,
+        "upnp_requested": false,
+        "tunnel_requested": false,
+        "upnp_approved": false,
+        "tunnel_approved": false
+      },
+      "expected": {"accepted": false, "reason": "rollback_required"}
+    },
+    {
+      "name": "managed_upnp_requires_explicit_approval",
+      "input": {
+        "mode": "managed",
+        "authentication_configured": true,
+        "identity_storage_protected": true,
+        "auto_update_requested": false,
+        "update_authenticated": false,
+        "rollback_verified": false,
+        "upnp_requested": true,
+        "tunnel_requested": false,
+        "upnp_approved": false,
+        "tunnel_approved": false
+      },
+      "expected": {"accepted": false, "reason": "upnp_approval_required"}
+    },
+    {
+      "name": "managed_tunnel_requires_explicit_approval",
+      "input": {
+        "mode": "managed",
+        "authentication_configured": true,
+        "identity_storage_protected": true,
+        "auto_update_requested": false,
+        "update_authenticated": false,
+        "rollback_verified": false,
+        "upnp_requested": false,
+        "tunnel_requested": true,
+        "upnp_approved": false,
+        "tunnel_approved": false
+      },
+      "expected": {"accepted": false, "reason": "tunnel_approval_required"}
+    },
+    {
+      "name": "managed_explicit_exposure_is_allowed",
+      "input": {
+        "mode": "managed",
+        "authentication_configured": true,
+        "identity_storage_protected": true,
+        "auto_update_requested": false,
+        "update_authenticated": false,
+        "rollback_verified": false,
+        "upnp_requested": true,
+        "tunnel_requested": true,
+        "upnp_approved": true,
+        "tunnel_approved": true
+      },
+      "expected": {"accepted": true, "reason": "managed_requirements_met"}
+    },
+    {
+      "name": "unknown_mode_fails_closed",
+      "input": {
+        "mode": "automatic",
+        "authentication_configured": true,
+        "identity_storage_protected": true,
+        "auto_update_requested": false,
+        "update_authenticated": false,
+        "rollback_verified": false,
+        "upnp_requested": false,
+        "tunnel_requested": false,
+        "upnp_approved": false,
+        "tunnel_approved": false
+      },
+      "expected": {"accepted": false, "reason": "invalid_operator_profile"}
+    }
+  ]
+}
