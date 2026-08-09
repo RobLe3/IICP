@@ -15,6 +15,7 @@ from iicp_conformance.runner import (
     run_dispatch_ticket_fixture,
     run_dispatch_ticket_trust_v2_fixture,
     run_dispatch_ticket_trust_v2_semantics_fixture,
+    run_policy_refusal_fixture,
     sign_result,
     verify_result,
 )
@@ -240,6 +241,33 @@ class RunnerTest(unittest.TestCase):
 
         self.assertEqual(
             bundled_offline_fixture_bytes("dispatch-ticket-trust-v2"),
+            canonical.read_bytes(),
+        )
+
+    def test_offline_policy_refusal_fixture_is_content_free_and_verifiable(self) -> None:
+        result = run_policy_refusal_fixture(evidence_class="project-verified")
+        self.assertEqual(result["profile"], "profile-compatibility-v0-policy-refusal")
+        self.assertEqual(result["target_role"], "offline_policy_refusal_verifier")
+        self.assertEqual(result["summary"], {"total": 2, "passed": 2, "failed": 0})
+        encoded = json.dumps(result)
+        for prohibited in (
+            "social-scoring",
+            "write_file",
+            "deny",
+        ):
+            self.assertNotIn(prohibited, encoded)
+        self.assertTrue(verify_result(result)["valid"])
+
+    def test_bundled_policy_refusal_fixture_is_identical_to_canonical_source(self) -> None:
+        repository_root = Path(__file__).resolve().parents[2]
+        canonical = (
+            repository_root
+            / "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json"
+        )
+        from iicp_conformance.runner import bundled_offline_fixture_bytes
+
+        self.assertEqual(
+            bundled_offline_fixture_bytes("profile-compatibility-v0-policy-refusal"),
             canonical.read_bytes(),
         )
 

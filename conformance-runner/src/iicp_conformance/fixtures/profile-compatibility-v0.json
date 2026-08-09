@@ -1,0 +1,227 @@
+{
+  "fixture_version": "0.4.0-draft",
+  "status": "pre-normative",
+  "purpose": "Deterministic profile-compatibility cases for future IICP capability, policy, evidence and extension profiles.",
+  "result_contract": {
+    "eligible_reason": "compatible",
+    "ineligible_reasons": ["intent_mismatch", "policy_refusal", "required_extension_missing", "schema_digest_mismatch", "experimental_extension_expired", "unsupported_binding"],
+    "unsupported_status": "unsupported_pre_normative_profile"
+  },
+  "intent_aliases": [
+    {"from": "urn:iicp:intent:classify:v1", "to": "urn:iicp:intent:llm:classify:v1"}
+  ],
+  "native_policy_scenarios": [
+    {"name": "key_required", "node": {"region": "eu-central"}, "policy": {"require_encryption": true}, "expected_reason": "missing_encryption_key"},
+    {"name": "region_restricted", "node": {"region": "us-east", "cx_public_key": true}, "policy": {"allowed_regions": ["eu"]}, "expected_reason": "region_not_allowed"},
+    {"name": "manifest_identity_threshold", "node": {"region": "eu-central", "cx_public_key": true, "node_policy_manifest": {"manifest_identity_level": "signed_valid"}}, "policy": {"required_manifest_identity_level": "operator_bound"}, "expected_reason": "manifest_identity_level_too_low"},
+    {"name": "missing_critical_policy_claim", "node": {"region": "eu-central", "cx_public_key": true, "node_policy_manifest": {}}, "policy": {"require_no_payload_retention": true}, "expected_reason": "payload_retention_not_none"}
+  ],
+  "scenarios": [
+    {
+      "name": "stable_chat",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "deprecated_alias",
+      "request": {
+        "intent": "urn:iicp:intent:classify:v1",
+        "schema": { "type": "object", "required": ["text", "categories"] }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:classify:v1",
+        "schema": { "type": "object", "required": ["text", "categories"] }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "schema_mismatch",
+      "request": {
+        "intent": "urn:iicp:intent:llm:embedding:v1",
+        "schema_digest": "sha256:embedding-input-v1",
+        "schema": { "type": "object", "required": ["input"], "properties": { "input": { "type": "string" } } }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:embedding:v1",
+        "schema_digest": "sha256:embedding-input-and-dimensions-v1",
+        "schema": { "type": "object", "required": ["input", "dimensions"] }
+      },
+      "expected": "ineligible",
+      "expected_reason": "schema_digest_mismatch"
+    },
+    {
+      "name": "schema_digest_match",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema_digest": "sha256:chat-input-v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema_digest": "sha256:chat-input-v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "unknown_intent",
+      "request": {
+        "intent": "urn:iicp:intent:unregistered:example:v1",
+        "schema": { "type": "object", "required": ["input"] }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "expected": "ineligible",
+      "expected_reason": "intent_mismatch"
+    },
+    {
+      "name": "unsupported_intent_version",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v2",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "expected": "ineligible",
+      "expected_reason": "intent_mismatch"
+    },
+    {
+      "name": "optional_extension",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } },
+        "extensions": [{ "uri": "https://iicp.network/extensions/citations/v1", "required": false }]
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "required_extension",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } },
+        "extensions": [{ "uri": "https://iicp.network/extensions/regulated-receipt/v1", "required": true }]
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"], "properties": { "messages": { "type": "array" } } }
+      },
+      "expected": "ineligible",
+      "expected_reason": "required_extension_missing"
+    },
+    {
+      "name": "required_extension_supported",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "extensions": [{ "uri": "https://iicp.network/extensions/regulated-receipt/v1", "required": true }]
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "extensions": [{ "uri": "https://iicp.network/extensions/regulated-receipt/v1" }]
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "prohibited_policy",
+      "request": {
+        "intent": "urn:iicp:intent:social-scoring:v1",
+        "schema": { "type": "object", "required": ["messages"] },
+        "policy": "deny"
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:social-scoring:v1",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "expected": "ineligible",
+      "expected_reason": "policy_refusal"
+    },
+    {
+      "name": "a2a_skill_bridge",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"] },
+        "mapping_kind": "a2a_skill"
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "mcp_tool_safe",
+      "request": {
+        "intent": "urn:iicp:intent:llm:embedding:v1",
+        "schema": { "type": "object", "required": ["input"] },
+        "mapping_kind": "mcp_tool"
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:embedding:v1",
+        "schema": { "type": "object", "required": ["input"] }
+      },
+      "expected": "eligible",
+      "expected_reason": "compatible"
+    },
+    {
+      "name": "mcp_tool_dangerous",
+      "request": {
+        "intent": "urn:iicp:intent:mcp:write_file:v1",
+        "schema": { "type": "object", "required": ["messages"] },
+        "policy": "deny",
+        "mapping_kind": "mcp_tool"
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:mcp:write_file:v1",
+        "schema": { "type": "object", "required": ["messages"] }
+      },
+      "expected": "ineligible",
+      "expected_reason": "policy_refusal"
+    },
+    {
+      "name": "expired_experimental_extension",
+      "now_s": 1800000000,
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema_digest": "sha256:chat-v1",
+        "extensions": [{"uri": "https://iicp.network/extensions/experimental-citations/v1", "required": true, "experimental": true, "owner": "iicp-working-group", "review_expires_at_s": 1700000000}]
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "schema_digest": "sha256:chat-v1",
+        "extensions": [{"uri": "https://iicp.network/extensions/experimental-citations/v1"}]
+      },
+      "expected": "ineligible",
+      "expected_reason": "experimental_extension_expired"
+    },
+    {
+      "name": "unsupported_bridge_binding",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "mapping_kind": "opaque_vendor_bridge"
+      },
+      "provider": {"intent": "urn:iicp:intent:llm:chat:v1"},
+      "expected": "ineligible",
+      "expected_reason": "unsupported_binding"
+    }
+  ]
+}
