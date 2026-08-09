@@ -27,6 +27,11 @@ between supported resources, temporary capacity and provider-local admission.
 It includes freshness, deadline, backpressure and privacy-negative vectors and
 does not expose scheduler or hardware topology.
 
+`managed-operator-v1.json` covers convenience compatibility and managed-mode
+fail-closed decisions for authentication, protected identity storage,
+authenticated updates, rollback and explicitly approved UPnP/tunnel exposure.
+It changes no SDK default and contains no credential or endpoint material.
+
 `profile-negotiation-v0.json` covers additive directory capability negotiation
 for a caller-requested pre-normative profile. No request preserves legacy
 discovery; unsupported required requests fail closed, while optional requests

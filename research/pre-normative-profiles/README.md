@@ -57,6 +57,11 @@ port with deterministic authorization and redaction outcomes. It keeps the
 Directory limited to signed route/manifest binding and mounts no public or
 default runtime endpoint.
 
+`managed-operator-v1.md` defines an opt-in fail-closed local operating mode for
+authenticated registration, protected identity storage, verified updates,
+rollback and explicitly approved exposure. Convenience mode remains the
+default, and the profile creates no remote-management authority.
+
 The lifecycle accounting fixture defines reservation and idempotent settlement
 cardinality for replay, cancellation, partial delivery and explicit new tasks.
 It does not define prices or mount production economic behavior.
