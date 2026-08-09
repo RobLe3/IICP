@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "research/pre-normative-profiles/**"
+      - "conformance-runner/**"
       - "research/native-ai-infrastructure/fixtures/service-profiles-v1.json"
       - "tools/check_profile_fixture_manifest.py"
       - "tools/check_spec_release_integrity.py"
@@ -23,6 +24,7 @@ on:
     branches: [main]
     paths:
       - "research/pre-normative-profiles/**"
+      - "conformance-runner/**"
       - "research/native-ai-infrastructure/fixtures/service-profiles-v1.json"
       - "tools/check_profile_fixture_manifest.py"
       - "tools/check_spec_release_integrity.py"
@@ -51,6 +53,8 @@ jobs:
         with:
           python-version: "3.11"
       - run: python3 -m pip install -r tools/requirements.txt
+      - run: python3 -m pip install "./conformance-runner[signing]"
+      - run: python3 -m unittest discover -s conformance-runner/tests
       - run: python3 tools/check_profile_fixture_manifest.py
       - run: python3 tools/check_intent_registry.py
       - run: python3 tools/check_intent_registry_schema.py
