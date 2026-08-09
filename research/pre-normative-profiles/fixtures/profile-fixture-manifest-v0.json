@@ -84,8 +84,8 @@
     },
     {
       "path": "mcp-era-negotiation-v0.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "b0ee4dfcd07a94f62548cf8e34ab030ab2fa8d30a8bc0179831eb18b31d13924"
+      "fixture_version": "0.1.1-draft",
+      "sha256": "f81c165e3be8244d02309f685c2555cbb41375c9cad25338420d0f0b1cdfc6e7"
     },
     {
       "path": "discovery-evidence-v1.json",

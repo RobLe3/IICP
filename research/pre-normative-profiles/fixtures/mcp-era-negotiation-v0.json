@@ -1,5 +1,5 @@
 {
-  "fixture_version": "0.1.0-draft",
+  "fixture_version": "0.1.1-draft",
   "status": "pre-normative",
   "profile_id": "iicp.mcp.era-negotiation.v0",
   "purpose": "Content-free cases for MCP revision negotiation and the IICP-to-MCP authorization boundary. These cases do not change SDK defaults or production behavior.",
@@ -88,6 +88,48 @@
       "name": "malformed_reserved_meta_rejected",
       "input": {"offered_revision": "2026-07-28", "reserved_meta_valid": false},
       "expected": {"accepted": false, "reason": "malformed_reserved_metadata"}
+    }
+    ,{
+      "id": "MCP-ERA-12",
+      "name": "oauth_issuer_mismatch_rejected",
+      "input": {"oauth_issuer_matches": false},
+      "expected": {"accepted": false, "reason": "oauth_issuer_mismatch"}
+    },
+    {
+      "id": "MCP-ERA-13",
+      "name": "oauth_audience_mismatch_rejected",
+      "input": {"oauth_audience_matches": false},
+      "expected": {"accepted": false, "reason": "oauth_audience_mismatch"}
+    },
+    {
+      "id": "MCP-ERA-14",
+      "name": "resource_indicator_required",
+      "input": {"resource_indicator_present": false},
+      "expected": {"accepted": false, "reason": "missing_resource_indicator"}
+    },
+    {
+      "id": "MCP-ERA-15",
+      "name": "protected_resource_metadata_required",
+      "input": {"protected_resource_metadata_valid": false},
+      "expected": {"accepted": false, "reason": "invalid_protected_resource_metadata"}
+    },
+    {
+      "id": "MCP-ERA-16",
+      "name": "pkce_required_when_authorization_code_flow_is_used",
+      "input": {"pkce_valid": false},
+      "expected": {"accepted": false, "reason": "pkce_required"}
+    },
+    {
+      "id": "MCP-ERA-17",
+      "name": "consent_boundary_required",
+      "input": {"consent_granted": false},
+      "expected": {"accepted": false, "reason": "consent_required"}
+    },
+    {
+      "id": "MCP-ERA-18",
+      "name": "audit_output_must_be_redacted",
+      "input": {"audit_output_redacted": false},
+      "expected": {"accepted": false, "reason": "audit_redaction_required"}
     }
   ]
 }

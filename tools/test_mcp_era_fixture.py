@@ -9,12 +9,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "research/pre-normative-profiles/fixtures/mcp-era-negotiation-v0.json"
-REQUIRED_IDS = {f"MCP-ERA-{number:02d}" for number in range(1, 12)}
+REQUIRED_IDS = {f"MCP-ERA-{number:02d}" for number in range(1, 19)}
 
 
 def main() -> int:
     document = json.loads(FIXTURE.read_text(encoding="utf-8"))
     assert document["status"] == "pre-normative"
+    assert document["fixture_version"] == "0.1.1-draft"
     assert document["supported_revisions"] == ["2025-11-25", "2026-07-28"]
 
     cases = document["cases"]
