@@ -4,6 +4,8 @@ import json
 import threading
 import unittest
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+import tomllib
 
 from iicp_conformance.runner import (
     bundled_manifest_bytes,
@@ -133,6 +135,17 @@ class RunnerTest(unittest.TestCase):
         self.assertNotIn(target, encoded)
         self.assertNotIn("urn:iicp", encoded)
         self.assertTrue(result["content_free"])
+
+    def test_standalone_package_uses_canonical_apache_metadata(self) -> None:
+        repository_root = Path(__file__).resolve().parents[2]
+        package_root = repository_root / "conformance-runner"
+        metadata = tomllib.loads((package_root / "pyproject.toml").read_text())
+        self.assertEqual(metadata["project"]["license"], "Apache-2.0")
+        self.assertEqual(metadata["project"]["license-files"], ["LICENSE"])
+        self.assertEqual(
+            (package_root / "LICENSE").read_bytes(),
+            (repository_root / "LICENSE").read_bytes(),
+        )
 
     def test_mixed_suite_is_rejected(self) -> None:
         manifest = json.loads(bundled_manifest_bytes())
