@@ -26,7 +26,9 @@ A supporting capability MAY include this additive block:
     "supported_profiles": [
       "urn:iicp:profile:provider-admission:v1",
       "urn:iicp:profile:service-lifecycle:v1"
-    ]
+    ],
+    "observed_at": "2026-08-09T10:00:00Z",
+    "valid_until": "2026-08-09T10:02:00Z"
   }
 }
 ```
@@ -37,10 +39,15 @@ A supporting capability MAY include this additive block:
 | `capacity_class` | SHOULD | `limited`, `standard`, or `high`; a coarse self-attested class, not a queue metric. |
 | `deadline_support` | MUST | Whether the provider enforces caller deadlines. |
 | `supported_profiles` | MUST | Semantic profile URNs supported by this capability. |
+| `observed_at` | MUST | RFC 3339 time when the provider observed this state. |
+| `valid_until` | MUST | RFC 3339 expiry, later than `observed_at` and at most 300 seconds later. |
+| `retry_after_ms` | COND | Required when unavailable, optional when draining; 100 through 300000. |
 
 An unavailable or draining provider MUST NOT advertise itself as ready. The
 directory MAY relay these safe fields but MUST NOT infer them from task payloads
-or publish private runtime details.
+or publish private runtime details. Clients treat an expired block as unknown
+capacity, not continued availability. A missing block preserves legacy
+eligibility and does not mean unlimited capacity.
 
 ## 3. Admission outcome
 
@@ -55,10 +62,16 @@ Before execution, a provider returns exactly one admission outcome:
 | `temporarily_unavailable` | 503 | Provider is draining, warming, or unavailable. |
 | `policy_rejected` | 403 | A declared provider policy rejects the request before execution. |
 
+The provider response carries `task_id`, `outcome`, and, when accepted,
+`accepted_until`. The latter MUST NOT exceed the request deadline. A deferred
+`capacity_exceeded` or `temporarily_unavailable` outcome carries
+`retry_after_ms`; an accepted outcome MUST NOT. Optional
+`capacity_class` uses the same bounded vocabulary as the advertisement.
+
 Rejections MUST occur before task execution and MUST NOT consume a billable
-execution. `capacity_exceeded` and `temporarily_unavailable` SHOULD include a
-non-negative `retry_after_ms`; its omission means the caller should use another
-eligible provider rather than busy-looping the same provider.
+execution. `capacity_exceeded` and `temporarily_unavailable` MUST include a
+`retry_after_ms` from 100 through 300000 so the caller does not busy-loop the
+same provider.
 
 ## 4. Bounded admission and deadlines
 
@@ -83,8 +96,10 @@ constraints.
 ## 6. Conformance
 
 `research/native-ai-infrastructure/fixtures/service-profiles-v1.json` defines
-the admission vectors. Implementations claiming this profile MUST pass
-`ADMISSION-01` through `ADMISSION-06` in the conformance suite.
+the lifecycle admission vectors. The focused
+`research/pre-normative-profiles/fixtures/provider-admission-v1.json` adds
+portable freshness, deadline, backpressure, field-combination and redaction
+cases. Implementations claiming this profile MUST pass both fixture sets.
 
 ## 7. Privacy boundary
 

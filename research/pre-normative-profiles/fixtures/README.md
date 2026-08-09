@@ -22,6 +22,11 @@ signer-key revocation.
 hard eligibility, including stable ordering, bounded load clamping, and the
 single-candidate case. It does not alter the default `epsilon` strategy.
 
+`provider-admission-v1.json` covers a bounded, redacted distinction
+between supported resources, temporary capacity and provider-local admission.
+It includes freshness, deadline, backpressure and privacy-negative vectors and
+does not expose scheduler or hardware topology.
+
 `profile-negotiation-v0.json` covers additive directory capability negotiation
 for a caller-requested pre-normative profile. No request preserves legacy
 discovery; unsupported required requests fail closed, while optional requests

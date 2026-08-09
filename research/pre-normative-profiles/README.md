@@ -46,6 +46,12 @@ The policy operational-evidence fixture adds only an opt-in compatibility
 check for locally authenticated, digest-bound and unexpired evidence records.
 It is not a legal certification and does not change default routing.
 
+The focused `fixtures/provider-admission-v1.json` vectors extend the proposed
+`spec/v1.9/iicp-provider-admission-profile.md` distinction between supported
+capabilities, short-lived provider capacity and the provider's authoritative
+admission outcome. They test freshness, backpressure, deadlines and redaction
+without publishing hardware or scheduler topology.
+
 The authenticated policy-detail fixture adds an opt-in provider-side policy
 port with deterministic authorization and redaction outcomes. It keeps the
 Directory limited to signed route/manifest binding and mounts no public or
