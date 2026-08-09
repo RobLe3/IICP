@@ -1,9 +1,9 @@
 # IICP-MCP Binding Specification
 
-**Version**: 0.2.0
-**Date**: 2026-07-31
+**Version**: 0.2.1
+**Date**: 2026-08-09
 **Status**: draft  
-**Issue**: #15  
+**Issue**: #15 (historical), #35 (current alignment)
 **Authority**: Protocol Steward  
 **Relation**: SPEC_ANALYSIS.md GAP-3, ADR-007
 
@@ -112,7 +112,7 @@ reinterpret one revision as another. This binding defines two eras:
 
 | Era | MCP revision | Bootstrap and state |
 |---|---|---|
-| legacy | `2025-11-25` | `initialize` / `initialized`; an MCP session MAY be used |
+| legacy | `2025-11-25` | `initialize` / `initialized`; HTTP adapters retain the negotiated session |
 | modern | `2026-07-28` | stateless, self-contained requests; `server/discover` MAY be used before invocation |
 
 Support for either era is optional. Advertising MCP capability without advertising a
@@ -138,6 +138,33 @@ MCP tool calls ride inside `SUB_PROTOCOL` payloads:
 ```
 
 The `SUB_PROTOCOL` payload is a JSON-RPC 2.0 object as defined by the MCP specification.
+
+#### 4.1.1 Legacy Streamable HTTP gateway lifecycle
+
+This subsection applies only when an IICP gateway invokes an MCP server over
+legacy Streamable HTTP. It does not redefine native IICP framing.
+
+1. Before the first `tools/call`, the gateway **MUST** send `initialize` with
+   `MCP-Protocol-Version: 2025-11-25` and then send the MCP `initialized`
+   notification required by the selected MCP server.
+2. The gateway **MUST** retain the session identifier returned by a successful
+   initialization and **MUST** include it on every later request in that
+   session. A missing, malformed, or changed session identifier is a
+   fail-closed transport error; it is not an authorization fallback.
+3. A gateway **MUST NOT** forward an IICP node token, dispatch ticket, caller
+   credential, or tool arguments as a session identifier or downstream MCP
+   credential.
+4. If a session expires before a call is accepted, the gateway may
+   reinitialize once. It may retry the original `tools/call` only when the
+   caller has explicitly marked the call replay-safe. Otherwise it returns a
+   retryable session-expired failure without reissuing the tool call.
+5. Session identifiers, downstream credentials, and raw tool arguments
+   **MUST NOT** appear in IICP receipts, audit records, telemetry, or public
+   health responses.
+
+The gateway keeps this session state locally, scoped to the selected MCP
+endpoint and negotiated revision. It does not make the session an IICP route
+credential and does not change the default MCP revision.
 
 ### 4.2 Modern stateless binding
 
@@ -272,6 +299,7 @@ Tool-name risk classification is a conservative baseline, not sufficient authori
 | 0.1.1 | 2026-05-15 | Added Changelog section (A6 spec cleanup) |
 | 0.1.2 | 2026-06-06 | Added reserved-status note — the MCP intent URN is registry-reserved in Phase 1; directories MUST accept it in capability arrays without implementing translation, MUST NOT reject on it; clients MUST NOT assume tool execution until the Phase-2 binding ships. Header reconciled to 0.1.2 (it trailed the changelog at 0.1.1). |
 | 0.2.0 | 2026-07-31 | Added explicit MCP 2025-11-25 legacy and 2026-07-28 modern eras, stateless request metadata, downgrade rules, optional extension negotiation, authorization boundaries, server identity binding, and shared conformance requirements. Remains draft; no SDK default or production behavior changed. |
+| 0.2.1 | 2026-08-09 | Clarified the legacy Streamable HTTP gateway lifecycle: initialize and retain the MCP session, fail closed on invalid session state, prohibit credential/session reuse, and constrain expired-session retry to explicitly replay-safe calls. Remains draft; this records an implementation requirement and does not change an SDK default. |
 
 ---
 

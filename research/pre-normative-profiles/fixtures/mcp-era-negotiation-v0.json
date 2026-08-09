@@ -1,5 +1,5 @@
 {
-  "fixture_version": "0.1.1-draft",
+  "fixture_version": "0.1.2-draft",
   "status": "pre-normative",
   "profile_id": "iicp.mcp.era-negotiation.v0",
   "purpose": "Content-free cases for MCP revision negotiation and the IICP-to-MCP authorization boundary. These cases do not change SDK defaults or production behavior.",
@@ -130,6 +130,62 @@
       "name": "audit_output_must_be_redacted",
       "input": {"audit_output_redacted": false},
       "expected": {"accepted": false, "reason": "audit_redaction_required"}
+    },
+    {
+      "id": "MCP-ERA-19",
+      "name": "legacy_http_initialize_required",
+      "input": {
+        "offered_revision": "2025-11-25",
+        "transport": "streamable_http",
+        "initialize_completed": false
+      },
+      "expected": {"accepted": false, "reason": "initialize_required"}
+    },
+    {
+      "id": "MCP-ERA-20",
+      "name": "legacy_http_session_retained",
+      "input": {
+        "offered_revision": "2025-11-25",
+        "transport": "streamable_http",
+        "initialize_completed": true,
+        "session_identifier_returned": true,
+        "session_identifier_carried_on_tool_call": true
+      },
+      "expected": {"accepted": true, "era": "legacy", "session_mode": "retained"}
+    },
+    {
+      "id": "MCP-ERA-21",
+      "name": "legacy_http_session_identifier_required",
+      "input": {
+        "offered_revision": "2025-11-25",
+        "transport": "streamable_http",
+        "initialize_completed": true,
+        "session_identifier_returned": false
+      },
+      "expected": {"accepted": false, "reason": "missing_session_identifier"}
+    },
+    {
+      "id": "MCP-ERA-22",
+      "name": "legacy_expired_session_nonreplayable_call_not_reissued",
+      "input": {
+        "offered_revision": "2025-11-25",
+        "transport": "streamable_http",
+        "session_expired": true,
+        "tool_call_replay_safe": false
+      },
+      "expected": {"accepted": false, "reason": "session_expired_caller_retry_required"}
+    },
+    {
+      "id": "MCP-ERA-23",
+      "name": "legacy_expired_session_replay_safe_call_reinitialized_once",
+      "input": {
+        "offered_revision": "2025-11-25",
+        "transport": "streamable_http",
+        "session_expired": true,
+        "tool_call_replay_safe": true,
+        "reinitialize_attempts": 1
+      },
+      "expected": {"accepted": true, "reason": "reinitialized_once"}
     }
   ]
 }

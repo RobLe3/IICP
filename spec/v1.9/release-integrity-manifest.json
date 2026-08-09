@@ -84,7 +84,7 @@
     "spec/v1.9/iicp-federated-directory.md": "1fb5cf34a73ae606ec49d489e63e6ff148cb3a5afd5d324b83b6ac79f742305b",
     "spec/v1.9/iicp-framing.md": "e342de169a9319a09c16049eda2f27ce83127563cde22a9ccd21109ad433a58a",
     "spec/v1.9/iicp-identity-slot.md": "9c993178135f5e4a341c7f1cec36e27a9d26573f9dba35b215d9ef63132d7f9c",
-    "spec/v1.9/iicp-mcp-binding.md": "a6ba6055671711fb4f9eab453a379c2428c7df6d9422339dd8711a4b55774754",
+    "spec/v1.9/iicp-mcp-binding.md": "f319434c1fa10610a7a4445b7f355f34d42735198e40727ad6fe9723bc1e2dbc",
     "spec/v1.9/iicp-provider-admission-profile.md": "3d20f8df593b16f2faf757c904e8a501e89f8bf71ba5bd9e8e1a4d414c60b28b",
     "spec/v1.9/iicp-recognition.md": "5dd65bc65236eeb3370f969d60dcb59c51c57695a2a07fec2b7abce912c32eff",
     "spec/v1.9/iicp-sdk-request-projection-profile.md": "cf90a3938547a33a9bdac0c6c213cfab002af36b5f9f729a38135af2a6e336bd",
