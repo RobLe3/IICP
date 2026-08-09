@@ -328,6 +328,12 @@ Directory implementations also share an implementation-neutral
 contract. Internal module or service placement cannot redefine public routes,
 event ownership, replication behavior or authorization.
 
+The [public evidence access profile](docs/public-evidence-access.md) lists the
+version, implementation, registry, conformance, release and live-runtime
+artifacts intended for non-browser retrieval. Static source evidence has a
+repository fallback; unavailable live state is reported as unavailable rather
+than inferred from source metadata.
+
 ---
 
 ## Contributing
