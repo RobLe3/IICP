@@ -34,6 +34,7 @@ OFFLINE_PROFILE_FILES = {
     "dispatch-ticket-trust-v2": "dispatch-ticket-trust-v2.json",
     "dispatch-ticket-trust-v2-crypto": "dispatch-ticket-trust-v2-crypto.json",
     "profile-compatibility-v0-policy-refusal": "profile-compatibility-v0.json",
+    "federation-chain-v0": "federation-chain-v0.json",
 }
 OFFLINE_PROFILE_METADATA = {
     "dispatch-route-ticket-v1": {
@@ -57,6 +58,7 @@ OFFLINE_PROFILE_METADATA = {
         "target_role": "offline_policy_refusal_verifier",
         "expected_reason": "policy_refusal",
     },
+    "federation-chain-v0": {"vector_key": "cases", "id_key": "id", "target_role": "offline_federation_chain_verifier"},
 }
 DISPATCH_TICKET_DOMAIN = b"iicp:dispatch-route-ticket:v1\n"
 DISPATCH_TICKET_AUDIENCE = "iicp.directory.dispatch"
@@ -479,6 +481,45 @@ def run_policy_refusal_fixture(
         "results": results,
         "content_free": True,
     }
+
+
+def run_federation_chain_fixture(*, evidence_class: str = "self-attested") -> dict[str, Any]:
+    """Verify portable pre-normative signed event-chain cases offline."""
+    if evidence_class not in EVIDENCE_CLASSES:
+        raise ValueError("unsupported evidence class")
+    try:
+        from cryptography.exceptions import InvalidSignature
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+    except ImportError as error:
+        raise RuntimeError("install iicp-conformance[signing] to verify federation vectors") from error
+    profile = "federation-chain-v0"; raw = bundled_offline_fixture_bytes(profile); fixture = json.loads(raw)
+    if fixture.get("fixture_version") != "0.1.0-draft" or fixture.get("status") != "pre-normative":
+        raise ValueError("mixed or unsupported federation-chain fixture version")
+    def decision(case: dict[str, Any]) -> str:
+        auth = case.get("replica_authorization")
+        if auth == "expired": return "reject_replica_authorization_expired"
+        if auth != "active": return "reject_replica_authorization"
+        key_hex = fixture["trusted_roots"].get(case.get("root_id"))
+        if not key_hex: return "reject_untrusted_root"
+        previous = fixture["genesis_root"]; sequence = 0
+        for event in case["events"]:
+            if event["seq"] <= sequence: return "reject_sequence"
+            sequence = event["seq"]
+            if event["prev_hash"] != previous: return "reject_chain_link"
+            payload_hash = hashlib.sha256(json.dumps(event["payload"], sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
+            message = hashlib.sha256(f'{event["event_id"]}:{event["event_type"]}:{event["seq"]}:{event["ts_ms"]}:{payload_hash}:{event["prev_hash"]}'.encode()).digest()
+            try: Ed25519PublicKey.from_public_bytes(bytes.fromhex(key_hex)).verify(bytes.fromhex(event["sig"]), message)
+            except (ValueError, InvalidSignature): return "reject_signature"
+            previous = hashlib.sha256(event["sig"].encode()).hexdigest()
+        return "accept"
+    cases = fixture.get("cases")
+    if not isinstance(cases, list) or not cases: raise ValueError("federation-chain fixture has no cases")
+    started=datetime.now(timezone.utc); results=[]
+    for case in cases:
+        began=time.monotonic(); observed=decision(case); expected=case.get("expected")
+        results.append({"test_id":case["id"],"outcome":"pass" if observed == expected else "fail","reason":"passed" if observed == expected else "assertion_failed","observed_status":None,"duration_ms":round((time.monotonic()-began)*1000,3)})
+    finished=datetime.now(timezone.utc); passed=sum(x["outcome"]=="pass" for x in results)
+    return {"schema":RESULT_SCHEMA,"runner_version":RUNNER_VERSION,"suite_version":fixture["fixture_version"],"profile":profile,"fixture_digest":f"sha256:{hashlib.sha256(raw).hexdigest()}","target_role":"offline_federation_chain_verifier","evidence_class":evidence_class,"started_at":started.isoformat().replace("+00:00","Z"),"finished_at":finished.isoformat().replace("+00:00","Z"),"summary":{"total":len(results),"passed":passed,"failed":len(results)-passed},"results":results,"content_free":True}
 
 
 def load_manifest(raw: bytes) -> dict[str, Any]:
