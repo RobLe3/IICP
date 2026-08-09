@@ -14,6 +14,9 @@ python3 -m venv .venv
 .venv/bin/iicp-conformance run --profile directory-lifecycle-v1 \
   --target http://127.0.0.1:8010 --output lifecycle-result.json
 .venv/bin/iicp-conformance verify result.json
+.venv/bin/iicp-conformance verify-dispatch-ticket-fixture \
+  --evidence-class project-verified --output ticket-result.json
+.venv/bin/iicp-conformance verify ticket-result.json
 ```
 
 Install `.[signing]` and provide a file containing a 32-byte Ed25519 private key
@@ -27,9 +30,18 @@ refusal and unauthenticated credit and telemetry boundaries. The
 `directory-dispatch-v1` profile covers prompt-free ticket issuance and negative
 policy/validation cases. It is restricted to loopback targets because a passing
 case issues route material and may update aggregate adoption counters. Run it
-only against a disposable directory database. Registration lifecycle, replay,
-downgrade, canonical ticket verification and federation profiles remain tracked
-by issue #62 and must be added as isolated profiles.
+only against a disposable directory database. Replay, downgrade, policy-refusal, and federation-chain profiles remain tracked
+by issue #62 and must be added as isolated profiles. The offline ticket command
+covers only the published v1 vector set; it does not claim v2 trust-store,
+stateful-replay, or federation behavior.
+
+`verify-dispatch-ticket-fixture` is an offline profile over the canonical
+`dispatch-route-ticket:v1` Ed25519 vectors. It verifies the signature, issuer,
+audience, node, intent, expiry and malformed/tampered cases, then emits only
+case names and aggregate outcomes. It does not output ticket material, claims,
+routes or endpoint data. Install `.[signing]` before running it. It verifies
+v1 route-disclosure semantics only: v1 does not claim stateful redemption or
+signer-key revocation.
 
 The loopback-only `directory-lifecycle-v1` profile registers a disposable node,
 authenticates a heartbeat, refreshes the registration and rotates its token,

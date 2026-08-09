@@ -1,0 +1,139 @@
+{
+  "fixture_version": "1.0.0-draft",
+  "status": "pre-normative",
+  "purpose": "Cross-implementation validation vectors for disclosure-only IICP dispatch route tickets.",
+  "domain": "iicp:dispatch-route-ticket:v1\n",
+  "public_key_hex": "557a59f8820da4ad8a684fdc8a00355d30149b5ec22231ae331a62daa8dcf869",
+  "valid": {
+    "token": "eyJ2IjoxLCJ0eXAiOiJkaXNwYXRjaC1yb3V0ZS10aWNrZXQiLCJpc3MiOiJodHRwczovL2RpcmVjdG9yeS5leGFtcGxlLnRlc3QiLCJhdWQiOiJpaWNwLmRpcmVjdG9yeS5kaXNwYXRjaCIsImp0aSI6IjAxMjM0NTY3ODlhYmNkZWYwMTIzNDU2NyIsIm5vZGVfaWQiOiJub2RlLTAwMDAwMDAxIiwiaW50ZW50IjoidXJuOmlpY3A6aW50ZW50OmxsbTpjaGF0OnYxIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjQxMDI0NDQ4MDB9.86cf4831d15b1b2a73c7dd8cd2b4692a6f12a742ba4fd1b0ac30e6c60cfecf17bf8b9a0ac340677951649bd3403496883e9123b63d3313b8ad3438a8e3cf6a0d",
+    "claims": {
+      "v": 1,
+      "typ": "dispatch-route-ticket",
+      "iss": "https://directory.example.test",
+      "aud": "iicp.directory.dispatch",
+      "jti": "0123456789abcdef01234567",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "iat": 1700000000,
+      "exp": 4102444800
+    }
+  },
+  "invalid_cases": [
+    "malformed_token",
+    "bad_signature",
+    "expired",
+    "wrong_issuer",
+    "wrong_audience",
+    "wrong_node",
+    "wrong_intent"
+  ],
+  "security": {
+    "control_plane_only": true,
+    "task_payload_fields_forbidden": [
+      "prompt",
+      "messages",
+      "payload",
+      "input",
+      "chat",
+      "content",
+      "response"
+    ],
+    "ticket_semantics": "route_disclosure_only",
+    "single_use_enforcement": "not_provided_in_v1",
+    "safe_receipt_fields": [
+      "ticket_id_prefix",
+      "node_id_prefix",
+      "intent",
+      "policy_decision",
+      "expiry"
+    ]
+  },
+  "validation_vectors": [
+    {
+      "name": "valid",
+      "token": "valid",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "valid"
+    },
+    {
+      "name": "malformed_token",
+      "token": "not-a-ticket",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "rejected"
+    },
+    {
+      "name": "bad_signature",
+      "token": "valid+0",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "rejected"
+    },
+    {
+      "name": "expired",
+      "token": "valid",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 4102444800,
+      "expected": "rejected"
+    },
+    {
+      "name": "wrong_issuer",
+      "token": "valid",
+      "issuer": "https://other-directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "rejected"
+    },
+    {
+      "name": "wrong_audience",
+      "token": "wrong_audience",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "rejected"
+    },
+    {
+      "name": "wrong_node",
+      "token": "valid",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-other",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "now_s": 1800000000,
+      "expected": "rejected"
+    },
+    {
+      "name": "wrong_intent",
+      "token": "valid",
+      "issuer": "https://directory.example.test",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:embedding:v1",
+      "now_s": 1800000000,
+      "expected": "rejected"
+    }
+  ],
+  "wrong_audience": {
+    "token": "eyJ2IjoxLCJ0eXAiOiJkaXNwYXRjaC1yb3V0ZS10aWNrZXQiLCJpc3MiOiJodHRwczovL2RpcmVjdG9yeS5leGFtcGxlLnRlc3QiLCJhdWQiOiJpaWNwLmRpcmVjdG9yeS53cm9uZy1hdWRpZW5jZSIsImp0aSI6IjAxMjM0NTY3ODlhYmNkZWYwMTIzNDU2NyIsIm5vZGVfaWQiOiJub2RlLTAwMDAwMDAxIiwiaW50ZW50IjoidXJuOmlpY3A6aW50ZW50OmxsbTpjaGF0OnYxIiwiaWF0IjoxNzAwMDAwMDAwLCJleHAiOjQxMDI0NDQ4MDB9.b085edb655d4c9cc81dd29cbc07082da43fd6cf9e79adc68aa674bd4e166c1e54da59b96b44b34ce7634e6130d784eea48c77bb19e1a6edb537b9e5e99fe6b0f",
+    "claims": {
+      "v": 1,
+      "typ": "dispatch-route-ticket",
+      "iss": "https://directory.example.test",
+      "aud": "iicp.directory.wrong-audience",
+      "jti": "0123456789abcdef01234567",
+      "node_id": "node-00000001",
+      "intent": "urn:iicp:intent:llm:chat:v1",
+      "iat": 1700000000,
+      "exp": 4102444800
+    }
+  }
+}
