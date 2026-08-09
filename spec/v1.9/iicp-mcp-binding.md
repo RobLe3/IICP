@@ -156,8 +156,10 @@ legacy Streamable HTTP. It does not redefine native IICP framing.
    credential.
 4. If a session expires before a call is accepted, the gateway may
    reinitialize once. It may retry the original `tools/call` only when the
-   caller has explicitly marked the call replay-safe. Otherwise it returns a
-   retryable session-expired failure without reissuing the tool call.
+   caller has explicitly marked the IICP task payload with
+   `mcp_replay_safe: true`. Absent or non-boolean values are false. Otherwise
+   it returns a retryable session-expired failure without reissuing the tool
+   call.
 5. Session identifiers, downstream credentials, and raw tool arguments
    **MUST NOT** appear in IICP receipts, audit records, telemetry, or public
    health responses.
