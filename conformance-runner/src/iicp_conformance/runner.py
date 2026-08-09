@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import base64
+import binascii
 import hashlib
 import json
 import re
@@ -27,6 +29,11 @@ PROFILE_SUITES = {
     "directory-dispatch-v1": "4.49.0",
     "directory-lifecycle-v1": "4.50.0",
 }
+OFFLINE_PROFILE_FILES = {
+    "dispatch-route-ticket-v1": "dispatch-route-ticket-v1.json",
+}
+DISPATCH_TICKET_DOMAIN = b"iicp:dispatch-route-ticket:v1\n"
+DISPATCH_TICKET_AUDIENCE = "iicp.directory.dispatch"
 STATE_NAME = re.compile(r"^[a-z][a-z0-9_]{0,63}$")
 STATE_REFERENCE = re.compile(r"\$\{([a-z][a-z0-9_]{0,63})\}")
 CAPTURE_PATH = re.compile(r"^[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*)*$")
@@ -75,6 +82,133 @@ def bundled_manifest_bytes(profile: str = DEFAULT_PROFILE) -> bytes:
         .joinpath(f"fixtures/{fixture}")
         .read_bytes()
     )
+
+
+def bundled_offline_fixture_bytes(profile: str) -> bytes:
+    try:
+        fixture = OFFLINE_PROFILE_FILES[profile]
+    except KeyError as error:
+        raise ValueError("unsupported offline conformance profile") from error
+    return files("iicp_conformance").joinpath(f"fixtures/{fixture}").read_bytes()
+
+
+def _b64url_decode(value: str) -> bytes:
+    padded = value + "=" * ((4 - len(value) % 4) % 4)
+    return base64.urlsafe_b64decode(padded.encode("ascii"))
+
+
+def _ticket_vector_token(fixture: dict[str, Any], reference: str) -> str:
+    if reference == "valid":
+        return fixture["valid"]["token"]
+    if reference == "valid+0":
+        return f"{fixture['valid']['token']}0"
+    if reference == "wrong_audience":
+        return fixture["wrong_audience"]["token"]
+    return reference
+
+
+def verify_dispatch_route_ticket(
+    token: str,
+    public_key_hex: str,
+    issuer: str,
+    node_id: str,
+    intent: str,
+    now_s: int,
+) -> bool:
+    """Verify the disclosed-route v1 ticket contract without retaining claims."""
+    try:
+        from cryptography.exceptions import InvalidSignature
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+    except ImportError as error:
+        raise RuntimeError(
+            "install iicp-conformance[signing] to verify dispatch ticket vectors"
+        ) from error
+    payload_b64, separator, signature_hex = token.partition(".")
+    if not separator or len(signature_hex) != 128:
+        return False
+    try:
+        Ed25519PublicKey.from_public_bytes(bytes.fromhex(public_key_hex)).verify(
+            bytes.fromhex(signature_hex), DISPATCH_TICKET_DOMAIN + payload_b64.encode("ascii")
+        )
+        claims = json.loads(_b64url_decode(payload_b64))
+    except (ValueError, binascii.Error, InvalidSignature, json.JSONDecodeError, UnicodeEncodeError):
+        return False
+    if not isinstance(claims, dict):
+        return False
+    jti = claims.get("jti")
+    policy_digest = claims.get("policy_manifest_sha256")
+    return (
+        claims.get("v") == 1
+        and claims.get("typ") == "dispatch-route-ticket"
+        and claims.get("iss") == issuer
+        and claims.get("aud") == DISPATCH_TICKET_AUDIENCE
+        and claims.get("node_id") == node_id
+        and claims.get("intent") == intent
+        and isinstance(claims.get("iat"), int)
+        and isinstance(claims.get("exp"), int)
+        and claims["exp"] > now_s
+        and isinstance(jti, str)
+        and bool(re.fullmatch(r"[0-9a-f]{24}", jti))
+        and (
+            policy_digest is None
+            or isinstance(policy_digest, str)
+            and bool(re.fullmatch(r"[0-9a-f]{64}", policy_digest))
+        )
+    )
+
+
+def run_dispatch_ticket_fixture(
+    *, evidence_class: str = "self-attested"
+) -> dict[str, Any]:
+    """Execute canonical offline ticket vectors and emit only aggregate outcomes."""
+    if evidence_class not in EVIDENCE_CLASSES:
+        raise ValueError("unsupported evidence class")
+    profile = "dispatch-route-ticket-v1"
+    raw = bundled_offline_fixture_bytes(profile)
+    fixture = json.loads(raw)
+    if fixture.get("fixture_version") != "1.0.0-draft":
+        raise ValueError("mixed or unsupported dispatch ticket fixture version")
+    vectors = fixture.get("validation_vectors")
+    if not isinstance(vectors, list) or not vectors:
+        raise ValueError("dispatch ticket fixture has no validation vectors")
+    started = datetime.now(timezone.utc)
+    results: list[dict[str, Any]] = []
+    for vector in vectors:
+        began = time.monotonic()
+        valid = verify_dispatch_route_ticket(
+            _ticket_vector_token(fixture, vector["token"]),
+            fixture["public_key_hex"],
+            vector["issuer"],
+            vector["node_id"],
+            vector["intent"],
+            vector["now_s"],
+        )
+        expected_valid = vector.get("expected") == "valid"
+        results.append(
+            {
+                "test_id": vector["name"],
+                "outcome": "pass" if valid == expected_valid else "fail",
+                "reason": "passed" if valid == expected_valid else "assertion_failed",
+                "observed_status": None,
+                "duration_ms": round((time.monotonic() - began) * 1000, 3),
+            }
+        )
+    finished = datetime.now(timezone.utc)
+    passed = sum(item["outcome"] == "pass" for item in results)
+    return {
+        "schema": RESULT_SCHEMA,
+        "runner_version": RUNNER_VERSION,
+        "suite_version": fixture["fixture_version"],
+        "profile": profile,
+        "fixture_digest": f"sha256:{hashlib.sha256(raw).hexdigest()}",
+        "target_role": "offline_ticket_verifier",
+        "evidence_class": evidence_class,
+        "started_at": started.isoformat().replace("+00:00", "Z"),
+        "finished_at": finished.isoformat().replace("+00:00", "Z"),
+        "summary": {"total": len(results), "passed": passed, "failed": len(results) - passed},
+        "results": results,
+        "content_free": True,
+    }
 
 
 def load_manifest(raw: bytes) -> dict[str, Any]:
@@ -387,11 +521,28 @@ def verify_result(
 ) -> dict[str, Any]:
     profile = result.get("profile", DEFAULT_PROFILE)
     try:
-        raw = bundled_manifest_bytes(profile)
-        manifest = load_manifest(raw)
-    except ValueError as error:
+        if profile in PROFILE_FILES:
+            raw = bundled_manifest_bytes(profile)
+            manifest = load_manifest(raw)
+            expected_version = manifest["suite_version"]
+            expected_ids = [case["id"] for case in manifest["tests"]]
+            expected_target_role = "directory"
+        elif profile in OFFLINE_PROFILE_FILES:
+            raw = bundled_offline_fixture_bytes(profile)
+            fixture = json.loads(raw)
+            expected_version = fixture["fixture_version"]
+            vectors = fixture.get("validation_vectors")
+            if not isinstance(vectors, list) or not vectors:
+                raise ValueError("offline fixture has no validation vectors")
+            expected_ids = [vector["name"] for vector in vectors]
+            expected_target_role = "offline_ticket_verifier"
+        else:
+            raise ValueError("unsupported conformance profile")
+    except (ValueError, KeyError, json.JSONDecodeError) as error:
         raw = b""
-        manifest = {"tests": []}
+        expected_version = None
+        expected_ids = []
+        expected_target_role = None
         errors = [str(error)]
     else:
         errors = []
@@ -417,12 +568,12 @@ def verify_result(
         errors.append(f"unknown fields: {','.join(unknown)}")
     if result.get("schema") != RESULT_SCHEMA:
         errors.append("unsupported result schema")
-    if result.get("suite_version") != manifest.get("suite_version"):
+    if result.get("suite_version") != expected_version:
         errors.append("mixed or unsupported suite version")
     expected_digest = f"sha256:{hashlib.sha256(raw).hexdigest()}"
     if result.get("fixture_digest") != expected_digest:
         errors.append("fixture digest mismatch")
-    if result.get("target_role") != "directory":
+    if result.get("target_role") != expected_target_role:
         errors.append("unsupported target role")
     if result.get("evidence_class") not in EVIDENCE_CLASSES:
         errors.append("unsupported evidence class")
@@ -433,7 +584,6 @@ def verify_result(
         errors.append(f"prohibited fields: {','.join(prohibited)}")
 
     results = result.get("results")
-    expected_ids = [case["id"] for case in manifest["tests"]]
     if not isinstance(results, list):
         errors.append("results must be an array")
         results = []
