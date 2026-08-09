@@ -22,6 +22,8 @@ python3 -m venv .venv
   --evidence-class project-verified --output ticket-trust-semantics-result.json
 .venv/bin/iicp-conformance verify-policy-refusal-fixture \
   --evidence-class project-verified --output policy-refusal-result.json
+.venv/bin/iicp-conformance verify-federation-chain-fixture \
+  --evidence-class project-verified --output federation-chain-result.json
 .venv/bin/iicp-conformance verify ticket-result.json
 ```
 
@@ -36,11 +38,9 @@ refusal and unauthenticated credit and telemetry boundaries. The
 `directory-dispatch-v1` profile covers prompt-free ticket issuance and negative
 policy/validation cases. It is restricted to loopback targets because a passing
 case issues route material and may update aggregate adoption counters. Run it
-only against a disposable directory database. Policy-refusal and
-federation-chain profiles remain tracked by issue #62 and must be added as
-isolated profiles. The offline v1 ticket command covers only the published v1
-vector set; it does not claim v2 trust-store, stateful-replay, or federation
-behavior.
+only against a disposable directory database. The offline profile commands are isolated evidence profiles. The offline v1
+ticket command covers only the published v1 vector set; it does not claim v2
+trust-store or stateful replay behavior.
 
 `verify-dispatch-ticket-fixture` is an offline profile over the canonical
 `dispatch-route-ticket:v1` Ed25519 vectors. It verifies the signature, issuer,
@@ -79,3 +79,20 @@ responses in the same run. It rejects unresolved variables before sending a
 request and never writes captured node IDs or credentials to the result bundle.
 The target must provide the fixture node's HTTPS health response in its
 disposable test environment; the profile does not weaken endpoint validation.
+
+## Release-candidate and external-run boundary
+
+Run `python3 conformance-runner/scripts/release_preflight.py` before proposing
+a runner artifact. It builds the candidate locally, checks wheel and source
+distribution metadata, then clean-installs the source, wheel and source
+distribution from a temporary working directory. Each installation must run
+and verify every bundled offline profile with `self-attested` content-free
+output. The command does not publish an artifact or create independent
+evidence.
+
+An operator outside the IICP repository family may use a published artifact and
+this README to submit a result. Select `independent` only when the operator
+controls the implementation and result publication; a project-run or
+project-hosted test remains `project-verified` or `self-attested`. Do not put
+credentials, target URLs, node IDs, route data, payloads or personal data in a
+published result bundle.

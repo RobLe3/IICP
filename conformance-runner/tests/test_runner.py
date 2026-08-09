@@ -146,6 +146,7 @@ class RunnerTest(unittest.TestCase):
         metadata = tomllib.loads((package_root / "pyproject.toml").read_text())
         self.assertEqual(metadata["project"]["license"], "Apache-2.0")
         self.assertEqual(metadata["project"]["license-files"], ["LICENSE"])
+        self.assertEqual(metadata["project"]["readme"], "README.md")
         self.assertEqual(
             (package_root / "LICENSE").read_bytes(),
             (repository_root / "LICENSE").read_bytes(),
