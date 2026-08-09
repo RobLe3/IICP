@@ -2,12 +2,26 @@
 
 ## Unreleased
 
+## v1.10.12 — 2026-08-09
+
+Current-line corrective specification release. It does not begin a new protocol
+train or change the stable v1.9 base wire.
+
 - Corrects the proposed service-lifecycle profile's native envelope mapping:
   negotiated partial and terminal RESPONSE frames carry the additive key-13
   lifecycle envelope; advisory OBSERVE events carry the same envelope in
-  `data`. Adds call-ID, sequence, finality and post-terminal native negative
-  vectors. This is an additive draft-profile clarification, not a base-wire,
-  implementation-release or protocol-line change.
+  `data`.
+- Adds call-ID, sequence, finality and post-terminal native negative vectors,
+  plus integrity and workflow coverage for the lifecycle fixture.
+- Makes Registry 1.4 schema validation standards-compliant, validates evidence
+  references as JSON Pointers, and rejects malformed source-observation URNs
+  without changing existing canonical intent URNs or legacy `payload_schema`.
+- Extends the pre-normative MCP authorization fixture and adds a shared,
+  content-free PHP/Rust reputation-hourly-velocity fixture. These fixtures do
+  not promote a draft profile or change deployed runtime behavior.
+- Adds dated, implementation-neutral standards research for the current IETF
+  agent-protocol landscape and IEEE P3931 registry scope. The research makes no
+  compatibility, endorsement, adoption or submission claim.
 
 ## v1.10.11 — 2026-08-08
 

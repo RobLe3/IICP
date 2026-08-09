@@ -24,7 +24,8 @@ the entire IICP specification suite (core, CIP, framing, identity, telemetry, et
 | v1.9.0 | 2026-05-30 | RT-01/RT-05 reputation caps and directory drift closeout |
 | v1.9.1 | 2026-07-30 | Status/version governance and transport/IANA errata; superseded because its bundled implementation index was stale |
 | v1.9.2 | 2026-07-30 | Corrective immutable release with synchronized implementation/package references and a version-truth gate |
-| **v1.10.11** | **2026-08-08** | **Current** — additive evidence-linked intent registry 1.4 and PHP/Rust reputation parity; no base-wire change |
+| **v1.10.12** | **2026-08-09** | **Current** — profile-only lifecycle-envelope correction, strict Registry 1.4 evidence validation, and updated conformance fixtures; no base-wire change |
+| v1.10.11 | 2026-08-08 | Additive evidence-linked intent registry 1.4 and PHP/Rust reputation parity; no base-wire change |
 | v1.10.10 | 2026-08-08 | Consolidated rate-limit correctness, registry validation and negotiated streaming clarification; no base-wire change |
 | v1.10.9 | 2026-08-05 | Recorded PHP directory 1.10.87 security-patch currency; no wire change |
 | v1.10.8 | 2026-08-02 | Added a content-free, loopback-only authenticated directory lifecycle profile; no wire change |

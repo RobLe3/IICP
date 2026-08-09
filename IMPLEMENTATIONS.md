@@ -6,7 +6,7 @@ Git submodules. Visibility describes source access, not protocol maturity.
 
 | Component | Authority | Language | Visibility | Lifecycle | Release |
 |---|---|---|---|---|---|
-| [IICP](https://github.com/RobLe3/IICP) | normative protocol, registries and reviewed research | specification | public | active | 1.10.11 |
+| [IICP](https://github.com/RobLe3/IICP) | normative protocol, registries and reviewed research | specification | public | active | 1.10.12 |
 | iicp.network (source private) | cross-component issues, integration, conformance and project history | mixed | private | restructuring | — |
 | iicp-network-ops (source private) | reviewed deployment, rollback, REACH and community operational source; no live credentials or production data | mixed | private | active | — |
 | iicp-network-internal (source private) | FORGE, agent, project-management and reviewed private-history material; never a public build dependency | mixed | private | active | — |
