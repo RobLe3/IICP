@@ -14,6 +14,7 @@ from iicp_conformance.runner import (
     run,
     run_dispatch_ticket_fixture,
     run_dispatch_ticket_trust_v2_fixture,
+    run_dispatch_ticket_trust_v2_semantics_fixture,
     sign_result,
     verify_result,
 )
@@ -214,6 +215,31 @@ class RunnerTest(unittest.TestCase):
 
         self.assertEqual(
             bundled_offline_fixture_bytes("dispatch-ticket-trust-v2-crypto"),
+            canonical.read_bytes(),
+        )
+
+    def test_offline_dispatch_ticket_trust_v2_semantics_fixture_is_content_free(self) -> None:
+        result = run_dispatch_ticket_trust_v2_semantics_fixture(
+            evidence_class="project-verified"
+        )
+        self.assertEqual(result["profile"], "dispatch-ticket-trust-v2")
+        self.assertEqual(result["target_role"], "offline_ticket_trust_semantic_verifier")
+        self.assertEqual(result["summary"], {"total": 12, "passed": 12, "failed": 0})
+        encoded = json.dumps(result)
+        for prohibited in ("strict_pinned", "open_compat", "same_origin_key_valid"):
+            self.assertNotIn(prohibited, encoded)
+        self.assertTrue(verify_result(result)["valid"])
+
+    def test_bundled_ticket_trust_v2_semantics_fixture_is_identical_to_canonical_source(self) -> None:
+        repository_root = Path(__file__).resolve().parents[2]
+        canonical = (
+            repository_root
+            / "research/pre-normative-profiles/fixtures/dispatch-ticket-trust-v2.json"
+        )
+        from iicp_conformance.runner import bundled_offline_fixture_bytes
+
+        self.assertEqual(
+            bundled_offline_fixture_bytes("dispatch-ticket-trust-v2"),
             canonical.read_bytes(),
         )
 
