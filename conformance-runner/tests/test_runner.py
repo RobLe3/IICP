@@ -13,6 +13,7 @@ from iicp_conformance.runner import (
     load_manifest,
     run,
     run_dispatch_ticket_fixture,
+    run_dispatch_ticket_trust_v2_fixture,
     sign_result,
     verify_result,
 )
@@ -180,6 +181,41 @@ class RunnerTest(unittest.TestCase):
         from iicp_conformance.runner import bundled_offline_fixture_bytes
 
         self.assertEqual(bundled_offline_fixture_bytes("dispatch-route-ticket-v1"), canonical.read_bytes())
+
+    def test_offline_dispatch_ticket_trust_v2_fixture_is_content_free_and_verifiable(self) -> None:
+        try:
+            import cryptography  # noqa: F401
+        except ImportError:
+            self.skipTest("signing extra not installed")
+        result = run_dispatch_ticket_trust_v2_fixture(evidence_class="project-verified")
+        self.assertEqual(result["profile"], "dispatch-ticket-trust-v2-crypto")
+        self.assertEqual(result["target_role"], "offline_ticket_trust_verifier")
+        self.assertEqual(result["summary"], {"total": 7, "passed": 7, "failed": 0})
+        encoded = json.dumps(result)
+        for prohibited in (
+            "directory.example",
+            "provider-a",
+            "ticket-0001",
+            "IICP-DISPATCH-TICKET-V2",
+            "dir-2026-active",
+        ):
+            self.assertNotIn(prohibited, encoded)
+        self.assertTrue(verify_result(result)["valid"])
+        result["target_role"] = "offline_ticket_verifier"
+        self.assertFalse(verify_result(result)["valid"])
+
+    def test_bundled_ticket_trust_v2_fixture_is_identical_to_canonical_source(self) -> None:
+        repository_root = Path(__file__).resolve().parents[2]
+        canonical = (
+            repository_root
+            / "research/pre-normative-profiles/fixtures/dispatch-ticket-trust-v2-crypto.json"
+        )
+        from iicp_conformance.runner import bundled_offline_fixture_bytes
+
+        self.assertEqual(
+            bundled_offline_fixture_bytes("dispatch-ticket-trust-v2-crypto"),
+            canonical.read_bytes(),
+        )
 
     def test_mixed_suite_is_rejected(self) -> None:
         manifest = json.loads(bundled_manifest_bytes())

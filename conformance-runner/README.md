@@ -16,6 +16,8 @@ python3 -m venv .venv
 .venv/bin/iicp-conformance verify result.json
 .venv/bin/iicp-conformance verify-dispatch-ticket-fixture \
   --evidence-class project-verified --output ticket-result.json
+.venv/bin/iicp-conformance verify-dispatch-ticket-trust-v2-fixture \
+  --evidence-class project-verified --output ticket-trust-result.json
 .venv/bin/iicp-conformance verify ticket-result.json
 ```
 
@@ -30,10 +32,11 @@ refusal and unauthenticated credit and telemetry boundaries. The
 `directory-dispatch-v1` profile covers prompt-free ticket issuance and negative
 policy/validation cases. It is restricted to loopback targets because a passing
 case issues route material and may update aggregate adoption counters. Run it
-only against a disposable directory database. Replay, downgrade, policy-refusal, and federation-chain profiles remain tracked
-by issue #62 and must be added as isolated profiles. The offline ticket command
-covers only the published v1 vector set; it does not claim v2 trust-store,
-stateful-replay, or federation behavior.
+only against a disposable directory database. Policy-refusal and
+federation-chain profiles remain tracked by issue #62 and must be added as
+isolated profiles. The offline v1 ticket command covers only the published v1
+vector set; it does not claim v2 trust-store, stateful-replay, or federation
+behavior.
 
 `verify-dispatch-ticket-fixture` is an offline profile over the canonical
 `dispatch-route-ticket:v1` Ed25519 vectors. It verifies the signature, issuer,
@@ -42,6 +45,13 @@ case names and aggregate outcomes. It does not output ticket material, claims,
 routes or endpoint data. Install `.[signing]` before running it. It verifies
 v1 route-disclosure semantics only: v1 does not claim stateful redemption or
 signer-key revocation.
+
+`verify-dispatch-ticket-trust-v2-fixture` is a separate **pre-normative**
+offline profile over the canonical v2 Ed25519, key-status and local-replay
+vectors. It emits only case identifiers and aggregate outcomes. It does not
+enable v2 at runtime, persist a replay cache or trust bundle, distribute or
+rotate keys, provide global single-use redemption, or prove federation
+behavior. Install `.[signing]` before running it.
 
 The loopback-only `directory-lifecycle-v1` profile registers a disposable node,
 authenticates a heartbeat, refreshes the registration and rotates its token,
