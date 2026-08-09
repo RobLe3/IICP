@@ -1,0 +1,58 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "profile_id": "iicp.directory.reputation-hourly-velocity.v0",
+  "purpose": "Content-free cross-directory evidence input for the RT-01b positive reputation velocity budget.",
+  "scope": {
+    "implementation_flavors": ["php", "rust"],
+    "database_mode": "disposable_mysql",
+    "required_behaviors": [
+      "concurrent_positive_updates_share_one_persisted_hourly_budget",
+      "3599_seconds_remains_in_the_current_window",
+      "3600_seconds_starts_a_new_window",
+      "persisted_budget_survives_repository_reload",
+      "negative_delta_does_not_consume_or_restore_positive_budget"
+    ]
+  },
+  "inputs": {
+    "initial_reputation": 0.5,
+    "positive_delta_per_heartbeat": 0.1,
+    "maximum_hourly_positive_gain": 0.2,
+    "workers": 4,
+    "tasks_success_per_worker": 10,
+    "negative_delta_after_reload": -0.05
+  },
+  "expected": {
+    "concurrent_score": 0.7,
+    "concurrent_hourly_gain": 0.2,
+    "concurrent_tasks_total": 40,
+    "same_window_age_seconds": 3599,
+    "same_window_score": 0.7,
+    "next_window_age_seconds": 3600,
+    "next_window_score_after_first_positive": 0.8,
+    "next_window_hourly_gain_after_first_positive": 0.1,
+    "final_score_after_reload_and_negative": 0.85,
+    "final_hourly_gain": 0.2
+  },
+  "result_contract": {
+    "required_fields": [
+      "fixture_version",
+      "implementation_flavor",
+      "database_mode",
+      "concurrent_score",
+      "concurrent_hourly_gain",
+      "concurrent_tasks_total",
+      "same_window_score",
+      "next_window_score",
+      "final_score",
+      "final_hourly_gain"
+    ],
+    "must_not_include": [
+      "credentials",
+      "endpoints",
+      "node_ids",
+      "task_payloads",
+      "production_data"
+    ]
+  }
+}
