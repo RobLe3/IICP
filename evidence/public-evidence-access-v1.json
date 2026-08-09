@@ -1,0 +1,100 @@
+{
+  "profile": "iicp-public-evidence-access-v1",
+  "version": 1,
+  "status": "project-contract",
+  "discovery_path": "/.well-known/iicp-evidence.json",
+  "http_contract": {
+    "methods": ["GET", "HEAD"],
+    "success_status": 200,
+    "rate_limit_status": 429,
+    "temporary_failure_status": 503,
+    "retry_header": "Retry-After",
+    "html_challenge_is_success": false,
+    "credentials_required": false
+  },
+  "artifacts": [
+    {
+      "id": "ecosystem-current-versions",
+      "class": "source-and-release",
+      "media_type": "application/json",
+      "static_media_types": ["application/json", "text/plain"],
+      "website_path": "/assets/json/ecosystem-current-versions.json",
+      "repository_path": "ecosystem/current-versions.json",
+      "static_url": "https://raw.githubusercontent.com/RobLe3/IICP/main/ecosystem/current-versions.json",
+      "cache_policy": "revalidate-within-3600-seconds",
+      "fallback_equivalent": true
+    },
+    {
+      "id": "implementation-catalog",
+      "class": "source-and-release",
+      "media_type": "application/json",
+      "static_media_types": ["application/json", "text/plain"],
+      "website_path": null,
+      "repository_path": "ecosystem/repositories.json",
+      "static_url": "https://raw.githubusercontent.com/RobLe3/IICP/main/ecosystem/repositories.json",
+      "cache_policy": "revalidate-within-3600-seconds",
+      "fallback_equivalent": true
+    },
+    {
+      "id": "intent-registry",
+      "class": "source-and-release",
+      "media_type": "application/json",
+      "static_media_types": ["application/json", "text/plain"],
+      "website_path": "/.well-known/iicp-intents.json",
+      "repository_path": "registry/intents.json",
+      "static_url": "https://raw.githubusercontent.com/RobLe3/IICP/main/registry/intents.json",
+      "cache_policy": "revalidate-within-3600-seconds",
+      "fallback_equivalent": true
+    },
+    {
+      "id": "conformance-profile-manifest",
+      "class": "source-and-release",
+      "media_type": "application/json",
+      "static_media_types": ["application/json", "text/plain"],
+      "website_path": null,
+      "repository_path": "research/pre-normative-profiles/fixtures/profile-fixture-manifest-v0.json",
+      "static_url": "https://raw.githubusercontent.com/RobLe3/IICP/main/research/pre-normative-profiles/fixtures/profile-fixture-manifest-v0.json",
+      "cache_policy": "revalidate-within-3600-seconds",
+      "fallback_equivalent": true
+    },
+    {
+      "id": "release-integrity-manifest",
+      "class": "immutable-release",
+      "media_type": "application/json",
+      "static_media_types": ["application/json", "text/plain"],
+      "website_path": null,
+      "repository_path": "spec/v1.9/release-integrity-manifest.json",
+      "static_url": "https://raw.githubusercontent.com/RobLe3/IICP/main/spec/v1.9/release-integrity-manifest.json",
+      "cache_policy": "immutable-only-when-addressed-by-release-tag",
+      "fallback_equivalent": true
+    },
+    {
+      "id": "directory-deployment-record",
+      "class": "live-runtime",
+      "media_type": "application/json",
+      "website_path": "/.well-known/iicp-deployment.json",
+      "repository_path": null,
+      "static_url": null,
+      "cache_policy": "no-store-or-bounded-by-record-expiry",
+      "fallback_equivalent": false,
+      "unavailable_behavior": "report-live-state-unavailable"
+    },
+    {
+      "id": "directory-status-summary",
+      "class": "live-runtime",
+      "media_type": "application/json",
+      "website_path": "/api/v1/stats",
+      "repository_path": null,
+      "static_url": null,
+      "cache_policy": "no-store-or-revalidate-within-60-seconds",
+      "fallback_equivalent": false,
+      "unavailable_behavior": "report-live-state-unavailable"
+    }
+  ],
+  "privacy": {
+    "task_payloads_allowed": false,
+    "credentials_allowed": false,
+    "private_topology_allowed": false,
+    "raw_operator_identifiers_allowed": false
+  }
+}
