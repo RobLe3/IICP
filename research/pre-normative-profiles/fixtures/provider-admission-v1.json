@@ -1,0 +1,123 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "profile": "urn:iicp:profile:provider-admission:v1",
+  "advertisement_vectors": [
+    {
+      "name": "bounded_available_capacity",
+      "advertisement": {
+        "profile": "urn:iicp:profile:provider-admission:v1",
+        "availability": "ready",
+        "capacity_class": "limited",
+        "supported_profiles": [
+          "urn:iicp:profile:service-lifecycle:v1"
+        ],
+        "observed_at": "2026-08-09T10:00:00Z",
+        "valid_until": "2026-08-09T10:02:00Z"
+      },
+      "expected": "accept"
+    },
+    {
+      "name": "unavailable_requires_retry_hint",
+      "advertisement": {
+        "profile": "urn:iicp:profile:provider-admission:v1",
+        "availability": "unavailable",
+        "capacity_class": "limited",
+        "supported_profiles": [],
+        "observed_at": "2026-08-09T10:00:00Z",
+        "valid_until": "2026-08-09T10:01:00Z"
+      },
+      "expected": "reject_missing_retry_after"
+    },
+    {
+      "name": "capacity_class_is_bounded",
+      "advertisement": {
+        "profile": "urn:iicp:profile:provider-admission:v1",
+        "availability": "draining",
+        "capacity_class": "gpu-8x",
+        "supported_profiles": [],
+        "observed_at": "2026-08-09T10:00:00Z",
+        "valid_until": "2026-08-09T10:01:00Z"
+      },
+      "expected": "reject_capacity_class"
+    },
+    {
+      "name": "freshness_is_bounded",
+      "advertisement": {
+        "profile": "urn:iicp:profile:provider-admission:v1",
+        "availability": "ready",
+        "capacity_class": "high",
+        "supported_profiles": [],
+        "observed_at": "2026-08-09T10:00:00Z",
+        "valid_until": "2026-08-09T10:10:00Z"
+      },
+      "expected": "reject_excessive_validity"
+    },
+    {
+      "name": "runtime_topology_is_not_portable",
+      "advertisement": {
+        "profile": "urn:iicp:profile:provider-admission:v1",
+        "availability": "ready",
+        "capacity_class": "limited",
+        "supported_profiles": [],
+        "observed_at": "2026-08-09T10:00:00Z",
+        "valid_until": "2026-08-09T10:01:00Z",
+        "gpu_uuid": "not-public"
+      },
+      "expected": "reject_unknown_field"
+    }
+  ],
+  "admission_vectors": [
+    {
+      "name": "accepted_is_deadline_bounded",
+      "request_deadline": "2026-08-09T10:02:00Z",
+      "outcome": {
+        "task_id": "task-1",
+        "outcome": "accepted",
+        "accepted_until": "2026-08-09T10:02:00Z",
+        "capacity_class": "limited"
+      },
+      "expected": "accept"
+    },
+    {
+      "name": "accepted_after_deadline_is_invalid",
+      "request_deadline": "2026-08-09T10:02:00Z",
+      "outcome": {
+        "task_id": "task-2",
+        "outcome": "accepted",
+        "accepted_until": "2026-08-09T10:02:01Z"
+      },
+      "expected": "reject_deadline"
+    },
+    {
+      "name": "deferred_capacity_has_retry_hint",
+      "request_deadline": "2026-08-09T10:02:00Z",
+      "outcome": {
+        "task_id": "task-3",
+        "outcome": "capacity_exceeded",
+        "retry_after_ms": 5000
+      },
+      "expected": "accept"
+    },
+    {
+      "name": "unknown_outcome_is_rejected",
+      "request_deadline": "2026-08-09T10:02:00Z",
+      "outcome": {
+        "task_id": "task-4",
+        "outcome": "rejected"
+      },
+      "expected": "reject_outcome"
+    },
+    {
+      "name": "accepted_must_not_carry_retry_hint",
+      "request_deadline": "2026-08-09T10:02:00Z",
+      "outcome": {
+        "task_id": "task-5",
+        "outcome": "accepted",
+        "accepted_until": "2026-08-09T10:01:00Z",
+        "retry_after_ms": 1000
+      },
+      "expected": "reject_field_combination"
+    }
+  ]
+}

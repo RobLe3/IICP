@@ -1247,9 +1247,21 @@
       "disposition": "observed outside the canonical registry; requires separate review and evidence",
       "sources": [
         {
+          "repository": "IICP",
+          "paths": [
+            "tools/test_mcp_gateway_official_processes.py"
+          ]
+        },
+        {
           "repository": "iicp-client-python",
           "paths": [
             "tests/test_mcp_gateway.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "tests/mcp_gateway_tests.rs"
           ]
         },
         {
