@@ -35,7 +35,7 @@
     },
     {
       "id": "directory-rust",
-      "version": "0.1.9",
+      "version": "0.1.10",
       "wire_behavior": "unchanged",
       "conformance_impact": "changed",
       "profiles": [
@@ -44,8 +44,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No database migration is required. Reputation updates now serialize the shared hourly budget and retry bounded transient MySQL lock failures.",
-      "rollback": "Restore v0.1.8; Genesis cutover remains unauthorized and the earlier concurrent reputation behavior is not parity-safe."
+      "migration": "No database migration is required. The corrective release validates nested fixture digests recursively, persists no-op heartbeat updates in MySQL, and removes the event-listener advisory path.",
+      "rollback": "Restore v0.1.9; Genesis cutover remains unauthorized. Rolling back also restores the prior nested-fixture and no-op-heartbeat defects."
     },
     {
       "id": "client-python",
