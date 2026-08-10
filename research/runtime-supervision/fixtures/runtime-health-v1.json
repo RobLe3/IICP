@@ -1,0 +1,68 @@
+{
+  "fixture_version": "1.0.0-draft",
+  "status": "pre-normative-operational",
+  "boundary": "local runtime semantics; not an IICP wire profile",
+  "reason_precedence": ["STARTING", "STOPPING", "RUNTIME_PROGRESS_STALE", "SUPERVISOR_PROGRESS_STALE", "PROVIDER_UNAVAILABLE", "NO_CAPACITY", "ROUTING_UNAVAILABLE", "TUNNEL_RECOVERING", "DIRECTORY_UNAVAILABLE", "DNS_UNAVAILABLE", "INTERNET_UNAVAILABLE", "STATE_UNKNOWN"],
+  "scenarios": [
+    {
+      "id": "RUNTIME-HEALTH-01-normal",
+      "input": {"lifecycle": "running", "runtime_age_ms": 500, "runtime_stale_after_ms": 30000, "supervisor_required": true, "supervisor_age_ms": 1000, "supervisor_stale_after_ms": 120000, "provider": "healthy", "capacity_available": true, "routing": "healthy", "directory": "healthy", "dns": "healthy", "internet": "healthy", "tunnel": "healthy"},
+      "expected": {"liveness": "live", "readiness": "ready", "reason_codes": []}
+    },
+    {
+      "id": "RUNTIME-HEALTH-02-startup",
+      "input": {"lifecycle": "starting", "runtime_age_ms": 0, "runtime_stale_after_ms": 30000, "supervisor_required": true, "supervisor_age_ms": 0, "supervisor_stale_after_ms": 120000, "provider": "unknown", "capacity_available": false, "routing": "unknown", "directory": "unknown", "dns": "unknown", "internet": "unknown", "tunnel": "unknown"},
+      "expected": {"liveness": "starting", "readiness": "not_ready", "reason_codes": ["STARTING"]}
+    },
+    {
+      "id": "RUNTIME-HEALTH-03-runtime-stalled",
+      "input": {"lifecycle": "running", "runtime_age_ms": 30001, "runtime_stale_after_ms": 30000, "supervisor_required": true, "supervisor_age_ms": 1000, "supervisor_stale_after_ms": 120000, "provider": "healthy", "capacity_available": true, "routing": "healthy", "directory": "healthy", "dns": "healthy", "internet": "healthy", "tunnel": "healthy"},
+      "expected": {"liveness": "not_live", "readiness": "not_ready", "reason_codes": ["RUNTIME_PROGRESS_STALE"]}
+    },
+    {
+      "id": "RUNTIME-HEALTH-04-supervisor-stalled",
+      "input": {"lifecycle": "running", "runtime_age_ms": 500, "runtime_stale_after_ms": 30000, "supervisor_required": true, "supervisor_age_ms": 120001, "supervisor_stale_after_ms": 120000, "provider": "healthy", "capacity_available": true, "routing": "healthy", "directory": "healthy", "dns": "healthy", "internet": "healthy", "tunnel": "healthy"},
+      "expected": {"liveness": "not_live", "readiness": "not_ready", "reason_codes": ["SUPERVISOR_PROGRESS_STALE"]}
+    },
+    {
+      "id": "RUNTIME-HEALTH-05-directory-unavailable",
+      "input": {"lifecycle": "running", "runtime_age_ms": 500, "runtime_stale_after_ms": 30000, "supervisor_required": true, "supervisor_age_ms": 1000, "supervisor_stale_after_ms": 120000, "provider": "healthy", "capacity_available": true, "routing": "healthy", "directory": "unavailable", "dns": "healthy", "internet": "healthy", "tunnel": "healthy"},
+      "expected": {"liveness": "live", "readiness": "degraded", "reason_codes": ["DIRECTORY_UNAVAILABLE"]}
+    },
+    {
+      "id": "RUNTIME-HEALTH-06-tunnel-recovering",
+      "input": {"lifecycle": "running", "runtime_age_ms": 500, "runtime_stale_after_ms": 30000, "supervisor_required": true, "supervisor_age_ms": 1000, "supervisor_stale_after_ms": 120000, "provider": "healthy", "capacity_available": true, "routing": "healthy", "directory": "healthy", "dns": "healthy", "internet": "healthy", "tunnel": "recovering"},
+      "expected": {"liveness": "live", "readiness": "degraded", "reason_codes": ["TUNNEL_RECOVERING"]}
+    },
+    {
+      "id": "RUNTIME-HEALTH-07-provider-unavailable",
+      "input": {"lifecycle": "running", "runtime_age_ms": 500, "runtime_stale_after_ms": 30000, "supervisor_required": true, "supervisor_age_ms": 1000, "supervisor_stale_after_ms": 120000, "provider": "unavailable", "capacity_available": true, "routing": "healthy", "directory": "healthy", "dns": "healthy", "internet": "healthy", "tunnel": "healthy"},
+      "expected": {"liveness": "live", "readiness": "not_ready", "reason_codes": ["PROVIDER_UNAVAILABLE"]}
+    },
+    {
+      "id": "RUNTIME-HEALTH-08-no-capacity",
+      "input": {"lifecycle": "running", "runtime_age_ms": 500, "runtime_stale_after_ms": 30000, "supervisor_required": true, "supervisor_age_ms": 1000, "supervisor_stale_after_ms": 120000, "provider": "healthy", "capacity_available": false, "routing": "healthy", "directory": "healthy", "dns": "healthy", "internet": "healthy", "tunnel": "healthy"},
+      "expected": {"liveness": "live", "readiness": "not_ready", "reason_codes": ["NO_CAPACITY"]}
+    },
+    {
+      "id": "RUNTIME-HEALTH-09-network-loss",
+      "input": {"lifecycle": "running", "runtime_age_ms": 500, "runtime_stale_after_ms": 30000, "supervisor_required": true, "supervisor_age_ms": 1000, "supervisor_stale_after_ms": 120000, "provider": "healthy", "capacity_available": true, "routing": "healthy", "directory": "unavailable", "dns": "unavailable", "internet": "unavailable", "tunnel": "unavailable"},
+      "expected": {"liveness": "live", "readiness": "degraded", "reason_codes": ["DIRECTORY_UNAVAILABLE", "DNS_UNAVAILABLE", "INTERNET_UNAVAILABLE"]}
+    },
+    {
+      "id": "RUNTIME-HEALTH-10-supervisor-not-required",
+      "input": {"lifecycle": "running", "runtime_age_ms": 500, "runtime_stale_after_ms": 30000, "supervisor_required": false, "supervisor_age_ms": 999999, "supervisor_stale_after_ms": 120000, "provider": "healthy", "capacity_available": true, "routing": "healthy", "directory": "healthy", "dns": "healthy", "internet": "healthy", "tunnel": "not_applicable"},
+      "expected": {"liveness": "live", "readiness": "ready", "reason_codes": []}
+    },
+    {
+      "id": "RUNTIME-HEALTH-11-stopping",
+      "input": {"lifecycle": "stopping", "runtime_age_ms": 500, "runtime_stale_after_ms": 30000, "supervisor_required": true, "supervisor_age_ms": 1000, "supervisor_stale_after_ms": 120000, "provider": "healthy", "capacity_available": true, "routing": "healthy", "directory": "healthy", "dns": "healthy", "internet": "healthy", "tunnel": "healthy"},
+      "expected": {"liveness": "live", "readiness": "not_ready", "reason_codes": ["STOPPING"]}
+    },
+    {
+      "id": "RUNTIME-HEALTH-12-high-load-within-threshold",
+      "input": {"lifecycle": "running", "runtime_age_ms": 29999, "runtime_stale_after_ms": 30000, "supervisor_required": true, "supervisor_age_ms": 119999, "supervisor_stale_after_ms": 120000, "provider": "healthy", "capacity_available": true, "routing": "healthy", "directory": "healthy", "dns": "healthy", "internet": "healthy", "tunnel": "healthy"},
+      "expected": {"liveness": "live", "readiness": "ready", "reason_codes": []}
+    }
+  ]
+}

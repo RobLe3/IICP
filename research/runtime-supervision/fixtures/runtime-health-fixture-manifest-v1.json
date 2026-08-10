@@ -1,0 +1,14 @@
+{
+  "manifest_version": "1.0.0-draft",
+  "status": "pre-normative-operational",
+  "fixtures": [
+    {
+      "path": "runtime-health-snapshot-v1.schema.json",
+      "sha256": "038a026ae5c224e461d23f58efaa49b556b5e63fccee71b43361a3fc57213037"
+    },
+    {
+      "path": "runtime-health-v1.json",
+      "sha256": "7641f794db3a660e5338785ec26df510ecef7374c0df9977cfeec8c0071e4732"
+    }
+  ]
+}

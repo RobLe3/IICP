@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/runtime-health-snapshot-v1.schema.json",
+  "title": "IICP local runtime health snapshot v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["health_schema_version", "process_epoch", "pid", "sequence", "emitted_at", "lifecycle", "liveness", "readiness", "progress", "subsystems", "external_connectivity", "reason_codes"],
+  "properties": {
+    "health_schema_version": {"const": 1},
+    "process_epoch": {"type": "string", "pattern": "^[0-9a-f-]{36}$"},
+    "pid": {"type": "integer", "minimum": 1},
+    "sequence": {"type": "integer", "minimum": 0},
+    "emitted_at": {"type": "string", "format": "date-time"},
+    "lifecycle": {"enum": ["starting", "running", "stopping"]},
+    "liveness": {"enum": ["starting", "live", "not_live", "indeterminate"]},
+    "readiness": {"enum": ["ready", "degraded", "not_ready"]},
+    "progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime", "supervisor"],
+      "properties": {
+        "runtime": {"$ref": "#/$defs/progress"},
+        "supervisor": {"$ref": "#/$defs/progress"}
+      }
+    },
+    "subsystems": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/subsystemState"}
+    },
+    "external_connectivity": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/subsystemState"}
+    },
+    "reason_codes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/reasonCode"}
+    }
+  },
+  "$defs": {
+    "progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "age_ms", "stale_after_ms", "required"],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 0},
+        "age_ms": {"type": "integer", "minimum": 0},
+        "stale_after_ms": {"type": "integer", "minimum": 1},
+        "required": {"type": "boolean"}
+      }
+    },
+    "subsystemState": {
+      "enum": ["healthy", "degraded", "recovering", "unavailable", "not_applicable", "unknown"]
+    },
+    "reasonCode": {
+      "enum": ["STARTING", "STOPPING", "RUNTIME_PROGRESS_STALE", "SUPERVISOR_PROGRESS_STALE", "DIRECTORY_UNAVAILABLE", "DNS_UNAVAILABLE", "INTERNET_UNAVAILABLE", "TUNNEL_RECOVERING", "PROVIDER_UNAVAILABLE", "NO_CAPACITY", "ROUTING_UNAVAILABLE", "STATE_UNKNOWN"]
+    }
+  }
+}
