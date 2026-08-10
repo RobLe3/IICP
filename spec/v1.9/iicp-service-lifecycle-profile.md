@@ -103,6 +103,12 @@ explicitly negotiates resumption.
   new task identifier to another provider only after declaring the first result
   unavailable; any separate billing is a new execution.
 
+For native framing, CALL key 24 carries `task_id`. A client negotiating this
+profile MUST send it. A retry of the same logical task MUST retain `task_id` and
+`idempotency_key` while using a new attempt-scoped `call_id`. A provider MUST
+reject a negotiated lifecycle CALL that omits `task_id`, or that reuses a known
+`task_id` with a different idempotency key or task-defining content.
+
 ## 6. Transport mapping
 
 Native TCP/QUIC uses the existing CALL, RESPONSE, CONTROL, and OBSERVE message
@@ -127,7 +133,7 @@ above remain identical.
 
 `research/native-ai-infrastructure/fixtures/service-profiles-v1.json` defines
 the minimum state-transition vectors. Implementations claiming this profile
-MUST pass `SERVICE-LIFECYCLE-01` through `SERVICE-LIFECYCLE-20` in the
+MUST pass `SERVICE-LIFECYCLE-01` through `SERVICE-LIFECYCLE-23` in the
 conformance suite.
 
 ## 8. Security and privacy

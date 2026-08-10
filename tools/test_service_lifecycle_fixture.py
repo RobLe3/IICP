@@ -54,6 +54,28 @@ def native_lifecycle_errors(vector: dict) -> list[str]:
     return errors
 
 
+def native_call_identity_errors(vector: dict) -> list[str]:
+    """Validate negotiated task, attempt, and idempotency identities."""
+    calls = vector["calls"]
+    errors: list[str] = []
+    known: dict[str, str] = {}
+    call_ids: set[str] = set()
+    for index, call in enumerate(calls):
+        task_id = call.get("task_id")
+        call_id = call.get("call_id")
+        idempotency_key = call.get("idempotency_key")
+        if call.get("profile") and not task_id:
+            errors.append(f"call {index}: missing task_id")
+        if call_id in call_ids:
+            errors.append(f"call {index}: reused call_id")
+        call_ids.add(call_id)
+        if task_id in known and known[task_id] != idempotency_key:
+            errors.append(f"call {index}: conflicting idempotency_key")
+        if task_id:
+            known.setdefault(task_id, idempotency_key)
+    return errors
+
+
 class ServiceLifecycleFixtureTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -64,7 +86,7 @@ class ServiceLifecycleFixtureTest(unittest.TestCase):
         ids = [item["id"] for item in self.data["lifecycle_vectors"]]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(
-            {f"SERVICE-LIFECYCLE-{number:02d}" for number in range(1, 21)},
+            {f"SERVICE-LIFECYCLE-{number:02d}" for number in range(1, 24)},
             set(ids),
         )
 
@@ -123,6 +145,19 @@ class ServiceLifecycleFixtureTest(unittest.TestCase):
             with self.subTest(vector_id=vector_id):
                 errors = native_lifecycle_errors(self.vectors[vector_id])
                 self.assertTrue(any(expected in error for error in errors), errors)
+
+    def test_native_call_identity_distinguishes_task_attempt_and_idempotency(self) -> None:
+        self.assertEqual(
+            [], native_call_identity_errors(self.vectors["SERVICE-LIFECYCLE-21"])
+        )
+        self.assertEqual(
+            [], native_call_identity_errors(self.vectors["SERVICE-LIFECYCLE-22"])
+        )
+        errors = native_call_identity_errors(self.vectors["SERVICE-LIFECYCLE-23"])
+        self.assertTrue(any("missing task_id" in error for error in errors), errors)
+        self.assertTrue(
+            any("conflicting idempotency_key" in error for error in errors), errors
+        )
 
 
 if __name__ == "__main__":

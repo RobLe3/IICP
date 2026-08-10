@@ -1,6 +1,6 @@
 {
-  "fixture_version": "1.2.0-draft",
-  "purpose": "Implementation-neutral conformance vectors for the proposed IICP service-lifecycle and provider-admission profiles, including native lifecycle-envelope correlation. These vectors do not modify the base wire frame.",
+  "fixture_version": "1.3.0-draft",
+  "purpose": "Implementation-neutral conformance vectors for the proposed IICP service-lifecycle and provider-admission profiles, including native response correlation and explicit task/attempt/idempotency identity. These vectors do not modify the base wire frame.",
   "profiles": [
     "urn:iicp:profile:service-lifecycle:v1",
     "urn:iicp:profile:provider-admission:v1"
@@ -549,6 +549,62 @@
         }
       ],
       "expected": "reject response after terminal"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-21",
+      "name": "negotiated native CALL carries stable task identity",
+      "calls": [
+        {
+          "task_id": "t-21",
+          "call_id": "c-21-a",
+          "idempotency_key": "k-21",
+          "profile": "urn:iicp:profile:service-lifecycle:v1"
+        }
+      ],
+      "expected": "accept explicit task identity before execution"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-22",
+      "name": "retry preserves logical identity and changes attempt identity",
+      "calls": [
+        {
+          "task_id": "t-22",
+          "call_id": "c-22-a",
+          "idempotency_key": "k-22",
+          "profile": "urn:iicp:profile:service-lifecycle:v1"
+        },
+        {
+          "task_id": "t-22",
+          "call_id": "c-22-b",
+          "idempotency_key": "k-22",
+          "profile": "urn:iicp:profile:service-lifecycle:v1"
+        }
+      ],
+      "expected": "return existing state without duplicate execution or billing"
+    },
+    {
+      "id": "SERVICE-LIFECYCLE-23",
+      "name": "missing or conflicting native task identity is rejected",
+      "calls": [
+        {
+          "call_id": "c-23-a",
+          "idempotency_key": "k-23",
+          "profile": "urn:iicp:profile:service-lifecycle:v1"
+        },
+        {
+          "task_id": "t-23",
+          "call_id": "c-23-b",
+          "idempotency_key": "k-23",
+          "profile": "urn:iicp:profile:service-lifecycle:v1"
+        },
+        {
+          "task_id": "t-23",
+          "call_id": "c-23-c",
+          "idempotency_key": "k-conflict",
+          "profile": "urn:iicp:profile:service-lifecycle:v1"
+        }
+      ],
+      "expected": "reject missing task_id and conflicting task/idempotency reuse before execution"
     }
   ],
   "admission_vectors": [

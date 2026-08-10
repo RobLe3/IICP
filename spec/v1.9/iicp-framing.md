@@ -208,6 +208,14 @@ preserved; three keys are deprecated (marked †).
 | 21 | capabilities | array | MAY | Required node capabilities; array of tstr |
 | 22 | ttl | uint | MAY | Time-to-live in seconds; 0 = no limit |
 | 23 | metadata | map | MAY | Opaque key/value pairs; keys and values MUST be tstr |
+| 24 | task_id | tstr | COND | Stable logical-task identifier; MUST be present when `urn:iicp:profile:service-lifecycle:v1` is negotiated |
+
+`task_id`, `call_id`, and `idempotency_key` have distinct roles. `task_id`
+identifies one logical task and remains unchanged across retry attempts.
+`call_id` identifies one transport attempt and MUST change for a new attempt.
+`idempotency_key` binds replay-safe execution and billing behavior; it MUST
+remain unchanged when retrying the same accepted or ambiguously completed task.
+An unnegotiated base CALL MAY omit key 24.
 
 **LOG-FORBIDDEN**: Implementations MUST NOT log the value of key 11 (`auth_token`)
 in any log, trace, metric label, error message, or debug output. This prohibition
@@ -289,7 +297,7 @@ keys:
 | 5 | receipt | map | SHOULD on terminal | Redacted terminal evidence when another negotiated profile requires it. |
 
 The RESPONSE `session_id` and `call_id` MUST echo the CALL. The envelope
-`task_id` MUST identify that CALL's submitted task. RESPONSE status maps to the
+`task_id` MUST equal CALL key 24. RESPONSE status maps to the
 envelope event as follows: `partial` to `partial`; `success` to `completed`;
 `error` to `failed` or `cancelled`; and `timeout` to `timed_out`. A receiver
 MUST reject a contradictory status, finality, session, call, task, or sequence
