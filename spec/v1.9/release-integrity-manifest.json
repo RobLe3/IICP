@@ -1,7 +1,7 @@
 {
   "files": {
-    "CHANGELOG.md": "c3a2ae553ae1cef544e2f07557f8029a15dcf8dae13913e248bdad943ec12080",
-    "IMPLEMENTATIONS.md": "2b6ecef29ccb6850c3de042b429c5d3c4b3f01b8c1bb25526bacd6da1ed4e932",
+    "CHANGELOG.md": "e66f9aa705ba1ad864a064e76c201e86fe5cdaef04be0c0fb6b4c5a403dccd73",
+    "IMPLEMENTATIONS.md": "3f46676c861fa8ec5a8237988d88e661dce30a15817159a5158546b5bebf064b",
     "README.md": "27199a17ddf89300e37f8dbefb15c3cd0830ba20cac70beebd1d35ae14ea5605",
     "SPEC_RELEASE_PROCESS.md": "8145897d8b3768bcfdab1121fcd081af98f2a52044fbe8835240b0059a07c1fd",
     "SPEC_STATUS.md": "90935da47e9a249aceb01213011b8aa4f031613b6d14a532da693005992025b4",
@@ -21,10 +21,10 @@
     "conformance-runner/src/iicp_conformance/runner.py": "05527fb44e9714d25cd25cf0ed7340b34b2f3c6b111890830ded3accacdb436c",
     "conformance-runner/tests/test_runner.py": "f42a0758494607a60594fd63bd0dbf648bc9df6c07319f923d2b6f22ed25caf2",
     "docs/architecture/portability-and-non-capture.md": "98f56e514014514fccdd4a12f685722b158416ef3a1836384d2732aaad0a2823",
-    "ecosystem/CURRENT_VERSIONS.md": "248793f6594dd800ab07dc8bec4c7d9d1740c405830ab57d419d298ab1825e9e",
-    "ecosystem/current-versions.json": "cfb54cf23ae3e9c3afaa39e825ec39a6a7855c6b795b3d7d01f283cdd94931e1",
-    "ecosystem/releases.json": "559c5a165cb56de625ee11fc02c95bde09127dceaad1d676510eab784e006596",
-    "ecosystem/repositories.json": "1eba096f9a548a26822ce42ae129e60864989b54c681c0fd786f5456ff8f200e",
+    "ecosystem/CURRENT_VERSIONS.md": "51e0d48b2cecebca2225f19ba58804961725aadcfe4b88f91eee2067aed9293d",
+    "ecosystem/current-versions.json": "1a4e20eb62b64eecdf426b6f39fd7a18d9bc4b49d1656fc18eb9baf10a1a7640",
+    "ecosystem/releases.json": "935ce9714992a70fd7463874e573f5325aff215c5b6d38a2a213b414f3c6f480",
+    "ecosystem/repositories.json": "54ec6f910137b1c30b354b23064badfe9400fbdd316e8237fb8a3b4c7a01a021",
     "fixtures/directory-implementation-metadata-v1.json": "5bdd9ebd838cd5c4c972176fabebb4971a759b0ca69014328e8370a02d6ee08f",
     "registry/README.md": "e69c9ce65f3b1650e9f6f64c7a895b8ffe47cef3bdd537cc65b54c444ca17c8a",
     "registry/fixtures/intent-payloads-v1.json": "d567eab0c62dbebc942a2618f8f20d113a8642d40133f31e1ab5d42959bb9335",
@@ -110,7 +110,7 @@
     "tools/test_public_prose.py": "39f8488525192780a4cabda0c3b5641208fb7b27c66044bd464693e740fc505f",
     "tools/test_service_lifecycle_fixture.py": "95bac952af648bf78ba86e67bd2b70a309b156dedd411fc0d3ef9e1d760b070c"
   },
-  "manifest_version": "1.11.0",
+  "manifest_version": "1.12.0",
   "protocol_suite_version": "1.10.12",
   "registry_version": "1.4.0",
   "status": "immutable canonical release candidate"
