@@ -960,6 +960,9 @@ change Phase 1 conformance or the fixed native frame. The canonical fixture is
 | `SERVICE-LIFECYCLE-18` | Native lifecycle sequence gaps are rejected. | Native lifecycle / `t-18` |
 | `SERVICE-LIFECYCLE-19` | Native RESPONSE/envelope finality disagreement is rejected. | Native lifecycle / `t-19` |
 | `SERVICE-LIFECYCLE-20` | Native output after the terminal response is rejected. | Native lifecycle / `t-20` |
+| `SERVICE-LIFECYCLE-21` | A negotiated native lifecycle CALL carries an explicit stable task identifier. | Native lifecycle / `t-21` |
+| `SERVICE-LIFECYCLE-22` | A retry retains task and idempotency identifiers while changing its call attempt identifier. | Native lifecycle / `t-22` |
+| `SERVICE-LIFECYCLE-23` | Missing task identity or conflicting task/idempotency reuse is rejected before execution. | Native lifecycle / `t-23` |
 | `ADMISSION-01` | A ready provider accepts bounded work. | Provider admission / `ADMISSION-01` |
 | `ADMISSION-02` | An unknown required profile rejects before execution. | Provider admission / `ADMISSION-02` |
 | `ADMISSION-03` | Capacity exhaustion rejects without unbounded queueing or billing. | Provider admission / `ADMISSION-03` |
