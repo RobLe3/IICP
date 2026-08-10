@@ -145,17 +145,21 @@ The evidence supports a supervision gap at the design level: process-exit superv
 
 ## Tracked follow-up
 
-| Repository | Issue | Purpose |
-|---|---:|---|
-| IICP | [#121](https://github.com/RobLe3/IICP/issues/121) | shared semantics and fixtures |
-| Rust SDK | [#64](https://github.com/RobLe3/iicp-client-rust/issues/64) | generic health reference |
-| Python SDK | [#67](https://github.com/RobLe3/iicp-client-python/issues/67) | semantic parity |
-| TypeScript SDK | [#61](https://github.com/RobLe3/iicp-client-typescript/issues/61) | semantic parity |
-| Rust SDK | [#66](https://github.com/RobLe3/iicp-client-rust/issues/66) | gated systemd adapter and ARM validation |
-| Rust SDK | [#65](https://github.com/RobLe3/iicp-client-rust/issues/65) | effective service lifecycle |
-| Python SDK | [#68](https://github.com/RobLe3/iicp-client-python/issues/68) | effective service lifecycle |
-| TypeScript SDK | [#62](https://github.com/RobLe3/iicp-client-typescript/issues/62) | effective service lifecycle |
-| Website | `iicp-website#24` (private) | operator documentation after behavior stabilizes |
-| Operations | `iicp-network-ops#24` (private) | sanitized Pi incident classification |
+Implementation status was reverified on 2026-08-10. Shared semantics, all three
+runtime-health implementations, the three effective service-lifecycle commands,
+and operator documentation are complete. The Linux adapter is implemented as an
+opt-in candidate, but its issue remains open for Linux CI, controlled fault
+injection, measured ARM/Pi timing, and a separate default-enable decision.
 
-The platform adapter and documentation issues are dependency-gated. Their existence does not authorize implementation before the shared health model is accepted.
+| Repository | Issue | Status and purpose |
+|---|---:|---|
+| IICP | [#121](https://github.com/RobLe3/IICP/issues/121) | complete: shared semantics and fixtures |
+| Rust SDK | [#64](https://github.com/RobLe3/iicp-client-rust/issues/64) | complete: generic health reference |
+| Python SDK | [#67](https://github.com/RobLe3/iicp-client-python/issues/67) | complete: semantic parity |
+| TypeScript SDK | [#61](https://github.com/RobLe3/iicp-client-typescript/issues/61) | complete: semantic parity |
+| Rust SDK | [#66](https://github.com/RobLe3/iicp-client-rust/issues/66) | open: opt-in systemd candidate and ARM/fault evidence |
+| Rust SDK | [#65](https://github.com/RobLe3/iicp-client-rust/issues/65) | complete: effective service lifecycle |
+| Python SDK | [#68](https://github.com/RobLe3/iicp-client-python/issues/68) | complete: effective service lifecycle |
+| TypeScript SDK | [#62](https://github.com/RobLe3/iicp-client-typescript/issues/62) | complete: effective service lifecycle |
+| Website | `iicp-website#24` (private) | complete in source; no deployment included |
+| Operations | `iicp-network-ops#24` (private) | open: sanitized Pi incident classification |
