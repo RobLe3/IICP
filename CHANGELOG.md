@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Records the PHP Genesis directory v1.10.90 reliability release, which bounds
+  the public stats aggregate lookup without changing protocol, routes or schema.
+
 ## v1.10.12 — 2026-08-09
 
 Current-line corrective specification release. It does not begin a new protocol

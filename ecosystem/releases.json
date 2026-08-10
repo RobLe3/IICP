@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-09",
+  "generated_at": "2026-08-10",
   "releases": [
     {
       "id": "specification",
@@ -21,17 +21,17 @@
     },
     {
       "id": "directory-php",
-      "version": "1.10.89",
+      "version": "1.10.90",
       "wire_behavior": "unchanged",
-      "conformance_impact": "changed",
+      "conformance_impact": "unchanged",
       "profiles": [
         "directory-implementation-metadata-v1",
         "discovery-evidence-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No database migration is required. Reputation score, task counters and the hourly positive-gain budget are now committed in one node-locked transaction.",
-      "rollback": "Restore the immutable 1.10.88 artifact; concurrent successful heartbeats can then exceed the intended shared hourly reputation budget, so rollback is for emergency recovery only."
+      "migration": "No database migration is required. The public 24-hour stats aggregate now selects only the newest deterministic row per metric in SQL.",
+      "rollback": "Restore the immutable 1.10.89 artifact; the public stats cache-miss path then returns to unbounded historical-row hydration and may exceed shared-host PHP memory limits."
     },
     {
       "id": "directory-rust",
