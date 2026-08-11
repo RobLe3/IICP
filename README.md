@@ -4,7 +4,7 @@
 
 *Building the HTTP for the Age of Generative AI*
 
-**Protocol-suite release**: v1.10.13<br>
+**Protocol-suite release**: v1.10.12<br>
 **Wire compatibility baseline**: v1.9.0<br>
 **Reference implementation**: [iicp.network](https://iicp.network)
 **Status**: Project-normative beta suite; individual profiles retain their own status
@@ -265,7 +265,7 @@ The mesh is usable for its current capabilities, while relay hardening, broader 
 | Core protocol — register / discover / route | ✅ Live | Current evidence is published on the live stats page |
 | CIP coordinator (multi-node dispatch) | ✅ Implemented | Credit receipts, response integrity verification |
 | Reputation scoring | ✅ Ratified | Tier structure (§5.1.1) + bootstrap floor (§5.1.2) ratified 2026-05-24 — normative |
-| Published SDKs (Python / TypeScript / Rust) | ✅ Published v0.7.101 | Shared protocol baseline; see [Client SDKs](#client-sdks) |
+| Published SDKs (Python / TypeScript / Rust) | ✅ Published v0.7.100 | Shared protocol baseline; see [Client SDKs](#client-sdks) |
 | Node runtime (`iicp-node`) | ✅ Published | Ships inside every SDK (`pip install iicp-client` → `iicp-node serve`) |
 | Relay transport for unreachable workers | ✅ Shipped (v0.7.56) | HTTP long-poll worker transport — browsers and CGNAT operators bind outbound to a relay-capable node; consumers route through path-scoped relay endpoints with zero client changes |
 | **Browser node** (WebGPU, zero install) | ✅ Live | [iicp.network/browser-node](https://iicp.network/browser-node) — runs a real model in the browser via WebLLM, queries the live mesh as an IICP consumer (with a wire-level connection console), and can serve into the mesh via a relay. First **directory-listed browser node** verified end-to-end on 2026-06-12 |
@@ -292,18 +292,7 @@ Follow this repo or [iicp.network](https://iicp.network) for announcements.
 
 | Version | Date | Notes |
 |---------|------|-------|
-| **v1.10.13** | 2026-08-11 | Corrects current-state documentation and makes conformance-fixture version classification explicit and fail-closed; no base-wire change. |
-| v1.10.12 | 2026-08-09 | Corrects the negotiated lifecycle-envelope mapping and strengthens Registry 1.4 validation; no base-wire change. |
-| v1.10.11 | 2026-08-08 | Adds evidence-linked Registry 1.4 and directory reputation parity; no base-wire change. |
-| v1.10.10 | 2026-08-08 | Reconciles registration rate limits and negotiated streaming semantics; no base-wire change. |
-| v1.10.9 | 2026-08-05 | Records PHP directory security-patch currency; no wire change. |
-| v1.10.8 | 2026-08-02 | Adds the authenticated directory lifecycle conformance profile; no wire change. |
-| v1.10.7 | 2026-08-02 | Reconciles conformance-suite authority and adds dispatch-safety coverage; no wire change. |
-| v1.10.6 | 2026-08-02 | Generates current-version projections and adds prose-quality tooling; no wire change. |
-| v1.10.5 | 2026-08-02 | Records browser node 0.2.3; no wire change. |
-| v1.10.4 | 2026-08-02 | Separates provider implementation identity from SDK compatibility. |
-| v1.10.3 | 2026-08-01 | Adds the dual-era MCP profile and records SDK 0.7.101. |
-| v1.10.2 | 2026-08-01 | Adds pre-normative discovery evidence explanations; no ranking change. |
+| **v1.10.2** | 2026-08-01 | Additive pre-normative discovery evidence: health reasons, Gold progress, latency basis, SDK currency and aggregate operator diversity; no ranking change. |
 | v1.10.1 | 2026-07-31 | Corrective immutable release: pins synchronized structured release metadata in the integrity manifest; no wire change. |
 | v1.10.0 | 2026-07-31 | Adds authenticated replica decommissioning, credential invalidation, signed lifecycle propagation and same-DID reactivation. |
 | v1.9.3 | 2026-07-31 | Corrective immutable release: records Rust directory v0.1.4 snapshot-bootstrap correction; no protocol wire change. |

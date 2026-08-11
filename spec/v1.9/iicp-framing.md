@@ -1,7 +1,7 @@
 # IICP Binary Framing Layer
 
 **Document**: `spec/iicp-framing.md`  
-**Version**: 0.1.9-draft
+**Version**: 0.1.8-draft
 **Date**: 2026-08-08
 **Status**: Draft — NOT YET RATIFIED (see §12)  
 **Authority**: Protocol Steward  

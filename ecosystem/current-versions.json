@@ -33,7 +33,7 @@
     "specification": {
       "lifecycle": "active",
       "name": "IICP",
-      "release": "1.10.13",
+      "release": "1.10.12",
       "visibility": "public"
     },
     "web-node": {
@@ -49,8 +49,8 @@
       "visibility": "private"
     }
   },
-  "generated_at": "2026-08-11",
-  "protocol_suite_release": "1.10.13",
+  "generated_at": "2026-08-10",
+  "protocol_suite_release": "1.10.12",
   "schema": "iicp.ecosystem-current-versions.v1",
   "wire_compatibility_baseline": "1.9.0"
 }
