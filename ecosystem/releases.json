@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-10",
+  "generated_at": "2026-08-11",
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.12",
-      "wire_behavior": "additive",
+      "version": "1.10.13",
+      "wire_behavior": "unchanged",
       "conformance_impact": "changed",
       "profiles": [
         "directory-public-v1",
@@ -16,8 +16,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No base-wire, directory-schema or persisted-state migration is required. The negotiated service-lifecycle profile now has a defined native lifecycle envelope; Registry 1.4 validation is stricter while preserving existing intent URNs and legacy payload_schema fields.",
-      "rollback": "Continue using immutable v1.10.11 artifacts; implementations must not claim the corrected native lifecycle-envelope mapping or strict Registry 1.4 evidence validation."
+      "migration": "No wire, schema, registry, package or persisted-state migration is required. Current-state documentation now follows generated release authority, and the conformance-version gate explicitly distinguishes released fixtures from pre-normative fixtures while rejecting ambiguous metadata.",
+      "rollback": "Continue using immutable v1.10.12 artifacts. The protocol behavior remains compatible, but the older documentation contains stale current-state claims and its conformance-version gate rejects explicitly pre-normative bundled fixtures."
     },
     {
       "id": "directory-php",
