@@ -8,7 +8,7 @@
 
 **Format**: `MAJOR.MINOR.PATCH` (semver)  
 **Source of truth**: `spec/v1.9/VERSION` in the [`RobLe3/IICP`](https://github.com/RobLe3/IICP) spec repo  
-**Displayed as**: `IICP v1.9.0` or `IICP Protocol v1.9.0`  
+**Displayed as**: `IICP v<suite-version>` or `IICP Protocol v<suite-version>`
 **Changelog**: `CHANGELOG.md` in the IICP spec repo
 
 This is the version that external implementers, operators, and IETF reviewers see. It covers
@@ -24,7 +24,8 @@ the entire IICP specification suite (core, CIP, framing, identity, telemetry, et
 | v1.9.0 | 2026-05-30 | RT-01/RT-05 reputation caps and directory drift closeout |
 | v1.9.1 | 2026-07-30 | Status/version governance and transport/IANA errata; superseded because its bundled implementation index was stale |
 | v1.9.2 | 2026-07-30 | Corrective immutable release with synchronized implementation/package references and a version-truth gate |
-| **v1.10.12** | **2026-08-09** | **Current** — profile-only lifecycle-envelope correction, strict Registry 1.4 evidence validation, and updated conformance fixtures; no base-wire change |
+| **v1.10.13** | **2026-08-11** | **Current** — current-state documentation and fail-closed conformance-fixture classification corrections; no base-wire change |
+| v1.10.12 | 2026-08-09 | Profile-only lifecycle-envelope correction, strict Registry 1.4 evidence validation, and updated conformance fixtures; no base-wire change |
 | v1.10.11 | 2026-08-08 | Additive evidence-linked intent registry 1.4 and PHP/Rust reputation parity; no base-wire change |
 | v1.10.10 | 2026-08-08 | Consolidated rate-limit correctness, registry validation and negotiated streaming clarification; no base-wire change |
 | v1.10.9 | 2026-08-05 | Recorded PHP directory 1.10.87 security-patch currency; no wire change |
@@ -51,7 +52,7 @@ the entire IICP specification suite (core, CIP, framing, identity, telemetry, et
 
 **Format**: `MAJOR.MINOR.PATCH[-draft]`  
 **Scope**: Per-document, for tracking editorial changes within a specific spec file  
-**Displayed as**: `S.12 v0.6.8` (always with the spec number prefix)
+**Displayed as**: `S.12 v<document-version>` (always with the spec number prefix)
 
 Sub-spec documents have their own internal versioning for fine-grained editorial tracking.
 **These are NOT the IICP Protocol Suite version.** They exist so spec editors can track
@@ -59,13 +60,13 @@ which version of a sub-document contains which normative text.
 
 | Sub-spec | Current internal version | Notes |
 |----------|--------------------------|-------|
-| S.12 `iicp-cooperative-inference.md` | 0.6.8 | CIP — Phase 5 |
+| S.12 `iicp-cooperative-inference.md` | 0.6.13 | CIP — Phase 5 |
 | `iicp-core.md` | follows iicp-core section versioning | Core protocol |
 | `iicp-framing.md` | 0.1.x | Binary framing — Phase 4 stub |
 
 **Rules:**
 - Sub-spec versions are for editors. End users see the Protocol Suite version.
-- When displaying both: `IICP v1.9.0 · S.12 CIP v0.6.9` (suite first, sub-spec second)
+- When displaying both: `IICP v<suite-version> · S.12 CIP v<document-version>` (suite first, sub-spec second)
 - Never use a sub-spec version alone as "the" IICP version on public-facing surfaces
 
 ---
@@ -124,16 +125,16 @@ be displayed as the Protocol Suite, OpenAPI or package version.
 
 | Surface | What to display | Example |
 |---------|----------------|---------|
-| Research page badge | Protocol Suite version | `IICP v1.9.0 · Updated 2026-05-30` |
-| Spec references in page body | Suite + sub-spec | `spec S.12 v0.6.8` |
+| Research page badge | Protocol Suite version | `IICP v<suite-version> · Updated <date>` |
+| Spec references in page body | Suite + sub-spec | `spec S.12 v<document-version>` |
 | Implementation evidence | Software version | `directory v1.9.19` |
 | PR commit messages | Component + software version | `[directory] v1.9.19` |
 | IICP repo CHANGELOG | Protocol Suite version | `## v1.7.0 — 2026-05-24` |
-| Spec file headers | Sub-spec version | `**Version**: 0.6.8` |
+| Spec file headers | Sub-spec version | `**Version**: <document-version>` |
 
 **Never do:**
 - Use a made-up page version (e.g., "v1.3.0") on public surfaces
-- Use the S.12 internal version (0.6.8) as the IICP version badge
+- Use an S.12 internal version as the IICP version badge
 - Use the directory software version as the protocol version
 - Mix version axes in the same badge without labeling them
 
