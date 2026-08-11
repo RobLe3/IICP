@@ -2,23 +2,8 @@
 
 ## Unreleased
 
-## v1.10.13 — 2026-08-11
-
-Corrective documentation and tooling release on the existing protocol line. It
-records PHP Genesis directory v1.10.90 and does not change the stable v1.9 base
-wire, schemas, routes, registry entries, packages or deployment behavior.
-
-- Aligns the root overview, specification index, generated release projection
-  and suite `VERSION` authority, including the published SDK 0.7.101 line.
-- Uses the status meanings defined by `SPEC_STATUS.md`, fixes the specification
-  reading order, and reconciles the framing 0.1.9-draft and S.12 0.6.13
-  editorial-version references.
-- Makes the conformance-version gate accept only explicitly pre-normative
-  fixtures without `suite_version`, continue requiring known suite versions for
-  released fixtures, and fail closed on missing, unknown or contradictory
-  classification metadata.
-- Adds regression tests for current documentation axes, editorial versions and
-  positive and negative fixture classification.
+- Records the PHP Genesis directory v1.10.90 reliability release, which bounds
+  the public stats aggregate lookup without changing protocol, routes or schema.
 
 ## v1.10.12 — 2026-08-09
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-11",
+  "generated_at": "2026-08-10",
   "current_namespace": "RobLe3",
   "planned_namespace": "iicp-protocol",
   "organization_plan": "github-free",
@@ -14,7 +14,7 @@
       "authority": "normative protocol, registries and reviewed research",
       "language": "specification",
       "protocol": "1.9",
-      "release": "1.10.13"
+      "release": "1.10.12"
     },
     {
       "id": "project-hub",

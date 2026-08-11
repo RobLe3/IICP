@@ -1,6 +1,6 @@
 # IICP Protocol Specification Index
 
-**Current Protocol Suite version**: [`v1.10.13`](./VERSION) — see [CHANGELOG](../../CHANGELOG.md) for history.
+**Current Protocol Suite version**: [`v1.9.0`](./VERSION) — see [CHANGELOG](../../CHANGELOG.md) for history.
 
 This directory contains the normative and informational protocol documents for IICP.
 
@@ -18,10 +18,10 @@ Start here when you are new to the protocol. Each document builds on the previou
 | 4 | [`IICP-core-phase1-profile.md`](./IICP-core-phase1-profile.md) | Accepted Phase 1 conformance baseline — the minimal implementation contract. |
 | 5 | [`iicp-service-lifecycle-profile.md`](./iicp-service-lifecycle-profile.md) | Proposed optional lifecycle profile — streaming, cancellation, retry, and idempotency. |
 | 6 | [`iicp-provider-admission-profile.md`](./iicp-provider-admission-profile.md) | Proposed optional provider-admission profile — readiness, bounded capacity, and deadlines. |
-| 7 | [`iicp-confidentiality.md`](./iicp-confidentiality.md) | IICP-CX — key advertisement, payload encryption, keyless-node refusal, relay opacity, and Tier-2 confidentiality targets. |
-| 8 | [`iicp-cooperative-inference.md`](./iicp-cooperative-inference.md) | CIP — multi-node cooperative inference (Phase 5). Coordinator/worker roles, HMAC receipt, credit flow, conformance levels. |
-| 9 | [`iicp-federated-directory.md`](./iicp-federated-directory.md) | Federated control plane — Genesis Seed, replica sync, Ed25519 event log (Phase 6). |
-| 10 | [`iicp-framing.md`](./iicp-framing.md) | Binary framing layer (draft) — 12-byte frame header, CBOR schemas, version negotiation, HTTP fallback. NOT YET RATIFIED. |
+| 5 | [`iicp-confidentiality.md`](./iicp-confidentiality.md) | IICP-CX — key advertisement, payload encryption, keyless-node refusal, relay opacity, and Tier-2 confidentiality targets. |
+| 6 | [`iicp-cooperative-inference.md`](./iicp-cooperative-inference.md) | CIP — multi-node cooperative inference (Phase 5). Coordinator/worker roles, HMAC receipt, credit flow, conformance levels. |
+| 7 | [`iicp-federated-directory.md`](./iicp-federated-directory.md) | Federated control plane — Genesis Seed, replica sync, Ed25519 event log (Phase 6). |
+| 8 | [`iicp-framing.md`](./iicp-framing.md) | Binary framing layer (draft) — 12-byte frame header, CBOR schemas, version negotiation, HTTP fallback. NOT YET RATIFIED. |
 
 ---
 
@@ -83,16 +83,11 @@ For implementation ADRs and their current evidence, see the
 
 ---
 
-## Specification status
-
-The authoritative definitions live in [`SPEC_STATUS.md`](../../SPEC_STATUS.md).
-This index uses those terms without treating implementation or deployment as
-ratification.
+## Spec status legend
 
 | Status | Meaning |
-|---|---|
-| `Project-normative` | Binding for implementations claiming conformance to the named Protocol Suite release. |
-| `Stable` | Project-normative behavior protected by compatibility and deprecation policy. |
-| `Active draft` | Reviewed work under development; not required unless a released profile incorporates it. |
-| `Experimental` | Research or implementation work without sufficient interoperability and operational evidence. |
-| `Externally ratified` | Approved by a named external standards body and backed by a public reference. |
+|--------|---------|
+| `accepted` | Ratified — implementations MUST conform |
+| `draft` | Active and normative within the project; not yet externally ratified |
+| `Draft (skeleton)` | Structure committed; normative bodies pending review |
+| `NOT YET RATIFIED` | Experimental — do not implement without maintainer sign-off |

@@ -12,31 +12,8 @@ SUITE_PATH = ROOT / "spec/v1.9/conformance-test-suite.md"
 FIXTURE_DIR = ROOT / "conformance-runner/src/iicp_conformance/fixtures"
 
 
-def _fixture_classification(fixture: dict, path: Path) -> tuple[str | None, str | None]:
-    """Return (classification, error) without guessing ambiguous metadata."""
-    suite_version = fixture.get("suite_version")
-    status = fixture.get("status")
-
-    if isinstance(suite_version, str):
-        if status is not None:
-            return None, f"{path.name}: released fixture must not also declare status {status!r}"
-        return "released", None
-
-    if isinstance(status, str) and (
-        status == "pre-normative" or status.startswith("pre-normative-")
-    ):
-        return "pre-normative", None
-
-    if status is None:
-        return None, f"{path.name}: missing suite_version and explicit pre-normative status"
-    return None, f"{path.name}: unrecognized fixture status {status!r}"
-
-
-def check(
-    suite_path: Path = SUITE_PATH,
-    fixture_dir: Path = FIXTURE_DIR,
-) -> list[str]:
-    text = suite_path.read_text(encoding="utf-8")
+def check() -> list[str]:
+    text = SUITE_PATH.read_text(encoding="utf-8")
     errors: list[str] = []
 
     header = re.search(r"^\*\*Version\*\*:\s*([0-9]+(?:\.[0-9]+){2})\s*$", text, re.MULTILINE)
@@ -66,17 +43,13 @@ def check(
             f"suite header {header_version} differs from latest changelog entry {versions[0]}"
         )
 
-    for path in sorted(fixture_dir.glob("*.json")):
+    for path in sorted(FIXTURE_DIR.glob("*.json")):
         fixture = json.loads(path.read_text(encoding="utf-8"))
         suite_version = fixture.get("suite_version")
         profile = fixture.get("profile", path.stem)
-        classification, classification_error = _fixture_classification(fixture, path)
-        if classification_error is not None:
-            errors.append(classification_error)
+        if not isinstance(suite_version, str):
+            errors.append(f"{path.name}: missing suite_version")
             continue
-        if classification == "pre-normative":
-            continue
-        assert classification == "released" and isinstance(suite_version, str)
         if suite_version not in versions:
             errors.append(
                 f"{path.name}: suite version {suite_version} is absent from the changelog"
