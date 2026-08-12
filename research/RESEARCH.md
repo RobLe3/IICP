@@ -2,7 +2,7 @@
 
 **Maintained by**: RESA loop (`project/resa-loop-prompt.md`), SPEC loop, and FORGE-5 ADOPTION sub-loop  
 **State file**: `project/RESA_STATE.json` (RESA tracks); WORK_QUEUE.json (ADOPTION-driven tracks)  
-**Last updated**: 2026-06-29 (operational evidence checkpoint added)
+**Last updated**: 2026-08-12 (heterogeneous routing and execution-privacy boundary research added)
 
 > **Simulation-vs-live status (updated iter93)**: REP findings (F1–F16) and R1–R7 design findings derive from discrete-event simulation (Python harness, bounded network sizes 100–10,000). RS6 Phase 2 (iter93) added actual Ollama inference validation (phi3:mini vs qwen2.5:0.5b, 90 calls) — the quality-feedback loop is now partially cross-validated against real inference. Treat REP equilibrium findings as directional until REP6 full pilot completes. R4/R5/R6 routing findings are validated at simulation scale; real-pool behaviour to be confirmed by RS6 Phase 3.
 
@@ -29,6 +29,18 @@
 > contracts. See
 > [`research/strategic/2026-07-11-layered-intent-capability-research.md`](strategic/2026-07-11-layered-intent-capability-research.md).
 
+> **Heterogeneous routing and execution-privacy checkpoint (2026-08-12):**
+> two focused assessments extend the layered substrate without changing the
+> current wire protocol. Semantic-quality prediction remains evaluator-specific
+> and client-local, after IICP eligibility and before IICP-controlled dispatch.
+> Execution privacy remains unimplemented; the recommended research direction is
+> an optional attested confidential-execution profile that binds a fresh CX key
+> to hardware-backed evidence and keeps the complete plaintext path inside the
+> measured boundary. See
+> [`research/strategic/2026-08-12-heterogeneous-model-quality-and-learned-routing.md`](strategic/2026-08-12-heterogeneous-model-quality-and-learned-routing.md)
+> and
+> [`research/strategic/2026-08-12-execution-privacy-and-attested-confidential-execution.md`](strategic/2026-08-12-execution-privacy-and-attested-confidential-execution.md).
+
 This document consolidates all research outcomes, datasets, test cases, and design
 insights across the active research tracks. It is the primary reference for
 spec writers, ADR authors, and implementation teams.
@@ -47,6 +59,8 @@ spec writers, ADR authors, and implementation teams.
 | **INBOUND-ADAPTERS** — LLM API compat layer | #273 | **Research COMPLETE 1/1** (iter-370) | Priority matrix done: Ollama-compat Phase A, Anthropic-compat Phase B; implementation issues to be filed |
 | **OPER-EVIDENCE** — live implementation evidence discipline | Reference implementation | **Active** | Separate live, validated, simulated and future claims; see validation methodology §7 |
 | **STRATEGIC-PROFILES** — layered intent/capability/policy/evidence research | `iicp.network#619`, `RobLe3/IICP#2` | **Research complete; ratification gated** | Preserve stable URNs; publish profiles and shared fixtures before normative changes. |
+| **HETEROGENEOUS-QUALITY** — evaluator-owned learned backend selection | focused IICP research issue | **Research decision complete; experiment gated** | Reuse policy eligibility and ticketed dispatch; test a generic local ranker before any shared profile change. |
+| **EXECUTION-PRIVACY** — attested confidential execution | focused IICP research issue | **Research decision complete; feasibility gated** | Ordinary CX does not hide plaintext from the executor; prove nonce/key-bound attestation and a complete confidential worker before implementation claims. |
 
 **RESA composite**: **92.36/90.0 CONVERGED** (iter93, 2026-05-18). R-GATE-1 OPEN.
 

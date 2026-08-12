@@ -4,6 +4,14 @@
 **Decision status:** research only; no protocol or implementation change is authorized  
 **Question:** which Edge-Net or QuDAG concepts expose a general IICP requirement, and which should remain execution-fabric internals?
 
+> **Tracker reconciliation, 2026-08-12:** IICP #4 has since closed after the
+> provider-admission baseline and Edge-Net evidence were recorded. Any future
+> additive capability/capacity vocabulary belongs under the layered substrate
+> and registry gates in IICP #54 and #55. The heterogeneous-model learned-routing
+> assessment found no new Edge-Net or QuDAG requirement: observations remain
+> portable, while selection algorithms remain client-local. The adapter proof of
+> concept is still not justified without a runnable, stable Edge-Net task surface.
+
 ## Sources and method
 
 The review used current source at fixed commits rather than README feature lists.
@@ -249,6 +257,5 @@ This research should not displace the current quality and parity milestones.
 7. **Is Edge-Net relay/genesis prior art useful?** The signaling message separation and reconnect flow are useful. The inspected P2P/genesis path is incomplete and should not be ported.
 8. **Is QuDAG discovery prior art useful?** Yes for understanding mDNS/Kademlia/Identify roles and their separation. It does not justify making IICP a P2P overlay.
 9. **What stays outside IICP?** DAG consensus, token settlement, `.dark` naming, onion routing, full overlay management, compute runtimes, scheduler internals and RuVector learning/storage algorithms.
-10. **Which issues were opened?** None. Existing issues #4, #39, #52, #59, #63, #89 and #98 own the justified questions. They should receive evidence links instead of duplicates.
-11. **Is a PoC justified now?** No. Reassess after #4 and #89 and after a runnable Edge-Net task path exists. The eventual PoC should require no Edge-Net-specific IICP wire field.
-
+10. **Which issues were opened?** None. Open issues #39, #52, #54, #55, #59, #63 and #98 own the remaining justified questions; closed #4 and #89 retain the delivered admission and streaming evidence.
+11. **Is a PoC justified now?** No. Reassess only after a runnable Edge-Net task path exists and the current layered capability work shows that an adapter needs evidence beyond the generic provider contract. The eventual PoC should require no Edge-Net-specific IICP wire field.
