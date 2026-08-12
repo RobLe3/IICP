@@ -193,7 +193,7 @@ Success means a repeatable improvement over the current selector with calibrated
 
 | Area | Action | Reason |
 |---|---|---|
-| Heterogeneous semantic-quality boundary | **OPEN one focused IICP research issue** | No existing issue owns evaluator-specific semantic prediction, backend continuity and the policy-safe selector boundary together. |
+| Heterogeneous semantic-quality boundary | **OPENED [IICP #135](https://github.com/RobLe3/IICP/issues/135)** | No existing issue owned evaluator-specific semantic prediction, backend continuity and the policy-safe selector boundary together. |
 | Layered substrate (#54) | **UPDATE** | Link the new research owner and keep eligibility, evidence, ranking and dispatch separated. |
 | Registry profile (#55) | **UPDATE** | Candidate evidence and any continuity reference must be additive, versioned and privacy-bounded. |
 | Route tickets and receipts (#58) | **UPDATE** | Track only evidence required to correlate selection purpose/backend continuity; no universal quality score. |
@@ -236,4 +236,3 @@ Success means a repeatable improvement over the current selector with calibrated
 ## Final answer
 
 IICP can support radically heterogeneous backends without changing its role. It should expose a small, versioned view of already eligible candidates to an optional local ranker, retain verified dispatch, and correlate operational outcomes without owning semantic judgments. MetaHarness is a strong experimental adapter for that seam. It is not a protocol layer.
-

@@ -8,7 +8,7 @@
 > provider-admission baseline and Edge-Net evidence were recorded. Any future
 > additive capability/capacity vocabulary belongs under the layered substrate
 > and registry gates in IICP #54 and #55. The heterogeneous-model learned-routing
-> assessment found no new Edge-Net or QuDAG requirement: observations remain
+> assessment, now tracked by IICP #135, found no new Edge-Net or QuDAG requirement: observations remain
 > portable, while selection algorithms remain client-local. The adapter proof of
 > concept is still not justified without a runnable, stable Edge-Net task surface.
 

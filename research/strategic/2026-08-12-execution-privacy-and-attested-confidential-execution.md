@@ -246,7 +246,7 @@ Platform fault and side-channel testing remains vendor- and deployment-specific;
 | Area | Action | Reason |
 |---|---|---|
 | June 2026 confidentiality research | **REUSE and supersede where more precise** | It correctly identified local-first, TEE-next and FHE-later. |
-| Attested execution privacy | **OPEN one focused IICP research umbrella** | No open issue owns the threat model, RATS/EAT mapping, CX key binding and prototype gate. |
+| Attested execution privacy | **OPENED [IICP #136](https://github.com/RobLe3/IICP/issues/136)** | No open issue owned the threat model, RATS/EAT mapping, CX key binding and prototype gate. |
 | Layered substrate (#54) | **UPDATE** | Execution privacy should reuse capabilities, policy, evidence and dispatch rather than form a parallel protocol. |
 | Registry profile (#55) | **UPDATE** | Only stable support descriptors belong in discovery; fresh evidence does not. |
 | Policy/data handling (#56) | **UPDATE** | Required execution privacy must filter and fail closed with no implicit downgrade. |
@@ -306,4 +306,3 @@ These paths should become IICP providers only when they expose a stable executio
 The smallest extension is an optional, negotiated capability and evidence profile that lets a candidate declare support for attested confidential execution, lets the consumer request fresh platform evidence bound to a nonce and ephemeral CX recipient key, and requires the consumer to appraise that evidence before ordinary IICP-CX encryption and ticketed dispatch. Stable descriptors may pass through existing additive capability mechanisms; fresh evidence stays point-to-point. Ordinary CX and non-confidential providers remain unchanged. Required execution privacy fails closed and never silently downgrades.
 
 That answer is technically plausible, but it is not implementable as a trustworthy public claim until the threat model, verifier trust, runtime measurement, key binding, hardware TCB and full plaintext boundary are explicit and tested.
-
