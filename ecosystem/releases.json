@@ -4,7 +4,7 @@
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.12",
+      "version": "1.10.13",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [

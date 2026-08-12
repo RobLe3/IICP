@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## v1.10.13 — 2026-08-12
+
+Corrective documentation and validation release. It does not begin a new
+protocol train or change the stable v1.9 base wire.
+
+- Reconciles current protocol and SDK version references with generated
+  ecosystem authority, while preserving the separate base-wire axis.
+- Aligns specification status language and reading order with `SPEC_STATUS.md`.
+- Corrects editorial framing and S.12 version references.
+- Makes conformance-version validation recognize explicitly pre-normative
+  fixtures while continuing to reject ambiguous or downlevel released fixtures.
+
 - Records the PHP Genesis directory v1.10.90 reliability release, which bounds
   the public stats aggregate lookup without changing protocol, routes or schema.
 
