@@ -241,6 +241,22 @@ Before any implementation claim, test:
 
 Platform fault and side-channel testing remains vendor- and deployment-specific; it cannot be replaced by shared JSON vectors.
 
+### Executable pre-hardware boundary
+
+The companion
+[`execution-privacy-feasibility`](execution-privacy-feasibility/README.md)
+fixture makes the relying-party boundary executable with synthetic signed
+attestation results. Its ten scenarios cover the accepted path plus signature,
+freshness, nonce, key-binding, measurement, debug, TCB, protected-boundary and
+downgrade failures. The fixture is explicitly not vendor evidence or proof that
+a private key stayed inside confidential hardware.
+
+The first hardware target is now narrowed to AMD SEV-SNP on Linux. The intended
+path uses `/dev/sev-guest`, binds the digest of the consumer nonce and ephemeral
+X25519 execution key into `REPORT_DATA`, and appraises the VCEK certificate
+chain and current TCB with VirTEE `snpguest` v0.9.2 as the reviewed reference.
+This is a target selection, not a completed hardware proof.
+
 ## Existing work and issue disposition
 
 | Area | Action | Reason |

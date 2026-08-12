@@ -63,7 +63,7 @@ spec writers, ADR authors, and implementation teams.
 | **OPER-EVIDENCE** — live implementation evidence discipline | Reference implementation | **Active** | Separate live, validated, simulated and future claims; see validation methodology §7 |
 | **STRATEGIC-PROFILES** — layered intent/capability/policy/evidence research | `iicp.network#619`, `RobLe3/IICP#2` | **Research complete; ratification gated** | Preserve stable URNs; publish profiles and shared fixtures before normative changes. |
 | **HETEROGENEOUS-QUALITY** — evaluator-owned learned backend selection | [#135](https://github.com/RobLe3/IICP/issues/135) | **Initial experiment complete; Rust seam gated** | Pinned MetaHarness reproduction supports a client-only experiment after eligibility; an IICP-specific heterogeneous benchmark remains required before shared profile work. |
-| **EXECUTION-PRIVACY** — attested confidential execution | [#136](https://github.com/RobLe3/IICP/issues/136) | **Research decision complete; feasibility gated** | Ordinary CX does not hide plaintext from the executor; prove nonce/key-bound attestation and a complete confidential worker before implementation claims. |
+| **EXECUTION-PRIVACY** — attested confidential execution | [#136](https://github.com/RobLe3/IICP/issues/136) | **Synthetic boundary vectors pass; hardware proof gated** | Ten content-free negative/positive vectors now exercise verifier signature, freshness, nonce, key binding, measurement, debug, TCB, boundary and downgrade checks. AMD SEV-SNP is the selected first hardware target; private-key containment and a complete measured worker remain unproven. |
 
 **RESA composite**: **92.36/90.0 CONVERGED** (iter93, 2026-05-18). R-GATE-1 OPEN.
 

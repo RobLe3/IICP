@@ -1,0 +1,384 @@
+{
+  "evidence_class": "synthetic-research-only",
+  "fixture_version": "execution-privacy-binding-v0",
+  "non_claims": [
+    "not_vendor_evidence",
+    "not_hardware_attestation",
+    "not_proof_of_private_key_containment",
+    "not_a_normative_iicp_profile"
+  ],
+  "policy": {
+    "accepted_evidence_profiles": [
+      "iicp-research-synthetic-result-v0"
+    ],
+    "accepted_measurements": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    ],
+    "accepted_tcb_status": [
+      "up_to_date"
+    ],
+    "expected_nonce": "consumer-challenge-v0",
+    "now": 1800000000,
+    "required_protected_components": [
+      "cpu",
+      "memory",
+      "runtime"
+    ]
+  },
+  "scenarios": [
+    {
+      "expected": "PASS",
+      "id": "valid",
+      "result": {
+        "binding_digest_sha256": "6dae6d4f8a2d4628032403c0598a41949f07e17e8140eff244f6e838d539ea6f",
+        "evidence_profile": "iicp-research-synthetic-result-v0",
+        "execution_key": {
+          "algorithm": "X25519",
+          "encoding": "base64url",
+          "key": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0",
+          "key_id": "cx-ephemeral-research-v0"
+        },
+        "expires_at": 1800000060,
+        "issued_at": 1799999940,
+        "nonce": "consumer-challenge-v0",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "ZboaRUnUSCoJppOQP4XxZIT3e9eHn8oaKcDrOB1o9VgUvkvIPxOhD-ySC-6E3IWTwOBURWIUOTAh_QdwchRMAg"
+        },
+        "verifier_id": "https://verifier.invalid/research-v0"
+      }
+    },
+    {
+      "expected": "SIGNATURE_INVALID",
+      "id": "bad_signature",
+      "result": {
+        "binding_digest_sha256": "6dae6d4f8a2d4628032403c0598a41949f07e17e8140eff244f6e838d539ea6f",
+        "evidence_profile": "iicp-research-synthetic-result-v0",
+        "execution_key": {
+          "algorithm": "X25519",
+          "encoding": "base64url",
+          "key": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0",
+          "key_id": "cx-ephemeral-research-v0"
+        },
+        "expires_at": 1800000060,
+        "issued_at": 1799999940,
+        "nonce": "consumer-challenge-v0",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "ZboaRUnUSCoJppOQP4XxZIT3e9eHn8oaKcDrOB1o9VgUvkvIPxOhD-ySC-6E3IWTwOBURWIUOTAh_QdwchRMAA"
+        },
+        "verifier_id": "https://verifier.invalid/research-v0"
+      }
+    },
+    {
+      "expected": "NONCE_MISMATCH",
+      "id": "wrong_nonce",
+      "result": {
+        "binding_digest_sha256": "9b5e233d194c80accea72d2de9c5c29a8aebb2b174a34d1f86cf4253b63f4f43",
+        "evidence_profile": "iicp-research-synthetic-result-v0",
+        "execution_key": {
+          "algorithm": "X25519",
+          "encoding": "base64url",
+          "key": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0",
+          "key_id": "cx-ephemeral-research-v0"
+        },
+        "expires_at": 1800000060,
+        "issued_at": 1799999940,
+        "nonce": "different-consumer-challenge",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "6ysQc53sAF3239SVrhwS63D65QlPtEjxCY-9T540UNy6NsgDQOdnXVqd6fBrQiE1Y9pF89oB3nw3aMOyVusKCg"
+        },
+        "verifier_id": "https://verifier.invalid/research-v0"
+      }
+    },
+    {
+      "expected": "EXPIRED",
+      "id": "stale",
+      "result": {
+        "binding_digest_sha256": "6dae6d4f8a2d4628032403c0598a41949f07e17e8140eff244f6e838d539ea6f",
+        "evidence_profile": "iicp-research-synthetic-result-v0",
+        "execution_key": {
+          "algorithm": "X25519",
+          "encoding": "base64url",
+          "key": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0",
+          "key_id": "cx-ephemeral-research-v0"
+        },
+        "expires_at": 1799999999,
+        "issued_at": 1799999940,
+        "nonce": "consumer-challenge-v0",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "aK_HA_vASVzOXOkQd3zou1clH63BYuZoWBfuUGB9TB02Krd-oO6m98bCbaxpJUHsdtFSMprgA9KS9BU30yjqDg"
+        },
+        "verifier_id": "https://verifier.invalid/research-v0"
+      }
+    },
+    {
+      "expected": "KEY_BINDING_INVALID",
+      "id": "key_substitution",
+      "result": {
+        "binding_digest_sha256": "6dae6d4f8a2d4628032403c0598a41949f07e17e8140eff244f6e838d539ea6f",
+        "evidence_profile": "iicp-research-synthetic-result-v0",
+        "execution_key": {
+          "algorithm": "X25519",
+          "encoding": "base64url",
+          "key": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "key_id": "cx-ephemeral-research-v0"
+        },
+        "expires_at": 1800000060,
+        "issued_at": 1799999940,
+        "nonce": "consumer-challenge-v0",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "RcwTR4IvPmCAckJn64j5AVHFIx-B8ymkg5NRDNXDdwCgAwslWpg-YdX_Zgkve_tyJzZVWGyl25GbzCq3R3JNAA"
+        },
+        "verifier_id": "https://verifier.invalid/research-v0"
+      }
+    },
+    {
+      "expected": "MEASUREMENT_UNACCEPTED",
+      "id": "changed_measurement",
+      "result": {
+        "binding_digest_sha256": "f20888508c9ba2323eb5feb7c96a953f180228755276cef228602a4356e7f709",
+        "evidence_profile": "iicp-research-synthetic-result-v0",
+        "execution_key": {
+          "algorithm": "X25519",
+          "encoding": "base64url",
+          "key": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0",
+          "key_id": "cx-ephemeral-research-v0"
+        },
+        "expires_at": 1800000060,
+        "issued_at": 1799999940,
+        "nonce": "consumer-challenge-v0",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "5hZv1dpnLGiwqR3ywHIhOA23hax85v0z166wsTCpmzStgIZdOhFiTEj3OgeDKDGfUGTDPNd7SFr4FYLEjK38Cg"
+        },
+        "verifier_id": "https://verifier.invalid/research-v0"
+      }
+    },
+    {
+      "expected": "DEBUG_ENABLED",
+      "id": "debug_enabled",
+      "result": {
+        "binding_digest_sha256": "9d8f6059c2077d506199c516e131a225898f26c3ffab7826bb1153c9244aab76",
+        "evidence_profile": "iicp-research-synthetic-result-v0",
+        "execution_key": {
+          "algorithm": "X25519",
+          "encoding": "base64url",
+          "key": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0",
+          "key_id": "cx-ephemeral-research-v0"
+        },
+        "expires_at": 1800000060,
+        "issued_at": 1799999940,
+        "nonce": "consumer-challenge-v0",
+        "runtime": {
+          "debug": true,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "NeOYJR-FWf_9uuZvp8-ztMFqslSK19Dxni8iSxFBiqgWy4LpPNq355ZFKWKSQExEeaS4rcGK5yf77M01SxWpAA"
+        },
+        "verifier_id": "https://verifier.invalid/research-v0"
+      }
+    },
+    {
+      "expected": "TCB_UNACCEPTED",
+      "id": "unacceptable_tcb",
+      "result": {
+        "binding_digest_sha256": "94ea31a408e5a7694b027ca133d29616bc4717e97c1f0dd0c88b61ee5a2372c2",
+        "evidence_profile": "iicp-research-synthetic-result-v0",
+        "execution_key": {
+          "algorithm": "X25519",
+          "encoding": "base64url",
+          "key": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0",
+          "key_id": "cx-ephemeral-research-v0"
+        },
+        "expires_at": 1800000060,
+        "issued_at": 1799999940,
+        "nonce": "consumer-challenge-v0",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "out_of_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "maz_ZO3L6rQGcm4WS11tIgqH_hd3U618LGkb79sF5XikqnEzd0VH5jbmThHVwE6gWInW69pP_ukW4pWVIXKlBg"
+        },
+        "verifier_id": "https://verifier.invalid/research-v0"
+      }
+    },
+    {
+      "expected": "BOUNDARY_INCOMPLETE",
+      "id": "incomplete_boundary",
+      "result": {
+        "binding_digest_sha256": "6c37dd906d9f232c86e4604b31bd8c39d489f9d05a70fff3c4fd7f30f0776003",
+        "evidence_profile": "iicp-research-synthetic-result-v0",
+        "execution_key": {
+          "algorithm": "X25519",
+          "encoding": "base64url",
+          "key": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0",
+          "key_id": "cx-ephemeral-research-v0"
+        },
+        "expires_at": 1800000060,
+        "issued_at": 1799999940,
+        "nonce": "consumer-challenge-v0",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "wZy6LTH4afgT2uEHjQh9DRxNR4w4mSb7xfJ5hJDQNJT4PMBzqEru8S6fe6aVR5FkZyLOT8vFw5rGSRC6t5PiDA"
+        },
+        "verifier_id": "https://verifier.invalid/research-v0"
+      }
+    },
+    {
+      "expected": "EVIDENCE_PROFILE_UNACCEPTED",
+      "id": "ordinary_cx_downgrade",
+      "result": {
+        "binding_digest_sha256": "6dae6d4f8a2d4628032403c0598a41949f07e17e8140eff244f6e838d539ea6f",
+        "evidence_profile": "ordinary-iicp-cx",
+        "execution_key": {
+          "algorithm": "X25519",
+          "encoding": "base64url",
+          "key": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0",
+          "key_id": "cx-ephemeral-research-v0"
+        },
+        "expires_at": 1800000060,
+        "issued_at": 1799999940,
+        "nonce": "consumer-challenge-v0",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "ftVtgt8lxroiFpLmMaJc6ARriaCYOtjSIlSjUkaa68azftZ1GDl071TPt4V2AIVzS1Xg2omy5Jej9qCr58QbBA"
+        },
+        "verifier_id": "https://verifier.invalid/research-v0"
+      }
+    }
+  ],
+  "verifier": {
+    "algorithm": "Ed25519",
+    "key_id": "research-verifier-v0",
+    "public_key": "ebVWLo_mVPlAeLES6KmLp5AfhTrmlb7X4OORC60ElmQ"
+  }
+}
