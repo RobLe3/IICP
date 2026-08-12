@@ -101,3 +101,8 @@ For a clean-environment installation, offline-first evidence, loopback safety
 boundary and evidence-class decision, follow [the external run guide](EXTERNAL_RUN.md).
 It is intentionally release-artifact based: it does not ask an external operator
 to install a moving repository checkout.
+
+An external team implementing directory behavior from public contracts should
+also follow the [clean-room directory interoperability guide](CLEAN_ROOM_IMPLEMENTATION.md).
+It fixes the allowed source inputs, minimum positive and negative profiles,
+ambiguity log and publication boundary required by IICP issue #31.

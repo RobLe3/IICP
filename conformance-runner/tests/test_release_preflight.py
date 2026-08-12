@@ -41,6 +41,21 @@ class ReleasePreflightContractTest(unittest.TestCase):
         self.assertIn("directory-lifecycle-v1", guide)
         self.assertIn("shared production", guide)
 
+    def test_clean_room_guide_preserves_independence_and_safety_boundaries(self) -> None:
+        package_root = Path(__file__).resolve().parents[1]
+        guide = (package_root / "CLEAN_ROOM_IMPLEMENTATION.md").read_text(encoding="utf-8")
+        for profile in (
+            "directory-public-v1",
+            "directory-lifecycle-v1",
+            "directory-dispatch-v1",
+        ):
+            self.assertIn(profile, guide)
+        self.assertIn("Do not use PHP or Rust directory source", guide)
+        self.assertIn("ambiguity log", guide)
+        self.assertIn("independent", guide)
+        self.assertIn("project-verified", guide)
+        self.assertIn("Do not aim mutating profiles at the public Genesis directory", guide)
+
 
 if __name__ == "__main__":
     unittest.main()
