@@ -1,0 +1,24 @@
+{
+  "profile": "iicp-public-measurement-v1",
+  "schema_version": 1,
+  "evidence_class": "independent",
+  "claim": {"scope": "network-wide", "target_class": "directory", "target_id": "public-directory-a"},
+  "window": {"started_at": "2026-08-12T10:00:00Z", "ended_at": "2026-08-12T10:05:00Z"},
+  "vantages": [
+    {"vantage_id": "probe-a", "operator_id": "target-operator", "failure_domain_id": "target-domain", "region": "DE-BE", "network_class": "cloud", "target_controlled": true}
+  ],
+  "observations": [
+    {"sample_id": 1, "vantage_id": "probe-a", "observed_at": "2026-08-12T10:01:00Z", "outcome": "timeout", "latency_ms": 40, "reason_code": "DEADLINE_EXCEEDED"}
+  ],
+  "summary": {
+    "requested_samples": 2,
+    "successful_samples": 1,
+    "failed_samples": 0,
+    "availability": 1.0,
+    "latency_sample_count": 1,
+    "latency_ms": {"min": 40, "p50": 40, "p95": 40, "max": 40},
+    "outcomes": {"success": 1, "http_error": 0, "transport_error": 0, "timeout": 0, "invalid_response": 0, "not_run": 0},
+    "aggregation": "nearest-rank-v1"
+  },
+  "privacy": {"content_free": true, "identifiers_scoped_to_bundle": true}
+}

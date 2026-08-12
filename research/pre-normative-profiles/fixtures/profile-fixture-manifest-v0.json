@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.14.0-draft",
+  "manifest_version": "0.15.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -90,7 +90,12 @@
     {
       "path": "discovery-evidence-v1.json",
       "fixture_version": "0.1.0-draft",
-      "sha256": "9b7b1302ee68af4a4889074e42e123c380e4e5e5fd0c80b78050c97b13f45f0c"
+      "sha256": "2f5a25502ba713328c2321fd136b23e948c1a4d9bdd0b10a85bf7cd1f71cc9e3"
+    },
+    {
+      "path": "public-measurement-v1-valid.json",
+      "fixture_version": "1.0.0-research",
+      "sha256": "19385d9c059734858b37ceb898d6683645f5f744a226559e5c2523a618b3f0e4"
     },
     {
       "path": "reputation-hourly-velocity-v0.json",

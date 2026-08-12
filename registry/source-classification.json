@@ -502,6 +502,19 @@
       ]
     },
     {
+      "urn": "urn:iicp:intent:embed:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/repo.rs"
+          ]
+        }
+      ]
+    },
+    {
       "urn": "urn:iicp:intent:embedding:multimodal:v1",
       "classification": "canonical",
       "disposition": "present in registry/intents.json",
@@ -523,6 +536,19 @@
           "repository": "iicp-web-node",
           "paths": [
             "tests/client.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:embedding:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "tests/Feature/CapabilitySupportedProfilesTest.php"
           ]
         }
       ]
@@ -563,6 +589,19 @@
           "repository": "iicp-web-node",
           "paths": [
             "tests/client.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:execution-privacy:proof:v0",
+      "classification": "negative-test",
+      "disposition": "invalid, unknown or rejection-path fixture",
+      "sources": [
+        {
+          "repository": "IICP",
+          "paths": [
+            "research/strategic/execution-privacy-feasibility/software_prototype.py"
           ]
         }
       ]
@@ -627,6 +666,9 @@
             "research/pre-normative-profiles/fixtures/dispatch-ticket-trust-v2-crypto.json",
             "research/pre-normative-profiles/fixtures/policy-detail-disclosure-v0.json",
             "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json",
+            "research/strategic/execution-privacy-feasibility/software_prototype.py",
+            "research/strategic/learned-routing-experiment/candidate-ranker-v0.json",
+            "research/strategic/learned-routing-experiment/sample-candidate-evidence-v0.json",
             "schemas/nodelist.json",
             "schemas/samples/task-invalid-missing-auth.json",
             "schemas/samples/task-valid.json",
@@ -644,7 +686,8 @@
             "spec/v1.9/iicp-identity-slot.md",
             "spec/v1.9/iicp-mcp-binding.md",
             "spec/v1.9/iicp-semantics.md",
-            "spec/v1.9/node-capability-format.md"
+            "spec/v1.9/node-capability-format.md",
+            "tools/test_execution_privacy_feasibility.py"
           ]
         },
         {
@@ -676,6 +719,7 @@
             "src/iicp_client/proxy/plugin/iicp_provider.py",
             "src/iicp_client/relay_worker_client.py",
             "src/iicp_client/trust_auditor.py",
+            "tests/fixtures/candidate-ranker-v0.json",
             "tests/proxy/test_aggregator.py",
             "tests/proxy/test_anthropic_compat.py",
             "tests/proxy/test_coverage_gates.py",
@@ -691,6 +735,7 @@
             "tests/proxy/test_router.py",
             "tests/proxy/test_translator.py",
             "tests/test_backends.py",
+            "tests/test_candidate_ranker.py",
             "tests/test_capabilities.py",
             "tests/test_cip_policy.py",
             "tests/test_client.py",
@@ -745,6 +790,7 @@
             "src/proxy/mod.rs",
             "src/relay_session.rs",
             "src/relay_worker_client.rs",
+            "src/selection.rs",
             "src/trust_auditor.rs",
             "tests/backends_tests.rs",
             "tests/cip_policy_tests.rs",
@@ -754,6 +800,7 @@
             "tests/consumer_token_tests.rs",
             "tests/dispatch_admission_sqlite.rs",
             "tests/e2e_local.rs",
+            "tests/fixtures/candidate-ranker-v0.json",
             "tests/iicp_tcp_tests.rs",
             "tests/integration.rs",
             "tests/node_inference.rs",
@@ -792,6 +839,7 @@
             "src/proxy/index.ts",
             "src/trust_auditor.ts",
             "tests/backends.test.ts",
+            "tests/candidate_ranker.test.ts",
             "tests/capabilities.test.ts",
             "tests/cip_policy.test.ts",
             "tests/cli.test.ts",
@@ -805,6 +853,7 @@
             "tests/discovery_evidence.test.ts",
             "tests/dispatch_admission.test.ts",
             "tests/dispatch_ticket.test.ts",
+            "tests/fixtures/candidate-ranker-v0.json",
             "tests/iicp_tcp.test.ts",
             "tests/integration.test.ts",
             "tests/model_drift_reregister.test.ts",
@@ -833,6 +882,7 @@
             "scripts/seed_operator_benchmark.py",
             "spec/proposals/fixtures/profile-compatibility-v0.json",
             "tests/Feature/AddressObserverTest.php",
+            "tests/Feature/CapabilitySupportedProfilesTest.php",
             "tests/Feature/CipPolicyTest.php",
             "tests/Feature/ConsumerTokenTest.php",
             "tests/Feature/CreditSummaryTest.php",
@@ -873,7 +923,6 @@
             "parity/policy-detail-disclosure-v0.json",
             "parity/profile-compatibility-v0.json",
             "src/federation.rs",
-            "src/main.rs",
             "src/main_tests.rs",
             "src/policy.rs",
             "src/replica.rs",
@@ -1421,7 +1470,6 @@
         {
           "repository": "iicp-directory-rust",
           "paths": [
-            "src/main.rs",
             "src/main_tests.rs",
             "src/policy.rs"
           ]
@@ -1449,7 +1497,6 @@
         {
           "repository": "iicp-directory-rust",
           "paths": [
-            "src/main.rs",
             "src/main_tests.rs"
           ]
         }
@@ -1525,7 +1572,6 @@
         {
           "repository": "iicp-directory-rust",
           "paths": [
-            "src/main.rs",
             "src/main_tests.rs",
             "src/policy.rs"
           ]
@@ -1611,6 +1657,31 @@
           "repository": "iicp-web-node",
           "paths": [
             "tests/client.test.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "urn": "urn:iicp:intent:test:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-client-python",
+          "paths": [
+            "tests/test_iicp_tcp.py"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "tests/iicp_tcp_tests.rs"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "tests/iicp_tcp.test.ts"
           ]
         }
       ]
