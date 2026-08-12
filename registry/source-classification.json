@@ -659,6 +659,7 @@
             "research/inbound-adapters/01-adapter-priority-matrix.md",
             "research/mesh-telemetry/01-tier-definitions.md",
             "research/native-ai-infrastructure/IICP_BENCHMARK_RESULTS.md",
+            "research/pre-normative-profiles/fixtures/a2a-execution-binding-v0.json",
             "research/pre-normative-profiles/fixtures/cip-consumer-cosignature-transcript-v1.json",
             "research/pre-normative-profiles/fixtures/cip-consumer-cosignature-v1.json",
             "research/pre-normative-profiles/fixtures/dispatch-admission-v2.json",
