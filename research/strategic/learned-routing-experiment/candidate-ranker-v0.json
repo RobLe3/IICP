@@ -1,0 +1,120 @@
+{
+  "schema": "iicp.candidate-ranker-parity.v0",
+  "fixture_version": "0.1.0-experimental",
+  "status": "implementation-neutral-client-contract",
+  "evidence_schema": "iicp-candidate-evidence-v0",
+  "error_code": "IICP-CANDIDATE-RANKER-REFUSED",
+  "request": {
+    "task_id": "task-fixture-001",
+    "request_ref": "3c3a728202a98f783e76b600fd25128bac2768fefcf578b290afc4010cd3117d",
+    "intent": "urn:iicp:intent:llm:chat:v1",
+    "payload_marker": "PRIVATE-FIXTURE-PAYLOAD-MUST-NOT-APPEAR-IN-EVIDENCE"
+  },
+  "nodes": [
+    {
+      "node_id": "node-a",
+      "endpoint": "https://private-a.invalid",
+      "candidate_ref": "def850639cf0032d7b80551ded3a73d335c74b1249b3ce2a86cc1682624cdbe4",
+      "models": ["model-a"],
+      "directory_score": 0.9,
+      "load": 0.2,
+      "health_label": "healthy",
+      "directory_observed_reachable": true
+    },
+    {
+      "node_id": "node-b",
+      "endpoint": "https://private-b.invalid",
+      "candidate_ref": "37485b9b193972a50218f63c1acece2c78bf11ba6b06071da82a7520de21305c",
+      "models": ["model-b"],
+      "directory_score": 0.8,
+      "load": 0.4,
+      "health_label": "degraded",
+      "directory_observed_reachable": true
+    },
+    {
+      "node_id": "node-c-ineligible",
+      "endpoint": "https://private-c.invalid",
+      "candidate_ref": "45311ff58870d4119445aff6fcaeec82f2d567e2b1c403aa5415ca767564be02",
+      "models": ["model-c"],
+      "directory_score": 0.99,
+      "load": 0.1,
+      "health_label": "healthy",
+      "directory_observed_reachable": true
+    }
+  ],
+  "eligible_node_ids": ["node-a", "node-b"],
+  "built_in_order": ["node-a", "node-b"],
+  "excluded_evidence_terms": [
+    "node-a",
+    "node-b",
+    "node-c-ineligible",
+    "private-a.invalid",
+    "private-b.invalid",
+    "private-c.invalid",
+    "PRIVATE-FIXTURE-PAYLOAD-MUST-NOT-APPEAR-IN-EVIDENCE",
+    "endpoint",
+    "cx_public_key",
+    "dispatch_ticket"
+  ],
+  "cases": [
+    {
+      "id": "normal-selection",
+      "ranker": {
+        "outcome": "select",
+        "candidate_ref": "37485b9b193972a50218f63c1acece2c78bf11ba6b06071da82a7520de21305c",
+        "policy_id": "fixture-policy-v0",
+        "mode": "normal"
+      },
+      "expected_order": ["node-b", "node-a"],
+      "expected_primary_receipt": "external_ranker/fixture-policy-v0/normal",
+      "expected_fallback_receipt": "external_ranker/fixture-policy-v0/fallback"
+    },
+    {
+      "id": "exploration-selection",
+      "ranker": {
+        "outcome": "select",
+        "candidate_ref": "37485b9b193972a50218f63c1acece2c78bf11ba6b06071da82a7520de21305c",
+        "policy_id": "fixture-policy-v0",
+        "mode": "exploration"
+      },
+      "expected_order": ["node-b", "node-a"],
+      "expected_primary_receipt": "external_ranker/fixture-policy-v0/exploration",
+      "expected_fallback_receipt": "external_ranker/fixture-policy-v0/fallback"
+    },
+    {
+      "id": "decline-preserves-built-in-order",
+      "ranker": { "outcome": "decline" },
+      "expected_order": ["node-a", "node-b"],
+      "expected_primary_receipt": null,
+      "expected_fallback_receipt": null
+    },
+    {
+      "id": "unknown-candidate-fails-closed",
+      "ranker": {
+        "outcome": "select",
+        "candidate_ref": "not-in-eligible-set",
+        "policy_id": "fixture-policy-v0",
+        "mode": "normal"
+      },
+      "expected_error_contains": "outside the eligible candidate set"
+    },
+    {
+      "id": "invalid-policy-id-fails-closed",
+      "ranker": {
+        "outcome": "select",
+        "candidate_ref": "def850639cf0032d7b80551ded3a73d335c74b1249b3ce2a86cc1682624cdbe4",
+        "policy_id": "invalid policy/id",
+        "mode": "normal"
+      },
+      "expected_error_contains": "policy_id must be 1-64 ASCII"
+    },
+    {
+      "id": "ranker-error-fails-closed",
+      "ranker": {
+        "outcome": "error",
+        "message": "local evaluator unavailable"
+      },
+      "expected_error_contains": "local evaluator unavailable"
+    }
+  ]
+}
