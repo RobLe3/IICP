@@ -1,0 +1,161 @@
+{
+  "schema": "iicp.candidate-ranker-benchmark-replay.v1",
+  "source_result_sha256": "sha256:1bb4dfec32d6bba6d6ea9ec6cb105dbe880e0a8cd64d71424be88c4f847c0639",
+  "policy_id": "metaharness-iicp-local-v1",
+  "mode": "normal",
+  "nodes": [
+    {
+      "node_id": "qwen2.5-0.5b-q4",
+      "candidate_ref": "5aec93a89c11b59c074b85cf7acde38a59ddb609a1ca44409aa19232362ae8ba",
+      "models": [
+        "qwen2.5-0.5b-q4"
+      ]
+    },
+    {
+      "node_id": "llama3.2-1b-q8",
+      "candidate_ref": "6234e77ccf21da6d79b0a2be317bad6afdea1f155f1dc372f6389129e630aea8",
+      "models": [
+        "llama3.2-1b-q8"
+      ]
+    },
+    {
+      "node_id": "phi3-mini-3.8b-q4",
+      "candidate_ref": "118226529544f2180671d7633bd4435bd2bd2eee9ed01f64da5ae63de06ecabf",
+      "models": [
+        "phi3-mini-3.8b-q4"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "task_id": "structured-sort-05",
+      "eligible_node_ids": [
+        "qwen2.5-0.5b-q4",
+        "llama3.2-1b-q8",
+        "phi3-mini-3.8b-q4"
+      ],
+      "selected_node_id": "phi3-mini-3.8b-q4",
+      "selected_candidate_ref": "118226529544f2180671d7633bd4435bd2bd2eee9ed01f64da5ae63de06ecabf",
+      "baseline_node_id": "qwen2.5-0.5b-q4",
+      "expected_primary_receipt": "external_ranker/metaharness-iicp-local-v1/normal",
+      "expected_fallback_receipt": "external_ranker/metaharness-iicp-local-v1/fallback"
+    },
+    {
+      "task_id": "structured-unique-05",
+      "eligible_node_ids": [
+        "qwen2.5-0.5b-q4",
+        "llama3.2-1b-q8",
+        "phi3-mini-3.8b-q4"
+      ],
+      "selected_node_id": "phi3-mini-3.8b-q4",
+      "selected_candidate_ref": "118226529544f2180671d7633bd4435bd2bd2eee9ed01f64da5ae63de06ecabf",
+      "baseline_node_id": "qwen2.5-0.5b-q4",
+      "expected_primary_receipt": "external_ranker/metaharness-iicp-local-v1/normal",
+      "expected_fallback_receipt": "external_ranker/metaharness-iicp-local-v1/fallback"
+    },
+    {
+      "task_id": "structured-filter-01",
+      "eligible_node_ids": [
+        "qwen2.5-0.5b-q4",
+        "llama3.2-1b-q8",
+        "phi3-mini-3.8b-q4"
+      ],
+      "selected_node_id": "phi3-mini-3.8b-q4",
+      "selected_candidate_ref": "118226529544f2180671d7633bd4435bd2bd2eee9ed01f64da5ae63de06ecabf",
+      "baseline_node_id": "qwen2.5-0.5b-q4",
+      "expected_primary_receipt": "external_ranker/metaharness-iicp-local-v1/normal",
+      "expected_fallback_receipt": "external_ranker/metaharness-iicp-local-v1/fallback"
+    },
+    {
+      "task_id": "factual-05",
+      "eligible_node_ids": [
+        "qwen2.5-0.5b-q4",
+        "llama3.2-1b-q8",
+        "phi3-mini-3.8b-q4"
+      ],
+      "selected_node_id": "qwen2.5-0.5b-q4",
+      "selected_candidate_ref": "5aec93a89c11b59c074b85cf7acde38a59ddb609a1ca44409aa19232362ae8ba",
+      "baseline_node_id": "qwen2.5-0.5b-q4",
+      "expected_primary_receipt": "external_ranker/metaharness-iicp-local-v1/normal",
+      "expected_fallback_receipt": "external_ranker/metaharness-iicp-local-v1/fallback"
+    },
+    {
+      "task_id": "factual-12",
+      "eligible_node_ids": [
+        "qwen2.5-0.5b-q4",
+        "llama3.2-1b-q8",
+        "phi3-mini-3.8b-q4"
+      ],
+      "selected_node_id": "qwen2.5-0.5b-q4",
+      "selected_candidate_ref": "5aec93a89c11b59c074b85cf7acde38a59ddb609a1ca44409aa19232362ae8ba",
+      "baseline_node_id": "qwen2.5-0.5b-q4",
+      "expected_primary_receipt": "external_ranker/metaharness-iicp-local-v1/normal",
+      "expected_fallback_receipt": "external_ranker/metaharness-iicp-local-v1/fallback"
+    },
+    {
+      "task_id": "factual-23",
+      "eligible_node_ids": [
+        "qwen2.5-0.5b-q4",
+        "llama3.2-1b-q8",
+        "phi3-mini-3.8b-q4"
+      ],
+      "selected_node_id": "llama3.2-1b-q8",
+      "selected_candidate_ref": "6234e77ccf21da6d79b0a2be317bad6afdea1f155f1dc372f6389129e630aea8",
+      "baseline_node_id": "qwen2.5-0.5b-q4",
+      "expected_primary_receipt": "external_ranker/metaharness-iicp-local-v1/normal",
+      "expected_fallback_receipt": "external_ranker/metaharness-iicp-local-v1/fallback"
+    },
+    {
+      "task_id": "reasoning-arithmetic-06",
+      "eligible_node_ids": [
+        "qwen2.5-0.5b-q4",
+        "llama3.2-1b-q8",
+        "phi3-mini-3.8b-q4"
+      ],
+      "selected_node_id": "qwen2.5-0.5b-q4",
+      "selected_candidate_ref": "5aec93a89c11b59c074b85cf7acde38a59ddb609a1ca44409aa19232362ae8ba",
+      "baseline_node_id": "qwen2.5-0.5b-q4",
+      "expected_primary_receipt": "external_ranker/metaharness-iicp-local-v1/normal",
+      "expected_fallback_receipt": "external_ranker/metaharness-iicp-local-v1/fallback"
+    },
+    {
+      "task_id": "reasoning-sequence-04",
+      "eligible_node_ids": [
+        "qwen2.5-0.5b-q4",
+        "llama3.2-1b-q8",
+        "phi3-mini-3.8b-q4"
+      ],
+      "selected_node_id": "phi3-mini-3.8b-q4",
+      "selected_candidate_ref": "118226529544f2180671d7633bd4435bd2bd2eee9ed01f64da5ae63de06ecabf",
+      "baseline_node_id": "qwen2.5-0.5b-q4",
+      "expected_primary_receipt": "external_ranker/metaharness-iicp-local-v1/normal",
+      "expected_fallback_receipt": "external_ranker/metaharness-iicp-local-v1/fallback"
+    },
+    {
+      "task_id": "reasoning-logic-04",
+      "eligible_node_ids": [
+        "qwen2.5-0.5b-q4",
+        "llama3.2-1b-q8",
+        "phi3-mini-3.8b-q4"
+      ],
+      "selected_node_id": "qwen2.5-0.5b-q4",
+      "selected_candidate_ref": "5aec93a89c11b59c074b85cf7acde38a59ddb609a1ca44409aa19232362ae8ba",
+      "baseline_node_id": "qwen2.5-0.5b-q4",
+      "expected_primary_receipt": "external_ranker/metaharness-iicp-local-v1/normal",
+      "expected_fallback_receipt": "external_ranker/metaharness-iicp-local-v1/fallback"
+    },
+    {
+      "task_id": "reasoning-logic-08",
+      "eligible_node_ids": [
+        "qwen2.5-0.5b-q4",
+        "llama3.2-1b-q8",
+        "phi3-mini-3.8b-q4"
+      ],
+      "selected_node_id": "qwen2.5-0.5b-q4",
+      "selected_candidate_ref": "5aec93a89c11b59c074b85cf7acde38a59ddb609a1ca44409aa19232362ae8ba",
+      "baseline_node_id": "qwen2.5-0.5b-q4",
+      "expected_primary_receipt": "external_ranker/metaharness-iicp-local-v1/normal",
+      "expected_fallback_receipt": "external_ranker/metaharness-iicp-local-v1/fallback"
+    }
+  ]
+}

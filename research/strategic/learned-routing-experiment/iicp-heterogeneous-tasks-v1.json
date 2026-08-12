@@ -1,0 +1,2046 @@
+{
+  "schema": "iicp.heterogeneous-routing-tasks.v1",
+  "seed": 42,
+  "answer_contract": "JSON object with exactly one field named answer",
+  "categories": {
+    "structured": 30,
+    "factual": 30,
+    "reasoning": 30
+  },
+  "embedding_dimensions": [
+    "structured",
+    "factual",
+    "reasoning",
+    "sort",
+    "unique",
+    "filter",
+    "fact",
+    "arithmetic",
+    "sequence",
+    "logic",
+    "difficulty_normalized"
+  ],
+  "tasks": [
+    {
+      "id": "structured-sort-01",
+      "category": "structured",
+      "subtype": "sort",
+      "difficulty": 1,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Sort these integers in ascending order: [8, 3, 5, 1]",
+      "expected_answer": [
+        1,
+        3,
+        5,
+        8
+      ]
+    },
+    {
+      "id": "structured-sort-02",
+      "category": "structured",
+      "subtype": "sort",
+      "difficulty": 1,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Sort these integers in ascending order: [14, -2, 7, 7, 0]",
+      "expected_answer": [
+        -2,
+        0,
+        7,
+        7,
+        14
+      ]
+    },
+    {
+      "id": "structured-sort-03",
+      "category": "structured",
+      "subtype": "sort",
+      "difficulty": 1,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Sort these integers in ascending order: [91, 12, 44, 3, 18]",
+      "expected_answer": [
+        3,
+        12,
+        18,
+        44,
+        91
+      ]
+    },
+    {
+      "id": "structured-sort-04",
+      "category": "structured",
+      "subtype": "sort",
+      "difficulty": 1,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Sort these integers in ascending order: [6, 2, 9, 4, 1, 8]",
+      "expected_answer": [
+        1,
+        2,
+        4,
+        6,
+        8,
+        9
+      ]
+    },
+    {
+      "id": "structured-sort-05",
+      "category": "structured",
+      "subtype": "sort",
+      "difficulty": 1,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Sort these integers in ascending order: [105, 17, 42, -9]",
+      "expected_answer": [
+        -9,
+        17,
+        42,
+        105
+      ]
+    },
+    {
+      "id": "structured-sort-06",
+      "category": "structured",
+      "subtype": "sort",
+      "difficulty": 1,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Sort these integers in ascending order: [33, 31, 32, 30]",
+      "expected_answer": [
+        30,
+        31,
+        32,
+        33
+      ]
+    },
+    {
+      "id": "structured-sort-07",
+      "category": "structured",
+      "subtype": "sort",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "Sort these integers in ascending order: [4, 16, 2, 8, 1]",
+      "expected_answer": [
+        1,
+        2,
+        4,
+        8,
+        16
+      ]
+    },
+    {
+      "id": "structured-sort-08",
+      "category": "structured",
+      "subtype": "sort",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "Sort these integers in ascending order: [72, 11, 93, 54, 20]",
+      "expected_answer": [
+        11,
+        20,
+        54,
+        72,
+        93
+      ]
+    },
+    {
+      "id": "structured-sort-09",
+      "category": "structured",
+      "subtype": "sort",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "Sort these integers in ascending order: [0, -5, 8, -1, 3]",
+      "expected_answer": [
+        -5,
+        -1,
+        0,
+        3,
+        8
+      ]
+    },
+    {
+      "id": "structured-sort-10",
+      "category": "structured",
+      "subtype": "sort",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "Sort these integers in ascending order: [1000, 10, 100, 1]",
+      "expected_answer": [
+        1,
+        10,
+        100,
+        1000
+      ]
+    },
+    {
+      "id": "structured-unique-01",
+      "category": "structured",
+      "subtype": "unique",
+      "difficulty": 1,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Return the unique integers in ascending order: [3, 1, 3, 2, 1]",
+      "expected_answer": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "structured-unique-02",
+      "category": "structured",
+      "subtype": "unique",
+      "difficulty": 1,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Return the unique integers in ascending order: [9, 9, 8, 7, 8, 6]",
+      "expected_answer": [
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    {
+      "id": "structured-unique-03",
+      "category": "structured",
+      "subtype": "unique",
+      "difficulty": 1,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Return the unique integers in ascending order: [4, 2, 4, 2, 0]",
+      "expected_answer": [
+        0,
+        2,
+        4
+      ]
+    },
+    {
+      "id": "structured-unique-04",
+      "category": "structured",
+      "subtype": "unique",
+      "difficulty": 1,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Return the unique integers in ascending order: [12, -1, 12, 5, -1]",
+      "expected_answer": [
+        -1,
+        5,
+        12
+      ]
+    },
+    {
+      "id": "structured-unique-05",
+      "category": "structured",
+      "subtype": "unique",
+      "difficulty": 1,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Return the unique integers in ascending order: [20, 10, 20, 30, 10]",
+      "expected_answer": [
+        10,
+        20,
+        30
+      ]
+    },
+    {
+      "id": "structured-unique-06",
+      "category": "structured",
+      "subtype": "unique",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "Return the unique integers in ascending order: [7, 5, 6, 7, 5, 4]",
+      "expected_answer": [
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "structured-unique-07",
+      "category": "structured",
+      "subtype": "unique",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "Return the unique integers in ascending order: [101, 99, 101, 100]",
+      "expected_answer": [
+        99,
+        100,
+        101
+      ]
+    },
+    {
+      "id": "structured-unique-08",
+      "category": "structured",
+      "subtype": "unique",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "Return the unique integers in ascending order: [2, 2, 2, 1]",
+      "expected_answer": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "structured-unique-09",
+      "category": "structured",
+      "subtype": "unique",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "Return the unique integers in ascending order: [15, 13, 14, 15, 12]",
+      "expected_answer": [
+        12,
+        13,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "structured-unique-10",
+      "category": "structured",
+      "subtype": "unique",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "Return the unique integers in ascending order: [0, -2, -2, 1, 0, -1]",
+      "expected_answer": [
+        -2,
+        -1,
+        0,
+        1
+      ]
+    },
+    {
+      "id": "structured-filter-01",
+      "category": "structured",
+      "subtype": "filter",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "From these records, return an alphabetically sorted array of names with score >= 80: [{'name': 'Ada', 'score': 91}, {'name': 'Ben', 'score': 72}, {'name': 'Cy', 'score': 88}]",
+      "expected_answer": [
+        "Ada",
+        "Cy"
+      ]
+    },
+    {
+      "id": "structured-filter-02",
+      "category": "structured",
+      "subtype": "filter",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "From these records, return an alphabetically sorted array of names with score >= 55: [{'name': 'Iris', 'score': 55}, {'name': 'Jo', 'score': 55}, {'name': 'Kai', 'score': 54}]",
+      "expected_answer": [
+        "Iris",
+        "Jo"
+      ]
+    },
+    {
+      "id": "structured-filter-03",
+      "category": "structured",
+      "subtype": "filter",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "From these records, return an alphabetically sorted array of names with score >= 20: [{'name': 'Mina', 'score': 10}, {'name': 'Noa', 'score': 30}, {'name': 'Oli', 'score': 20}]",
+      "expected_answer": [
+        "Noa",
+        "Oli"
+      ]
+    },
+    {
+      "id": "structured-filter-04",
+      "category": "structured",
+      "subtype": "filter",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "From these records, return an alphabetically sorted array of names with score >= 99: [{'name': 'Pia', 'score': 99}, {'name': 'Quin', 'score': 98}, {'name': 'Rae', 'score': 100}]",
+      "expected_answer": [
+        "Pia",
+        "Rae"
+      ]
+    },
+    {
+      "id": "structured-filter-05",
+      "category": "structured",
+      "subtype": "filter",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "From these records, return an alphabetically sorted array of names with score >= 0: [{'name': 'Sol', 'score': -1}, {'name': 'Tao', 'score': 0}, {'name': 'Uma', 'score': 1}]",
+      "expected_answer": [
+        "Tao",
+        "Uma"
+      ]
+    },
+    {
+      "id": "structured-filter-06",
+      "category": "structured",
+      "subtype": "filter",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "From these records, return an alphabetically sorted array of names with score >= 43: [{'name': 'Vik', 'score': 44}, {'name': 'Wes', 'score': 42}, {'name': 'Xiu', 'score': 43}]",
+      "expected_answer": [
+        "Vik",
+        "Xiu"
+      ]
+    },
+    {
+      "id": "structured-filter-07",
+      "category": "structured",
+      "subtype": "filter",
+      "difficulty": 2,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "From these records, return an alphabetically sorted array of names with score >= 8: [{'name': 'Yara', 'score': 7}, {'name': 'Zed', 'score': 9}, {'name': 'Ari', 'score': 8}]",
+      "expected_answer": [
+        "Ari",
+        "Zed"
+      ]
+    },
+    {
+      "id": "structured-filter-08",
+      "category": "structured",
+      "subtype": "filter",
+      "difficulty": 3,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "From these records, return an alphabetically sorted array of names with score >= 60: [{'name': 'Bea', 'score': 61}, {'name': 'Cal', 'score': 59}, {'name': 'Dee', 'score': 60}]",
+      "expected_answer": [
+        "Bea",
+        "Dee"
+      ]
+    },
+    {
+      "id": "structured-filter-09",
+      "category": "structured",
+      "subtype": "filter",
+      "difficulty": 3,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "From these records, return an alphabetically sorted array of names with score >= 4: [{'name': 'Eli', 'score': 4}, {'name': 'Fay', 'score': 4}, {'name': 'Gus', 'score': 3}]",
+      "expected_answer": [
+        "Eli",
+        "Fay"
+      ]
+    },
+    {
+      "id": "structured-filter-10",
+      "category": "structured",
+      "subtype": "filter",
+      "difficulty": 3,
+      "embedding": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "From these records, return an alphabetically sorted array of names with score >= 81: [{'name': 'Hana', 'score': 82}, {'name': 'Ivan', 'score': 81}, {'name': 'Jae', 'score': 83}]",
+      "expected_answer": [
+        "Hana",
+        "Ivan",
+        "Jae"
+      ]
+    },
+    {
+      "id": "factual-01",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 1,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "What is the capital of France?",
+      "expected_answer": "Paris"
+    },
+    {
+      "id": "factual-02",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 1,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "What is the chemical symbol for gold?",
+      "expected_answer": "Au"
+    },
+    {
+      "id": "factual-03",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 1,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "How many sides does a hexagon have?",
+      "expected_answer": 6
+    },
+    {
+      "id": "factual-04",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 1,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "What planet is known as the Red Planet?",
+      "expected_answer": "Mars"
+    },
+    {
+      "id": "factual-05",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 1,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "What is the largest ocean on Earth?",
+      "expected_answer": "Pacific Ocean"
+    },
+    {
+      "id": "factual-06",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 1,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "What is the capital of Japan?",
+      "expected_answer": "Tokyo"
+    },
+    {
+      "id": "factual-07",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 1,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "What is the chemical symbol for sodium?",
+      "expected_answer": "Na"
+    },
+    {
+      "id": "factual-08",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 1,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "How many minutes are in two hours?",
+      "expected_answer": 120
+    },
+    {
+      "id": "factual-09",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 1,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "Which gas do plants absorb from the atmosphere?",
+      "expected_answer": "carbon dioxide"
+    },
+    {
+      "id": "factual-10",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 1,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.3333333333333333
+      ],
+      "prompt": "What is the square root of 144?",
+      "expected_answer": 12
+    },
+    {
+      "id": "factual-11",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the capital of Canada?",
+      "expected_answer": "Ottawa"
+    },
+    {
+      "id": "factual-12",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the SI unit of electric current?",
+      "expected_answer": "ampere"
+    },
+    {
+      "id": "factual-13",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "How many continents are conventionally recognized?",
+      "expected_answer": 7
+    },
+    {
+      "id": "factual-14",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "Which planet is closest to the Sun?",
+      "expected_answer": "Mercury"
+    },
+    {
+      "id": "factual-15",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the chemical symbol for iron?",
+      "expected_answer": "Fe"
+    },
+    {
+      "id": "factual-16",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "Who wrote Pride and Prejudice?",
+      "expected_answer": "Jane Austen"
+    },
+    {
+      "id": "factual-17",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the capital of Brazil?",
+      "expected_answer": "Brasilia"
+    },
+    {
+      "id": "factual-18",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the freezing point of water in degrees Celsius at standard pressure?",
+      "expected_answer": 0
+    },
+    {
+      "id": "factual-19",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "How many bytes are in 32 bits?",
+      "expected_answer": 4
+    },
+    {
+      "id": "factual-20",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the largest mammal?",
+      "expected_answer": "blue whale"
+    },
+    {
+      "id": "factual-21",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "What is the capital of Kenya?",
+      "expected_answer": "Nairobi"
+    },
+    {
+      "id": "factual-22",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "What is the chemical symbol for potassium?",
+      "expected_answer": "K"
+    },
+    {
+      "id": "factual-23",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "Which language is primarily used to style web pages?",
+      "expected_answer": "CSS"
+    },
+    {
+      "id": "factual-24",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "How many degrees are in a right angle?",
+      "expected_answer": 90
+    },
+    {
+      "id": "factual-25",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "What is the capital of New Zealand?",
+      "expected_answer": "Wellington"
+    },
+    {
+      "id": "factual-26",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "What is the binary representation of decimal 10?",
+      "expected_answer": "1010"
+    },
+    {
+      "id": "factual-27",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "Which organ pumps blood through the human body?",
+      "expected_answer": "heart"
+    },
+    {
+      "id": "factual-28",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "What is the chemical symbol for silver?",
+      "expected_answer": "Ag"
+    },
+    {
+      "id": "factual-29",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "How many items are in a dozen?",
+      "expected_answer": 12
+    },
+    {
+      "id": "factual-30",
+      "category": "factual",
+      "subtype": "fact",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "What is the capital of Iceland?",
+      "expected_answer": "Reykjavik"
+    },
+    {
+      "id": "reasoning-arithmetic-01",
+      "category": "reasoning",
+      "subtype": "arithmetic",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "A store has 17 boxes with 6 items each, then receives 9 more items. How many items are there in total?",
+      "expected_answer": 111
+    },
+    {
+      "id": "reasoning-arithmetic-02",
+      "category": "reasoning",
+      "subtype": "arithmetic",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "A store has 23 boxes with 4 items each, then receives 11 more items. How many items are there in total?",
+      "expected_answer": 103
+    },
+    {
+      "id": "reasoning-arithmetic-03",
+      "category": "reasoning",
+      "subtype": "arithmetic",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "A store has 31 boxes with 3 items each, then receives 17 more items. How many items are there in total?",
+      "expected_answer": 110
+    },
+    {
+      "id": "reasoning-arithmetic-04",
+      "category": "reasoning",
+      "subtype": "arithmetic",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "A store has 14 boxes with 8 items each, then receives 15 more items. How many items are there in total?",
+      "expected_answer": 127
+    },
+    {
+      "id": "reasoning-arithmetic-05",
+      "category": "reasoning",
+      "subtype": "arithmetic",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "A store has 27 boxes with 5 items each, then receives 19 more items. How many items are there in total?",
+      "expected_answer": 154
+    },
+    {
+      "id": "reasoning-arithmetic-06",
+      "category": "reasoning",
+      "subtype": "arithmetic",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "A store has 42 boxes with 2 items each, then receives 13 more items. How many items are there in total?",
+      "expected_answer": 97
+    },
+    {
+      "id": "reasoning-arithmetic-07",
+      "category": "reasoning",
+      "subtype": "arithmetic",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "A store has 19 boxes with 7 items each, then receives 21 more items. How many items are there in total?",
+      "expected_answer": 154
+    },
+    {
+      "id": "reasoning-arithmetic-08",
+      "category": "reasoning",
+      "subtype": "arithmetic",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "A store has 36 boxes with 4 items each, then receives 29 more items. How many items are there in total?",
+      "expected_answer": 173
+    },
+    {
+      "id": "reasoning-arithmetic-09",
+      "category": "reasoning",
+      "subtype": "arithmetic",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "A store has 28 boxes with 9 items each, then receives 16 more items. How many items are there in total?",
+      "expected_answer": 268
+    },
+    {
+      "id": "reasoning-arithmetic-10",
+      "category": "reasoning",
+      "subtype": "arithmetic",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "A store has 55 boxes with 3 items each, then receives 24 more items. How many items are there in total?",
+      "expected_answer": 189
+    },
+    {
+      "id": "reasoning-sequence-01",
+      "category": "reasoning",
+      "subtype": "sequence",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the next number in this sequence? [2, 5, 8, 11]",
+      "expected_answer": 14
+    },
+    {
+      "id": "reasoning-sequence-02",
+      "category": "reasoning",
+      "subtype": "sequence",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the next number in this sequence? [10, 20, 40, 80]",
+      "expected_answer": 160
+    },
+    {
+      "id": "reasoning-sequence-03",
+      "category": "reasoning",
+      "subtype": "sequence",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the next number in this sequence? [81, 27, 9, 3]",
+      "expected_answer": 1
+    },
+    {
+      "id": "reasoning-sequence-04",
+      "category": "reasoning",
+      "subtype": "sequence",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "What is the next number in this sequence? [1, 4, 9, 16]",
+      "expected_answer": 25
+    },
+    {
+      "id": "reasoning-sequence-05",
+      "category": "reasoning",
+      "subtype": "sequence",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the next number in this sequence? [3, 6, 12, 24]",
+      "expected_answer": 48
+    },
+    {
+      "id": "reasoning-sequence-06",
+      "category": "reasoning",
+      "subtype": "sequence",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the next number in this sequence? [100, 90, 80, 70]",
+      "expected_answer": 60
+    },
+    {
+      "id": "reasoning-sequence-07",
+      "category": "reasoning",
+      "subtype": "sequence",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "What is the next number in this sequence? [1, 1, 2, 3, 5]",
+      "expected_answer": 8
+    },
+    {
+      "id": "reasoning-sequence-08",
+      "category": "reasoning",
+      "subtype": "sequence",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the next number in this sequence? [7, 14, 21, 28]",
+      "expected_answer": 35
+    },
+    {
+      "id": "reasoning-sequence-09",
+      "category": "reasoning",
+      "subtype": "sequence",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.6666666666666666
+      ],
+      "prompt": "What is the next number in this sequence? [64, 32, 16, 8]",
+      "expected_answer": 4
+    },
+    {
+      "id": "reasoning-sequence-10",
+      "category": "reasoning",
+      "subtype": "sequence",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "prompt": "What is the next number in this sequence? [2, 6, 12, 20, 30]",
+      "expected_answer": 42
+    },
+    {
+      "id": "reasoning-logic-01",
+      "category": "reasoning",
+      "subtype": "logic",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.6666666666666666
+      ],
+      "prompt": "A box has 8 red and 5 blue balls. Two red balls are removed and three blue balls are added. How many balls are in the box?",
+      "expected_answer": 14
+    },
+    {
+      "id": "reasoning-logic-02",
+      "category": "reasoning",
+      "subtype": "logic",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.6666666666666666
+      ],
+      "prompt": "Nora is older than Liam. Liam is older than Maya. Who is the youngest?",
+      "expected_answer": "Maya"
+    },
+    {
+      "id": "reasoning-logic-03",
+      "category": "reasoning",
+      "subtype": "logic",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.6666666666666666
+      ],
+      "prompt": "A train leaves at 09:35 and travels for 95 minutes. At what time does it arrive in 24-hour HH:MM format?",
+      "expected_answer": "11:10"
+    },
+    {
+      "id": "reasoning-logic-04",
+      "category": "reasoning",
+      "subtype": "logic",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.6666666666666666
+      ],
+      "prompt": "Four machines make 40 parts in one hour at equal rates. How many parts do six such machines make in one hour?",
+      "expected_answer": 60
+    },
+    {
+      "id": "reasoning-logic-05",
+      "category": "reasoning",
+      "subtype": "logic",
+      "difficulty": 2,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.6666666666666666
+      ],
+      "prompt": "A book has 240 pages. Sam reads one quarter on Monday and 60 pages on Tuesday. How many pages remain?",
+      "expected_answer": 120
+    },
+    {
+      "id": "reasoning-logic-06",
+      "category": "reasoning",
+      "subtype": "logic",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "prompt": "Every zorb is blue. No blue object is red. Can a zorb be red? Answer yes or no.",
+      "expected_answer": "no"
+    },
+    {
+      "id": "reasoning-logic-07",
+      "category": "reasoning",
+      "subtype": "logic",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "prompt": "A farmer has chickens and cows with 12 heads and 34 legs total. How many cows are there?",
+      "expected_answer": 5
+    },
+    {
+      "id": "reasoning-logic-08",
+      "category": "reasoning",
+      "subtype": "logic",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "prompt": "A password has three letters followed by two digits. How many characters does it contain?",
+      "expected_answer": 5
+    },
+    {
+      "id": "reasoning-logic-09",
+      "category": "reasoning",
+      "subtype": "logic",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "prompt": "If today is Tuesday, what day of the week will it be 17 days from today?",
+      "expected_answer": "Friday"
+    },
+    {
+      "id": "reasoning-logic-10",
+      "category": "reasoning",
+      "subtype": "logic",
+      "difficulty": 3,
+      "embedding": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "prompt": "A recipe for 4 people uses 300 grams of flour. How many grams are needed for 10 people at the same rate?",
+      "expected_answer": 750
+    }
+  ]
+}

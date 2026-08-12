@@ -1,0 +1,15 @@
+{
+  "schema": "iicp.learned-routing-abuse-cases.v1",
+  "cases": [
+    {"id": "unknown-candidate", "input": {"selected_supplied": false}, "expected": "refuse"},
+    {"id": "ineligible-candidate", "input": {"selected_eligible": false}, "expected": "refuse"},
+    {"id": "stale-evidence", "input": {"fresh": false}, "expected": "exclude-history"},
+    {"id": "changed-execution-profile", "input": {"profile_state": "changed"}, "expected": "exclude-history"},
+    {"id": "missing-execution-profile", "input": {"profile_state": "missing"}, "expected": "cold-start"},
+    {"id": "insufficient-samples", "input": {"samples": 1}, "expected": "cold-start"},
+    {"id": "ranker-error", "input": {"ranker_error": true}, "expected": "refuse"},
+    {"id": "malformed-score", "input": {"score_valid": false}, "expected": "refuse"},
+    {"id": "intentional-exploration", "input": {"mode": "exploration"}, "expected": "allow-and-annotate"},
+    {"id": "eligible-fallback", "input": {"mode": "fallback", "fallback_eligible": true}, "expected": "allow-fallback-and-annotate"}
+  ]
+}

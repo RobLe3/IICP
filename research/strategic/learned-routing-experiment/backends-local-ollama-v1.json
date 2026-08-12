@@ -1,0 +1,24 @@
+{
+  "schema": "iicp.heterogeneous-routing-backends.v1",
+  "endpoint": "http://127.0.0.1:11434",
+  "backends": [
+    {
+      "alias": "qwen2.5-0.5b-q4",
+      "model": "qwen2.5:0.5b",
+      "parameter_class_b": 0.5,
+      "relative_compute_weight": 0.5
+    },
+    {
+      "alias": "llama3.2-1b-q8",
+      "model": "llama3.2:1b",
+      "parameter_class_b": 1.2,
+      "relative_compute_weight": 1.2
+    },
+    {
+      "alias": "phi3-mini-3.8b-q4",
+      "model": "phi3:mini",
+      "parameter_class_b": 3.8,
+      "relative_compute_weight": 3.8
+    }
+  ]
+}
