@@ -80,7 +80,7 @@
       "authority": "pre-1.0 Rust directory operator preview; not the production Genesis authority",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.1.10"
+      "release": "0.1.11"
     },
     {
       "id": "client-python",

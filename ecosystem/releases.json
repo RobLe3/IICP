@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-10",
+  "generated_at": "2026-08-12",
   "releases": [
     {
       "id": "specification",
@@ -35,17 +35,18 @@
     },
     {
       "id": "directory-rust",
-      "version": "0.1.10",
+      "version": "0.1.11",
       "wire_behavior": "unchanged",
       "conformance_impact": "changed",
       "profiles": [
         "directory-implementation-metadata-v1",
-        "discovery-evidence-v1"
+        "discovery-evidence-v1",
+        "runtime-health-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No database migration is required. The corrective release validates nested fixture digests recursively, persists no-op heartbeat updates in MySQL, and removes the event-listener advisory path.",
-      "rollback": "Restore v0.1.9; Genesis cutover remains unauthorized. Rolling back also restores the prior nested-fixture and no-op-heartbeat defects."
+      "migration": "No database migration is required. This operator-preview release adds local runtime-health and opt-in systemd service support, a checksum-bound staged updater, deterministic bounded stats parity with PHP v1.10.90, and crates.io distribution.",
+      "rollback": "Restore v0.1.10 with the guarded updater. PHP remains Genesis authority; rollback does not require a database migration or authorize federation or cutover."
     },
     {
       "id": "client-python",

@@ -27,7 +27,7 @@
     "directory-rust": {
       "lifecycle": "operator-preview",
       "name": "iicp-directory-rust",
-      "release": "0.1.10",
+      "release": "0.1.11",
       "visibility": "public"
     },
     "specification": {
