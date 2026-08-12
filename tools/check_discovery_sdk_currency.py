@@ -51,7 +51,7 @@ def main() -> int:
         observed["PHP fixture"] = directory_fixture_version(args.php_directory)
     if args.rust_directory:
         observed["Rust default"] = extracted(
-            args.rust_directory / "src/main.rs",
+            args.rust_directory / "src/discovery.rs",
             r'SDK_LATEST_KNOWN_VERSION:\s*&str\s*=\s*"([^"]+)"',
         )
         observed["Rust fixture"] = directory_fixture_version(args.rust_directory)

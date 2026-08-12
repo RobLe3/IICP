@@ -49,42 +49,51 @@
     },
     {
       "id": "client-python",
-      "version": "0.7.101",
+      "version": "0.7.102",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
-        "mcp-era-negotiation-v0"
+        "service-lifecycle-v1",
+        "runtime-health-v1",
+        "managed-operator-v1",
+        "cip-consumer-cosignature-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "optional",
-      "migration": "No persisted-state migration is required; MCP 2025-11-25 remains the default and 2026-07-28 is explicit.",
-      "rollback": "Install the preceding immutable 0.7.100 package; existing legacy MCP gateway behavior remains available."
+      "upgrade": "recommended",
+      "migration": "No persisted-state migration is required. Native streaming and runtime-health advertisement remain explicit opt-ins; buffered call() behavior and terminal-only backends remain compatible.",
+      "rollback": "Install the preceding immutable 0.7.101 package. Disable any 0.7.102-only opt-in profile before rollback."
     },
     {
       "id": "client-typescript",
-      "version": "0.7.101",
+      "version": "0.7.102",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
-        "mcp-era-negotiation-v0"
+        "service-lifecycle-v1",
+        "runtime-health-v1",
+        "managed-operator-v1",
+        "cip-consumer-cosignature-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "optional",
-      "migration": "No persisted-state migration is required; MCP 2025-11-25 remains the default and 2026-07-28 is explicit.",
-      "rollback": "Install the preceding immutable 0.7.100 package; existing legacy MCP gateway behavior remains available."
+      "upgrade": "recommended",
+      "migration": "No persisted-state migration is required. Native streaming and runtime-health advertisement remain explicit opt-ins; buffered call() behavior and terminal-only backends remain compatible.",
+      "rollback": "Install the preceding immutable 0.7.101 package. Disable any 0.7.102-only opt-in profile before rollback."
     },
     {
       "id": "client-rust",
-      "version": "0.7.101",
+      "version": "0.7.102",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
-        "mcp-era-negotiation-v0"
+        "service-lifecycle-v1",
+        "runtime-health-v1",
+        "managed-operator-v1",
+        "cip-consumer-cosignature-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "optional",
-      "migration": "No persisted-state migration is required; MCP 2025-11-25 remains the default and 2026-07-28 is explicit.",
-      "rollback": "Install the preceding immutable 0.7.100 package; existing legacy MCP gateway behavior remains available."
+      "upgrade": "recommended",
+      "migration": "No persisted-state migration is required. Native streaming and runtime-health advertisement remain explicit opt-ins; buffered call() behavior and terminal-only backends remain compatible.",
+      "rollback": "Install the preceding immutable 0.7.101 package. Disable any 0.7.102-only opt-in profile before rollback."
     },
     {
       "id": "web-node",

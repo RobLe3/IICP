@@ -3,19 +3,19 @@
     "client-python": {
       "lifecycle": "active",
       "name": "iicp-client-python",
-      "release": "0.7.101",
+      "release": "0.7.102",
       "visibility": "public"
     },
     "client-rust": {
       "lifecycle": "active",
       "name": "iicp-client-rust",
-      "release": "0.7.101",
+      "release": "0.7.102",
       "visibility": "public"
     },
     "client-typescript": {
       "lifecycle": "active",
       "name": "iicp-client-typescript",
-      "release": "0.7.101",
+      "release": "0.7.102",
       "visibility": "public"
     },
     "directory-php": {
@@ -49,7 +49,7 @@
       "visibility": "private"
     }
   },
-  "generated_at": "2026-08-10",
+  "generated_at": "2026-08-12",
   "protocol_suite_release": "1.10.13",
   "schema": "iicp.ecosystem-current-versions.v1",
   "wire_compatibility_baseline": "1.9.0"
