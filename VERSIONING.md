@@ -51,7 +51,7 @@ the entire IICP specification suite (core, CIP, framing, identity, telemetry, et
 
 **Format**: `MAJOR.MINOR.PATCH[-draft]`  
 **Scope**: Per-document, for tracking editorial changes within a specific spec file  
-**Displayed as**: `S.12 v0.6.8` (always with the spec number prefix)
+**Displayed as**: `S.12 v0.6.13` (always with the spec number prefix)
 
 Sub-spec documents have their own internal versioning for fine-grained editorial tracking.
 **These are NOT the IICP Protocol Suite version.** They exist so spec editors can track
@@ -59,13 +59,13 @@ which version of a sub-document contains which normative text.
 
 | Sub-spec | Current internal version | Notes |
 |----------|--------------------------|-------|
-| S.12 `iicp-cooperative-inference.md` | 0.6.8 | CIP — Phase 5 |
+| S.12 `iicp-cooperative-inference.md` | 0.6.13 | CIP — Phase 5 |
 | `iicp-core.md` | follows iicp-core section versioning | Core protocol |
 | `iicp-framing.md` | 0.1.x | Binary framing — Phase 4 stub |
 
 **Rules:**
 - Sub-spec versions are for editors. End users see the Protocol Suite version.
-- When displaying both: `IICP v1.9.0 · S.12 CIP v0.6.9` (suite first, sub-spec second)
+- When displaying both: `IICP v1.10.12 · S.12 CIP v0.6.13` (suite first, sub-spec second)
 - Never use a sub-spec version alone as "the" IICP version on public-facing surfaces
 
 ---
@@ -124,16 +124,16 @@ be displayed as the Protocol Suite, OpenAPI or package version.
 
 | Surface | What to display | Example |
 |---------|----------------|---------|
-| Research page badge | Protocol Suite version | `IICP v1.9.0 · Updated 2026-05-30` |
-| Spec references in page body | Suite + sub-spec | `spec S.12 v0.6.8` |
+| Research page badge | Protocol Suite version | Use `spec/v1.9/VERSION` and label the axis |
+| Spec references in page body | Suite + sub-spec | `IICP v1.10.12 · S.12 v0.6.13` |
 | Implementation evidence | Software version | `directory v1.9.19` |
 | PR commit messages | Component + software version | `[directory] v1.9.19` |
 | IICP repo CHANGELOG | Protocol Suite version | `## v1.7.0 — 2026-05-24` |
-| Spec file headers | Sub-spec version | `**Version**: 0.6.8` |
+| Spec file headers | Sub-spec version | `**Version**: 0.6.13` |
 
 **Never do:**
 - Use a made-up page version (e.g., "v1.3.0") on public surfaces
-- Use the S.12 internal version (0.6.8) as the IICP version badge
+- Use the S.12 internal version as the IICP Protocol Suite version badge
 - Use the directory software version as the protocol version
 - Mix version axes in the same badge without labeling them
 

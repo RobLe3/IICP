@@ -12,6 +12,27 @@ SUITE_PATH = ROOT / "spec/v1.9/conformance-test-suite.md"
 FIXTURE_DIR = ROOT / "conformance-runner/src/iicp_conformance/fixtures"
 
 
+def check_fixture(path: Path, fixture: dict[str, object], versions: list[str], header_version: str) -> list[str]:
+    """Validate released-suite authority or an explicit pre-normative classification."""
+    errors: list[str] = []
+    suite_version = fixture.get("suite_version")
+    status = fixture.get("status")
+    profile = fixture.get("profile", path.stem)
+    pre_normative = isinstance(status, str) and status.startswith("pre-normative")
+    if pre_normative:
+        if suite_version is not None:
+            errors.append(f"{path.name}: pre-normative fixture must not claim suite_version")
+        return errors
+    if not isinstance(suite_version, str):
+        errors.append(f"{path.name}: missing suite_version or explicit pre-normative status")
+        return errors
+    if suite_version not in versions:
+        errors.append(f"{path.name}: suite version {suite_version} is absent from the changelog")
+    if profile == "directory-lifecycle-v1" and suite_version != header_version:
+        errors.append(f"{path.name}: current lifecycle profile must use suite {header_version}")
+    return errors
+
+
 def check() -> list[str]:
     text = SUITE_PATH.read_text(encoding="utf-8")
     errors: list[str] = []
@@ -45,19 +66,7 @@ def check() -> list[str]:
 
     for path in sorted(FIXTURE_DIR.glob("*.json")):
         fixture = json.loads(path.read_text(encoding="utf-8"))
-        suite_version = fixture.get("suite_version")
-        profile = fixture.get("profile", path.stem)
-        if not isinstance(suite_version, str):
-            errors.append(f"{path.name}: missing suite_version")
-            continue
-        if suite_version not in versions:
-            errors.append(
-                f"{path.name}: suite version {suite_version} is absent from the changelog"
-            )
-        if profile == "directory-lifecycle-v1" and suite_version != header_version:
-            errors.append(
-                f"{path.name}: current lifecycle profile must use suite {header_version}"
-            )
+        errors.extend(check_fixture(path, fixture, versions, header_version))
 
     return errors
 
