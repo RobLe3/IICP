@@ -1,0 +1,28 @@
+{
+  "profile": "iicp-public-measurement-v1",
+  "schema_version": 1,
+  "evidence_class": "independent",
+  "claim": {"scope": "multi-region", "target_class": "directory", "target_id": "public-directory-a"},
+  "window": {"started_at": "2026-08-12T10:00:00Z", "ended_at": "2026-08-12T10:05:00Z"},
+  "vantages": [
+    {"vantage_id": "probe-a", "operator_id": "operator-a", "failure_domain_id": "domain-a", "region": "DE-BE", "network_class": "residential", "target_controlled": false},
+    {"vantage_id": "probe-b", "operator_id": "operator-b", "failure_domain_id": "domain-b", "region": "US-VA", "network_class": "cloud", "target_controlled": false},
+    {"vantage_id": "probe-c", "operator_id": "operator-c", "failure_domain_id": "domain-c", "region": "AU-NSW", "network_class": "academic", "target_controlled": false}
+  ],
+  "observations": [
+    {"sample_id": 1, "vantage_id": "probe-a", "observed_at": "2026-08-12T10:01:00Z", "outcome": "success", "latency_ms": 40, "http_status": 200},
+    {"sample_id": 2, "vantage_id": "probe-b", "observed_at": "2026-08-12T10:02:00Z", "outcome": "success", "latency_ms": 90, "http_status": 200},
+    {"sample_id": 3, "vantage_id": "probe-c", "observed_at": "2026-08-12T10:03:00Z", "outcome": "timeout", "reason_code": "DEADLINE_EXCEEDED"}
+  ],
+  "summary": {
+    "requested_samples": 3,
+    "successful_samples": 2,
+    "failed_samples": 1,
+    "availability": 0.666667,
+    "latency_sample_count": 2,
+    "latency_ms": {"min": 40, "p50": 40, "p95": 90, "max": 90},
+    "outcomes": {"success": 2, "http_error": 0, "transport_error": 0, "timeout": 1, "invalid_response": 0, "not_run": 0},
+    "aggregation": "nearest-rank-v1"
+  },
+  "privacy": {"content_free": true, "identifiers_scoped_to_bundle": true}
+}

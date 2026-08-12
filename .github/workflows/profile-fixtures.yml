@@ -7,6 +7,9 @@ on:
       - "conformance-runner/**"
       - "research/native-ai-infrastructure/fixtures/service-profiles-v1.json"
       - "research/runtime-supervision/fixtures/**"
+      - "research/pre-normative-profiles/*measurement*"
+      - "research/pre-normative-profiles/fixtures/public-measurement-*"
+      - "research/pre-normative-profiles/schemas/public-measurement-*"
       - "tools/check_profile_fixture_manifest.py"
       - "tools/check_spec_release_integrity.py"
       - "tools/test_service_lifecycle_fixture.py"
@@ -15,6 +18,8 @@ on:
       - "tools/test_terminology_discoverability.py"
       - "tools/check_runtime_health_fixture.py"
       - "tools/test_runtime_health_fixture.py"
+      - "tools/check_public_measurement_profile.py"
+      - "tools/test_public_measurement_profile.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
       - "tools/check_discovery_sdk_currency.py"
       - "ecosystem/releases.json"
@@ -30,6 +35,9 @@ on:
       - "conformance-runner/**"
       - "research/native-ai-infrastructure/fixtures/service-profiles-v1.json"
       - "research/runtime-supervision/fixtures/**"
+      - "research/pre-normative-profiles/*measurement*"
+      - "research/pre-normative-profiles/fixtures/public-measurement-*"
+      - "research/pre-normative-profiles/schemas/public-measurement-*"
       - "tools/check_profile_fixture_manifest.py"
       - "tools/check_spec_release_integrity.py"
       - "tools/test_service_lifecycle_fixture.py"
@@ -38,6 +46,8 @@ on:
       - "tools/test_terminology_discoverability.py"
       - "tools/check_runtime_health_fixture.py"
       - "tools/test_runtime_health_fixture.py"
+      - "tools/check_public_measurement_profile.py"
+      - "tools/test_public_measurement_profile.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
       - "tools/check_discovery_sdk_currency.py"
       - "ecosystem/releases.json"
@@ -72,5 +82,7 @@ jobs:
       - run: python3 tools/test_reputation_hourly_velocity_fixture.py
       - run: python3 -m unittest discover -s tools -p 'test_terminology_discoverability.py'
       - run: python3 tools/check_runtime_health_fixture.py
+      - run: python3 tools/check_public_measurement_profile.py
+      - run: python3 -m unittest discover -s tools -p 'test_public_measurement_profile.py'
       - run: python3 tools/check_spec_release_integrity.py
       - run: python3 tools/check_discovery_sdk_currency.py
