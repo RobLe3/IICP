@@ -665,6 +665,7 @@
             "research/pre-normative-profiles/fixtures/dispatch-admission-v2.json",
             "research/pre-normative-profiles/fixtures/dispatch-route-ticket-v1.json",
             "research/pre-normative-profiles/fixtures/dispatch-ticket-trust-v2-crypto.json",
+            "research/pre-normative-profiles/fixtures/dns-aid-import-export-v0.json",
             "research/pre-normative-profiles/fixtures/policy-detail-disclosure-v0.json",
             "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json",
             "research/strategic/execution-privacy-feasibility/software_prototype.py",
