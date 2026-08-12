@@ -1,0 +1,737 @@
+{
+  "evidence_class": "synthetic-research-only",
+  "fixture_version": "execution-privacy-binding-v1",
+  "non_claims": [
+    "not_vendor_evidence",
+    "not_hardware_attestation",
+    "not_proof_of_private_key_containment",
+    "not_a_normative_iicp_profile",
+    "json_projection_not_cose_sign1"
+  ],
+  "policy": {
+    "accepted_eat_profiles": [
+      "tag:iicp.network,2026:execution-privacy-attestation-result-v0"
+    ],
+    "accepted_measurements": [
+      "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    ],
+    "accepted_tcb_status": [
+      "up_to_date"
+    ],
+    "expected_audience": "iicp-consumer-session-v0",
+    "expected_candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "expected_nonce": "consumer-challenge-v0",
+    "expected_route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "now": 1800000000,
+    "required_protected_components": [
+      "cpu",
+      "memory",
+      "runtime"
+    ]
+  },
+  "scenarios": [
+    {
+      "expected": "PASS",
+      "id": "valid",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "ac2e64dd9e6cd8198e3c19391ff6057d507e600c24b78d7c502ae6ededd2e7bc",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "tjfRMXzW9pjVnfpGgGpkC0xTFNRjAoFBH9ryh0jtKHggsVfwgHQz8_Hi0JDAgADlJJdn6Rb7mwpEx6WZYL6VCQ"
+        }
+      }
+    },
+    {
+      "expected": "SIGNATURE_INVALID",
+      "id": "bad_signature",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "ac2e64dd9e6cd8198e3c19391ff6057d507e600c24b78d7c502ae6ededd2e7bc",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "tjfRMXzW9pjVnfpGgGpkC0xTFNRjAoFBH9ryh0jtKHggsVfwgHQz8_Hi0JDAgADlJJdn6Rb7mwpEx6WZYL6VCA"
+        }
+      }
+    },
+    {
+      "expected": "SIGNATURE_INVALID",
+      "id": "wrong_trust_root",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "ac2e64dd9e6cd8198e3c19391ff6057d507e600c24b78d7c502ae6ededd2e7bc",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "PVkcz0CegwUYvfmnBQPyHmwVvE6vUIxUtTtDQXTbtJqpiiRu5dfYTYFgNTG5CKyinxvBcsO0aATg5E9Dp-CrDw"
+        }
+      }
+    },
+    {
+      "expected": "NONCE_MISMATCH",
+      "id": "wrong_nonce",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "3d7ad88a7e14999f06fd115984a75db6caed7957c9f0bf0cb947d3b2ed5a720d",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "different-consumer-challenge",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "7Ef0aVIH841ws4tcgontfMgFlimFzzbtUaJ9Jw_VS9j0HQwfWgU278eacy1ZgYB55q31SeT-NRqfeIigb_MdDg"
+        }
+      }
+    },
+    {
+      "expected": "EXPIRED",
+      "id": "stale",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "ac2e64dd9e6cd8198e3c19391ff6057d507e600c24b78d7c502ae6ededd2e7bc",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1799999999,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "otEa_bUKtbTd7BmcNpkT23-vBwerMKxxsyZDnQ6f9t9r3BfhCSoGEwYR5HXly5KSlsNAMglIHxEugs6w3HUqCQ"
+        }
+      }
+    },
+    {
+      "expected": "NOT_YET_VALID",
+      "id": "not_yet_valid",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "ac2e64dd9e6cd8198e3c19391ff6057d507e600c24b78d7c502ae6ededd2e7bc",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1800000001,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "Bz8mCOKWT0l4Rbj_RHUil8yItlXR3yWvnVYNDgSAjkF04MSv0noNWYQLFYlhG7LQmQ2cATkHgzs2K5QUcTeDCg"
+        }
+      }
+    },
+    {
+      "expected": "REPLAYED",
+      "id": "replayed_result",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "ac2e64dd9e6cd8198e3c19391ff6057d507e600c24b78d7c502ae6ededd2e7bc",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "tjfRMXzW9pjVnfpGgGpkC0xTFNRjAoFBH9ryh0jtKHggsVfwgHQz8_Hi0JDAgADlJJdn6Rb7mwpEx6WZYL6VCQ"
+        }
+      },
+      "seen_before": true
+    },
+    {
+      "expected": "KEY_BINDING_INVALID",
+      "id": "key_substitution",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "ac2e64dd9e6cd8198e3c19391ff6057d507e600c24b78d7c502ae6ededd2e7bc",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "FnOLvBn_mWyB9jVwfX7Bv_Q84hKEVRazH_vB33vi9ZifEqQaWlh-SdbLmWrjvMv5g5L1ZQh7lafTAfmerUsQBQ"
+        }
+      }
+    },
+    {
+      "expected": "EXECUTION_KEY_UNSUPPORTED",
+      "id": "unsupported_execution_key",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "c1f88d7297354d1a4e7c31ab255a2c9861dbeb76b4e6c9aa9fc5b19e4b14d46c",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "Ed25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "KxSYNuI1dHUblCsPPUZ6T62hPrdeR2fT3mhB-ko1EAcSyyse5qYd0Ow1JrTcEXaj4bKprp6gdDjyWjV7SM0GDQ"
+        }
+      }
+    },
+    {
+      "expected": "MEASUREMENT_UNACCEPTED",
+      "id": "changed_measurement",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "27ae04cfbd532318259456bdd488bf83c0344214229fa278108c0277f953af71",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "rRdLcuQ7495iCMMnn4kp8lojHvtvOj6C6gEXyjwaQ-TZaNGXiHFT7koKaVswyzTN1XpmDF4r8NGFfKCO9VpWBg"
+        }
+      }
+    },
+    {
+      "expected": "DEBUG_ENABLED",
+      "id": "debug_enabled",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "2a3f425286a1c1cee6c8712a444028ed4d960cfdbc28128b32f726420dcc4944",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": true,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "69tbTljd1hpIm_CdP_h1RsbMjL41UVu-SoxuITnFTMmgfnr9g0S2WfRrDfF-QnMVqzklLHVwjP6JvnhgNZKKCA"
+        }
+      }
+    },
+    {
+      "expected": "TCB_UNACCEPTED",
+      "id": "unacceptable_tcb",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "c77e1f789ff442b28678c94000d34e64b7ab3d45eb07561f980b306facc5ceab",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "out_of_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "5c7-6DqMD6gGD-PQ2eUjAuA_Y33bIVJPaqApSTDenPLIB7X7Zv4bn6rgmV0IbydUMgLoInD-8QDMd1Bvqth9Bg"
+        }
+      }
+    },
+    {
+      "expected": "BOUNDARY_INCOMPLETE",
+      "id": "incomplete_boundary",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "8a26d8b02fa72ebefffdf5bd5cdb0475515a5fb92c7cb7b03c1dac1769603a00",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "m6mHvlWj6ScF5pjCH2Qz92-V4ZwDoKEjQsAVOXDIujJ1IVmhrGAo0oNUVX1NTGGoJ4dLDaQAHn7_qR8plelpBw"
+        }
+      }
+    },
+    {
+      "expected": "EAT_PROFILE_UNACCEPTED",
+      "id": "ordinary_cx_downgrade",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "ac2e64dd9e6cd8198e3c19391ff6057d507e600c24b78d7c502ae6ededd2e7bc",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "ordinary-iicp-cx",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "OCmMfV5IK0b0QPLJKjCVMFoLZ6UNPxcedyp245RN-Is71mCQ3Y6-mpw0nE2IFJGrpso60f9--cUePXJu0ckfAw"
+        }
+      }
+    },
+    {
+      "expected": "AUDIENCE_MISMATCH",
+      "id": "wrong_audience",
+      "result": {
+        "aud": "different-consumer-session",
+        "binding_digest_sha256": "fa037cec19d8d817fd781b9a31e49c0be661b95540167985f5920a0c02b98415",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "pEpFs-mRpbNUlsF559toDtMS-_5YfbS5lt6O4-FbOWzb4MQbl-ftrDiE4MIN3QyUqVKoJ6iBJ3iYZOYNITWQAg"
+        }
+      }
+    },
+    {
+      "expected": "CANDIDATE_MISMATCH",
+      "id": "wrong_candidate",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "455a085b2381f0df5a46e57a636147c4b56a2f85bf11398788f72d78ecd9350b",
+        "candidate_ref": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "hCsA2d4iFdE2IDfR_00m51auoSpVFrrAp-cRcIy-O4SI-8tHrODVjBaz0zfSihX5Ynd8tnXg91fChT2ggXhiCA"
+        }
+      }
+    },
+    {
+      "expected": "ROUTE_TICKET_MISMATCH",
+      "id": "wrong_route_ticket",
+      "result": {
+        "aud": "iicp-consumer-session-v0",
+        "binding_digest_sha256": "9bd1530d2c08222194c4b25a91b2c8cf193932ad3fbd0966d5a3eb5f091e3aa9",
+        "candidate_ref": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "cnf": {
+          "COSE_Key": {
+            "crv": "X25519",
+            "kid": "cx-ephemeral-research-v0",
+            "kty": "OKP",
+            "x": "-LKZgrZEnFMr9ctB3uQDKsME07ZzS4Ce-SapFAePul0"
+          }
+        },
+        "eat_nonce": "consumer-challenge-v0",
+        "eat_profile": "tag:iicp.network,2026:execution-privacy-attestation-result-v0",
+        "exp": 1800000060,
+        "iat": 1799999940,
+        "intuse": 5,
+        "iss": "https://verifier.invalid/research-v0",
+        "route_ticket_digest_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "runtime": {
+          "debug": false,
+          "measurement_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "profile_id": "iicp-confidential-worker-research-v0",
+          "protected_components": [
+            "cpu",
+            "memory",
+            "runtime"
+          ],
+          "tcb_status": "up_to_date"
+        },
+        "schema_version": "iicp-research-attestation-result-v0",
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "research-verifier-v0",
+          "value": "u5CQsk7LJnPlXq89G9Sc98qHZpj0165o5M-VOxpY3xD5XgweYF0mrZ859a33UDpLScdHetBYZ245QkoRDJhIAQ"
+        }
+      }
+    }
+  ],
+  "selected_media_type": "application/eat+cwt",
+  "verifier": {
+    "algorithm": "Ed25519",
+    "key_id": "research-verifier-v0",
+    "public_key": "ebVWLo_mVPlAeLES6KmLp5AfhTrmlb7X4OORC60ElmQ"
+  }
+}
