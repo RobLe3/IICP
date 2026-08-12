@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 import unittest
@@ -12,6 +13,22 @@ EXPERIMENT = ROOT / "research/strategic/learned-routing-experiment"
 
 
 class LearnedRoutingExperimentTests(unittest.TestCase):
+    def test_candidate_ranker_fixture_is_bounded_and_self_consistent(self) -> None:
+        fixture = json.loads((EXPERIMENT / "candidate-ranker-v0.json").read_text())
+        self.assertEqual(fixture["schema"], "iicp.candidate-ranker-parity.v0")
+        self.assertEqual(fixture["evidence_schema"], "iicp-candidate-evidence-v0")
+        self.assertEqual(fixture["error_code"], "IICP-CANDIDATE-RANKER-REFUSED")
+        eligible = set(fixture["eligible_node_ids"])
+        self.assertNotIn("node-c-ineligible", eligible)
+        self.assertEqual(len(fixture["cases"]), 6)
+        for node in fixture["nodes"]:
+            digest = hashlib.sha256(f"iicp:candidate:v0\n{node['node_id']}".encode()).hexdigest()
+            self.assertEqual(node["candidate_ref"], digest)
+        request_digest = hashlib.sha256(
+            f"iicp:request:v0\n{fixture['request']['task_id']}".encode()
+        ).hexdigest()
+        self.assertEqual(fixture["request"]["request_ref"], request_digest)
+
     def test_candidate_projection_matches_research_schema(self) -> None:
         schema = json.loads((EXPERIMENT / "candidate-evidence-v0.schema.json").read_text())
         sample = json.loads((EXPERIMENT / "sample-candidate-evidence-v0.json").read_text())

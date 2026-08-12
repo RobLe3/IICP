@@ -29,6 +29,25 @@ not a hardware identifier and must not expose private topology.
 This v0 projection is a research artifact, not a directory response or
 normative schema. Current SDK `Node` projections do not yet carry every field.
 
+## Cross-SDK candidate-ranker contract
+
+`candidate-ranker-v0.json` is the implementation-neutral client contract used
+by the Rust, Python and TypeScript experiments. It does not define a directory
+or wire payload. Each SDK evaluates an exact byte-for-byte copy in its test
+suite.
+
+The contract fixes only observable safety semantics: the ranker sees candidates
+after hard eligibility, may select one supplied opaque reference or decline,
+and cannot perform dispatch. Decline preserves the built-in order. Ranker
+errors, invalid policy identifiers and unknown candidate references fail closed
+under `IICP-CANDIDATE-RANKER-REFUSED`. Receipt evidence records a bounded policy
+and `normal`, `exploration` or `fallback` mode without semantic scores or task
+content. With no ranker attached, existing routing behavior is unchanged.
+
+The complete task request may be made available to an in-process adapter. The
+SDK never serializes or transmits it automatically; any out-of-process adapter
+creates a separate privacy and trust boundary owned by the application.
+
 ## Reproduce the MetaHarness result
 
 The benchmark uses the MetaHarness DRACO routing dataset without copying its
