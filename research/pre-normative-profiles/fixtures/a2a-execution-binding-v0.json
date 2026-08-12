@@ -1,0 +1,89 @@
+{
+  "profile": "iicp-a2a-execution-binding-v0",
+  "fixture_version": "0.1.0-research",
+  "status": "informative",
+  "source": {
+    "a2a_version": "1.0",
+    "a2a_commit": "0a431950ddd2c698394219eefc2ba32977fe0716",
+    "aap_version": "1.2",
+    "aap_extension": "https://autoagentprotocol.org/extensions/aap/v1.2"
+  },
+  "selected_provider": {
+    "node_id": "node-a2a-01",
+    "operator_ref": "did:web:operator.example",
+    "intent": "urn:iicp:intent:llm:chat:v1",
+    "route_ticket_audience": "iicp.directory.dispatch",
+    "binding": {
+      "agent_card_url": "https://agent.example/.well-known/agent-card.json",
+      "agent_card_sha256": "730ac81ebcae8d12c1d77bb8103bc2ccd241bb5c9370581393bf2b66d095dc62",
+      "card_expires_at": "2026-08-13T00:00:00Z",
+      "interface_url": "https://agent.example/a2a",
+      "protocol_binding": "JSONRPC",
+      "protocol_version": "1.0",
+      "tenant": null,
+      "intent_skill_map": {"urn:iicp:intent:llm:chat:v1": "dealer.information"},
+      "required_extensions": ["https://autoagentprotocol.org/extensions/aap/v1.2"]
+    }
+  },
+  "agent_card": {
+    "name": "AAP loopback dealer",
+    "description": "Typed dealer-information test agent",
+    "supportedInterfaces": [{"url": "https://agent.example/a2a", "protocolBinding": "JSONRPC", "protocolVersion": "1.0"}],
+    "provider": {"organization": "Loopback Operator", "url": "https://operator.example"},
+    "version": "1.0.0",
+    "capabilities": {"streaming": false, "extensions": [{"uri": "https://autoagentprotocol.org/extensions/aap/v1.2", "description": "AAP v1.2 typed data", "required": true}]},
+    "securitySchemes": {"oauth": {"oauth2SecurityScheme": {"metadataUrl": "https://auth.example/.well-known/oauth-authorization-server"}}},
+    "securityRequirements": [{"schemes": {"oauth": {"list": ["a2a.execute"]}}}],
+    "defaultInputModes": ["application/vnd.autoagent.dealer-information-request+json"],
+    "defaultOutputModes": ["application/vnd.autoagent.dealer-information-response+json"],
+    "skills": [{"id": "dealer.information", "name": "Dealer information", "description": "Returns public dealer information", "tags": ["automotive", "dealer"]}]
+  },
+  "authorization": {
+    "iicp_ticket_forwarded": false,
+    "a2a_credential_audience": "https://agent.example",
+    "expected_a2a_credential_audience": "https://agent.example"
+  },
+  "scenarios": [
+    {"id": "valid-terminal-aap", "mutation": {}, "request_streaming": false, "expected": "accept"},
+    {"id": "card-digest-mismatch", "mutation": {"agent_card_sha256": "wrong"}, "request_streaming": false, "expected": "card_digest_mismatch"},
+    {"id": "stale-card-binding", "mutation": {"card_expires_at": "2026-08-11T00:00:00Z"}, "request_streaming": false, "expected": "card_binding_expired"},
+    {"id": "interface-substitution", "mutation": {"interface_url": "https://other.example/a2a"}, "request_streaming": false, "expected": "interface_mismatch"},
+    {"id": "wrong-a2a-audience", "mutation": {"a2a_credential_audience": "https://other.example"}, "request_streaming": false, "expected": "credential_audience_mismatch"},
+    {"id": "ticket-passthrough", "mutation": {"iicp_ticket_forwarded": true}, "request_streaming": false, "expected": "ticket_passthrough_forbidden"},
+    {"id": "skill-mismatch", "mutation": {"mapped_skill": "inventory.search"}, "request_streaming": false, "expected": "skill_mismatch"},
+    {"id": "streaming-not-advertised", "mutation": {}, "request_streaming": true, "expected": "streaming_not_supported"}
+  ],
+  "operation_vectors": [
+    {"id": "cancel-running-task", "operation": "cancel", "a2a_task_id_present": true, "current_state": "TASK_STATE_WORKING", "expected": "send_CancelTask"},
+    {"id": "cancel-completed-task", "operation": "cancel", "a2a_task_id_present": true, "current_state": "TASK_STATE_COMPLETED", "expected": "return_terminal_without_cancel"},
+    {"id": "cancel-before-task-id", "operation": "cancel", "a2a_task_id_present": false, "current_state": null, "expected": "cancel_local_request_only"},
+    {"id": "deadline-cancel-ambiguous", "operation": "deadline", "a2a_task_id_present": true, "current_state": "TASK_STATE_WORKING", "cancel_result": "transport_error", "expected": "local_expired_remote_unknown"},
+    {"id": "partial-execution-transport-failure", "operation": "retry", "a2a_task_id_present": true, "current_state": "TASK_STATE_WORKING", "expected": "do_not_automatic_fallback"}
+  ],
+  "state_map": {
+    "MESSAGE": "completed",
+    "TASK_STATE_SUBMITTED": "accepted",
+    "TASK_STATE_WORKING": "running",
+    "TASK_STATE_INPUT_REQUIRED": "waiting",
+    "TASK_STATE_AUTH_REQUIRED": "waiting",
+    "TASK_STATE_COMPLETED": "completed",
+    "TASK_STATE_FAILED": "failed",
+    "TASK_STATE_CANCELED": "cancelled",
+    "TASK_STATE_REJECTED": "rejected"
+  },
+  "error_map": {
+    "authentication": "authentication_failed",
+    "VersionNotSupportedError": "unsupported_binding",
+    "UnsupportedOperationError": "unsupported_binding",
+    "ExtensionSupportRequiredError": "unsupported_binding",
+    "TaskNotFoundError": "task_not_found",
+    "TaskNotCancelableError": "task_not_cancelable",
+    "InvalidAgentResponseError": "invalid_response",
+    "transport_before_acknowledgement": "candidate_transport_failure",
+    "transport_after_acknowledgement": "execution_state_unknown_no_automatic_replay"
+  },
+  "receipt": {
+    "allowed_fields": ["ticket_id_prefix", "node_id_prefix", "agent_card_sha256", "protocol_binding", "protocol_version", "skill_id", "a2a_task_id_hash", "terminal_state", "attempt_class", "duration_ms"],
+    "forbidden_fields": ["agent_card_url", "interface_url", "authorization", "credential", "message", "history", "artifact", "prompt", "response", "payload"]
+  }
+}
