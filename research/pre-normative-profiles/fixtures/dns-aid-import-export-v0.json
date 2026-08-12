@@ -1,0 +1,38 @@
+{
+  "profile": "iicp-dns-aid-import-export-v0",
+  "fixture_version": "0.1.0-research",
+  "status": "offline-only",
+  "source_revision": "draft-mozleywilliams-dnsop-dnsaid-00",
+  "decision": {"dns_aid": "prototype_offline_mapping", "ans": "monitor_defer", "runtime_default": false, "publication_authorized": false},
+  "export": {
+    "descriptor": {
+      "domain": "example.test",
+      "service_label": "chat",
+      "endpoint_origin": "https://provider.example.test:443",
+      "capability_url": "https://provider.example.test/.well-known/iicp-capabilities.json",
+      "capability_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "protocol": "https",
+      "intent": "urn:iicp:intent:llm:chat:v1"
+    },
+    "candidate_record": {
+      "owner": "chat._iicp._agents.example.test.",
+      "ttl": 300,
+      "type": "SVCB",
+      "priority": 1,
+      "target": "provider.example.test.",
+      "params": {"mandatory": ["alpn", "port", "keyNNNNN", "keyMMMMM"], "alpn": ["h2"], "port": 443, "keyNNNNN": "https://provider.example.test/.well-known/iicp-capabilities.json", "keyMMMMM": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}
+    }
+  },
+  "import_vectors": [
+    {"id": "secure-candidate", "dnssec": "secure", "dane": "secure", "require_dnssec": true, "require_dane": true, "mandatory_understood": true, "digest_match": true, "fresh": true, "endpoint_policy": "allow", "expected": "candidate_untrusted_pending_iicp_eligibility"},
+    {"id": "dnssec-bogus", "dnssec": "bogus", "dane": "not_checked", "require_dnssec": false, "require_dane": false, "mandatory_understood": true, "digest_match": true, "fresh": true, "endpoint_policy": "allow", "expected": "reject_dnssec_bogus"},
+    {"id": "unsigned-required", "dnssec": "insecure", "dane": "not_checked", "require_dnssec": true, "require_dane": false, "mandatory_understood": true, "digest_match": true, "fresh": true, "endpoint_policy": "allow", "expected": "reject_dnssec_required"},
+    {"id": "unsigned-explicitly-allowed", "dnssec": "insecure", "dane": "not_checked", "require_dnssec": false, "require_dane": false, "mandatory_understood": true, "digest_match": true, "fresh": true, "endpoint_policy": "allow", "expected": "candidate_untrusted_pending_iicp_eligibility"},
+    {"id": "unknown-mandatory-param", "dnssec": "secure", "dane": "secure", "require_dnssec": true, "require_dane": true, "mandatory_understood": false, "digest_match": true, "fresh": true, "endpoint_policy": "allow", "expected": "reject_unknown_mandatory"},
+    {"id": "capability-digest-mismatch", "dnssec": "secure", "dane": "secure", "require_dnssec": true, "require_dane": true, "mandatory_understood": true, "digest_match": false, "fresh": true, "endpoint_policy": "allow", "expected": "reject_capability_digest"},
+    {"id": "stale-record", "dnssec": "secure", "dane": "secure", "require_dnssec": true, "require_dane": true, "mandatory_understood": true, "digest_match": true, "fresh": false, "endpoint_policy": "allow", "expected": "reject_stale"},
+    {"id": "private-rebind", "dnssec": "secure", "dane": "secure", "require_dnssec": true, "require_dane": true, "mandatory_understood": true, "digest_match": true, "fresh": true, "endpoint_policy": "reject", "expected": "reject_endpoint_policy"},
+    {"id": "dane-required-failed", "dnssec": "secure", "dane": "failed", "require_dnssec": true, "require_dane": true, "mandatory_understood": true, "digest_match": true, "fresh": true, "endpoint_policy": "allow", "expected": "reject_dane_required"}
+  ],
+  "boundaries": {"establishes_health": false, "establishes_trust": false, "establishes_policy_eligibility": false, "establishes_dispatch_authority": false, "task_payload_allowed": false, "credentials_allowed": false}
+}

@@ -13,6 +13,8 @@ on:
       - "research/pre-normative-profiles/*a2a*"
       - "research/pre-normative-profiles/fixtures/a2a-*"
       - "research/pre-normative-profiles/prototypes/a2a-*"
+      - "research/pre-normative-profiles/fixtures/dns-aid-*"
+      - "research/strategic/*dns-aid*"
       - "tools/check_profile_fixture_manifest.py"
       - "tools/check_spec_release_integrity.py"
       - "tools/test_service_lifecycle_fixture.py"
@@ -26,6 +28,8 @@ on:
       - "tools/check_a2a_execution_binding.py"
       - "tools/test_a2a_execution_binding.py"
       - "tools/test_a2a_cross_runtime_loopback.py"
+      - "tools/check_dns_aid_mapping.py"
+      - "tools/test_dns_aid_mapping.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
       - "tools/check_discovery_sdk_currency.py"
       - "ecosystem/releases.json"
@@ -47,6 +51,8 @@ on:
       - "research/pre-normative-profiles/*a2a*"
       - "research/pre-normative-profiles/fixtures/a2a-*"
       - "research/pre-normative-profiles/prototypes/a2a-*"
+      - "research/pre-normative-profiles/fixtures/dns-aid-*"
+      - "research/strategic/*dns-aid*"
       - "tools/check_profile_fixture_manifest.py"
       - "tools/check_spec_release_integrity.py"
       - "tools/test_service_lifecycle_fixture.py"
@@ -60,6 +66,8 @@ on:
       - "tools/check_a2a_execution_binding.py"
       - "tools/test_a2a_execution_binding.py"
       - "tools/test_a2a_cross_runtime_loopback.py"
+      - "tools/check_dns_aid_mapping.py"
+      - "tools/test_dns_aid_mapping.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
       - "tools/check_discovery_sdk_currency.py"
       - "ecosystem/releases.json"
@@ -99,5 +107,7 @@ jobs:
       - run: python3 tools/check_a2a_execution_binding.py
       - run: python3 -m unittest discover -s tools -p 'test_a2a_execution_binding.py'
       - run: python3 -m unittest discover -s tools -p 'test_a2a_cross_runtime_loopback.py'
+      - run: python3 tools/check_dns_aid_mapping.py
+      - run: python3 -m unittest discover -s tools -p 'test_dns_aid_mapping.py'
       - run: python3 tools/check_spec_release_integrity.py
       - run: python3 tools/check_discovery_sdk_currency.py
