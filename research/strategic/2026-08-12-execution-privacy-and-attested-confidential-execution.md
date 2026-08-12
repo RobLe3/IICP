@@ -111,9 +111,11 @@ IICP should use the RATS role model rather than inventing a second attestation v
 | Relying Party | IICP consumer deciding whether to release the CX-encrypted task |
 | Endorsements/reference values | vendor roots, firmware/runtime reference values and project/operator policy inputs |
 
-RFC 9711 provides a standardized EAT claims framework and nonce-based freshness, but it is not a universal vendor-evidence decoder or protocol flow. Composite CPU/GPU attestation may use EAT submodules or platform-specific nested results. The profile must state exactly how verification keys, endorsements, reference values and appraisal policies are obtained.
+RFC 9711 provides a standardized EAT claims framework and nonce-based freshness, but it is not a universal vendor-evidence decoder or protocol flow. Composite CPU/GPU attestation may use EAT submodules or platform-specific nested results. The selected research representation is an EAT Claims-Set encoded as a CWT, signed in tagged COSE_Sign1 and transported as `application/eat+cwt` with a provisional IICP profile identifier. Vendor evidence remains adapter-specific.
 
-Key binding is essential. A valid quote about one environment plus an unrelated CX public key is insufficient. AMD SEV-SNP can include guest-supplied data in an attestation report, and Intel TDX report data can bind runtime/user data. An IETF key-binding draft also illustrates EAT `cnf` plus proof-of-possession, but it remains an Internet-Draft and cannot be treated as a stable standard. The IICP research profile should define the required property while adapters implement the platform-specific binding.
+Key binding is essential. A valid quote about one environment plus an unrelated CX public key is insufficient. AMD SEV-SNP can include guest-supplied data in an attestation report, and Intel TDX report data can bind runtime/user data. The selected result uses the RFC 8747 `cnf` claim with an X25519 public COSE_Key. A preflight CX challenge confirms possession before the protected task is released. Proof of possession does not prove hardware containment; the measured worker and hardware report must establish that separately.
+
+The relying party may verify vendor evidence locally or trust an explicitly configured remote verifier. In the remote case it must authenticate and pin or otherwise validate the result-signing key. The directory, provider and untrusted host are never verifier trust anchors. The complete pre-normative choice is recorded in [`execution-privacy-feasibility/profile-v0.md`](execution-privacy-feasibility/profile-v0.md).
 
 ## Recommended trust split
 
@@ -138,21 +140,22 @@ Tools need explicit treatment. If a model emits protected tool arguments to an o
 The endpoint name and encoding remain open until the profile audit is complete. The required semantics are:
 
 1. Consumer discovers an eligible node advertising stable support for an execution-privacy profile and supported evidence formats.
-2. Consumer generates a cryptographically random nonce and requests fresh evidence.
-3. The confidential worker generates or exposes an ephemeral CX execution key whose private half never leaves the protected boundary.
-4. Platform evidence binds the nonce, execution public key, runtime measurement, configuration/security state and expiry.
-5. A verifier appraises the evidence against current endorsements, reference values and policy.
-6. The consumer appraises the result, including freshness, key binding, TCB status, debug state, CPU/GPU coverage and accepted measurement.
-7. IICP applies ordinary policy eligibility and obtains the route ticket for the same candidate.
-8. The consumer encrypts the existing IICP-CX payload to the attested execution key.
-9. The untrusted shell forwards ciphertext. Only the confidential worker decrypts, executes and encrypts the response.
-10. The consumer verifies that response context and routing evidence correspond to the selected attested execution.
+2. IICP applies ordinary policy eligibility and obtains a signed dispatch ticket for the selected candidate.
+3. Consumer generates a 32-byte random nonce and requests fresh evidence bound to its session audience, the opaque candidate reference and the dispatch-ticket digest.
+4. The confidential worker generates an ephemeral per-task CX execution key whose private half never leaves the protected boundary.
+5. Platform evidence binds the challenge, execution public key, runtime measurement, configuration/security state and expiry.
+6. A verifier appraises the evidence against current endorsements, reference values and policy and produces an authenticated normalized result.
+7. The consumer authenticates and appraises the result, including freshness, replay, candidate/ticket context, key binding, TCB status, debug state, CPU/GPU coverage and accepted measurement.
+8. The consumer completes a preflight proof of possession under the attested X25519 key.
+9. The consumer encrypts the existing IICP-CX payload to the attested execution key.
+10. The untrusted shell forwards ciphertext. Only the confidential worker decrypts, executes and encrypts the response.
+11. The consumer verifies that response context corresponds to the selected attested execution, then retires the key.
 
 If execution privacy is required, any missing, invalid, stale, replayed, downgraded or key-mismatched evidence rejects the candidate. Fallback to ordinary CX is allowed only when the caller explicitly authorized that weaker mode.
 
 ## Can the current CX envelope survive?
 
-Probably, but this must be proven. The current envelope already accepts a recipient X25519 public key. If the provider advertises or returns a fresh attestation-bound X25519 execution key, the payload encryption construction may remain unchanged.
+The software composition proof passes without changing the current envelope. The envelope already accepts a recipient X25519 public key, binds `task_id|intent` into request AAD and binds `task_id|resp` into response AAD. The prototype substitutes a fresh attestation-bound key, proves possession, completes one request/response exchange and rejects response-context substitution.
 
 Potential changes are more likely in:
 
@@ -163,7 +166,7 @@ Potential changes are more likely in:
 - key lifetime and replay rules;
 - conformance fixtures.
 
-The profile must test whether the existing associated data binds enough request context and whether a route-ticket or task-ID binding is needed. It must not claim “no CX change” until cross-task substitution and replay tests pass.
+The selected per-task key is additionally bound to an opaque candidate reference and the digest of the signed dispatch ticket before encryption. This keeps route/profile context in the attestation transaction rather than adding it to the CX envelope. No CX envelope change is justified for the one-shot prototype. Streaming, retries, cancellation and reusable sessions remain unproven and may reopen that decision.
 
 ## Capability, policy and evidence placement
 
@@ -181,9 +184,9 @@ Directory assertions remain claims used to find candidates. They are not proof t
 
 ## Key lifecycle
 
-The safest first prototype uses an ephemeral execution key generated inside the protected worker and bound to a fresh consumer nonce. Per-task keys minimize replay and continuity risk but make attestation expensive; per-boot or short-lived session keys reduce cost but require strict expiry, nonce binding and revocation behavior. The prototype should compare these choices rather than persisting today's static CX private key into the CVM.
+The first hardware prototype will use one ephemeral execution key per attestation and task. It is generated after the consumer challenge, used for proof of possession and one request/response exchange, then retired on completion, cancellation, expiry or worker restart. This is intentionally more expensive than a reusable session key, but it minimizes replay, rollback, correlation and continuity assumptions while feasibility is still unknown.
 
-Private execution keys must never be exported to the host. Sealing may support restart continuity, but it expands rollback and TCB policy. The first prototype should prefer ephemeral generation and no host-readable persistence. Restart invalidates prior evidence and requires fresh verification.
+Private execution keys must never be exported to the host. The first prototype will not seal or persist them. Restart invalidates prior evidence and requires a new challenge, key and appraisal. Per-boot, sealed and reusable session keys remain deferred until a hardware-backed per-task path is proven.
 
 ## Runtime measurements and supply chain
 
@@ -246,10 +249,13 @@ Platform fault and side-channel testing remains vendor- and deployment-specific;
 The companion
 [`execution-privacy-feasibility`](execution-privacy-feasibility/README.md)
 fixture makes the relying-party boundary executable with synthetic signed
-attestation results. Its ten scenarios cover the accepted path plus signature,
-freshness, nonce, key-binding, measurement, debug, TCB, protected-boundary and
-downgrade failures. The fixture is explicitly not vendor evidence or proof that
-a private key stayed inside confidential hardware.
+attestation results. Its 17 scenarios cover the accepted path plus verifier
+trust, freshness, replay, nonce, audience, candidate/ticket context,
+key-binding, measurement, debug, TCB, protected-boundary and downgrade
+failures. A software-only companion proves preflight proof of possession and
+one request/response exchange with the existing CX envelope. Neither artifact
+is vendor evidence or proof that a private key stayed inside confidential
+hardware.
 
 The first hardware target is now narrowed to AMD SEV-SNP on Linux. The intended
 path uses `/dev/sev-guest`, binds the digest of the consumer nonce and ephemeral
@@ -279,14 +285,14 @@ This is a target selection, not a completed hardware proof.
 - establish the research umbrella;
 - define protected data, attackers, metadata and residual risks;
 - select one CPU confidential-VM target and verifier path;
-- prove fresh nonce plus ephemeral CX key binding with a minimal measured worker;
-- decide whether the current CX envelope and route context are sufficient.
+- prove fresh nonce plus ephemeral CX key binding in software, then repeat it with a minimal measured worker;
+- use the existing CX envelope for the one-shot hardware proof unless that proof exposes a concrete gap.
 
 ### Phase 1: pre-normative vendor-neutral profile
 
-- define RATS roles, evidence/result profiles, capability descriptor and fail-closed policy;
-- define key lifetime, measurement, TCB and verifier trust rules;
-- publish negative vectors that do not depend on proprietary quotes;
+- retain the selected EAT/CWT + COSE_Sign1 normalized-result representation and verifier trust model;
+- define the capability descriptor and fail-closed caller policy only after hardware feasibility;
+- translate the JSON projection into real CBOR/COSE interoperability vectors;
 - keep the profile experimental and optional.
 
 ### Phase 2: Rust CPU prototype
