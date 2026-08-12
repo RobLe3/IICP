@@ -1,0 +1,86 @@
+{
+  "schema": "iicp.learned-routing-experiment-result.v0",
+  "source": {
+    "project": "ruvnet/metaharness",
+    "commit": "68402755f017e0df5f493c6ee608218420540d17",
+    "dataset": "packages/bench/draco/runs/routing-dataset.json",
+    "dataset_sha256": "sha256:8cfbedb6120b69d229919f9bfd453a01e36ad88cbb2af9e1c47378728c4adc9e",
+    "router_package": "@metaharness/router@0.4.0"
+  },
+  "method": {
+    "rows": 20,
+    "validation": "leave-one-out",
+    "neighbours": 5,
+    "quality_threshold": 0.7,
+    "candidates_are_assumed_eligible": true
+  },
+  "average_model_quality": {
+    "anthropic/claude-haiku-4.5": 0.6544921175950487,
+    "openai/gpt-5": 0.6795466973097837,
+    "anthropic/claude-opus-4": 0.6959544130148939
+  },
+  "best_fixed_candidate": "anthropic/claude-opus-4",
+  "strategies": {
+    "fixed_best_posthoc": {
+      "mean_quality": 0.6959544130148939,
+      "mean_price_per_mtok": 45,
+      "threshold_success_rate": 0.5,
+      "selections": {
+        "anthropic/claude-opus-4": 20
+      }
+    },
+    "fixed_cheapest": {
+      "mean_quality": 0.6544921175950487,
+      "mean_price_per_mtok": 3,
+      "threshold_success_rate": 0.4,
+      "selections": {
+        "anthropic/claude-haiku-4.5": 20
+      }
+    },
+    "learned_best": {
+      "mean_quality": 0.7047763527418337,
+      "mean_price_per_mtok": 32.55,
+      "threshold_success_rate": 0.6,
+      "selections": {
+        "anthropic/claude-opus-4": 13,
+        "anthropic/claude-haiku-4.5": 2,
+        "openai/gpt-5": 5
+      }
+    },
+    "learned_threshold_0_70": {
+      "mean_quality": 0.6881763527418336,
+      "mean_price_per_mtok": 28.35,
+      "threshold_success_rate": 0.5,
+      "selections": {
+        "anthropic/claude-haiku-4.5": 4,
+        "anthropic/claude-opus-4": 11,
+        "openai/gpt-5": 5
+      }
+    },
+    "oracle_best": {
+      "mean_quality": 0.7682348687519378,
+      "mean_price_per_mtok": 20.1,
+      "threshold_success_rate": 0.8,
+      "selections": {
+        "anthropic/claude-opus-4": 6,
+        "anthropic/claude-haiku-4.5": 4,
+        "openai/gpt-5": 10
+      }
+    },
+    "oracle_threshold_0_70": {
+      "mean_quality": 0.7393481493410804,
+      "mean_price_per_mtok": 15.75,
+      "threshold_success_rate": 0.8,
+      "selections": {
+        "anthropic/claude-opus-4": 5,
+        "anthropic/claude-haiku-4.5": 10,
+        "openai/gpt-5": 5
+      }
+    }
+  },
+  "limitations": [
+    "The 20-row DRACO dataset is small and measures research-dossier quality, not general IICP traffic.",
+    "Price per million tokens is a preference axis, not realized per-request cost because token counts are absent from this dataset.",
+    "The experiment does not measure current IICP directory ordering, live runtime fitness, dispatch or cross-SDK behavior."
+  ]
+}

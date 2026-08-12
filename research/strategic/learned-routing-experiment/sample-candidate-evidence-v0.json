@@ -1,0 +1,58 @@
+{
+  "schema": "iicp.learned-routing-candidate-evidence.v0",
+  "request_ref": "request_demo_01",
+  "intent": "urn:iicp:intent:llm:chat:v1",
+  "candidate_set_digest": "sha256:4c6f85f69f79d10f38f0968733cf6d9844e77a8fb0b2670a85c78178f7345d26",
+  "eligibility": {
+    "filter_complete": true,
+    "ticketed_dispatch_required": true,
+    "policy_profile": "confidential-default"
+  },
+  "candidates": [
+    {
+      "candidate_ref": "candidate_alpha",
+      "execution_profile_ref": "profile_alpha_03",
+      "semantic_prior": {
+        "models": ["example/small-specialist"],
+        "model_family": "example-specialist",
+        "model_revision": "revision-3",
+        "quantization": "q8",
+        "specialization": ["structured-output"],
+        "context_tokens": 32768,
+        "modalities": ["text"]
+      },
+      "runtime_fitness": {
+        "available": true,
+        "directory_score": 0.91,
+        "load": 0.18,
+        "observed_at": "2026-08-12T17:00:00Z",
+        "latency_ms": 82.4
+      },
+      "economic_evidence": {
+        "cost_per_million_tokens": 2.5
+      }
+    },
+    {
+      "candidate_ref": "candidate_beta",
+      "execution_profile_ref": "profile_beta_08",
+      "semantic_prior": {
+        "models": ["example/large-general"],
+        "model_family": "example-general",
+        "model_revision": "revision-8",
+        "quantization": "bf16",
+        "context_tokens": 131072,
+        "modalities": ["text", "image"]
+      },
+      "runtime_fitness": {
+        "available": true,
+        "directory_score": 0.95,
+        "load": 0.42,
+        "observed_at": "2026-08-12T17:00:00Z",
+        "latency_ms": 146.2
+      },
+      "economic_evidence": {
+        "cost_per_million_tokens": 18
+      }
+    }
+  ]
+}

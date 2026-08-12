@@ -1,0 +1,11 @@
+{
+  "name": "iicp-learned-routing-experiment",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@metaharness/router": "0.4.0"
+  }
+}

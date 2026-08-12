@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/research/learned-routing-candidate-evidence-v0.schema.json",
+  "title": "Experimental eligible-candidate evidence projection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "request_ref",
+    "intent",
+    "candidate_set_digest",
+    "eligibility",
+    "candidates"
+  ],
+  "properties": {
+    "schema": { "const": "iicp.learned-routing-candidate-evidence.v0" },
+    "request_ref": { "$ref": "#/$defs/opaqueRef" },
+    "intent": { "type": "string", "pattern": "^urn:iicp:intent:" },
+    "candidate_set_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["filter_complete", "ticketed_dispatch_required"],
+      "properties": {
+        "filter_complete": { "const": true },
+        "ticketed_dispatch_required": { "const": true },
+        "policy_profile": { "type": "string", "maxLength": 128 }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/candidate" }
+    }
+  },
+  "$defs": {
+    "opaqueRef": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{8,128}$"
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_ref", "semantic_prior", "runtime_fitness", "economic_evidence"],
+      "properties": {
+        "candidate_ref": { "$ref": "#/$defs/opaqueRef" },
+        "execution_profile_ref": { "$ref": "#/$defs/opaqueRef" },
+        "semantic_prior": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["models"],
+          "properties": {
+            "models": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "type": "string", "maxLength": 256 }
+            },
+            "model_family": { "type": "string", "maxLength": 128 },
+            "model_revision": { "type": "string", "maxLength": 128 },
+            "quantization": { "type": "string", "maxLength": 64 },
+            "specialization": {
+              "type": "array",
+              "items": { "type": "string", "maxLength": 128 }
+            },
+            "context_tokens": { "type": "integer", "minimum": 1 },
+            "modalities": {
+              "type": "array",
+              "items": { "type": "string", "maxLength": 64 }
+            }
+          }
+        },
+        "runtime_fitness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["available", "directory_score", "load", "observed_at"],
+          "properties": {
+            "available": { "const": true },
+            "directory_score": { "type": "number", "minimum": 0 },
+            "load": { "type": "number", "minimum": 0, "maximum": 1 },
+            "observed_at": { "type": "string", "format": "date-time" },
+            "latency_ms": { "type": "number", "minimum": 0 }
+          }
+        },
+        "economic_evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cost_per_million_tokens": { "type": "number", "minimum": 0 },
+            "credits": { "type": "number", "minimum": 0 }
+          }
+        }
+      }
+    }
+  }
+}

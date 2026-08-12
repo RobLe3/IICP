@@ -3,6 +3,15 @@
 **Assessment date:** 2026-08-12  
 **Decision status:** research recommendation; no wire change, default-routing change, deployment or MetaHarness dependency is authorized
 
+> **Experiment update:** the bounded reproduction and v0 eligible-candidate
+> projection are published under
+> [`learned-routing-experiment/`](learned-routing-experiment/README.md). On the
+> pinned 20-row DRACO dataset, leave-one-out MetaHarness k-NN improved mean
+> quality and threshold success over the post-hoc best fixed model while using
+> a lower mean price input. The sample is too small and domain-specific for
+> normative promotion; it justifies a Rust client experiment behind the hard
+> eligibility boundary.
+
 ## Sources and method
 
 This assessment compared the current IICP specification and official implementations with MetaHarness at fixed source revisions. It also checked the existing Edge-Net/QuDAG assessment rather than repeating that work.
