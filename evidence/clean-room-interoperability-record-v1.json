@@ -1,0 +1,56 @@
+{
+  "schema_version": "clean-room-interoperability-record-v1",
+  "status": "blank-external-implementer-template",
+  "result_present": false,
+  "implementation": {
+    "repository": null,
+    "commit": null,
+    "license": null,
+    "language_runtime": null,
+    "authors_independent_of_iicp": false,
+    "operator_independent_of_iicp": false
+  },
+  "fixed_inputs": {
+    "protocol_release": "v1.10.13",
+    "protocol_archive_sha256": null,
+    "openapi_release": "iicp-directory-php-v1.10.90",
+    "openapi_sha256": null,
+    "runner_release": "iicp-conformance-v0.3.0",
+    "runner_wheel_sha256": "1e0314b14d37a0e0050e58543f2cccfe179ce901520a65b0803ef0c19132089a"
+  },
+  "source_boundary": {
+    "maintained_directory_source_consulted": false,
+    "maintained_directory_tests_consulted": false,
+    "private_project_material_consulted": false,
+    "implementation_advice_used_to_resolve_ambiguity": false
+  },
+  "profiles": [
+    {"id": "directory-public-v1", "positive_pass": null, "negative_pass": null, "signed_bundle_reference": null},
+    {"id": "directory-lifecycle-v1", "positive_pass": null, "negative_pass": null, "signed_bundle_reference": null},
+    {"id": "directory-dispatch-v1", "positive_pass": null, "negative_pass": null, "signed_bundle_reference": null}
+  ],
+  "compatibility_matrix": [],
+  "ambiguities": [],
+  "publication": {
+    "published_by_external_implementer": false,
+    "report_reference": null,
+    "evidence_class": null
+  },
+  "privacy": {
+    "credentials": false,
+    "private_keys": false,
+    "endpoint_urls": false,
+    "node_ids": false,
+    "route_material": false,
+    "payloads": false,
+    "raw_responses": false,
+    "private_topology": false,
+    "personal_data": false
+  },
+  "claim_boundary": {
+    "proves_production_readiness": false,
+    "proves_performance": false,
+    "proves_federation": false,
+    "promotes_a_profile": false
+  }
+}

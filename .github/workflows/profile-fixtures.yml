@@ -22,6 +22,8 @@ on:
       - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
+      - "standards/SUBMISSION_GOVERNANCE_DECISION.md"
+      - "standards/submission-governance-decision-v1.json"
       - "tools/check_profile_fixture_manifest.py"
       - "tools/check_spec_release_integrity.py"
       - "tools/test_service_lifecycle_fixture.py"
@@ -45,6 +47,10 @@ on:
       - "tools/test_operator_onboarding_recovery.py"
       - "tools/check_newcomer_validation_record.py"
       - "tools/test_newcomer_validation_record.py"
+      - "tools/check_clean_room_interoperability_record.py"
+      - "tools/test_clean_room_interoperability_record.py"
+      - "tools/check_submission_governance_decision.py"
+      - "tools/test_submission_governance_decision.py"
       - "tools/check_public_evidence_access.py"
       - "tools/test_public_evidence_access.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
@@ -77,6 +83,8 @@ on:
       - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
+      - "standards/SUBMISSION_GOVERNANCE_DECISION.md"
+      - "standards/submission-governance-decision-v1.json"
       - "tools/check_profile_fixture_manifest.py"
       - "tools/check_spec_release_integrity.py"
       - "tools/test_service_lifecycle_fixture.py"
@@ -100,6 +108,10 @@ on:
       - "tools/test_operator_onboarding_recovery.py"
       - "tools/check_newcomer_validation_record.py"
       - "tools/test_newcomer_validation_record.py"
+      - "tools/check_clean_room_interoperability_record.py"
+      - "tools/test_clean_room_interoperability_record.py"
+      - "tools/check_submission_governance_decision.py"
+      - "tools/test_submission_governance_decision.py"
       - "tools/check_public_evidence_access.py"
       - "tools/test_public_evidence_access.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
@@ -151,6 +163,10 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_operator_onboarding_recovery.py'
       - run: python3 tools/check_newcomer_validation_record.py
       - run: python3 -m unittest discover -s tools -p 'test_newcomer_validation_record.py'
+      - run: python3 tools/check_clean_room_interoperability_record.py
+      - run: python3 -m unittest discover -s tools -p 'test_clean_room_interoperability_record.py'
+      - run: python3 tools/check_submission_governance_decision.py
+      - run: python3 -m unittest discover -s tools -p 'test_submission_governance_decision.py'
       - run: python3 tools/check_public_evidence_access.py
       - run: python3 -m unittest discover -s tools -p 'test_public_evidence_access.py'
       - run: python3 tools/check_spec_release_integrity.py

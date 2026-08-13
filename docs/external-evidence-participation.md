@@ -14,7 +14,7 @@ result independent.
 
 | Lane | Tracker | Who is needed | Starting artifact | Completion evidence |
 | --- | --- | --- | --- | --- |
-| Clean-room directory | IICP #31 | An implementation team outside the IICP repository family | Protocol Suite `v1.10.13`, `iicp-conformance` `0.3.0`, and the clean-room guide | External repository, ambiguity log, compatibility matrix, and signed content-free results |
+| Clean-room directory | IICP #31 | An implementation team outside the IICP repository family | Protocol Suite `v1.10.13`, `iicp-conformance` `0.3.0`, the clean-room guide and the blank evidence record | External repository, ambiguity log, compatibility matrix, and signed content-free results |
 | Newcomer usability | IICP #94 | At least one non-technical reader, one developer, and one prospective node operator | The script below and the published website/operator guide | Three consented, anonymized session records and a findings summary |
 | Public evidence access | IICP #97 | A non-browser client or reviewer outside the project network | `/.well-known/iicp-evidence.json` and its repository fallback | GET/HEAD matrix with content types and exact failure classes |
 | Linux watchdog | Rust SDK #66 | A representative Linux/systemd operator, preferably including ARM | Rust SDK `0.7.102` and its opt-in native watchdog | Slow-start, pressure, reboot/logout, linger, restart, and rollback record |
@@ -35,6 +35,13 @@ them by inspecting the PHP or Rust directory source.
 
 The external team owns publication. An IICP maintainer may later verify the
 bundle, but a project rerun remains `project-verified`, not `independent`.
+The machine-readable intake record is
+[`clean-room-interoperability-record-v1.json`](../evidence/clean-room-interoperability-record-v1.json).
+Copy and complete it in the external repository, then run:
+
+```bash
+python3 tools/check_clean_room_interoperability_record.py <external-record.json>
+```
 
 ## Lane 2: Newcomer usability
 
