@@ -1,6 +1,6 @@
 {
   "files": {
-    ".github/workflows/profile-fixtures.yml": "61d94234bc281e519181a9c22f2260821f9cce997563a9bf4956ec524de58a32",
+    ".github/workflows/profile-fixtures.yml": "d48b141e83a2f5141765991fe5b73463a5803d35ffc89d11367687af7ee7fe1b",
     "CHANGELOG.md": "adbe6e1201e22aa846b4e4145e39e030aafa28d03abea6a9f0611f4927f19341",
     "IMPLEMENTATIONS.md": "7eb94f9c74e644cb8c95a8d4359eed13b9fc1f8fcb6344b43a48500df288378c",
     "README.md": "4153621ee3228e1f8fdddcaf80b23c788b89414a0e9f1c3d214cacaf9050aa94",
@@ -71,7 +71,7 @@
     "research/pre-normative-profiles/fixtures/federation-chain-v0.json": "e747af2ff181b2bc1f4b7f4f37a362c99d537a1e6e5fa58b1834f6c5b72f168d",
     "research/pre-normative-profiles/fixtures/identity-evidence-layering-v0.json": "d96124f0dc8cba6aa38991fcf9a9da7c3083c569b3762a87574246113e683581",
     "research/pre-normative-profiles/fixtures/operator-onboarding-recovery-v1.json": "e946a86efdfaaa305077367b50c3649c1732424f0dfed998fd6d62520bb8ffc1",
-    "research/pre-normative-profiles/fixtures/profile-fixture-manifest-v0.json": "440b0b34dc1252ef2f56f5d71176b329ac1f664704bfbf48f045829e905af03d",
+    "research/pre-normative-profiles/fixtures/profile-fixture-manifest-v0.json": "5af8812222883136e9581ab7344ae6bcf5f2d5b5082cf6816b1e2a2292943f38",
     "research/pre-normative-profiles/fixtures/signed-message-envelope-boundary-v0.json": "17cb5f369d1658fee1784ddd96953aa882e007afd8571c5ec567ab8ddb039159",
     "research/strategic/2026-08-13-identity-and-evidence-layer-crosswalk.md": "d02c9ff8bf61eaae9f0663273f0c786afeee1d2d72dbe9d2c037ace52c3d9c2f",
     "research/strategic/2026-08-13-signed-message-envelope-boundary.md": "57276d3c5e53544da3c55b541b520b6591cadb9bb83575be9c56d070e0ac1d10",
@@ -126,7 +126,7 @@
     "tools/check_public_prose.py": "4b0fa3becd2c71af7a1a89d72f971988bc019acc3917d7d59b8ead2fafe94657",
     "tools/check_security_considerations_coverage.py": "182d29f056e1e396d3331a1d1bac66d28d83bb4acf6beb4c785dc16c5acaccfe",
     "tools/check_signed_message_envelope_boundary.py": "6ff4228e34408681bdcc4485d3470b9a86b7f7b4a4fd5bbf56e830e2fcc53c5b",
-    "tools/check_spec_release_integrity.py": "7d6397d7e0f2fd4f1b682914550889c4b2166d33db3cb98aacd7b735f6834979",
+    "tools/check_spec_release_integrity.py": "9fe53e14f49df1ab1cc6dc311fa51cb79e2167a96ee8fd17a4b4e03f79729973",
     "tools/check_submission_governance_decision.py": "a249100bf6c2836ea01ceee353fa5c139ecbe0f0b280fe250a86d11137dde9cd",
     "tools/requirements.txt": "117bb7857e2106917057761be56b51e26df4b9c0e3ebdbcf48a992e94534c6ac",
     "tools/test_audit_intent_sources.py": "8286e32879fcf48647f00facc8bca1fbf9a460393e9fc607e50440cd1fae063f",
@@ -145,7 +145,10 @@
     "tools/test_submission_governance_decision.py": "d89a8a27a67e5c3daa0cfeed0fc61d1fbfe827787c8152dde9443713c05e8547",
     "evidence/relay-eligibility-record-v1.json": "33205747a262671d7fc18eb032f542046e0eba549ee01a1040b935d33d48cec0",
     "tools/check_relay_eligibility_record.py": "b883f0172d895b664f5269dd56448ef02d64a49fadbf55da5704bba8466f3cd8",
-    "tools/test_relay_eligibility_record.py": "5029125dc6981c4624eaa18631f2e90e54f8a33967e1cc61ea3836928edd6413"
+    "tools/test_relay_eligibility_record.py": "5029125dc6981c4624eaa18631f2e90e54f8a33967e1cc61ea3836928edd6413",
+    "research/pre-normative-profiles/fixtures/e050-client-credential-lifecycle-v1.json": "4f71c44380f7a95249e7f6233fc4bce56de4e344b97a5ecc11c8740e88af12d6",
+    "tools/check_e050_client_credential_lifecycle.py": "7bd5257ed48a9215b9f3fb2679868efd4bc53ae89e2d74b98d00b8a04e436362",
+    "tools/test_e050_client_credential_lifecycle.py": "b3a5dd3259f40e9c362a5494d58e5be431a633d403a53f4a408aa5bddd58f115"
   },
   "manifest_version": "1.9.0",
   "protocol_suite_version": "1.10.13",
