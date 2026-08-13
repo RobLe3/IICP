@@ -1,0 +1,41 @@
+{
+  "schema_version": "newcomer-validation-record-v1",
+  "status": "blank-participant-template",
+  "result_present": false,
+  "consent_confirmed": false,
+  "participant_role": null,
+  "observation": {
+    "observed_at_utc": null,
+    "device_class": null,
+    "input_methods": [],
+    "mobile_viewport_checked": false
+  },
+  "outcomes": {
+    "first_minute_comprehension": null,
+    "quickest_path": null,
+    "keyboard_navigation": null,
+    "failure_recovery": null
+  },
+  "failure_scenario": null,
+  "first_blocking_step_code": null,
+  "hint_count": null,
+  "retained_note": null,
+  "participant_reviewed_summary": false,
+  "privacy": {
+    "name": false,
+    "contact_details": false,
+    "raw_recording": false,
+    "full_transcript": false,
+    "credentials": false,
+    "node_identifiers": false,
+    "network_addresses": false,
+    "prompts": false,
+    "responses": false
+  },
+  "claim_boundary": {
+    "independent_implementation": false,
+    "independent_conformance": false,
+    "accessibility_certification": false,
+    "production_availability": false
+  }
+}

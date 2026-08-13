@@ -17,6 +17,9 @@ on:
       - "research/strategic/*dns-aid*"
       - "research/strategic/*identity*"
       - "docs/operator-onboarding-recovery.md"
+      - "docs/external-evidence-participation.md"
+      - "docs/public-evidence-access.md"
+      - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
       - "tools/check_profile_fixture_manifest.py"
@@ -40,6 +43,10 @@ on:
       - "tools/test_security_considerations_coverage.py"
       - "tools/check_operator_onboarding_recovery.py"
       - "tools/test_operator_onboarding_recovery.py"
+      - "tools/check_newcomer_validation_record.py"
+      - "tools/test_newcomer_validation_record.py"
+      - "tools/check_public_evidence_access.py"
+      - "tools/test_public_evidence_access.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
       - "tools/check_discovery_sdk_currency.py"
       - "ecosystem/releases.json"
@@ -65,6 +72,9 @@ on:
       - "research/strategic/*dns-aid*"
       - "research/strategic/*identity*"
       - "docs/operator-onboarding-recovery.md"
+      - "docs/external-evidence-participation.md"
+      - "docs/public-evidence-access.md"
+      - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
       - "tools/check_profile_fixture_manifest.py"
@@ -88,6 +98,10 @@ on:
       - "tools/test_security_considerations_coverage.py"
       - "tools/check_operator_onboarding_recovery.py"
       - "tools/test_operator_onboarding_recovery.py"
+      - "tools/check_newcomer_validation_record.py"
+      - "tools/test_newcomer_validation_record.py"
+      - "tools/check_public_evidence_access.py"
+      - "tools/test_public_evidence_access.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
       - "tools/check_discovery_sdk_currency.py"
       - "ecosystem/releases.json"
@@ -135,5 +149,9 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_security_considerations_coverage.py'
       - run: python3 tools/check_operator_onboarding_recovery.py
       - run: python3 -m unittest discover -s tools -p 'test_operator_onboarding_recovery.py'
+      - run: python3 tools/check_newcomer_validation_record.py
+      - run: python3 -m unittest discover -s tools -p 'test_newcomer_validation_record.py'
+      - run: python3 tools/check_public_evidence_access.py
+      - run: python3 -m unittest discover -s tools -p 'test_public_evidence_access.py'
       - run: python3 tools/check_spec_release_integrity.py
       - run: python3 tools/check_discovery_sdk_currency.py
