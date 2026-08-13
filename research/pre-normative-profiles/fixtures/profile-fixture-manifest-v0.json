@@ -131,6 +131,11 @@
       "path": "identity-evidence-layering-v0.json",
       "fixture_version": "0.1.0-research",
       "sha256": "d96124f0dc8cba6aa38991fcf9a9da7c3083c569b3762a87574246113e683581"
+    },
+    {
+      "path": "operator-onboarding-recovery-v1.json",
+      "fixture_version": "1.0.0-operational",
+      "sha256": "e946a86efdfaaa305077367b50c3649c1732424f0dfed998fd6d62520bb8ffc1"
     }
   ]
 }
