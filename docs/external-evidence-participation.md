@@ -10,6 +10,17 @@ private topology, raw node identifiers, private addresses or personal data.
 Signing a result proves who controlled its signing key; it does not make the
 result independent.
 
+The machine-readable campaign index is
+[`external-participation-campaign-v1.json`](../evidence/external-participation-campaign-v1.json).
+It fixes the participant class, artifact versions, record, validation command
+and submission path for the six current lanes. Every repository-owned state is
+`awaiting-participant`; the project does not infer acceptance, consent, a
+result or a decision. Validate the index with:
+
+```bash
+python3 tools/check_external_participation_campaign.py
+```
+
 ## Choose one lane
 
 | Lane | Tracker | Who is needed | Starting artifact | Completion evidence |
@@ -20,6 +31,14 @@ result independent.
 | Linux watchdog | Rust SDK #66 | A representative Linux/systemd operator, preferably including ARM | Rust SDK `0.7.102` and its opt-in native watchdog | Slow-start, pressure, reboot/logout, linger, restart, and rollback record |
 | Relay eligibility | IICP #59 | An independent relay operator and topology measurement environment | Current pre-normative relay research | Stale, forged, replayed, overloaded and partial-evidence cases without topology leakage |
 | Confidential execution | IICP #136 | A confidential-hardware operator and an external security reviewer | The pre-normative attested-execution profile | Evidence that the execution private key stays protected plus adversarial review |
+
+Qualified EU review and standards governance are also tracked in the campaign
+index because they need outside consent or professional judgment. The qualified
+reviewer starts with the dated packet linked from root #768 and #801. The
+standards-governance lane starts from
+[`submission-governance-decision-v1.json`](../standards/submission-governance-decision-v1.json)
+and requires a consenting backup editor before IICP #47 can close. Neither lane
+authorizes a deployment, publication or standards submission.
 
 The standards-gate issues #55, #56 and #58 consume suitable independent
 evidence from these or later lanes. They are decision gates, not invitations to

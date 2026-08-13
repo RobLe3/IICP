@@ -1,6 +1,6 @@
 {
   "files": {
-    ".github/workflows/profile-fixtures.yml": "d48b141e83a2f5141765991fe5b73463a5803d35ffc89d11367687af7ee7fe1b",
+    ".github/workflows/profile-fixtures.yml": "3ec883d531da2206c80082cbd199fcf8b73ddfa99b706b2664e658f8918957f1",
     "CHANGELOG.md": "adbe6e1201e22aa846b4e4145e39e030aafa28d03abea6a9f0611f4927f19341",
     "IMPLEMENTATIONS.md": "7eb94f9c74e644cb8c95a8d4359eed13b9fc1f8fcb6344b43a48500df288378c",
     "README.md": "4153621ee3228e1f8fdddcaf80b23c788b89414a0e9f1c3d214cacaf9050aa94",
@@ -25,7 +25,7 @@
     "conformance-runner/tests/test_runner.py": "f42a0758494607a60594fd63bd0dbf648bc9df6c07319f923d2b6f22ed25caf2",
     "docs/agent-bootstrap.md": "f8f0c1c18068f1b1b862ac2263255aa019395df5d50ea2f2d87bfcd6492c7386",
     "docs/architecture/portability-and-non-capture.md": "98f56e514014514fccdd4a12f685722b158416ef3a1836384d2732aaad0a2823",
-    "docs/external-evidence-participation.md": "004bf1a9298bbba327f11ba79b46ce1f5184521b7e52ec09e5a766ca767e25f6",
+    "docs/external-evidence-participation.md": "5934e5c1bcbac668790e3b2b3d7c30de826e3868db680fe7295f629033f64620",
     "docs/operator-onboarding-recovery.md": "1dbf10a2a46ef110e545871ccce0a5a8e63838c1f85acc53cbcb4c0dfb2c34b1",
     "ecosystem/CURRENT_VERSIONS.md": "a395d0d7004ba7d8cd1d26664acf144d6e7ace0b1fce15df63fec7e0d6a97acf",
     "ecosystem/current-versions.json": "af3c6f5720d1a319bc89c93076cbeb304a49306d4e54d18bd64538617f18b2dd",
@@ -126,7 +126,7 @@
     "tools/check_public_prose.py": "4b0fa3becd2c71af7a1a89d72f971988bc019acc3917d7d59b8ead2fafe94657",
     "tools/check_security_considerations_coverage.py": "182d29f056e1e396d3331a1d1bac66d28d83bb4acf6beb4c785dc16c5acaccfe",
     "tools/check_signed_message_envelope_boundary.py": "6ff4228e34408681bdcc4485d3470b9a86b7f7b4a4fd5bbf56e830e2fcc53c5b",
-    "tools/check_spec_release_integrity.py": "9fe53e14f49df1ab1cc6dc311fa51cb79e2167a96ee8fd17a4b4e03f79729973",
+    "tools/check_spec_release_integrity.py": "13dfab2ad4708a4b67e5300332da8d0b656795f098ad42d393907c0b6b0906e7",
     "tools/check_submission_governance_decision.py": "a249100bf6c2836ea01ceee353fa5c139ecbe0f0b280fe250a86d11137dde9cd",
     "tools/requirements.txt": "117bb7857e2106917057761be56b51e26df4b9c0e3ebdbcf48a992e94534c6ac",
     "tools/test_audit_intent_sources.py": "8286e32879fcf48647f00facc8bca1fbf9a460393e9fc607e50440cd1fae063f",
@@ -148,7 +148,11 @@
     "tools/test_relay_eligibility_record.py": "5029125dc6981c4624eaa18631f2e90e54f8a33967e1cc61ea3836928edd6413",
     "research/pre-normative-profiles/fixtures/e050-client-credential-lifecycle-v1.json": "4f71c44380f7a95249e7f6233fc4bce56de4e344b97a5ecc11c8740e88af12d6",
     "tools/check_e050_client_credential_lifecycle.py": "7bd5257ed48a9215b9f3fb2679868efd4bc53ae89e2d74b98d00b8a04e436362",
-    "tools/test_e050_client_credential_lifecycle.py": "b3a5dd3259f40e9c362a5494d58e5be431a633d403a53f4a408aa5bddd58f115"
+    "tools/test_e050_client_credential_lifecycle.py": "b3a5dd3259f40e9c362a5494d58e5be431a633d403a53f4a408aa5bddd58f115",
+    "evidence/external-participation-campaign-v1.json": "d0e1d0b9c540039de3926f26a05ba7d8b6037a2002fef701a60d694c59807af4",
+    "tools/README.md": "0385073548a86c4ee14fd56b2fe43dd2a1c29e2c192c7dffe6a75796d7b61e8e",
+    "tools/check_external_participation_campaign.py": "5b17828e3b3a025201a044a23b713174027331b4b3faa358b7a85eea7d028f7f",
+    "tools/test_external_participation_campaign.py": "21e0c60275a9459480551358596cb6c0b4b39810669cd2b8b1a96f3693bb1c67"
   },
   "manifest_version": "1.9.0",
   "protocol_suite_version": "1.10.13",

@@ -1,0 +1,77 @@
+{
+  "schema_version": "iicp-external-participation-campaign-v1",
+  "status": "open-for-participation",
+  "campaign_reference": "docs/external-evidence-participation.md",
+  "claim_boundary": {
+    "contains_participant_identity": false,
+    "contains_consent": false,
+    "contains_results": false,
+    "contains_decisions": false,
+    "authorizes_deployment": false,
+    "authorizes_default_change": false,
+    "promotes_profiles": false
+  },
+  "lanes": [
+    {
+      "id": "clean-room-directory",
+      "tracker": "https://github.com/RobLe3/IICP/issues/31",
+      "participant": "implementation team outside the IICP repository family",
+      "fixed_inputs": ["IICP Protocol Suite v1.10.13", "iicp-conformance 0.3.0"],
+      "record": "evidence/clean-room-interoperability-record-v1.json",
+      "validator": "python3 tools/check_clean_room_interoperability_record.py <completed-record.json>",
+      "submission": "publish from the external implementation repository and link it on IICP #31",
+      "state": "awaiting-participant"
+    },
+    {
+      "id": "newcomer-validation",
+      "tracker": "https://github.com/RobLe3/IICP/issues/94",
+      "participant": "one non-technical reader, one developer and one prospective node operator",
+      "fixed_inputs": ["current public website", "version-pinned operator and SDK guidance"],
+      "record": "evidence/newcomer-validation-record-v1.json",
+      "validator": "python3 tools/check_newcomer_validation_record.py <completed-record.json>",
+      "submission": "publish anonymized role records and a findings summary, then link them on IICP #94",
+      "state": "awaiting-participant"
+    },
+    {
+      "id": "linux-systemd-operator",
+      "tracker": "https://github.com/RobLe3/iicp-client-rust/issues/66",
+      "participant": "representative Linux/systemd operator, preferably including ARM64",
+      "fixed_inputs": ["iicp-client 0.7.102", "opt-in native watchdog"],
+      "record": "https://github.com/RobLe3/iicp-client-rust/blob/main/evidence/systemd-operator-validation-v1.json",
+      "validator": "python3 scripts/check_systemd_operator_validation.py <completed-record.json>",
+      "submission": "publish the content-free record and link it on Rust SDK #66",
+      "state": "awaiting-participant"
+    },
+    {
+      "id": "relay-operator",
+      "tracker": "https://github.com/RobLe3/IICP/issues/59",
+      "participant": "relay operator independent of IICP with a representative topology",
+      "fixed_inputs": ["IICP Protocol Suite v1.10.13", "pre-normative relay eligibility contract"],
+      "record": "evidence/relay-eligibility-record-v1.json",
+      "validator": "python3 tools/check_relay_eligibility_record.py <completed-record.json>",
+      "submission": "publish the signed content-free bundle and link it on IICP #59",
+      "state": "awaiting-participant"
+    },
+    {
+      "id": "qualified-eu-review",
+      "tracker": "https://github.com/RobLe3/iicp.network/issues/768",
+      "related_tracker": "https://github.com/RobLe3/iicp.network/issues/801",
+      "participant": "qualified EU privacy and AI-law reviewer",
+      "fixed_inputs": ["qualified review packet dated 2026-08-13", "final Article 50 guidance dated 2026-07-20"],
+      "record": "https://github.com/RobLe3/iicp.network/blob/main/project/compliance/qualified-review-decision-v1.json",
+      "validator": "python3 scripts/check_qualified_review_packet.py <completed-decision.json>",
+      "submission": "return an attributable decision record and review memorandum for root #768 and #801",
+      "state": "awaiting-participant"
+    },
+    {
+      "id": "standards-governance",
+      "tracker": "https://github.com/RobLe3/IICP/issues/47",
+      "participant": "consenting lead editor, backup editor and change controller",
+      "fixed_inputs": ["current draft candidate", "public governance decision contract"],
+      "record": "standards/submission-governance-decision-v1.json",
+      "validator": "python3 tools/check_submission_governance_decision.py <completed-decision.json>",
+      "submission": "publish the non-sensitive governance decision and link it on IICP #47",
+      "state": "awaiting-participant"
+    }
+  ]
+}
