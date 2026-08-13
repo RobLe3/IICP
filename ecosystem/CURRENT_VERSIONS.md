@@ -11,7 +11,7 @@ version different contracts and do not need to match.
 | iicp-directory-rust | 0.1.11 | operator-preview |
 | iicp-client-python | 0.7.102 | active |
 | iicp-client-typescript | 0.7.102 | active |
-| iicp-client-rust | 0.7.102 | active |
+| iicp-client-rust | 0.7.103 | active |
 | iicp-web-node | 0.2.3 | experimental |
 
 Deployment identifiers and observed live adoption are time-bound evidence and

@@ -15,7 +15,7 @@ Git submodules. Visibility describes source access, not protocol maturity.
 | [iicp-directory-rust](https://github.com/RobLe3/iicp-directory-rust) | pre-1.0 Rust directory operator preview; not the production Genesis authority | rust | public | operator-preview | 0.1.11 |
 | [iicp-client-python](https://github.com/RobLe3/iicp-client-python) | Python consumer and provider SDK | python | public | active | 0.7.102 |
 | [iicp-client-typescript](https://github.com/RobLe3/iicp-client-typescript) | TypeScript consumer and provider SDK | typescript | public | active | 0.7.102 |
-| [iicp-client-rust](https://github.com/RobLe3/iicp-client-rust) | Rust consumer and provider SDK | rust | public | active | 0.7.102 |
+| [iicp-client-rust](https://github.com/RobLe3/iicp-client-rust) | Rust consumer and provider SDK | rust | public | active | 0.7.103 |
 | [iicp-web-node](https://github.com/RobLe3/iicp-web-node) | browser-native IICP consumer and provider implementation | typescript | public | experimental | 0.2.3 |
 
 ## Governance boundary

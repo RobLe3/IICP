@@ -10,12 +10,23 @@ from pathlib import Path
 SDK_IDS = ("client-python", "client-typescript", "client-rust")
 
 
-def release_versions(root: Path) -> set[str]:
+def release_versions(root: Path) -> dict[str, str]:
     data = json.loads((root / "ecosystem/releases.json").read_text())
-    versions = {entry["version"] for entry in data["releases"] if entry["id"] in SDK_IDS}
-    if len(versions) != 1:
-        raise ValueError(f"coordinated SDK releases disagree: {sorted(versions)}")
+    versions = {entry["id"]: entry["version"] for entry in data["releases"] if entry["id"] in SDK_IDS}
+    if set(versions) != set(SDK_IDS):
+        raise ValueError(f"SDK release catalog is incomplete: {versions}")
     return versions
+
+
+def coordinated_baseline(root: Path) -> str:
+    """Return the highest release shared by every official SDK line.
+
+    Component packages are independently versioned. A language-specific patch may
+    advance one package without changing the common compatibility baseline used by
+    discovery evidence.
+    """
+    versions = release_versions(root)
+    return min(versions.values(), key=lambda version: tuple(int(part) for part in version.split(".")))
 
 
 def fixture_version(root: Path) -> str:
@@ -41,7 +52,7 @@ def main() -> int:
     parser.add_argument("--rust-directory", type=Path)
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    expected = next(iter(release_versions(root)))
+    expected = coordinated_baseline(root)
     observed = {"release catalog": expected, "discovery fixture": fixture_version(root)}
     if args.php_directory:
         observed["PHP default"] = extracted(
