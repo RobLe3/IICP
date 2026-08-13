@@ -32,6 +32,12 @@ class ExternalParticipationCampaignTest(unittest.TestCase):
         record["lanes"][0]["tracker"] = "#31"
         self.assertTrue(any("repository-qualified" in error for error in validate(record)))
 
+    def test_systemd_lane_must_follow_current_rust_release(self) -> None:
+        record = copy.deepcopy(self.record)
+        lane = next(item for item in record["lanes"] if item["id"] == "linux-systemd-operator")
+        lane["fixed_inputs"][0] = "iicp-client-rust 0.7.102"
+        self.assertTrue(any("must pin iicp-client-rust" in error for error in validate(record)))
+
 
 if __name__ == "__main__":
     unittest.main()

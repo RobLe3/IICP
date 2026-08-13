@@ -55,6 +55,12 @@ def validate(record: dict, root: Path = ROOT) -> list[str]:
             errors.append(f"{lane_id}: record path differs from the canonical template")
         if local and not (root / local).is_file():
             errors.append(f"{lane_id}: canonical template is missing")
+        if lane_id == "linux-systemd-operator":
+            versions = json.loads((root / "ecosystem/current-versions.json").read_text(encoding="utf-8"))
+            rust_release = versions["components"]["client-rust"]["release"]
+            expected = f"iicp-client-rust {rust_release}"
+            if expected not in lane.get("fixed_inputs", []):
+                errors.append(f"{lane_id}: fixed inputs must pin {expected}")
     return errors
 
 

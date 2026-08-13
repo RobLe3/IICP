@@ -36,7 +36,7 @@
       "id": "linux-systemd-operator",
       "tracker": "https://github.com/RobLe3/iicp-client-rust/issues/66",
       "participant": "representative Linux/systemd operator, preferably including ARM64",
-      "fixed_inputs": ["iicp-client 0.7.102", "opt-in native watchdog"],
+      "fixed_inputs": ["iicp-client-rust 0.7.103", "opt-in native watchdog"],
       "record": "https://github.com/RobLe3/iicp-client-rust/blob/main/evidence/systemd-operator-validation-v1.json",
       "validator": "python3 scripts/check_systemd_operator_validation.py <completed-record.json>",
       "submission": "publish the content-free record and link it on Rust SDK #66",

@@ -27,18 +27,24 @@ python3 tools/check_external_participation_campaign.py
 | --- | --- | --- | --- | --- |
 | Clean-room directory | IICP #31 | An implementation team outside the IICP repository family | Protocol Suite `v1.10.13`, `iicp-conformance` `0.3.0`, the clean-room guide and the blank evidence record | External repository, ambiguity log, compatibility matrix, and signed content-free results |
 | Newcomer usability | IICP #94 | At least one non-technical reader, one developer, and one prospective node operator | The script below and the published website/operator guide | Three consented, anonymized session records and a findings summary |
-| Public evidence access | IICP #97 | A non-browser client or reviewer outside the project network | `/.well-known/iicp-evidence.json` and its repository fallback | GET/HEAD matrix with content types and exact failure classes |
-| Linux watchdog | Rust SDK #66 | A representative Linux/systemd operator, preferably including ARM | Rust SDK `0.7.102` and its opt-in native watchdog | Slow-start, pressure, reboot/logout, linger, restart, and rollback record |
+| Linux watchdog | Rust SDK #66 | A representative Linux/systemd operator, preferably including ARM | Rust SDK `0.7.103` and its opt-in native watchdog | Slow-start, pressure, reboot/logout, linger, restart, and rollback record |
 | Relay eligibility | IICP #59 | An independent relay operator and topology measurement environment | Current pre-normative relay research | Stale, forged, replayed, overloaded and partial-evidence cases without topology leakage |
-| Confidential execution | IICP #136 | A confidential-hardware operator and an external security reviewer | The pre-normative attested-execution profile | Evidence that the execution private key stays protected plus adversarial review |
+| Qualified EU review | Root #768 and #801 | A qualified EU privacy and AI-law reviewer | The dated qualified-review packet | An attributable decision record and review memorandum |
+| Standards governance | IICP #47 | A consenting lead editor, backup editor, and change controller | The current draft candidate and governance decision contract | A non-sensitive governance decision with named stewardship roles |
 
-Qualified EU review and standards governance are also tracked in the campaign
-index because they need outside consent or professional judgment. The qualified
-reviewer starts with the dated packet linked from root #768 and #801. The
-standards-governance lane starts from
+The qualified reviewer starts with the dated packet linked from root #768 and
+#801. The standards-governance lane starts from
 [`submission-governance-decision-v1.json`](../standards/submission-governance-decision-v1.json)
 and requires a consenting backup editor before IICP #47 can close. Neither lane
 authorizes a deployment, publication or standards submission.
+
+Two related paths are documented below but are not campaign intake lanes.
+Public evidence access is a repeatable availability check for the evidence
+endpoint and repository fallback; issue #97 already established the project
+baseline. Confidential execution still needs a confidential-hardware operator
+and external security reviewer, but its intake artifact must follow the
+pre-normative profile work in #136 rather than implying that a hardware result
+already exists.
 
 The standards-gate issues #55, #56 and #58 consume suitable independent
 evidence from these or later lanes. They are decision gates, not invitations to
@@ -102,7 +108,7 @@ blocking step, prioritized corrections and links to resulting issues. Do not
 publish names, contact details, raw recordings, prompts, responses, IP
 addresses, credentials or full free-text transcripts.
 
-## Lane 3: Public evidence access
+## Complementary check: Public evidence access
 
 Start at `https://iicp.network/.well-known/iicp-evidence.json`. For each
 declared artifact, issue ordinary `GET` and `HEAD` requests and record:
@@ -126,7 +132,7 @@ permission to weaken edge protection. A `403`, HTML challenge, wrong media
 type or misleading `200` becomes an exact diagnostic for IICP #97 and the
 separately authorized private operations issue.
 
-## Lane 4: Linux watchdog
+## Lane 3: Linux watchdog
 
 Follow Rust SDK #66 and the runtime-supervision evidence request. Keep native
 watchdog support opt-in. Exercise the real service manager rather than only a
@@ -139,14 +145,11 @@ A representative run may justify either outcome: retain opt-in behavior, or
 propose default enablement with a measured timeout and rollback. It must not be
 used to guess the cause of the historical Raspberry Pi incident.
 
-## Lanes 5 and 6: Specialized evidence
+## Lane 4: Relay eligibility
 
-Relay eligibility and confidential execution need environments the project
-does not currently control. Prospective operators should comment on IICP #59
-or #136 before collecting data. Do not publish relay topology or stable
-hardware identifiers. Confidential-execution evidence must prove private-key
-containment and the complete plaintext boundary; a software-only quote or a
-TEE decryption proxy feeding a host backend is insufficient.
+Relay eligibility needs an environment the project does not currently control.
+Prospective operators should comment on IICP #59 before collecting data. Do not
+publish relay topology or stable hardware identifiers.
 
 Relay operators can start from the blank machine-readable record in
 [`relay-eligibility-record-v1.json`](../evidence/relay-eligibility-record-v1.json).
@@ -160,6 +163,14 @@ python3 tools/check_relay_eligibility_record.py <external-record.json>
 The blank template is preparation, not relay evidence. A completed result is
 independent only when the outside operator controls the environment, publishes
 the signed bundle and retains every fail-closed case.
+
+## Complementary research: Confidential execution
+
+Confidential execution also needs an environment the project does not control,
+but it is not a campaign intake lane yet. Prospective hardware operators and
+security reviewers should coordinate on IICP #136. Valid evidence must prove
+private-key containment and the complete plaintext boundary; a software-only
+quote or a TEE decryption proxy feeding a host backend is insufficient.
 
 ## Evidence classification
 
