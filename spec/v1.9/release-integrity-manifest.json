@@ -25,7 +25,7 @@
     "conformance-runner/tests/test_runner.py": "f42a0758494607a60594fd63bd0dbf648bc9df6c07319f923d2b6f22ed25caf2",
     "docs/agent-bootstrap.md": "f8f0c1c18068f1b1b862ac2263255aa019395df5d50ea2f2d87bfcd6492c7386",
     "docs/architecture/portability-and-non-capture.md": "98f56e514014514fccdd4a12f685722b158416ef3a1836384d2732aaad0a2823",
-    "docs/external-evidence-participation.md": "d9648ce5b435caadbf391725fa19fdc37d0339a411047b18e2b6bc1f3db277ef",
+    "docs/external-evidence-participation.md": "004bf1a9298bbba327f11ba79b46ce1f5184521b7e52ec09e5a766ca767e25f6",
     "docs/operator-onboarding-recovery.md": "1dbf10a2a46ef110e545871ccce0a5a8e63838c1f85acc53cbcb4c0dfb2c34b1",
     "ecosystem/CURRENT_VERSIONS.md": "a395d0d7004ba7d8cd1d26664acf144d6e7ace0b1fce15df63fec7e0d6a97acf",
     "ecosystem/current-versions.json": "af3c6f5720d1a319bc89c93076cbeb304a49306d4e54d18bd64538617f18b2dd",
@@ -142,7 +142,10 @@
     "tools/test_security_considerations_coverage.py": "aed836fde7c7f0dd517d0275090f7d4dd226451388690dd40038b4ecb23afd5f",
     "tools/test_service_lifecycle_fixture.py": "95bac952af648bf78ba86e67bd2b70a309b156dedd411fc0d3ef9e1d760b070c",
     "tools/test_signed_message_envelope_boundary.py": "8519856e2bfe5eb7850f1b598df27d06563a7389cb4052750bb77d82afc78f60",
-    "tools/test_submission_governance_decision.py": "d89a8a27a67e5c3daa0cfeed0fc61d1fbfe827787c8152dde9443713c05e8547"
+    "tools/test_submission_governance_decision.py": "d89a8a27a67e5c3daa0cfeed0fc61d1fbfe827787c8152dde9443713c05e8547",
+    "evidence/relay-eligibility-record-v1.json": "33205747a262671d7fc18eb032f542046e0eba549ee01a1040b935d33d48cec0",
+    "tools/check_relay_eligibility_record.py": "b883f0172d895b664f5269dd56448ef02d64a49fadbf55da5704bba8466f3cd8",
+    "tools/test_relay_eligibility_record.py": "5029125dc6981c4624eaa18631f2e90e54f8a33967e1cc61ea3836928edd6413"
   },
   "manifest_version": "1.9.0",
   "protocol_suite_version": "1.10.13",
