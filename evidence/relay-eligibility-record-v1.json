@@ -1,0 +1,52 @@
+{
+  "schema_version": "relay-eligibility-record-v1",
+  "status": "blank-external-operator-template",
+  "result_present": false,
+  "operator": {
+    "independent_of_iicp": false,
+    "report_reference": null,
+    "environment_class": null
+  },
+  "fixed_inputs": {
+    "protocol_release": "v1.10.13",
+    "relay_profile_reference": "https://github.com/RobLe3/IICP/issues/59",
+    "implementation_release": null
+  },
+  "cases": [
+    {"id": "eligible-current-evidence", "expected": "eligible", "passed": null},
+    {"id": "stale-evidence", "expected": "ineligible", "passed": null},
+    {"id": "forged-evidence", "expected": "ineligible", "passed": null},
+    {"id": "replayed-evidence", "expected": "ineligible", "passed": null},
+    {"id": "demoted-relay", "expected": "ineligible", "passed": null},
+    {"id": "overloaded-relay", "expected": "ineligible", "passed": null},
+    {"id": "partial-evidence", "expected": "ineligible", "passed": null},
+    {"id": "browser-override", "expected": "policy-defined", "passed": null}
+  ],
+  "measurements": {
+    "direct_path_attempted": null,
+    "relay_fallback_exercised": null,
+    "expiry_enforced": null,
+    "route_authorization_enforced": null,
+    "payload_confidentiality_preserved": null
+  },
+  "publication": {
+    "published_by_external_operator": false,
+    "evidence_class": null,
+    "signed_bundle_reference": null
+  },
+  "privacy": {
+    "credentials": false,
+    "private_keys": false,
+    "raw_node_identifiers": false,
+    "private_addresses": false,
+    "private_topology": false,
+    "payloads": false,
+    "personal_data": false
+  },
+  "claim_boundary": {
+    "proves_production_readiness": false,
+    "authorizes_default_routing": false,
+    "promotes_profile_to_normative": false,
+    "proves_anonymity": false
+  }
+}

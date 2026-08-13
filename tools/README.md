@@ -12,6 +12,7 @@ Validation and analysis tools for the IICP specification.
 | `test_mcp_gateway_official_processes.py` | Runs the actual Python, TypeScript and Rust gateways against the pinned official legacy MCP endpoint; local project verification only |
 | `check_context_event_ownership.py` | Validates unique bounded-context ownership, the closed federated event set, transition ownership, and the non-authoritative `service_id` boundary |
 | `check_public_evidence_access.py` | Validates the public machine-evidence inventory, static fallbacks, live-state honesty, HTTP behavior and privacy exclusions |
+| `check_relay_eligibility_record.py` | Validates the blank or externally completed relay-eligibility evidence record without exposing topology or payloads |
 | `test_provider_admission_capacity_fixture.py` | Validates bounded provider capacity, freshness, deadline, backpressure and redaction vectors |
 | `test_managed_operator_fixture.py` | Validates convenience compatibility and fail-closed managed-operation vectors |
 
@@ -29,6 +30,7 @@ python3 tools/test_mcp_legacy_official_endpoint.py
 python3 tools/test_mcp_gateway_official_processes.py
 python3 tools/check_context_event_ownership.py
 python3 tools/check_public_evidence_access.py
+python3 tools/check_relay_eligibility_record.py
 python3 tools/test_provider_admission_capacity_fixture.py
 python3 tools/test_managed_operator_fixture.py
 ```
