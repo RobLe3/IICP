@@ -1,0 +1,30 @@
+{
+  "schema": "iicp.security-considerations-coverage.v1",
+  "date": "2026-08-13",
+  "submission_authorized": false,
+  "profile_promotion_authorized": false,
+  "topics": [
+    {"id": "malicious_directory", "status": "documented", "class": "normative_and_implemented"},
+    {"id": "provider_plaintext", "status": "documented", "class": "accepted_boundary"},
+    {"id": "relay_metadata", "status": "documented", "class": "experimental"},
+    {"id": "route_harvesting", "status": "documented", "class": "migration_open"},
+    {"id": "authentication_replay_downgrade", "status": "documented", "class": "normative_and_implemented"},
+    {"id": "resource_exhaustion", "status": "documented", "class": "implemented_and_open_tuning"},
+    {"id": "nat_and_exposure", "status": "documented", "class": "implemented_and_research"},
+    {"id": "metadata_privacy", "status": "documented", "class": "accepted_boundary"},
+    {"id": "federation_compromise", "status": "documented", "class": "future_not_enabled"},
+    {"id": "operational_recovery", "status": "documented", "class": "implemented_opt_in"}
+  ],
+  "profile_dispositions": {
+    "55": "pre_normative_external_evidence_required",
+    "56": "pre_normative_external_evidence_required",
+    "57": "research_only",
+    "58": "pre_normative_external_evidence_required",
+    "59": "research_independent_operator_required",
+    "60": "research_complete_no_default",
+    "61": "research_complete_offline_only",
+    "63": "research_complete_no_rollout",
+    "136": "hardware_and_external_review_required"
+  }
+}
+
