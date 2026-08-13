@@ -213,7 +213,7 @@ uninstall. These requirements are consolidated in #96.
 | Policy/data handling (#56) | shared vectors and fail-closed SDK behavior | pre-normative; await independent adapter/review |
 | Route tickets/receipts (#58) | offline crypto, directory/SDK parity and conformance runner | pre-normative; await external evidence and recovery decision |
 | Stateful admission (#57) | deterministic research only | research; no v1 implication |
-| Signed message envelope (#52) | existing signatures are purpose-specific | research before any common envelope |
+| Signed message envelope (#52) | existing signatures are purpose-specific | universal envelope rejected; admit only a demonstrated narrow evidence profile |
 | Relay eligibility (#59) | project-operated relay evidence only | research; require independent operator |
 | A2A binding (#60) | pre-normative loopback interoperability | completed research; no default |
 | DNS-AID/ANS (#61) | offline import/export mapping | completed research; no runtime publication |

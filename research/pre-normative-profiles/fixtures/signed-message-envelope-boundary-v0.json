@@ -1,0 +1,33 @@
+{
+  "schema_version": "signed-message-envelope-boundary-v0",
+  "status": "research-decision",
+  "universal_envelope": "rejected",
+  "wire_change": false,
+  "authentication_default_change": false,
+  "deployment_authorized": false,
+  "existing_mechanisms": [
+    "transport_authentication",
+    "iicp_cx",
+    "dispatch_ticket",
+    "policy_manifest_signature",
+    "federation_signature",
+    "routing_and_task_receipts",
+    "attestation_key_binding"
+  ],
+  "required_future_profile_properties": [
+    "demonstrated_intermediary_integrity_gap",
+    "no_existing_signature_covers_statement",
+    "explicit_signer_verifier_and_purpose",
+    "versioned_canonical_input_and_domain_separation",
+    "bounded_freshness_replay_rotation_and_failure",
+    "confidentiality_and_metadata_limits",
+    "two_independent_implementations"
+  ],
+  "forbidden_claims": {
+    "deterministic_encoding_is_authentication": false,
+    "unkeyed_hash_prevents_substitution": false,
+    "identity_signature_grants_task_authority": false,
+    "signature_provides_confidentiality": false,
+    "adr_024_is_ratified": false
+  }
+}

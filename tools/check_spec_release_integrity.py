@@ -73,6 +73,10 @@ def main() -> int:
         "standards/submission-governance-decision-v1.json",
         "tools/check_submission_governance_decision.py",
         "tools/test_submission_governance_decision.py",
+        "research/strategic/2026-08-13-signed-message-envelope-boundary.md",
+        "research/pre-normative-profiles/fixtures/signed-message-envelope-boundary-v0.json",
+        "tools/check_signed_message_envelope_boundary.py",
+        "tools/test_signed_message_envelope_boundary.py",
         "tools/check_public_evidence_access.py",
         "tools/test_public_evidence_access.py",
     }
