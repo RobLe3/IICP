@@ -61,6 +61,13 @@ def main() -> int:
         "research/pre-normative-profiles/fixtures/operator-onboarding-recovery-v1.json",
         "tools/check_operator_onboarding_recovery.py",
         "tools/test_operator_onboarding_recovery.py",
+        "docs/external-evidence-participation.md",
+        "evidence/newcomer-validation-record-v1.json",
+        "evidence/public-evidence-access-v1.json",
+        "tools/check_newcomer_validation_record.py",
+        "tools/test_newcomer_validation_record.py",
+        "tools/check_public_evidence_access.py",
+        "tools/test_public_evidence_access.py",
     }
     missing_pins = sorted(required - set(manifest["files"]))
     if missing_pins:
