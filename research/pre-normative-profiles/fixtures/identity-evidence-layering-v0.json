@@ -1,0 +1,63 @@
+{
+  "profile": "identity-evidence-layering-v0",
+  "status": "research-decision",
+  "wire_change": false,
+  "trust_root_change": false,
+  "layers": [
+    {
+      "id": "operator_identity",
+      "mechanism": "did_ed25519_jcs",
+      "authority": false,
+      "stable_public": true,
+      "disposition": "reuse"
+    },
+    {
+      "id": "portable_provenance",
+      "mechanism": "vc_data_model_2_0",
+      "authority": false,
+      "stable_public": false,
+      "disposition": "prototype_after_external_use_case"
+    },
+    {
+      "id": "workload_identity",
+      "mechanism": "spiffe_x509_svid",
+      "authority": false,
+      "stable_public": false,
+      "disposition": "defer_optional_adapter"
+    },
+    {
+      "id": "task_authority",
+      "mechanism": "iicp_dispatch_ticket",
+      "authority": true,
+      "stable_public": false,
+      "disposition": "reuse"
+    },
+    {
+      "id": "execution_evidence",
+      "mechanism": "rats_eat_cwt_cose",
+      "authority": false,
+      "stable_public": false,
+      "disposition": "research_issue_136"
+    },
+    {
+      "id": "post_execution_evidence",
+      "mechanism": "iicp_signed_receipt_or_result",
+      "authority": false,
+      "stable_public": false,
+      "disposition": "reuse"
+    }
+  ],
+  "forbidden_collapses": [
+    ["operator_identity", "task_authority"],
+    ["workload_identity", "task_authority"],
+    ["execution_evidence", "operator_identity"],
+    ["portable_provenance", "task_authority"]
+  ],
+  "privacy": {
+    "public_composite_identifier": false,
+    "hardware_identity_in_directory": false,
+    "task_payloads": false,
+    "credentials_grant_authority_without_policy": false
+  }
+}
+

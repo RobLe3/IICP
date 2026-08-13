@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.17.0-draft",
+  "manifest_version": "0.18.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -126,6 +126,11 @@
       "path": "managed-operator-v1.json",
       "fixture_version": "0.1.0-draft",
       "sha256": "98f450a73228ef3cf439f6b49d931975aa2e807bcc47eeb48d045870f2bba5a0"
+    },
+    {
+      "path": "identity-evidence-layering-v0.json",
+      "fixture_version": "0.1.0-research",
+      "sha256": "d96124f0dc8cba6aa38991fcf9a9da7c3083c569b3762a87574246113e683581"
     }
   ]
 }
