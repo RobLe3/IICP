@@ -13,7 +13,9 @@ directly.
 
 The maintained Python, TypeScript and Rust SDKs support both roles. See the
 [implementation registry](../IMPLEMENTATIONS.md) for current releases and
-source repositories.
+source repositories. Operators running a persistent provider should use the
+[verifiable onboarding and recovery path](operator-onboarding-recovery.md)
+rather than treating this protocol overview as an installation runbook.
 
 ## Consumer bootstrap
 

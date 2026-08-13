@@ -16,6 +16,7 @@ on:
       - "research/pre-normative-profiles/fixtures/dns-aid-*"
       - "research/strategic/*dns-aid*"
       - "research/strategic/*identity*"
+      - "docs/operator-onboarding-recovery.md"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
       - "tools/check_profile_fixture_manifest.py"
@@ -37,6 +38,8 @@ on:
       - "tools/test_identity_evidence_layering.py"
       - "tools/check_security_considerations_coverage.py"
       - "tools/test_security_considerations_coverage.py"
+      - "tools/check_operator_onboarding_recovery.py"
+      - "tools/test_operator_onboarding_recovery.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
       - "tools/check_discovery_sdk_currency.py"
       - "ecosystem/releases.json"
@@ -61,6 +64,7 @@ on:
       - "research/pre-normative-profiles/fixtures/dns-aid-*"
       - "research/strategic/*dns-aid*"
       - "research/strategic/*identity*"
+      - "docs/operator-onboarding-recovery.md"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
       - "tools/check_profile_fixture_manifest.py"
@@ -82,6 +86,8 @@ on:
       - "tools/test_identity_evidence_layering.py"
       - "tools/check_security_considerations_coverage.py"
       - "tools/test_security_considerations_coverage.py"
+      - "tools/check_operator_onboarding_recovery.py"
+      - "tools/test_operator_onboarding_recovery.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
       - "tools/check_discovery_sdk_currency.py"
       - "ecosystem/releases.json"
@@ -127,5 +133,7 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_identity_evidence_layering.py'
       - run: python3 tools/check_security_considerations_coverage.py
       - run: python3 -m unittest discover -s tools -p 'test_security_considerations_coverage.py'
+      - run: python3 tools/check_operator_onboarding_recovery.py
+      - run: python3 -m unittest discover -s tools -p 'test_operator_onboarding_recovery.py'
       - run: python3 tools/check_spec_release_integrity.py
       - run: python3 tools/check_discovery_sdk_currency.py

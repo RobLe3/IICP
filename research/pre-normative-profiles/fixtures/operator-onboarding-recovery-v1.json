@@ -1,0 +1,101 @@
+{
+  "schema_version": "operator-onboarding-recovery-v1",
+  "status": "operational-contract",
+  "wire_change": false,
+  "sdk_release": "0.7.102",
+  "rollback_release": "0.7.101",
+  "packages": [
+    {
+      "id": "python",
+      "install": "python3 -m pip install 'iicp-client==0.7.102'",
+      "rollback": "python3 -m pip install 'iicp-client==0.7.101'",
+      "remove": "python3 -m pip uninstall iicp-client"
+    },
+    {
+      "id": "typescript",
+      "install": "npm install -g '@iicp/client@0.7.102'",
+      "rollback": "npm install -g '@iicp/client@0.7.101'",
+      "remove": "npm uninstall -g @iicp/client"
+    },
+    {
+      "id": "rust",
+      "install": "cargo install iicp-client --version 0.7.102 --locked",
+      "rollback": "cargo install iicp-client --version 0.7.101 --locked --force",
+      "remove": "cargo uninstall iicp-client"
+    }
+  ],
+  "ordered_stages": [
+    "install_published_package",
+    "verify_exact_version",
+    "initialize_identity_and_node",
+    "foreground_registration_check",
+    "install_user_service",
+    "verify_service_state",
+    "verify_local_liveness",
+    "classify_readiness",
+    "exercise_recovery",
+    "verify_rollback",
+    "remove_service",
+    "remove_package"
+  ],
+  "commands": {
+    "version": "iicp-node --version",
+    "update_check": "iicp-node update --check",
+    "initialize": "iicp-node init",
+    "foreground": "IICP_AUTO_UPDATE=0 iicp-node serve --node NAME",
+    "service_install": "IICP_AUTO_UPDATE=0 iicp-node service install --node NAME",
+    "service_status": "iicp-node service status --node NAME",
+    "service_restart": "iicp-node service restart --node NAME",
+    "service_remove": "iicp-node service uninstall --node NAME",
+    "doctor": "iicp-node doctor --node NAME --json",
+    "liveness": "iicp-node healthcheck --node NAME --json",
+    "readiness": "iicp-node healthcheck --node NAME --ready"
+  },
+  "update_policy": {
+    "runtime_default_enabled": true,
+    "initial_validation_enabled": false,
+    "enable_after_rollback_verified": true
+  },
+  "evidence": {
+    "class": "operator_reported_operational",
+    "allowed_fields": [
+      "sdk_family",
+      "sdk_version",
+      "os_family",
+      "service_manager",
+      "install_pass",
+      "service_active",
+      "liveness_pass",
+      "readiness_class",
+      "bounded_reason_codes",
+      "restart_exercised",
+      "rollback_exercised",
+      "observed_at_utc"
+    ],
+    "privacy": {
+      "credentials": false,
+      "node_identifiers": false,
+      "backend_urls": false,
+      "private_addresses": false,
+      "prompts": false,
+      "responses": false,
+      "raw_logs": false
+    },
+    "supports_claims": {
+      "package_operational": true,
+      "independent_implementation": false,
+      "independent_conformance": false,
+      "execution_privacy": false,
+      "credit_eligibility": false,
+      "production_availability": false
+    }
+  },
+  "boundaries": {
+    "relay_required": false,
+    "tunnel_required": false,
+    "service_scope": "user",
+    "package_removal_deletes_operator_state": false,
+    "normal_shutdown_deregistration": "best_effort",
+    "directory_expiry_is_fallback": true
+  }
+}

@@ -57,6 +57,10 @@ def main() -> int:
         "spec/v1.9/iicp-service-lifecycle-profile.md",
         "research/native-ai-infrastructure/fixtures/service-profiles-v1.json",
         "tools/test_service_lifecycle_fixture.py",
+        "docs/operator-onboarding-recovery.md",
+        "research/pre-normative-profiles/fixtures/operator-onboarding-recovery-v1.json",
+        "tools/check_operator_onboarding_recovery.py",
+        "tools/test_operator_onboarding_recovery.py",
     }
     missing_pins = sorted(required - set(manifest["files"]))
     if missing_pins:
