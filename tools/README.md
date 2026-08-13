@@ -13,6 +13,7 @@ Validation and analysis tools for the IICP specification.
 | `check_context_event_ownership.py` | Validates unique bounded-context ownership, the closed federated event set, transition ownership, and the non-authoritative `service_id` boundary |
 | `check_public_evidence_access.py` | Validates the public machine-evidence inventory, static fallbacks, live-state honesty, HTTP behavior and privacy exclusions |
 | `check_relay_eligibility_record.py` | Validates the blank or externally completed relay-eligibility evidence record without exposing topology or payloads |
+| `check_external_participation_campaign.py` | Validates the six-lane public participation index without inferring participant identity, consent, results or decisions |
 | `test_provider_admission_capacity_fixture.py` | Validates bounded provider capacity, freshness, deadline, backpressure and redaction vectors |
 | `test_managed_operator_fixture.py` | Validates convenience compatibility and fail-closed managed-operation vectors |
 
@@ -31,6 +32,7 @@ python3 tools/test_mcp_gateway_official_processes.py
 python3 tools/check_context_event_ownership.py
 python3 tools/check_public_evidence_access.py
 python3 tools/check_relay_eligibility_record.py
+python3 tools/check_external_participation_campaign.py
 python3 tools/test_provider_admission_capacity_fixture.py
 python3 tools/test_managed_operator_fixture.py
 ```

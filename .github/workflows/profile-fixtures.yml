@@ -52,6 +52,8 @@ on:
       - "tools/test_newcomer_validation_record.py"
       - "tools/check_clean_room_interoperability_record.py"
       - "tools/test_clean_room_interoperability_record.py"
+      - "tools/check_external_participation_campaign.py"
+      - "tools/test_external_participation_campaign.py"
       - "tools/check_submission_governance_decision.py"
       - "tools/test_submission_governance_decision.py"
       - "tools/check_signed_message_envelope_boundary.py"
@@ -118,6 +120,8 @@ on:
       - "tools/test_newcomer_validation_record.py"
       - "tools/check_clean_room_interoperability_record.py"
       - "tools/test_clean_room_interoperability_record.py"
+      - "tools/check_external_participation_campaign.py"
+      - "tools/test_external_participation_campaign.py"
       - "tools/check_submission_governance_decision.py"
       - "tools/test_submission_governance_decision.py"
       - "tools/check_signed_message_envelope_boundary.py"
@@ -177,6 +181,8 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_newcomer_validation_record.py'
       - run: python3 tools/check_clean_room_interoperability_record.py
       - run: python3 -m unittest discover -s tools -p 'test_clean_room_interoperability_record.py'
+      - run: python3 tools/check_external_participation_campaign.py
+      - run: python3 -m unittest discover -s tools -p 'test_external_participation_campaign.py'
       - run: python3 tools/check_submission_governance_decision.py
       - run: python3 -m unittest discover -s tools -p 'test_submission_governance_decision.py'
       - run: python3 tools/check_signed_message_envelope_boundary.py
