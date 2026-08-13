@@ -91,7 +91,7 @@
       "authority": "Python consumer and provider SDK",
       "language": "python",
       "protocol": "1.9",
-      "release": "0.7.102",
+      "release": "0.7.103",
       "package": "pypi:iicp-client"
     },
     {
@@ -103,7 +103,7 @@
       "authority": "TypeScript consumer and provider SDK",
       "language": "typescript",
       "protocol": "1.9",
-      "release": "0.7.102",
+      "release": "0.7.103",
       "package": "npm:@iicp/client"
     },
     {
