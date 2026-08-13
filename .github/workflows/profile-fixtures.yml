@@ -29,6 +29,8 @@ on:
       - "tools/check_spec_release_integrity.py"
       - "tools/test_service_lifecycle_fixture.py"
       - "tools/test_mcp_era_fixture.py"
+      - "tools/check_e050_client_credential_lifecycle.py"
+      - "tools/test_e050_client_credential_lifecycle.py"
       - "tools/test_reputation_hourly_velocity_fixture.py"
       - "tools/test_terminology_discoverability.py"
       - "tools/check_runtime_health_fixture.py"
@@ -93,6 +95,8 @@ on:
       - "tools/check_spec_release_integrity.py"
       - "tools/test_service_lifecycle_fixture.py"
       - "tools/test_mcp_era_fixture.py"
+      - "tools/check_e050_client_credential_lifecycle.py"
+      - "tools/test_e050_client_credential_lifecycle.py"
       - "tools/test_reputation_hourly_velocity_fixture.py"
       - "tools/test_terminology_discoverability.py"
       - "tools/check_runtime_health_fixture.py"
@@ -151,6 +155,8 @@ jobs:
       - run: python3 tools/audit_intent_sources.py --check
       - run: python3 -m unittest discover -s tools -p 'test_service_lifecycle_fixture.py'
       - run: python3 tools/test_mcp_era_fixture.py
+      - run: python3 tools/check_e050_client_credential_lifecycle.py
+      - run: python3 -m unittest discover -s tools -p 'test_e050_client_credential_lifecycle.py'
       - run: python3 tools/test_reputation_hourly_velocity_fixture.py
       - run: python3 -m unittest discover -s tools -p 'test_terminology_discoverability.py'
       - run: python3 tools/check_runtime_health_fixture.py

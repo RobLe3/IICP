@@ -136,6 +136,11 @@
       "path": "operator-onboarding-recovery-v1.json",
       "fixture_version": "1.0.0-operational",
       "sha256": "e946a86efdfaaa305077367b50c3649c1732424f0dfed998fd6d62520bb8ffc1"
+    },
+    {
+      "path": "e050-client-credential-lifecycle-v1.json",
+      "fixture_version": "1.0.0-implementation-evidence",
+      "sha256": "4f71c44380f7a95249e7f6233fc4bce56de4e344b97a5ecc11c8740e88af12d6"
     }
   ]
 }
