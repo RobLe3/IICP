@@ -82,9 +82,9 @@
     },
     {
       "id": "client-rust",
-      "version": "0.7.102",
-      "wire_behavior": "additive",
-      "conformance_impact": "changed",
+      "version": "0.7.103",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "unchanged",
       "profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -93,8 +93,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state migration is required. Native streaming and runtime-health advertisement remain explicit opt-ins; buffered call() behavior and terminal-only backends remain compatible.",
-      "rollback": "Install the preceding immutable 0.7.101 package. Disable any 0.7.102-only opt-in profile before rollback."
+      "migration": "No persisted-state or wire migration is required. This Rust-only security patch replaces the external kill(1)-based single-instance check with a direct OS liveness check, fails closed on indeterminate lock state, and preserves the existing node PID-file location.",
+      "rollback": "Install the preceding immutable 0.7.102 package only if the environment provides a reliable external kill executable. Rollback restores the documented minimal-container duplicate-node risk and is not recommended."
     },
     {
       "id": "web-node",
