@@ -1,7 +1,8 @@
 # Heterogeneous model quality and learned-routing boundary
 
-**Assessment date:** 2026-08-12  
-**Decision status:** research recommendation; no wire change, default-routing change, deployment or MetaHarness dependency is authorized
+**Assessment date:** 2026-08-12<br>
+**Native-integration eligibility checkpoint:** 2026-08-13<br>
+**Decision status:** retain the opt-in client-local experiment; no wire change, default-routing change, deployment, MetaHarness dependency or upstream MetaHarness PR is authorized
 
 > **Experiment update:** the bounded reproduction and v0 eligible-candidate
 > projection are published under
@@ -245,3 +246,122 @@ Success means a repeatable improvement over the current selector with calibrated
 ## Final answer
 
 IICP can support radically heterogeneous backends without changing its role. It should expose a small, versioned view of already eligible candidates to an optional local ranker, retain verified dispatch, and correlate operational outcomes without owning semantic judgments. MetaHarness is a strong experimental adapter for that seam. It is not a protocol layer.
+
+## Native MetaHarness integration eligibility checkpoint (2026-08-13)
+
+This checkpoint assesses the later proposal to prepare a native MetaHarness ×
+IICP integration and submit one upstream MetaHarness pull request. The proposal
+has the right separation of responsibilities, but its implementation sequence is
+not yet eligible.
+
+### Current evidence
+
+- The inspected MetaHarness source remains commit
+  [`68402755f017`](https://github.com/ruvnet/metaharness/tree/68402755f017e0df5f493c6ee608218420540d17),
+  the same revision used by the original experiment. No IICP issue or pull
+  request exists in that repository.
+- `@metaharness/router` 0.4.0 is a local model-quality router over caller-defined
+  candidate IDs, costs and labelled embedding outcomes. It does not own dynamic
+  discovery, IICP eligibility, authorization or dispatch.
+- MetaHarness host adapters describe agent runtimes such as Codex, Claude Code
+  and Hermes. IICP is an execution substrate, not one of those hosts. An IICP
+  integration therefore does not belong in a host-adapter package.
+- Basic request compatibility already exists wherever a MetaHarness execution
+  path accepts a configurable OpenAI-compatible base URL and is pointed at the
+  IICP local proxy. That path delegates execution through IICP but does not
+  expose IICP's dynamic, already-eligible candidate set to the learned router.
+- The official IICP clients now share the non-wire `candidate-ranker-v0`
+  contract. Rust publishes that seam in 0.7.103. Python and TypeScript implement
+  it on `main`, but their current 0.7.102 registry releases predate the feature.
+  A cross-project adapter cannot claim a coordinated public SDK contract until
+  the next authorized parity release publishes those two implementations.
+- The 90-task heterogeneous benchmark did not establish a production promotion
+  case. Learned routing reached 70.0% task success, below the fixed Phi baseline
+  at 75.6%; threshold-plus-cost reached 64.4%. The oracle gap shows potential,
+  not a sufficiently calibrated general improvement.
+
+### Architectural ownership
+
+| Concern | Authority |
+|---|---|
+| Discovery, hard eligibility, policy, identity, authentication, confidentiality and execution-privacy requirements | IICP |
+| Availability, route revalidation, retry boundaries, ticketing, transport and dispatch | IICP |
+| Query embedding, evaluator-specific quality prediction, calibration and learned history | MetaHarness or another optional local evaluator |
+| Cost or latency preference | Caller policy; a ranker may optimize only within the supplied eligible set and declared preference |
+| Semantic outcome labels | Evaluator-owned storage, correlated through content-free references |
+
+The integration seam remains:
+
+```text
+IICP eligible candidates
+  -> versioned redacted candidate evidence
+  -> optional local adapter into @metaharness/router
+  -> SELECT(supplied candidate_ref) or DECLINE
+  -> IICP revalidation, ticketing and dispatch
+```
+
+The existing IICP contract already enforces the important safety rules. A ranker
+sees only eligible candidates, cannot add a candidate, and can decline to the
+built-in order. An unknown reference or ranker error fails before dispatch.
+IICP keeps retry and fallback authority.
+
+The current seam still has limitations that an upstream integration must not
+hide. Rust and Python ranker calls are synchronous and the TypeScript call has no
+SDK-enforced timeout. Bounded latency and cancellation must therefore be supplied
+by an adapter or added as a separately reviewed, cross-SDK semantic change. The
+MetaHarness router also picks a best-effort candidate when no model clears the
+quality bar; an IICP adapter must translate insufficient or uncalibrated evidence
+to `DECLINE` instead of presenting that fallback as threshold satisfaction.
+
+### Identity and privacy
+
+MetaHarness may index history by IICP's request-local opaque `candidate_ref` only
+for the current selection. Longer-lived quality continuity should use the
+research-only `execution_profile_ref`: an evaluator-local, rotation-sensitive
+commitment that changes when the model revision, quantization, fine-tune, runtime
+or other quality-relevant configuration changes. It must not expose a full node
+identifier, endpoint, hardware serial, prompt, response, embedding or stable
+cross-service fingerprint. This remains an experimental evaluator concern, not a
+directory field or protocol identity.
+
+### Eligibility decision
+
+| Proposed action | Decision | Reason |
+|---|---|---|
+| Reuse IICP's candidate-ranker seam | **Eligible now for local experiments** | Cross-SDK source parity and adversarial fixture coverage exist. |
+| Add a MetaHarness dependency to IICP | **Reject** | It would couple protocol clients to one evaluator and package ecosystem. |
+| Implement IICP as a MetaHarness host | **Reject** | IICP is not an agent host under MetaHarness's host contract. |
+| Add an IICP-specific provider that dispatches directly | **Reject** | It would duplicate or bypass IICP dispatch authority. |
+| Create a thin optional adapter | **Eligible after gates** | This is the smallest composable boundary if repeated evidence demonstrates value. |
+| Submit an upstream MetaHarness PR now | **Not eligible** | The Python/TypeScript seam is not yet released, benchmark promotion evidence is insufficient, and upstream ownership has not been agreed. |
+| Reopen Edge-Net or QuDAG work | **No action** | This checkpoint produced no new connection beyond the existing observation/algorithm boundary. |
+| Change the wire protocol or directory schema | **Not eligible** | The current experiment needs no normative or public directory field. |
+
+### Promotion gates and next sequence
+
+1. **Release parity, without a special release.** Include the existing Python and
+   TypeScript ranker seam in the next authorized coordinated SDK release. Verify
+   that Rust, Python and TypeScript package artifacts expose the same fixture
+   semantics. Do not publish solely for this experiment.
+2. **Strengthen the experiment.** Use a larger, multi-domain and preferably
+   multi-operator corpus. Compare learned routing against strong fixed and simple
+   metadata baselines using predeclared quality, cost and calibration criteria.
+   Include cold start, sparse history, backend revision, poisoned observations,
+   ranker timeout and deliberate decline.
+3. **Require a promotion result.** A native adapter advances only if it improves
+   the declared quality/cost objective out of sample, preserves IICP eligibility,
+   and declines safely when confidence is inadequate. Oracle headroom alone is
+   not a pass.
+4. **Open an upstream design issue before code.** If the evidence passes, ask the
+   MetaHarness maintainers whether the adapter belongs in a new optional package
+   or remains application glue around `@metaharness/router`. It should not be
+   placed in a host adapter. Record any required ADR before implementation.
+5. **Submit one bounded pull request only after acceptance.** The pull request may
+   add a thin optional adapter and tests for dynamic candidate sets, stale
+   execution profiles, decline, timeout and IICP fallback. It must not add IICP
+   policy, transport or dispatch logic to MetaHarness.
+
+No new IICP or Edge-Net issue is justified by this checkpoint. The closed IICP
+issue [#135](https://github.com/RobLe3/IICP/issues/135) and its executable
+fixtures remain the authoritative project record. A new implementation issue is
+warranted only when the evidence and upstream-ownership gates pass.
