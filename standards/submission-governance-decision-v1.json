@@ -1,0 +1,52 @@
+{
+  "schema_version": "iicp-submission-governance-decision-v1",
+  "status": "blank-maintainer-decision-template",
+  "decision_present": false,
+  "decided_at": null,
+  "lead_editor": {
+    "public_name": null,
+    "public_contact": null,
+    "publication_consent": false
+  },
+  "backup_editor": {
+    "public_name": null,
+    "public_contact": null,
+    "publication_consent": false,
+    "maintenance_consent": false
+  },
+  "change_control": {
+    "controller": null,
+    "public_issue_process": null,
+    "errata_process": null,
+    "implementation_behavior_is_normative": false
+  },
+  "contributions": {
+    "copyright_treatment": null,
+    "ipr_treatment": null,
+    "contributor_consent_record": null
+  },
+  "succession": {
+    "temporary_unavailability_process": null,
+    "permanent_succession_process": null,
+    "backup_may_unilaterally_redefine_protocol": false
+  },
+  "submission": {
+    "candidate_document": "standards/ietf/draft-roble-iicp-peer.md",
+    "candidate_venue": null,
+    "submission_commit": null,
+    "explicit_maintainer_authorization_required": true,
+    "authorized_now": false
+  },
+  "open_gates": [
+    "security-review",
+    "independent-interoperability",
+    "service-port-decision"
+  ],
+  "privacy": {
+    "private_address": false,
+    "identity_documents": false,
+    "credentials": false,
+    "engagement_terms": false,
+    "private_correspondence": false
+  }
+}

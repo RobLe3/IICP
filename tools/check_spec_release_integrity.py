@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "spec/v1.9/release-integrity-manifest.json"
@@ -63,9 +63,16 @@ def main() -> int:
         "tools/test_operator_onboarding_recovery.py",
         "docs/external-evidence-participation.md",
         "evidence/newcomer-validation-record-v1.json",
+        "evidence/clean-room-interoperability-record-v1.json",
         "evidence/public-evidence-access-v1.json",
         "tools/check_newcomer_validation_record.py",
         "tools/test_newcomer_validation_record.py",
+        "tools/check_clean_room_interoperability_record.py",
+        "tools/test_clean_room_interoperability_record.py",
+        "standards/SUBMISSION_GOVERNANCE_DECISION.md",
+        "standards/submission-governance-decision-v1.json",
+        "tools/check_submission_governance_decision.py",
+        "tools/test_submission_governance_decision.py",
         "tools/check_public_evidence_access.py",
         "tools/test_public_evidence_access.py",
     }

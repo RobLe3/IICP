@@ -59,6 +59,11 @@ material, payloads, raw responses, private topology or personal data. Use the
 implementation and publishes its own result. An IICP-project rerun remains
 `project-verified`.
 
+Copy `evidence/clean-room-interoperability-record-v1.json` into the external
+repository before the run and complete that copy. Validate it with the released
+copy of `tools/check_clean_room_interoperability_record.py`. The project copy
+must remain a blank template; it is not an IICP-generated external result.
+
 ## Completion criteria
 
 The clean-room exercise is complete only when two separately running directory
