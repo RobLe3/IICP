@@ -90,7 +90,7 @@
     {
       "path": "discovery-evidence-v1.json",
       "fixture_version": "0.1.0-draft",
-      "sha256": "2f5a25502ba713328c2321fd136b23e948c1a4d9bdd0b10a85bf7cd1f71cc9e3"
+      "sha256": "f0fb3df696b228617b47940a4f9c3b1d36348e025dd47edc667ee31a7a9a2301"
     },
     {
       "path": "public-measurement-v1-valid.json",

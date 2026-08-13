@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-12",
+  "generated_at": "2026-08-13",
   "releases": [
     {
       "id": "specification",
@@ -50,8 +50,8 @@
     },
     {
       "id": "client-python",
-      "version": "0.7.102",
-      "wire_behavior": "additive",
+      "version": "0.7.103",
+      "wire_behavior": "unchanged",
       "conformance_impact": "changed",
       "profiles": [
         "service-lifecycle-v1",
@@ -61,13 +61,13 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state migration is required. Native streaming and runtime-health advertisement remain explicit opt-ins; buffered call() behavior and terminal-only backends remain compatible.",
-      "rollback": "Install the preceding immutable 0.7.101 package. Disable any 0.7.102-only opt-in profile before rollback."
+      "migration": "No persisted-state or wire migration is required. This release publishes the opt-in eligibility-bounded candidate-ranker seam, shared heterogeneous-routing evidence, and IICP-E050 credential-lifecycle replay already implemented across the official SDKs. Built-in selection remains the fallback, and IICP retains final policy validation and dispatch authority.",
+      "rollback": "Install the preceding immutable 0.7.102 package. Existing wire behavior remains compatible; the local candidate-ranker extension and the new credential-lifecycle regression evidence are then unavailable."
     },
     {
       "id": "client-typescript",
-      "version": "0.7.102",
-      "wire_behavior": "additive",
+      "version": "0.7.103",
+      "wire_behavior": "unchanged",
       "conformance_impact": "changed",
       "profiles": [
         "service-lifecycle-v1",
@@ -77,8 +77,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state migration is required. Native streaming and runtime-health advertisement remain explicit opt-ins; buffered call() behavior and terminal-only backends remain compatible.",
-      "rollback": "Install the preceding immutable 0.7.101 package. Disable any 0.7.102-only opt-in profile before rollback."
+      "migration": "No persisted-state or wire migration is required. This release publishes the opt-in eligibility-bounded candidate-ranker seam, shared heterogeneous-routing evidence, and IICP-E050 credential-lifecycle replay already implemented across the official SDKs. Built-in selection remains the fallback, and IICP retains final policy validation and dispatch authority.",
+      "rollback": "Install the preceding immutable 0.7.102 package. Existing wire behavior remains compatible; the local candidate-ranker extension and the new credential-lifecycle regression evidence are then unavailable."
     },
     {
       "id": "client-rust",

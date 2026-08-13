@@ -3,7 +3,7 @@
     "client-python": {
       "lifecycle": "active",
       "name": "iicp-client-python",
-      "release": "0.7.102",
+      "release": "0.7.103",
       "visibility": "public"
     },
     "client-rust": {
@@ -15,7 +15,7 @@
     "client-typescript": {
       "lifecycle": "active",
       "name": "iicp-client-typescript",
-      "release": "0.7.102",
+      "release": "0.7.103",
       "visibility": "public"
     },
     "directory-php": {
