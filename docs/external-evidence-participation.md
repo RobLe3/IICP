@@ -129,6 +129,19 @@ hardware identifiers. Confidential-execution evidence must prove private-key
 containment and the complete plaintext boundary; a software-only quote or a
 TEE decryption proxy feeding a host backend is insufficient.
 
+Relay operators can start from the blank machine-readable record in
+[`relay-eligibility-record-v1.json`](../evidence/relay-eligibility-record-v1.json).
+It fixes the required negative cases and privacy boundary without prescribing
+the operator's topology. Validate a copy before publication:
+
+```bash
+python3 tools/check_relay_eligibility_record.py <external-record.json>
+```
+
+The blank template is preparation, not relay evidence. A completed result is
+independent only when the outside operator controls the environment, publishes
+the signed bundle and retains every fail-closed case.
+
 ## Evidence classification
 
 **Self-attested** means the participant ran the released tool and publishes
