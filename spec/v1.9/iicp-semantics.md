@@ -30,11 +30,15 @@ BCP 14.
 
 ---
 
-## 1. Intent URN Semantics
+## 1. Intent identifier semantics
 
 ### 1.1 Intent format
 
-An IICP intent URN identifies the type of work requested. There are two tiers:
+An IICP intent identifier names the type of work requested. The deployed form
+uses the `urn:iicp:` prefix. Pending formal namespace registration, these values
+are stable project-defined identifiers rather than identifiers in an already
+registered URN namespace. Implementations MUST preserve and compare them as
+opaque, case-sensitive values. There are two tiers:
 
 #### Standard intents (registry-controlled)
 
@@ -68,8 +72,9 @@ intents under their own vendor label without IICP approval. This enables:
 - **Experimental intents**: `urn:iicp:intent:x.exp:multimodal-audio:v1`
 - **Internal platform intents**: `urn:iicp:intent:x.myplatform:sentiment-score:v3`
 
-The `x.` convention follows IETF practice for experimental/extension namespaces (see RFC 2045
-`x-` MIME parameter extensions, XMPP `jabber:x:` private namespaces).
+The `x.` convention is an IICP Private Use allocation rule. `x.exp` is the IICP
+Experimental Use subdomain. Neither is a separate URN namespace or a claim of
+IETF allocation practice.
 
 **Vendor labels**: lowercase alphanumeric and hyphens; MUST NOT conflict with IICP reserved
 domains. IICP commits to never using `x.` prefixed domains in the public registry.

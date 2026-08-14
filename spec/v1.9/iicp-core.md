@@ -33,11 +33,12 @@ companion specs; they are stated here so implementors and reviewers share a comm
 reference frame.
 
 **1. Intent is a capability address, not a semantic goal.**  
-The `intent` field on the wire is a stable URN (e.g. `urn:iicp:intent:llm:chat:v1`).
+The `intent` field on the wire is a stable project-defined identifier pending
+formal namespace registration (e.g. `urn:iicp:intent:llm:chat:v1`).
 It identifies *what kind of capability is being invoked*, not the user's natural-language
 request. The user's actual task lives in the `payload` field (CALL §5.1). Intent URNs are
 versioned and registry-controlled (stable across operator changes); payloads are ephemeral
-and private. See `iicp-semantics.md §1` for the full URN grammar.
+and private. See `iicp-semantics.md §1` for the full identifier grammar.
 
 **2. Payload is private and MUST NOT be logged or forwarded by the control plane.**  
 The directory service (ADR-003) MUST NOT see, log, or forward task payloads. Telemetry

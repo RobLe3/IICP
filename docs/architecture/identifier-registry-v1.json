@@ -1,0 +1,85 @@
+{
+  "decision_version": "1.0.0",
+  "status": "accepted-project-boundary-external-registration-pending",
+  "iana_urn_registry_checked_at": "2026-08-14",
+  "iana_nid_registered": false,
+  "current_identifier_status": "stable-project-defined-identifier",
+  "preferred_external_path": "formal-iicp-nid-registration-under-rfc8141",
+  "submission_authorized": false,
+  "submission_dependency": "RobLe3/IICP#47",
+  "compatibility": {
+    "preserve_released_values": true,
+    "comparison": "opaque-case-sensitive-exact",
+    "online_resolution_required": false,
+    "bulk_rewrite_allowed": false,
+    "fallback_if_registration_incompatible": "reviewed-alias-and-migration-plan"
+  },
+  "identifier_families": [
+    "intent",
+    "capability",
+    "profile",
+    "binding",
+    "evidence",
+    "schema"
+  ],
+  "private_and_experimental": {
+    "x_label": "iicp-private-use-convention",
+    "x_exp": "iicp-experimental-use-convention",
+    "ietf_practice_claim": false
+  },
+  "registry_policies": {
+    "intent": "specification-required",
+    "capability": "specification-required",
+    "profile": "specification-required",
+    "binding": "specification-required",
+    "frame_message_type": "expert-review",
+    "error_code": "specification-required",
+    "security_mechanism": "expert-review",
+    "schema_conformance": "specification-required"
+  },
+  "implementation_inventory": [
+    {
+      "component": "python-sdk",
+      "source": "src/iicp_client/client.py",
+      "current": "prefix regular expression",
+      "target": "opaque validated identifier wrapper"
+    },
+    {
+      "component": "typescript-sdk",
+      "source": "src/client.ts",
+      "current": "prefix regular expression",
+      "target": "opaque validated identifier wrapper"
+    },
+    {
+      "component": "rust-sdk",
+      "source": "src/client.rs",
+      "current": "prefix regular expression",
+      "target": "opaque validated identifier newtype"
+    },
+    {
+      "component": "php-directory",
+      "source": "app/Http/Controllers/RegisterController.php",
+      "current": "request validation regular expression",
+      "target": "shared opaque validation contract"
+    },
+    {
+      "component": "rust-directory",
+      "source": "src/validate.rs",
+      "current": "request validation",
+      "target": "shared opaque validation contract"
+    },
+    {
+      "component": "browser-node",
+      "source": "src/iicpConsumer.ts",
+      "current": "prefix regular expression",
+      "target": "opaque validated identifier wrapper"
+    }
+  ],
+  "explicit_non_claims": [
+    "no_iana_registration",
+    "no_iana_submission",
+    "no_identifier_migration",
+    "no_online_resolver",
+    "no_registry_1_4_change"
+  ]
+}
