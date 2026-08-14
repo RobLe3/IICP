@@ -650,6 +650,7 @@
             "conformance-runner/src/iicp_conformance/fixtures/profile-compatibility-v0.json",
             "conformance-runner/tests/test_runner.py",
             "docs/agent-bootstrap.md",
+            "docs/architecture/effective-service-capability-semantics.md",
             "registry/fixtures/intent-payloads-v1.json",
             "registry/intents.json",
             "research/aiospf/fixtures/cip-consumer-cosignature-transcript-v1.json",

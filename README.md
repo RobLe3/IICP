@@ -335,6 +335,11 @@ separate identity and advertisement validity from current reachability,
 execution availability and dispatch eligibility. Default discovery still
 returns only candidates that are eligible now.
 
+The [effective service capability semantics](docs/architecture/effective-service-capability-semantics.md)
+define capabilities as behavior exposed by the complete serving path. They
+separate modalities, features, runtime actions, limits, policy, Profiles,
+evidence, observations and evaluator-specific quality.
+
 The [public evidence access profile](docs/public-evidence-access.md) lists the
 version, implementation, registry, conformance, release and live-runtime
 artifacts intended for non-browser retrieval. Static source evidence has a

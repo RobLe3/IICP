@@ -1,7 +1,7 @@
 # IICP Node Capability Format
 
-**Version**: 0.1.3
-**Date**: 2026-07-31
+**Version**: 0.2.0
+**Date**: 2026-08-14
 **Status**: draft  
 **Issue**: #19  
 **Authority**: Protocol Steward  
@@ -34,8 +34,12 @@ All capability objects share this base schema:
 | `intent` | string | MUST | Full intent URN per ADR-007 |
 | `version` | string | SHOULD | Capability version; "1" if absent |
 | `phase` | integer | MAY | Minimum IICP phase required; 1 if absent |
+| `variant_id` | string | MAY | Opaque node-scoped identifier for one stable effective service variant |
 
-All additional fields are capability-type-specific (§3–§7).
+All additional fields are capability-type-specific (§3–§7). Model and token
+fields are conditional: `models` is required only when model identity or
+selection belongs to the intent contract, and `max_tokens` only where an output
+token limit is meaningful.
 
 ---
 
@@ -238,16 +242,28 @@ A node supporting Phase 5 CIP intents (summarization, reranking, classification)
 ```
 
 **Rules**:
-- Each intent URN MUST appear at most once per capabilities array.
-- The directory MUST index each capability by its `intent` for discovery filtering.
-- Unknown fields MUST be preserved and returned in NODELIST (forward compatibility).
+- An intent URN MAY appear more than once when the entries describe distinct
+  effective variants, including different modalities, Profiles, features or
+  limits.
+- When `variant_id` is present, `(intent, variant_id)` MUST be unique within one
+  advertisement. Exact duplicate objects are invalid even without a
+  `variant_id`.
+- The directory MUST index every variant by `intent`. Matching MUST select one
+  complete variant and MUST NOT union unrelated fields across variants.
+- Registered vocabulary fields and accepted namespaced `extensions` MUST be
+  preserved semantically. Unknown unnamespaced top-level fields MAY be ignored
+  and MUST NOT be interpreted as support.
 - A node with zero valid capabilities MUST NOT be registered (directory returns 422).
 
 ---
 
 ## 8. NODELIST Propagation
 
-The directory MUST return capabilities in NODELIST without modification:
+The directory MUST return registered vocabulary fields and any accepted
+namespaced `extensions` without semantic modification. A directory that cannot
+retain a required extension MUST reject it rather than accept and discard it.
+Legacy unknown top-level fields are ignorable; future declarations use the
+versioned extension container:
 
 ```json
 {
@@ -335,6 +351,7 @@ protocol version.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 0.2.0 | 2026-08-14 | Defines effective variants, conditional inference fields and namespaced extension preservation; the coordinated wire rollout remains pending. |
 | 0.1.3 | 2026-07-31 | MCP capabilities retain singular `mcp_version` as the preferred revision and may add `mcp_versions` for explicit multi-revision negotiation. |
 | 0.1.2 | 2026-05-17 | §9 policy block: added `minimum_reputation` and `max_concurrent_remote` fields with IICP-E020/E021 error references; closes #72 |
 | 0.1.0 | 2026-05-14 | Initial draft — capability object schema, intent URN format, policy block (Phase 5 reserved); closes issue #19 |
