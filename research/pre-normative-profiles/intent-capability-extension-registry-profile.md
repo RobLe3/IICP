@@ -1,6 +1,6 @@
 # Proposal — Intent, Capability and Extension Registry Profile
 
-**Status:** implementation-complete experimental candidate, still pre-normative (profile fixture `0.4.0-draft`) · **Depends on:** IICP semantics and node capability format. Normative promotion is tracked separately and requires independent adoption evidence.
+**Status:** `0.4.0-draft` compatibility core is an implementation-complete experimental candidate; the effective-capability amendment is research-only and tracked by #156. The profile remains pre-normative. · **Depends on:** IICP semantics and node capability format. Normative promotion is tracked separately and requires independent adoption evidence.
 
 ## Purpose
 
@@ -14,6 +14,41 @@ conditions it may do it.
 3. **Policy profile** — data class, retention/training claim, jurisdiction, approval and tool-risk requirement.
 4. **Evidence profile** — key readiness, conformance, observed health, receipt support and attestation references.
 5. **Extension declaration** — versioned URI with `required` boolean and parameters.
+
+## Effective service capability
+
+A capability claim describes behavior available through the complete advertised
+service path. A model feature is not an IICP capability when the model adapter,
+chat template, inference runtime, provider API, or IICP adapter does not expose
+it. Model names and static lookup tables may supply fallback hints, but they are
+not conformance evidence.
+
+The capability layer keeps the following property classes separate:
+
+| Class | Example | Not equivalent to |
+|---|---|---|
+| Modality | image input for `llm:chat:v1` | a separate generic vision intent |
+| Capability feature | structured output or model-generated tool calls | tool execution or result quality |
+| Execution capability | tool execution, delegation, or an agentic loop | model-generated tool calls |
+| Quantitative limit | context tokens, batch size, concurrency, duration | a boolean feature or quality score |
+| Policy or permission | tool execution allowed for this caller | capability absence |
+| Protocol binding/profile | MCP binding or service lifecycle | the semantic operation itself |
+| Identity, observation, or evidence | runtime metadata, latency, conformance probe | capability meaning |
+
+`tool_calling` means that the complete inference path accepts tool definitions
+and emits machine-readable invocation requests. It does not imply tool
+execution, MCP support, shell or network access, or an agentic loop. Tool
+execution is a separately authorized execution capability. A generic
+`agent=true` declaration is too ambiguous for interoperability; any future
+agentic declaration must be decomposed into testable properties such as loop
+ownership, execution, session state, delegation and resumability.
+
+Streaming continues to use the negotiated service-lifecycle profile. This
+proposal does not create a second streaming flag or change buffered behavior.
+The research-only classification fixture at
+`fixtures/effective-capability-taxonomy-v0.json` records these boundaries and
+negative implications. It is not a wire schema and does not authorize runtime
+advertisement.
 
 ## Compatibility rules
 

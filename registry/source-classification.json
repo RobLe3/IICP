@@ -666,8 +666,10 @@
             "research/pre-normative-profiles/fixtures/dispatch-route-ticket-v1.json",
             "research/pre-normative-profiles/fixtures/dispatch-ticket-trust-v2-crypto.json",
             "research/pre-normative-profiles/fixtures/dns-aid-import-export-v0.json",
+            "research/pre-normative-profiles/fixtures/effective-capability-taxonomy-v0.json",
             "research/pre-normative-profiles/fixtures/policy-detail-disclosure-v0.json",
             "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json",
+            "research/strategic/2026-08-14-effective-capability-taxonomy-and-issue-audit.md",
             "research/strategic/execution-privacy-feasibility/software_prototype.py",
             "research/strategic/learned-routing-experiment/candidate-ranker-v0.json",
             "research/strategic/learned-routing-experiment/sample-candidate-evidence-v0.json",
@@ -905,6 +907,7 @@
             "tests/Feature/PricingDeclarationTest.php",
             "tests/Feature/ProbationTierTest.php",
             "tests/Feature/RegisterTest.php",
+            "tests/Feature/RegistrationLimitMeasurementTest.php",
             "tests/Feature/RegistryTest.php",
             "tests/Feature/RelayBindTicketTest.php",
             "tests/Feature/ReplicaEventApplierTest.php",
@@ -936,6 +939,7 @@
           "repository": "iicp-web-node",
           "paths": [
             "README.md",
+            "parity/dispatch-route-ticket-v1.json",
             "src/browserNodeProvider.ts",
             "src/iicpConsumer.ts",
             "tests/client.test.ts",
@@ -1180,6 +1184,12 @@
             "parity/policy-detail-disclosure-v0.json",
             "parity/profile-compatibility-v0.json"
           ]
+        },
+        {
+          "repository": "iicp-web-node",
+          "paths": [
+            "parity/dispatch-route-ticket-v1.json"
+          ]
         }
       ]
     },
@@ -1383,6 +1393,7 @@
           "repository": "IICP",
           "paths": [
             "registry/intents.json",
+            "research/pre-normative-profiles/fixtures/effective-capability-taxonomy-v0.json",
             "spec/v1.9/iicp-mcp-binding.md",
             "spec/v1.9/node-capability-format.md"
           ]

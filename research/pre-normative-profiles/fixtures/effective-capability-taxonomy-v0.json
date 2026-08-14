@@ -1,0 +1,220 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "research-only",
+  "wire_contract": false,
+  "purpose": "Classify effective IICP service properties without conflating intent, modality, feature, execution, limits, policy, bindings, identity, observations or evidence.",
+  "classes": [
+    "intent",
+    "modality",
+    "capability_feature",
+    "execution_capability",
+    "quantitative_limit",
+    "policy_permission",
+    "protocol_binding",
+    "implementation_identity",
+    "performance_observation",
+    "quality_evidence",
+    "claim_provenance"
+  ],
+  "provenance_strength": [
+    "heuristic_fallback",
+    "operator_assertion",
+    "provider_metadata",
+    "runtime_introspection",
+    "conformance_probe"
+  ],
+  "cases": [
+    {
+      "name": "vision_chat_is_a_modality",
+      "statement": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "property": "image_input",
+        "class": "modality",
+        "effective": true,
+        "path": {
+          "model": true,
+          "template": true,
+          "runtime": true,
+          "provider_api": true,
+          "iicp_adapter": true
+        }
+      },
+      "expected": {
+        "advertise": true,
+        "does_not_imply": ["tool_calling", "tool_execution", "agentic_loop"]
+      }
+    },
+    {
+      "name": "theoretical_vision_is_not_effective",
+      "statement": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "property": "image_input",
+        "class": "modality",
+        "effective": false,
+        "path": {
+          "model": true,
+          "template": true,
+          "runtime": true,
+          "provider_api": false,
+          "iicp_adapter": true
+        }
+      },
+      "expected": {
+        "advertise": false,
+        "reason": "effective_path_incomplete"
+      }
+    },
+    {
+      "name": "model_name_is_only_a_fallback_claim",
+      "statement": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "property": "image_input",
+        "class": "modality",
+        "effective": null,
+        "provenance": "heuristic_fallback"
+      },
+      "expected": {
+        "advertise_as_verified": false,
+        "reason": "insufficient_claim_provenance"
+      }
+    },
+    {
+      "name": "tool_calling_is_generation_not_execution",
+      "statement": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "property": "tool_calling",
+        "class": "capability_feature",
+        "effective": true
+      },
+      "expected": {
+        "advertise": true,
+        "does_not_imply": ["tool_execution", "mcp_binding", "shell_access", "network_access", "agentic_loop"]
+      }
+    },
+    {
+      "name": "mcp_tool_execution_is_not_model_tool_calling",
+      "statement": {
+        "intent": "urn:iicp:intent:mcp:tools/call:v1",
+        "property": "tool_execution",
+        "class": "execution_capability",
+        "effective": true,
+        "binding": "mcp"
+      },
+      "expected": {
+        "advertise": true,
+        "does_not_imply": ["model_tool_calling", "agentic_loop", "unrestricted_execution"]
+      }
+    },
+    {
+      "name": "structured_output_is_a_feature",
+      "statement": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "property": "structured_output",
+        "class": "capability_feature",
+        "effective": true
+      },
+      "expected": {
+        "advertise": true,
+        "does_not_imply": ["tool_calling", "tool_execution", "semantic_correctness"]
+      }
+    },
+    {
+      "name": "streaming_uses_the_lifecycle_profile",
+      "statement": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "property": "urn:iicp:profile:service-lifecycle:v1",
+        "class": "protocol_binding",
+        "effective": true
+      },
+      "expected": {
+        "advertise": true,
+        "does_not_imply": ["streaming_backend_without_negotiation", "buffered_call_change"]
+      }
+    },
+    {
+      "name": "context_window_is_a_limit",
+      "statement": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "property": "context_tokens",
+        "class": "quantitative_limit",
+        "value": 65536
+      },
+      "expected": {
+        "advertise": true,
+        "does_not_imply": ["quality", "availability"]
+      }
+    },
+    {
+      "name": "tool_policy_denial_does_not_erase_capability",
+      "statement": {
+        "intent": "urn:iicp:intent:mcp:tools/call:v1",
+        "property": "tool_execution",
+        "class": "execution_capability",
+        "effective": true,
+        "policy": "denied_for_caller"
+      },
+      "expected": {
+        "advertise": true,
+        "eligible": false,
+        "reason": "policy_refusal"
+      }
+    },
+    {
+      "name": "reasoning_label_is_not_hidden_reasoning_access",
+      "statement": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "property": "reasoning_interface",
+        "class": "capability_feature",
+        "effective": true
+      },
+      "expected": {
+        "advertise": true,
+        "does_not_imply": ["chain_of_thought_access", "quality", "correctness"]
+      }
+    },
+    {
+      "name": "agentic_is_decomposed",
+      "statement": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "property": "agent",
+        "class": "capability_feature",
+        "effective": true
+      },
+      "expected": {
+        "advertise": false,
+        "reason": "ambiguous_composite_capability",
+        "required_decomposition": ["agentic_loop", "tool_execution", "stateful_session", "delegation"]
+      }
+    },
+    {
+      "name": "unknown_required_capability_fails_closed",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "requires": ["urn:iicp:capability:unknown:v1"]
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "capabilities": []
+      },
+      "expected": {
+        "eligible": false,
+        "reason": "required_capability_unknown"
+      }
+    },
+    {
+      "name": "unknown_preferred_capability_preserves_eligibility",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "prefers": ["urn:iicp:capability:unknown:v1"]
+      },
+      "provider": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "capabilities": []
+      },
+      "expected": {
+        "eligible": true,
+        "reason": "preference_unavailable"
+      }
+    }
+  ]
+}
