@@ -389,6 +389,38 @@ updater's self-report.
 - Node SHOULD send every 30 seconds.
 - Directory marks inactive after 90 seconds without a valid HEARTBEAT.
 
+### 3.2a Directory state axes and current eligibility (Normative)
+
+Node identity validity, advertisement validity, route reachability, execution
+availability and dispatch eligibility are independent state axes. A valid node
+identity or retained capability advertisement does not prove that a route is
+fresh, the service is ready, or the candidate satisfies the current request's
+policy and Profile requirements.
+
+The current connected-directory behavior maps onto those axes as follows:
+
+- accepted registration establishes a current advertisement and
+  probe-verified route;
+- an authenticated heartbeat supplies fresh self-reported reachability and
+  availability evidence for the heartbeat window;
+- heartbeat expiry retains the identity and advertisement record but makes the
+  node dormant, unavailable and ineligible for current dispatch;
+- a valid heartbeat reactivates the record and recalculates eligibility;
+- a confirmed active-probe failure demotes the failed route, although a
+  separately verified relay route may remain eligible; and
+- endpoint replacement supersedes the old route only after the new route passes
+  ownership, endpoint-safety and liveness validation.
+
+Default `GET /v1/discover` and dispatch tickets MUST return only candidates
+eligible now. A signed or otherwise valid but offline advertisement MAY remain
+stored or appear in authenticated owner/operator detail, but MUST NOT appear in
+the default or public discovery candidate set. Scheduled or predicted
+availability requires a future explicit Profile and does not confer current
+eligibility.
+
+The implementation-neutral state and evidence contract is recorded in
+`docs/architecture/directory-state-semantics.md` and its versioned fixture.
+
 ---
 
 ### 3.3 QUERY (Client → Directory)

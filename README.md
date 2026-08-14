@@ -330,6 +330,11 @@ The companion [task time semantics](docs/architecture/task-time-semantics.md)
 keeps the current provider attempt budget separate from delivery lifetime,
 logical-task deadline, result validity and caller-local wait behavior.
 
+The [directory state semantics](docs/architecture/directory-state-semantics.md)
+separate identity and advertisement validity from current reachability,
+execution availability and dispatch eligibility. Default discovery still
+returns only candidates that are eligible now.
+
 The [public evidence access profile](docs/public-evidence-access.md) lists the
 version, implementation, registry, conformance, release and live-runtime
 artifacts intended for non-browser retrieval. Static source evidence has a
