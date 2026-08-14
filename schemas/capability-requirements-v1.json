@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/capability-requirements-v1.json",
+  "title": "IICP capability requirements v1",
+  "type": "object",
+  "required": ["schema_version", "intent"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "intent": {"type": "string", "pattern": "^urn:iicp:intent:[a-z0-9][a-z0-9:-]*:v[0-9]+$", "maxLength": 255},
+    "requires": {"$ref": "#/$defs/requirementSet"},
+    "prefers": {"$ref": "#/$defs/requirementSet"},
+    "limits": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {"$ref": "#/$defs/limitRequirement"}
+    }
+  },
+  "$defs": {
+    "requirement": {
+      "type": "object",
+      "required": ["class", "id"],
+      "additionalProperties": false,
+      "properties": {
+        "class": {"type": "string", "enum": ["input_modality", "output_modality", "feature", "execution_capability", "profile", "extension"]},
+        "id": {"type": "string", "minLength": 1, "maxLength": 255}
+      }
+    },
+    "requirementSet": {
+      "type": "array",
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/requirement"}
+    },
+    "limitRequirement": {
+      "type": "object",
+      "required": ["id", "operator", "value", "unit"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"},
+        "operator": {"type": "string", "enum": ["gte", "lte", "eq"]},
+        "value": {"type": "number", "minimum": 0},
+        "unit": {"type": "string", "enum": ["tokens", "items", "bytes", "milliseconds", "dimensions"]}
+      }
+    }
+  }
+}

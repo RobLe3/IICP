@@ -42,6 +42,12 @@ cross-implementation experimental-candidate gate. This means its fixtures and
 release workflow are ready for explicit opt-in research; it is not a normative
 promotion.
 
+The effective-capability Profile now has binding-neutral advertisement,
+requirement and refusal schemas plus a shared parity fixture. Adoption remains
+opt-in and coordinated across both directories, the maintained SDKs and the
+browser implementation; no discovery endpoint or default changed with the
+schema publication.
+
 The policy operational-evidence fixture adds only an opt-in compatibility
 check for locally authenticated, digest-bound and unexpired evidence records.
 It is not a legal certification and does not change default routing.

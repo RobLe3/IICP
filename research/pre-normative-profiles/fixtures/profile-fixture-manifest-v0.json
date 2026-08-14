@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.21.0-draft",
+  "manifest_version": "0.22.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -11,6 +11,11 @@
       "path": "effective-capability-taxonomy-v0.json",
       "fixture_version": "0.1.0-draft",
       "sha256": "1cb9519fcdc742fbde6800d2b97169696992aea4a2cc2ef747358898f0c3741d"
+    },
+    {
+      "path": "effective-capability-v1.json",
+      "fixture_version": "1.0.0",
+      "sha256": "cdc8fa5131525ba5ef49cbea2aba02c9183411e01b1ead7ea3bd1503ba528d88"
     },
     {
       "path": "runtime-identity-context-v0.json",

@@ -1,0 +1,121 @@
+{
+  "fixture_version": "1.0.0",
+  "status": "pre-normative-parity-contract",
+  "profile_id": "urn:iicp:profile:effective-capability:v1",
+  "evaluation_time": "2026-08-14T12:00:00Z",
+  "vocabulary": {
+    "input_modality": ["text", "image", "audio", "video"],
+    "output_modality": ["text", "image", "audio", "video"],
+    "feature": ["structured_output", "tool_calling"],
+    "execution_capability": ["tool_execution", "agentic_loop", "stateful_session", "delegation", "resumability"],
+    "profile": ["urn:iicp:profile:service-lifecycle:v1"]
+  },
+  "advertisement": {
+    "schema_version": "1.0.0",
+    "capabilities": [
+      {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "variant_id": "text-basic",
+        "models": ["fixture-small"],
+        "input_modalities": ["text"],
+        "output_modalities": ["text"],
+        "limits": {
+          "context_tokens": {"value": 8192, "unit": "tokens"},
+          "output_tokens": {"value": 2048, "unit": "tokens"}
+        },
+        "claim_provenance": {
+          "source": "provider_metadata",
+          "observed_at": "2026-08-14T11:00:00Z",
+          "valid_until": "2026-08-15T11:00:00Z"
+        }
+      },
+      {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "variant_id": "vision-tools",
+        "models": ["fixture-vision"],
+        "input_modalities": ["text", "image"],
+        "output_modalities": ["text"],
+        "features": ["structured_output", "tool_calling"],
+        "limits": {
+          "context_tokens": {"value": 131072, "unit": "tokens"},
+          "output_tokens": {"value": 8192, "unit": "tokens"}
+        },
+        "supported_profiles": ["urn:iicp:profile:service-lifecycle:v1"],
+        "claim_provenance": {
+          "source": "runtime_introspection",
+          "observed_at": "2026-08-14T11:30:00Z",
+          "valid_until": "2026-08-14T13:00:00Z"
+        },
+        "extensions": {
+          "org.example.optional-batching": {"required": false, "value": {"enabled": true}}
+        }
+      },
+      {
+        "intent": "urn:iicp:intent:tool:invoke:v1",
+        "variant_id": "sandboxed-tool",
+        "execution_capabilities": ["tool_execution"],
+        "limits": {"payload_bytes": {"value": 1048576, "unit": "bytes"}},
+        "claim_provenance": {
+          "source": "conformance_probe",
+          "observed_at": "2026-08-14T10:00:00Z",
+          "valid_until": "2026-08-15T10:00:00Z",
+          "evidence_ref": "iicp-evidence:fixture-tool-v1"
+        }
+      }
+    ]
+  },
+  "matching_scenarios": [
+    {
+      "name": "text_chat_uses_complete_single_variant",
+      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:llm:chat:v1", "requires": [{"class": "input_modality", "id": "text"}]},
+      "expected": {"eligible": true, "variant_ids": ["text-basic", "vision-tools"]}
+    },
+    {
+      "name": "vision_and_tools_match_one_variant",
+      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:llm:chat:v1", "requires": [{"class": "input_modality", "id": "image"}, {"class": "feature", "id": "tool_calling"}], "limits": [{"id": "context_tokens", "operator": "gte", "value": 65536, "unit": "tokens"}]},
+      "expected": {"eligible": true, "variant_ids": ["vision-tools"]}
+    },
+    {
+      "name": "cross_variant_union_is_forbidden",
+      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:llm:chat:v1", "requires": [{"class": "input_modality", "id": "image"}, {"class": "execution_capability", "id": "tool_execution"}]},
+      "expected": {"eligible": false, "refusal": {"schema_version": "1.0.0", "code": "required_capability_unsupported"}}
+    },
+    {
+      "name": "unknown_required_fails_closed",
+      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:llm:chat:v1", "requires": [{"class": "feature", "id": "future_magic"}]},
+      "expected": {"eligible": false, "refusal": {"schema_version": "1.0.0", "code": "required_capability_unknown"}}
+    },
+    {
+      "name": "unknown_preference_does_not_change_eligibility",
+      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:llm:chat:v1", "requires": [{"class": "input_modality", "id": "text"}], "prefers": [{"class": "feature", "id": "future_magic"}]},
+      "expected": {"eligible": true, "variant_ids": ["text-basic", "vision-tools"], "preference_unavailable": true}
+    },
+    {
+      "name": "limit_is_unsatisfied",
+      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:llm:chat:v1", "limits": [{"id": "context_tokens", "operator": "gte", "value": 262144, "unit": "tokens"}]},
+      "expected": {"eligible": false, "refusal": {"schema_version": "1.0.0", "code": "capability_limit_unsatisfied"}}
+    },
+    {
+      "name": "stale_required_claim_fails_closed",
+      "evaluation_time": "2026-08-16T12:00:00Z",
+      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:tool:invoke:v1", "requires": [{"class": "execution_capability", "id": "tool_execution"}]},
+      "expected": {"eligible": false, "refusal": {"schema_version": "1.0.0", "code": "required_capability_stale"}}
+    },
+    {
+      "name": "policy_denial_is_not_capability_absence",
+      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:tool:invoke:v1", "requires": [{"class": "execution_capability", "id": "tool_execution"}]},
+      "policy_denials": [{"class": "execution_capability", "id": "tool_execution"}],
+      "expected": {"eligible": false, "refusal": {"schema_version": "1.0.0", "code": "capability_policy_denied"}}
+    },
+    {
+      "name": "unknown_optional_extension_is_preserved",
+      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:llm:chat:v1", "requires": [{"class": "input_modality", "id": "image"}]},
+      "expected": {"eligible": true, "variant_ids": ["vision-tools"], "preserved_extension": "org.example.optional-batching"}
+    }
+  ],
+  "invalid_advertisements": [
+    {"name": "missing_intent", "value": {"schema_version": "1.0.0", "capabilities": [{"variant_id": "invalid"}]}},
+    {"name": "unknown_top_level_field", "value": {"schema_version": "1.0.0", "capabilities": [{"intent": "urn:iicp:intent:llm:chat:v1", "vision": true}]}},
+    {"name": "negative_limit", "value": {"schema_version": "1.0.0", "capabilities": [{"intent": "urn:iicp:intent:llm:chat:v1", "limits": {"context_tokens": {"value": -1, "unit": "tokens"}}}]}}
+  ]
+}

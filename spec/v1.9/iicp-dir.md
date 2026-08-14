@@ -138,8 +138,10 @@ features from different variants. Inference-only `models` and `max_tokens` are
 conditional rather than universal semantic fields. Required capabilities,
 preferences and quantitative limits are separate matching inputs; policy denial
 remains distinct from absence. Unknown required declarations fail closed.
-Existing `?modality=` behavior remains unchanged, and the general matching
-contract adds no wire field in this release. See
+Existing `?modality=` behavior remains unchanged. The opt-in
+`urn:iicp:profile:effective-capability:v1` contract now defines
+binding-neutral advertisement, requirement and refusal schemas, but adds no
+HTTP endpoint or query field in this release. See
 `docs/architecture/effective-service-capability-semantics.md`.
 
 **`operator_delegation` (v1.10.0, ADR-045 Phase A — verifiable operator identity)**: an OPTIONAL

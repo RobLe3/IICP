@@ -65,9 +65,10 @@ class EffectiveServiceCapabilitySemanticsTest(unittest.TestCase):
         self.assertFalse(provenance["operator_assertion_is_verified"])
         self.assertEqual("stale", provenance["expired"])
 
-    def test_current_wire_is_unchanged(self) -> None:
-        self.assertFalse(self.contract["wire_change"])
-        self.assertIn("no_general_discovery_wire_change", self.contract["explicit_non_claims"])
+    def test_additive_profile_contract_does_not_change_http_binding(self) -> None:
+        self.assertTrue(self.contract["wire_change"])
+        self.assertEqual("urn:iicp:profile:effective-capability:v1", self.contract["profile_id"])
+        self.assertIn("no_http_discovery_binding_change", self.contract["explicit_non_claims"])
         self.assertIn("Existing `?modality=` behavior remains unchanged", self.directory)
 
 

@@ -1,6 +1,6 @@
 # Architecture decision: effective service capabilities
 
-**Status:** Accepted semantic and schema foundation; ecosystem rollout requires coordinated follow-up  
+**Status:** Accepted additive pre-normative Profile contract; ecosystem adoption remains parity-gated
 **Recorded:** 2026-08-14  
 **Machine-readable contract:**
 [`effective-service-capability-v1.json`](effective-service-capability-v1.json)  
@@ -55,10 +55,13 @@ required only when an output-token limit is meaningful. Tool, batch, retrieval,
 sensor and deterministic-service capabilities must not invent model names or
 token limits to satisfy the base object.
 
-Current directories and SDKs keep their legacy flattened representation until
-the coordinated rollout adopts this conditional schema. Existing registrations
-remain valid. Synthetic MCP model names are compatibility data, not capability
-semantics, and may be removed only through that rollout.
+The additive contract is published as
+[`effective-capability-advertisement-v1.json`](../../schemas/effective-capability-advertisement-v1.json).
+Current directories and SDKs keep accepting their legacy flattened
+representation while the coordinated rollout adopts this conditional schema.
+Existing registrations remain valid. Synthetic MCP model names are
+compatibility data, not capability semantics, and may be removed only through
+that rollout.
 
 ## Extension preservation
 
@@ -98,7 +101,7 @@ second registry.
 
 ## Matching
 
-A future capability-aware discovery request has three independent inputs:
+A capability-aware discovery request has three independent inputs:
 
 - `requires`: every understood requirement must be present on one effective
   variant;
@@ -111,9 +114,18 @@ Portable refusal classes are `required_capability_unknown`,
 declarations fail closed. Policy denial remains distinct from capability
 absence, and preferences influence ranking only after eligibility.
 
-This decision defines semantics, not a new discovery wire shape. Existing
-`?modality=` behavior remains unchanged until coordinated implementation work
-adds the general contract.
+The binding-neutral request and refusal shapes are published as
+[`capability-requirements-v1.json`](../../schemas/capability-requirements-v1.json)
+and
+[`capability-refusal-v1.json`](../../schemas/capability-refusal-v1.json).
+The shared fixture is
+[`effective-capability-v1.json`](../../research/pre-normative-profiles/fixtures/effective-capability-v1.json).
+It is the parity contract for complete-variant matching, unknown required and
+preferred declarations, typed limits, stale evidence, policy denial and
+extension preservation.
+
+These schemas do not define a new HTTP endpoint. Existing `?modality=` behavior
+remains unchanged until a binding adopts the general requirements object.
 
 ## Claim provenance and freshness
 
@@ -129,9 +141,23 @@ or backend topology. Hardware attestation is not required for ordinary claims.
 
 ## Compatibility and non-goals
 
-The foundation changes no current request, registration or discovery schema.
-It preserves existing intents, modalities, Profile negotiation and buffered
-execution. It does not create a vision intent, model ontology, global quality
-score, monitoring framework, agent framework or vendor-specific vocabulary.
-Downstream support must ship as one parity-gated chain across both directories,
-Python, TypeScript, Rust and browser surfaces.
+The new schemas are additive and opt-in. Implementations that have not adopted
+the Profile continue using the current request, registration and discovery
+shapes. The contract preserves existing intents, modality filtering, Profile
+negotiation and buffered execution. It does not create a vision intent, model
+ontology, global quality score, monitoring framework, agent framework or
+vendor-specific vocabulary. Downstream support must ship as one parity-gated
+chain across both directories, Python, TypeScript, Rust and browser surfaces.
+
+Adoption and rollback follow these rules:
+
+- a producer emits the Profile fields only when its implementation has enabled
+  this contract and can supply a complete effective-path claim;
+- a Directory either preserves accepted Profile data or rejects the
+  registration; it must not accept a required declaration and discard it;
+- a consumer that does not request the Profile keeps the current discovery and
+  selection behavior;
+- disabling the Profile stops new capability-aware requirements and
+  advertisements without rewriting legacy capability records;
+- rollback uses the existing registration and `?modality=` paths. It does not
+  require a protocol downgrade, version rewrite or changed buffered call.

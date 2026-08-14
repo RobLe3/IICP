@@ -19,6 +19,12 @@ execution, limits, policy, bindings, identity, observations and evidence; it
 also records negative implications such as tool-call generation not implying
 tool execution. It is not a wire schema and does not authorize advertisement.
 
+`effective-capability-v1.json` is the parity contract for the opt-in
+`urn:iicp:profile:effective-capability:v1` schemas. It tests complete-variant
+matching, typed limits, unknown required and preferred declarations, stale
+claims, policy denial and extension preservation. It does not add an HTTP
+endpoint or enable the Profile in an implementation by itself.
+
 `runtime-identity-context-v0.json` is a research-only classification contract
 for lean model-visible IICP context on conversational requests. It separates
 stable protocol identity from supplied runtime facts, fixes a strict disclosure

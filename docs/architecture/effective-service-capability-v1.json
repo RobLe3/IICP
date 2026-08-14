@@ -1,7 +1,14 @@
 {
   "decision_version": "1.0.0",
-  "status": "accepted-semantic-foundation",
-  "wire_change": false,
+  "status": "accepted-additive-pre-normative-profile-contract",
+  "wire_change": true,
+  "profile_id": "urn:iicp:profile:effective-capability:v1",
+  "schemas": {
+    "advertisement": "schemas/effective-capability-advertisement-v1.json",
+    "requirements": "schemas/capability-requirements-v1.json",
+    "refusal": "schemas/capability-refusal-v1.json"
+  },
+  "parity_fixture": "research/pre-normative-profiles/fixtures/effective-capability-v1.json",
   "definition": "behavior usable through the complete advertised service path for an intent",
   "path_components": ["model_or_service", "adapter_or_template", "runtime", "provider_interface", "iicp_adapter"],
   "classes": [
@@ -19,7 +26,7 @@
   ],
   "base_object": {
     "required": ["intent"],
-    "optional": ["version", "phase", "variant_id", "input_modalities", "output_modalities", "features", "limits", "supported_profiles", "claim_provenance", "extensions"],
+    "optional": ["version", "phase", "variant_id", "input_modalities", "output_modalities", "features", "execution_capabilities", "limits", "supported_profiles", "claim_provenance", "extensions"],
     "conditional": {
       "models": "required only where model identity or selection is part of the intent contract",
       "max_tokens": "required only where an output-token limit is meaningful"
@@ -141,8 +148,8 @@
   "explicit_non_claims": [
     "no_new_intent_hierarchy",
     "no_global_quality_score",
-    "no_general_discovery_wire_change",
+    "no_http_discovery_binding_change",
     "no_streaming_semantic_change",
-    "no_sdk_or_directory_rollout_in_this_decision"
+    "no_automatic_sdk_or_directory_adoption"
   ]
 }

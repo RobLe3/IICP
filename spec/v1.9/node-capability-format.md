@@ -35,11 +35,27 @@ All capability objects share this base schema:
 | `version` | string | SHOULD | Capability version; "1" if absent |
 | `phase` | integer | MAY | Minimum IICP phase required; 1 if absent |
 | `variant_id` | string | MAY | Opaque node-scoped identifier for one stable effective service variant |
+| `input_modalities` | string[] | MAY | Media accepted by this complete service path |
+| `output_modalities` | string[] | MAY | Media produced by this complete service path |
+| `features` | string[] | MAY | Inference/service features such as `structured_output` or `tool_calling` |
+| `execution_capabilities` | string[] | MAY | Runtime actions such as `tool_execution`; these remain policy-controlled |
+| `limits` | object | MAY | Typed quantitative limits represented as `{value, unit}` |
+| `supported_profiles` | string[] | MAY | Negotiated IICP Profile identifiers supported by this variant |
+| `claim_provenance` | object | MAY | Bounded source and freshness for the capability claim |
+| `extensions` | object | MAY | Namespaced required or optional extension values |
 
 All additional fields are capability-type-specific (§3–§7). Model and token
 fields are conditional: `models` is required only when model identity or
 selection belongs to the intent contract, and `max_tokens` only where an output
 token limit is meaningful.
+
+The opt-in `urn:iicp:profile:effective-capability:v1` contract publishes the
+exact additive advertisement, requirements and refusal schemas in
+`schemas/effective-capability-advertisement-v1.json`,
+`schemas/capability-requirements-v1.json` and
+`schemas/capability-refusal-v1.json`. Implementations that do not advertise or
+consume this Profile continue using the base capability format. The Profile
+does not create an HTTP endpoint or change the existing modality query.
 
 ---
 

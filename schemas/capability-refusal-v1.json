@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/capability-refusal-v1.json",
+  "title": "IICP capability matching refusal v1",
+  "type": "object",
+  "required": ["schema_version", "code"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "code": {
+      "type": "string",
+      "enum": [
+        "required_capability_unknown",
+        "required_capability_unsupported",
+        "required_capability_stale",
+        "capability_limit_unsatisfied",
+        "capability_policy_denied"
+      ]
+    },
+    "requirement": {"$ref": "capability-requirements-v1.json#/$defs/requirement"},
+    "limit": {"$ref": "capability-requirements-v1.json#/$defs/limitRequirement"},
+    "message": {"type": "string", "maxLength": 255}
+  }
+}
