@@ -153,6 +153,7 @@ jobs:
       - run: python3 -m unittest discover -s conformance-runner/tests
       - run: python3 tools/check_profile_fixture_manifest.py
       - run: python3 -m unittest discover -s tools -p 'test_effective_capability_taxonomy.py'
+      - run: python3 -m unittest discover -s tools -p 'test_runtime_identity_context.py'
       - run: python3 tools/check_intent_registry.py
       - run: python3 tools/check_intent_registry_schema.py
       - run: python3 -m unittest discover -s tools -p 'test_intent_registry.py'

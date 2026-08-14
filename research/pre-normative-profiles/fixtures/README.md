@@ -19,6 +19,12 @@ execution, limits, policy, bindings, identity, observations and evidence; it
 also records negative implications such as tool-call generation not implying
 tool execution. It is not a wire schema and does not authorize advertisement.
 
+`runtime-identity-context-v0.json` is a research-only classification contract
+for lean model-visible IICP context on conversational requests. It separates
+stable protocol identity from supplied runtime facts, fixes a strict disclosure
+allow-list boundary, leaves non-chat payloads unchanged, and records one local
+token-overhead measurement. It is not a prompt default or wire schema.
+
 `dispatch-route-ticket-v1.json` covers signed disclosure-only route tickets,
 including malformed, tampered, expired, issuer, audience, node and intent
 mismatches. It does not imply v1 node admission, single-use redemption or
