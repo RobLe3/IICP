@@ -22,6 +22,7 @@ on:
       - "docs/public-evidence-access.md"
       - "docs/architecture/environmental-independence-*"
       - "docs/architecture/identifier-*"
+      - "docs/architecture/task-time-*"
       - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
@@ -92,6 +93,7 @@ on:
       - "docs/public-evidence-access.md"
       - "docs/architecture/environmental-independence-*"
       - "docs/architecture/identifier-*"
+      - "docs/architecture/task-time-*"
       - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
@@ -161,6 +163,7 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_environmental_independence.py'
       - run: python3 -m unittest discover -s tools -p 'test_environmental_independence_decision.py'
       - run: python3 -m unittest discover -s tools -p 'test_identifier_registry_architecture.py'
+      - run: python3 -m unittest discover -s tools -p 'test_task_time_semantics.py'
       - run: python3 tools/check_intent_registry.py
       - run: python3 tools/check_intent_registry_schema.py
       - run: python3 -m unittest discover -s tools -p 'test_intent_registry.py'

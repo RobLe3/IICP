@@ -83,12 +83,20 @@ explicitly negotiates resumption.
 
 ## 5. Deadline, cancellation, retry, and idempotency
 
-- `constraints.timeout_ms` is an end-to-end deadline measured from provider
-  receipt. A provider MUST reject before acceptance when it cannot honor the
-  deadline, and MUST transition an accepted task to `timed_out` when it expires.
+- `constraints.timeout_ms` is the current provider attempt budget measured from
+  provider receipt through admission, queueing, execution and terminal response
+  creation. A provider MUST reject before acceptance when it cannot honor the
+  budget, and MUST transition an accepted task to `timed_out` when it expires.
+  It is not a pre-receipt delivery lifetime, absolute logical-task deadline,
+  result-retention promise or caller wait timeout. Those axes are defined in
+  `docs/architecture/task-time-semantics.md` and require separate Profile or
+  local API semantics.
 - A caller cancels with a CONTROL message over native transport or the
   HTTP-equivalent cancellation control endpoint. The control payload contains
   only `task_id` and `reason`; it MUST NOT repeat task payload content.
+- A local client or transport timeout does not confirm cancellation. Until a
+  cancellation acknowledgement or terminal state is observed, provider state
+  is unknown and a retry follows the idempotency rules below.
 - Cancellation before acceptance resolves as `rejected`; cancellation after
   acceptance resolves as `cancelled` or the already-committed terminal result.
   Providers MUST NOT report a task as cancelled after completing it.

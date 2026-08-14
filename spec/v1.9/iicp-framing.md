@@ -206,7 +206,7 @@ preserved; three keys are deprecated (marked †).
 | 19 | transport_hint† | tstr | deprecated | Use framing version negotiation instead |
 | 20 | region | tstr | MAY | Target region code (`us-east-1`, etc.) |
 | 21 | capabilities | array | MAY | Required node capabilities; array of tstr |
-| 22 | ttl | uint | MAY | Time-to-live in seconds; 0 = no limit |
+| 22 | ttl | uint | MAY | Legacy binding-local TTL hint in seconds; 0 = no binding-local limit. It is not a logical task deadline, result-retention promise or general delivery lifetime without a negotiated Profile/Binding mapping. |
 | 23 | metadata | map | MAY | Opaque key/value pairs; keys and values MUST be tstr |
 | 24 | task_id | tstr | COND | Stable logical-task identifier; MUST be present when `urn:iicp:profile:service-lifecycle:v1` is negotiated |
 
