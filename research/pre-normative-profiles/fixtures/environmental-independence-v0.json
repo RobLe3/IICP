@@ -1,0 +1,118 @@
+{
+  "fixture_version": "0.1.0-research",
+  "status": "research-only",
+  "wire_contract": false,
+  "purpose": "Classify environmental-independence and extension-layer invariants without defining a DTN, BPv7, space, transport, or wire profile.",
+  "invariants": [
+    "intent_transport_independent",
+    "capability_implementation_independent",
+    "identity_locator_distinct",
+    "advertisement_reachability_availability_distinct",
+    "logical_task_attempt_distinct",
+    "execution_delivery_result_time_distinct",
+    "qos_priority_delivery_execution_security_orthogonal",
+    "security_property_mechanism_distinct",
+    "message_semantics_encoding_distinct",
+    "fragmentation_task_semantics_distinct",
+    "continuous_connectivity_not_core_required",
+    "unknown_required_fails_closed"
+  ],
+  "extension_classes": {
+    "core": "fundamental logical operation or invariant required by every conforming implementation",
+    "profile": "optional interoperable semantics composed with Core",
+    "binding": "mapping of Core and negotiated profile semantics onto a transport or peer protocol",
+    "registry": "stable identifier, lifecycle and compatibility metadata",
+    "implementation_extension": "local behavior with no interoperability claim that cannot weaken negotiated requirements"
+  },
+  "cases": [
+    {
+      "name": "transport_change_keeps_intent",
+      "input": {"intent": "urn:iicp:intent:llm:chat:v1", "from": "http", "to": "future-bpv7-binding"},
+      "expected": {"intent_changed": false, "extension_class": "binding", "phase": "phase_8"}
+    },
+    {
+      "name": "non_model_service_can_satisfy_intent",
+      "input": {"implementation": "deterministic-software", "effective_contract_matches": true},
+      "expected": {"eligible_by_implementation_class": true, "capability_requires_model": false}
+    },
+    {
+      "name": "locator_rotation_keeps_identity",
+      "input": {"node_id": "node-stable", "old_locator": "https://old.example", "new_locator": "https://new.example"},
+      "expected": {"node_id_changed": false, "ownership_revalidation_required": true}
+    },
+    {
+      "name": "valid_advertisement_provider_temporarily_offline",
+      "input": {"advertisement_valid": true, "reachable_now": false, "available_now": false},
+      "expected": {"capability_exists": true, "default_dispatch_eligible": false}
+    },
+    {
+      "name": "retry_keeps_task_and_changes_call",
+      "input": {"task_id": "task-1", "first_call_id": "call-1", "retry_call_id": "call-2"},
+      "expected": {"same_logical_task": true, "valid_attempt_identity": true}
+    },
+    {
+      "name": "transport_retry_must_not_create_task",
+      "input": {"cause": "retransmission", "first_task_id": "task-1", "retry_task_id": "task-2"},
+      "expected": {"valid": false, "reason": "transport_retry_changed_logical_task"}
+    },
+    {
+      "name": "execution_and_delivery_time_are_separate",
+      "input": {"execution_timeout_ms": 30000, "delivery_lifetime_ms": 172800000, "task_deadline_ms": 259200000},
+      "expected": {"represent_as_one_timeout_ms": false, "requires_additive_profile_review": true}
+    },
+    {
+      "name": "environment_name_is_not_qos",
+      "input": {"qos": "mars"},
+      "expected": {"valid": false, "reason": "environment_must_not_be_encoded_as_qos"}
+    },
+    {
+      "name": "binding_security_mechanism_satisfies_property",
+      "input": {"required_property": "confidentiality", "binding": "future-bpv7", "mechanism": "bpsec"},
+      "expected": {"core_security_property_changed": false, "binding_must_prove_property": true, "phase": "phase_8"}
+    },
+    {
+      "name": "unknown_required_profile_rejects",
+      "input": {"profile": "urn:iicp:profile:future-required:v1", "required": true, "supported": false},
+      "expected": {"dispatch_allowed": false, "outcome": "unsupported_required_profile"}
+    },
+    {
+      "name": "unknown_optional_profile_preserves_baseline",
+      "input": {"profile": "urn:iicp:profile:future-optional:v1", "required": false, "supported": false},
+      "expected": {"baseline_allowed": true, "profile_applied": false}
+    },
+    {
+      "name": "unknown_required_intent_modifier_must_not_fail_open",
+      "input": {"intent": "urn:iicp:intent:llm:chat:v1+future-required", "modifier_known": false},
+      "expected": {"route_as_base_intent": false, "requires_modifier_profile_reconciliation": true}
+    },
+    {
+      "name": "fragmentation_keeps_task_semantics",
+      "input": {"task_id": "task-1", "fragmentation_layers": ["iicp-frame", "quic", "bpv7"]},
+      "expected": {"task_count": 1, "lifecycle_changed": false}
+    },
+    {
+      "name": "delayed_result_can_use_later_connection",
+      "input": {"task_id": "task-1", "submission_connection": "conn-a", "result_connection": "conn-b"},
+      "expected": {"core_task_identity_valid": true, "requires_negotiated_async_delivery_profile": true}
+    },
+    {
+      "name": "new_domain_capability_is_registry_work",
+      "input": {"capability": "urn:iicp:capability:future-domain:measure:v1"},
+      "expected": {"extension_class": "registry", "core_revision_required": false}
+    },
+    {
+      "name": "new_semantic_behavior_is_profile_work",
+      "input": {"behavior": "deterministic-execution"},
+      "expected": {"extension_class": "profile", "core_revision_required": false}
+    }
+  ],
+  "explicit_non_claims": [
+    "no_dtn_support",
+    "no_bpv7_binding",
+    "no_bpsec_mapping",
+    "no_space_mission_readiness",
+    "no_contact_plan_routing",
+    "no_urn_namespace_registration",
+    "no_wire_change"
+  ]
+}
