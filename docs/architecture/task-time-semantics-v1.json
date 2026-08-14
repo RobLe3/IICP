@@ -186,7 +186,7 @@
     },
     {
       "path": "spec/v1.9/iicp-dir.md",
-      "matches": 24,
+      "matches": 25,
       "owner": "control-plane freshness and operation timers"
     },
     {

@@ -294,6 +294,13 @@ data accumulation.
 - `since_seq` older than the seed's rolling window: server returns
   `IICP-E045` (snapshot_required) with hint to call `GET /v1/snapshot`
 
+A valid snapshot or event signature proves provenance and integrity at the
+recorded sequence and time. Signature validity does not extend reachability,
+availability or dispatch freshness. Replicas and clients MUST reapply the
+heartbeat, active-probe, replica-lag, policy and request-eligibility rules before
+serving or using a route. A retained valid-but-offline advertisement is known
+state, not a currently dispatchable candidate.
+
 ### 5.4 Event Payload Schemas (Normative)
 
 Replicas MUST consume these payloads to maintain locally consistent node state.

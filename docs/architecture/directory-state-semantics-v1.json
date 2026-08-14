@@ -1,0 +1,175 @@
+{
+  "decision_version": "1.0.0",
+  "status": "accepted-semantic-boundary",
+  "wire_change": false,
+  "default_discovery_change": false,
+  "axes": {
+    "identity": ["valid", "revoked"],
+    "advertisement": ["current", "superseded", "stale", "revoked", "invalid"],
+    "reachability": ["verified", "fresh_self_report", "stale", "failed", "unknown"],
+    "availability": ["ready", "degraded", "unavailable", "unknown"],
+    "dispatch": ["eligible", "ineligible"]
+  },
+  "views": {
+    "default_dispatch": "currently eligible candidates only",
+    "public": "redacted projection of the same currently eligible candidate set",
+    "owner_detail": "may expose the authenticated owner's retained dormant record",
+    "federation_snapshot": "signed recorded state whose dispatch freshness is recalculated by the recipient",
+    "valid_offline": "reserved for a future explicit profile or view"
+  },
+  "evidence_sources": {
+    "registration_probe": {
+      "proves": "route responded during admission",
+      "freshness": "registration_transaction"
+    },
+    "authenticated_heartbeat": {
+      "proves": "credential or key holder recently reported node state",
+      "freshness": "heartbeat_window"
+    },
+    "active_probe": {
+      "proves": "directory recently observed the route",
+      "freshness": "probe_window"
+    },
+    "signed_snapshot_or_event": {
+      "proves": "directory attested to recorded state at a sequence and time",
+      "freshness": "signature_plus_replica_lag_and_state_freshness"
+    },
+    "operator_assertion": {
+      "proves": "declared configuration or policy fact",
+      "freshness": "declaration_specific",
+      "proves_current_reachability": false
+    }
+  },
+  "scenarios": [
+    {
+      "name": "successful_registration",
+      "expected": {
+        "identity": "valid",
+        "advertisement": "current",
+        "reachability": "verified",
+        "dispatch": "eligible_if_all_other_gates_pass"
+      }
+    },
+    {
+      "name": "heartbeat_available_false",
+      "expected": {
+        "reachability": "fresh_self_report",
+        "availability": "unavailable",
+        "dispatch": "ineligible"
+      }
+    },
+    {
+      "name": "heartbeat_expired",
+      "expected": {
+        "identity": "valid",
+        "advertisement": "current",
+        "reachability": "stale",
+        "availability": "unavailable",
+        "dispatch": "ineligible",
+        "record_retained": true
+      }
+    },
+    {
+      "name": "heartbeat_recovery",
+      "expected": {
+        "identity": "valid",
+        "advertisement": "current",
+        "reachability": "fresh_self_report",
+        "availability": "ready_unless_explicitly_false",
+        "dispatch": "recalculate"
+      }
+    },
+    {
+      "name": "confirmed_active_probe_failure",
+      "expected": {
+        "reachability": "failed",
+        "failed_route_dispatch": "ineligible",
+        "independent_valid_route_may_remain": true
+      }
+    },
+    {
+      "name": "endpoint_rotation",
+      "expected": {
+        "old_advertisement": "superseded_after_new_route_validation",
+        "unverified_new_route_published": false
+      }
+    },
+    {
+      "name": "valid_but_offline",
+      "expected": {
+        "identity": "valid",
+        "advertisement": "current",
+        "reachability": "stale",
+        "dispatch": "ineligible",
+        "record_retained": true,
+        "default_discovery_contains": false
+      }
+    },
+    {
+      "name": "advertisement_revoked",
+      "expected": {
+        "advertisement": "revoked",
+        "dispatch": "ineligible"
+      }
+    },
+    {
+      "name": "advertisement_superseded",
+      "expected": {
+        "advertisement": "superseded",
+        "dispatch": "ineligible"
+      }
+    },
+    {
+      "name": "delayed_federation_sync",
+      "expected": {
+        "signature_may_remain_valid": true,
+        "replica_serves_discovery": false,
+        "dispatch": "ineligible"
+      }
+    },
+    {
+      "name": "reachable_but_policy_ineligible",
+      "expected": {
+        "reachability": "verified",
+        "availability": "ready",
+        "dispatch": "ineligible"
+      }
+    },
+    {
+      "name": "future_scheduled_availability",
+      "expected": {
+        "requires_profile": true,
+        "current_default_dispatch": "ineligible"
+      }
+    }
+  ],
+  "implementation_review": {
+    "php_directory": [
+      "registration_liveness",
+      "heartbeat_expiry",
+      "dormant_reactivation",
+      "availability_filter",
+      "confirmed_route_demotion_and_restore"
+    ],
+    "rust_directory": [
+      "registration_liveness",
+      "heartbeat_expiry",
+      "availability_filter",
+      "active_probe_telemetry"
+    ],
+    "confirmed_rust_gaps": [
+      "heartbeat_does_not_clear_dormant_since",
+      "heartbeat_does_not_emit_reactivate_transition",
+      "active_probe_does_not_apply_route_demotion_or_restore"
+    ],
+    "semantic_parity_required": true,
+    "parity_status": "implementation_follow_up_required"
+  },
+  "explicit_non_claims": [
+    "no_offline_discovery_endpoint",
+    "no_scheduled_availability_support",
+    "no_contact_plan",
+    "no_dtn_or_bpv7_support",
+    "no_default_discovery_expansion"
+  ]
+}
