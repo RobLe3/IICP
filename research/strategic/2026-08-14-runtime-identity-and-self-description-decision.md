@@ -1,7 +1,7 @@
 # Runtime identity and self-description decision
 
 **Date:** 2026-08-14  
-**Status:** Research foundation; not a wire contract or SDK default  
+**Status:** Reviewed pre-normative composition contract; opt-in only, not an SDK default
 **Tracker:** [IICP #158](https://github.com/RobLe3/IICP/issues/158)
 
 ## Decision
@@ -114,8 +114,7 @@ the fixture says, in substance:
 > requests. You are the selected model or service, not IICP. Use only supplied
 > runtime facts when describing this connection; do not guess missing facts.
 
-The exact text is research material until #158 reviews composition and
-provider behavior.
+The stable text remains pre-normative, but the composition contract is now reviewed for an opt-in implementation. Rendered messages carry the exact marker `IICP-RUNTIME-CONTEXT/1` for duplicate suppression.
 
 ## Fact authority and disclosure
 
@@ -157,18 +156,27 @@ would not make an executing model aware of the current request.
 
 ## Composition and precedence
 
-The profile must not become a universal prompt owner. The following principles
-need implementation evidence before exact ordering is normative:
+The profile must not become a universal prompt owner. The reviewed opt-in
+composition rules are deliberately mechanical:
 
-1. preserve application, developer, provider-safety, and user messages without
-   rewriting their content;
-2. compose one canonical IICP context rather than one prompt per SDK;
-3. keep the capsule factual and non-personal so it does not redefine the
+1. preserve every application, developer, provider-safety, and user message
+   without rewriting its role or content;
+2. render one canonical `system` message marked `IICP-RUNTIME-CONTEXT/1`;
+3. insert it after all leading `system` or `developer` messages and before the
+   first other message;
+4. if any existing `system` or `developer` message contains the exact marker,
+   do not insert another capsule;
+5. keep the capsule factual and non-personal so it does not redefine the
    application's assistant role;
-4. suppress an identical versioned capsule rather than duplicate it;
-5. do not promise that a system message prevents prompt injection;
-6. degrade without altering the request when a provider lacks a compatible
-   instruction channel, unless the caller explicitly required the profile.
+6. cap the UTF-8 rendering at 2,048 bytes and reject prohibited facts before
+   composition;
+7. do not claim that a system message prevents prompt injection;
+8. in `explicit` mode, leave the request unchanged when the instruction channel
+   is unsupported; in `required` mode, refuse before dispatch.
+
+These rules define portable observable behavior, not provider-internal prompt
+precedence. A provider may still apply its own safety prompt outside the caller's
+message array.
 
 The existing adapters demonstrate why a structured source is necessary.
 OpenAI-compatible and WebLLM paths accept message arrays, Anthropic uses a
@@ -212,8 +220,7 @@ secrecy is not a security assumption.
 | IICP #56 | **KEEP** | Policy/data-handling ratification is related but not an identity-capsule implementation issue. |
 
 No Web-only issue is justified. The Web path reproduced a shared architectural
-gap. No SDK or directory implementation child is justified before #158 reviews
-the shared semantics.
+gap. The shared semantics are now reviewed for an opt-in implementation chain. Directories remain out of scope because composition belongs at the client/provider execution boundary.
 
 ## Dependency order
 
