@@ -27,6 +27,9 @@
 - Defines effective service capabilities, conditional model-specific fields,
   same-intent variants, extension preservation, required/preferred/limit
   matching and bounded claim provenance without changing the current wire.
+- Defines a small, opt-in runtime-identity composition contract for chat-only
+  requests. It preserves application instructions, omits unknown facts and never
+  injects identity text into non-chat operations or creates an IICP persona.
 
 ## v1.10.13 — 2026-08-12
 
