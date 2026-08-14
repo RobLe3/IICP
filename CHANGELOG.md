@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- Defines the accepted environmental-independence and extension architecture:
+  Core, Profile, Binding, Registry and local implementation extensions now
+  have explicit ownership and compatibility rules.
+- Records transport, implementation, identity/locator, task/attempt, timing,
+  encoding, fragmentation and connectivity invariants without adding a wire
+  field or claiming DTN, BPv7, BPSec, QUIC or space support.
+- Deprecates intent `+modifier` suffixes as a requirements channel and aligns
+  the specification with the official SDKs' existing fail-closed validation.
+  Required optional behavior belongs in a negotiated Profile.
+
 ## v1.10.13 — 2026-08-12
 
 Corrective documentation and validation release. It does not begin a new
