@@ -25,6 +25,10 @@ on:
       - "docs/architecture/task-time-*"
       - "docs/architecture/directory-state-*"
       - "docs/architecture/effective-service-capability-*"
+      - "schemas/effective-capability-advertisement-v1.json"
+      - "schemas/capability-requirements-v1.json"
+      - "schemas/capability-refusal-v1.json"
+      - "tools/test_effective_capability_wire_contract.py"
       - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
@@ -98,6 +102,10 @@ on:
       - "docs/architecture/task-time-*"
       - "docs/architecture/directory-state-*"
       - "docs/architecture/effective-service-capability-*"
+      - "schemas/effective-capability-advertisement-v1.json"
+      - "schemas/capability-requirements-v1.json"
+      - "schemas/capability-refusal-v1.json"
+      - "tools/test_effective_capability_wire_contract.py"
       - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
@@ -170,6 +178,7 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_task_time_semantics.py'
       - run: python3 -m unittest discover -s tools -p 'test_directory_state_semantics.py'
       - run: python3 -m unittest discover -s tools -p 'test_effective_service_capability_semantics.py'
+      - run: python3 -m unittest discover -s tools -p 'test_effective_capability_wire_contract.py'
       - run: python3 tools/check_intent_registry.py
       - run: python3 tools/check_intent_registry_schema.py
       - run: python3 -m unittest discover -s tools -p 'test_intent_registry.py'
