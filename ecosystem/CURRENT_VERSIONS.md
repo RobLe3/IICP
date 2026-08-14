@@ -7,12 +7,12 @@ version different contracts and do not need to match.
 |---|---:|---|
 | Protocol-suite release | 1.10.13 | project-normative beta |
 | Wire compatibility baseline | 1.9.0 | stable v1.9 line |
-| iicp-directory-php | 1.10.90 | active |
-| iicp-directory-rust | 0.1.11 | operator-preview |
-| iicp-client-python | 0.7.103 | active |
-| iicp-client-typescript | 0.7.103 | active |
-| iicp-client-rust | 0.7.103 | active |
-| iicp-web-node | 0.2.3 | experimental |
+| iicp-directory-php | 1.10.91 | active |
+| iicp-directory-rust | 0.1.12 | operator-preview |
+| iicp-client-python | 0.7.104 | active |
+| iicp-client-typescript | 0.7.104 | active |
+| iicp-client-rust | 0.7.104 | active |
+| iicp-web-node | 0.2.4 | experimental |
 
 Deployment identifiers and observed live adoption are time-bound evidence and
 are intentionally not represented as release versions in this projection.
