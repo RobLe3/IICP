@@ -1,7 +1,7 @@
 {
   "files": {
     ".github/workflows/profile-fixtures.yml": "5f15a799aeac39a51a7d1ec36f2ec6d61cfe077599a66df2b7334284dcdab6c8",
-    "CHANGELOG.md": "0e88af774ff90efcfe4efbbe21cfa88ad32923e530ea6ecb1c427a8439549f5d",
+    "CHANGELOG.md": "d3919869b171eaa05876b39f4ba0ef80cd41ad36424119dbeaf96be88eab0f03",
     "IMPLEMENTATIONS.md": "90ea44c94e8573c9af73a68577520b4684cd84291572f7c6d2fb36bf8dd02993",
     "README.md": "0bef256a60f3c254d08062c6ac21e39166e279ce5cf886eb5efffbaf0cf65957",
     "SPEC_RELEASE_PROCESS.md": "8145897d8b3768bcfdab1121fcd081af98f2a52044fbe8835240b0059a07c1fd",
@@ -39,7 +39,7 @@
     "docs/operator-onboarding-recovery.md": "1dbf10a2a46ef110e545871ccce0a5a8e63838c1f85acc53cbcb4c0dfb2c34b1",
     "ecosystem/CURRENT_VERSIONS.md": "9c24c62d30114ab70d34f6f58cc36e9d63a799f3b2fc1a5393ec56998c3d8330",
     "ecosystem/current-versions.json": "9471533561854f0e1c9c08757ea23212df2b532df80187e7b956aa22dd0777d5",
-    "ecosystem/releases.json": "30d3a707f43e9ddb7620fc3b4061cc9b72fd4dcf33c2106c3a944331dfd31b1a",
+    "ecosystem/releases.json": "405ee1c5e39856536e40bd31c55b6177d093a48c11d3bf7f89141f346deb7530",
     "ecosystem/repositories.json": "8f2ce4fb902d8fb1a2734992e37387633dd927fbea8ce5ff37068ac801b11ea1",
     "evidence/clean-room-interoperability-record-v1.json": "907a769090908ec1169c04f8e276396bb644765c0cb98bee735320467c449bc9",
     "evidence/external-participation-campaign-v1.json": "bc1859d39f51467a8375acad725f3649aecee0e44d50ca6ae33b17520fe5fa66",

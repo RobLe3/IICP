@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-13",
+  "generated_at": "2026-08-14",
   "releases": [
     {
       "id": "specification",
@@ -21,93 +21,105 @@
     },
     {
       "id": "directory-php",
-      "version": "1.10.90",
-      "wire_behavior": "unchanged",
-      "conformance_impact": "unchanged",
-      "profiles": [
-        "directory-implementation-metadata-v1",
-        "discovery-evidence-v1"
-      ],
-      "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "recommended",
-      "migration": "No database migration is required. The public 24-hour stats aggregate now selects only the newest deterministic row per metric in SQL.",
-      "rollback": "Restore the immutable 1.10.89 artifact; the public stats cache-miss path then returns to unbounded historical-row hydration and may exceed shared-host PHP memory limits."
-    },
-    {
-      "id": "directory-rust",
-      "version": "0.1.11",
-      "wire_behavior": "unchanged",
+      "version": "1.10.91",
+      "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
         "directory-implementation-metadata-v1",
         "discovery-evidence-v1",
-        "runtime-health-v1"
+        "effective-capability-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No database migration is required. This operator-preview release adds local runtime-health and opt-in systemd service support, a checksum-bound staged updater, deterministic bounded stats parity with PHP v1.10.90, and crates.io distribution.",
-      "rollback": "Restore v0.1.10 with the guarded updater. PHP remains Genesis authority; rollback does not require a database migration or authorize federation or cutover."
+      "migration": "Run the additive capability version/phase migration. The directory preserves, projects and matches explicit effective-capability variants while retaining legacy capability fields and default discovery behavior.",
+      "rollback": "Restore immutable 1.10.90 application code. The expand-first capability columns may remain unused; do not destructively roll back the schema. Genesis deployment requires a separate operator decision."
     },
     {
-      "id": "client-python",
-      "version": "0.7.103",
-      "wire_behavior": "unchanged",
-      "conformance_impact": "changed",
-      "profiles": [
-        "service-lifecycle-v1",
-        "runtime-health-v1",
-        "managed-operator-v1",
-        "cip-consumer-cosignature-v1"
-      ],
-      "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "recommended",
-      "migration": "No persisted-state or wire migration is required. This release publishes the opt-in eligibility-bounded candidate-ranker seam, shared heterogeneous-routing evidence, and IICP-E050 credential-lifecycle replay already implemented across the official SDKs. Built-in selection remains the fallback, and IICP retains final policy validation and dispatch authority.",
-      "rollback": "Install the preceding immutable 0.7.102 package. Existing wire behavior remains compatible; the local candidate-ranker extension and the new credential-lifecycle regression evidence are then unavailable."
-    },
-    {
-      "id": "client-typescript",
-      "version": "0.7.103",
-      "wire_behavior": "unchanged",
-      "conformance_impact": "changed",
-      "profiles": [
-        "service-lifecycle-v1",
-        "runtime-health-v1",
-        "managed-operator-v1",
-        "cip-consumer-cosignature-v1"
-      ],
-      "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "recommended",
-      "migration": "No persisted-state or wire migration is required. This release publishes the opt-in eligibility-bounded candidate-ranker seam, shared heterogeneous-routing evidence, and IICP-E050 credential-lifecycle replay already implemented across the official SDKs. Built-in selection remains the fallback, and IICP retains final policy validation and dispatch authority.",
-      "rollback": "Install the preceding immutable 0.7.102 package. Existing wire behavior remains compatible; the local candidate-ranker extension and the new credential-lifecycle regression evidence are then unavailable."
-    },
-    {
-      "id": "client-rust",
-      "version": "0.7.103",
-      "wire_behavior": "unchanged",
-      "conformance_impact": "unchanged",
-      "profiles": [
-        "service-lifecycle-v1",
-        "runtime-health-v1",
-        "managed-operator-v1",
-        "cip-consumer-cosignature-v1"
-      ],
-      "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "recommended",
-      "migration": "No persisted-state or wire migration is required. This Rust-only security patch replaces the external kill(1)-based single-instance check with a direct OS liveness check, fails closed on indeterminate lock state, and preserves the existing node PID-file location.",
-      "rollback": "Install the preceding immutable 0.7.102 package only if the environment provides a reliable external kill executable. Rollback restores the documented minimal-container duplicate-node risk and is not recommended."
-    },
-    {
-      "id": "web-node",
-      "version": "0.2.3",
+      "id": "directory-rust",
+      "version": "0.1.12",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
-        "directory-implementation-metadata-v1"
+        "directory-implementation-metadata-v1",
+        "discovery-evidence-v1",
+        "runtime-health-v1",
+        "effective-capability-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Rebuild or install the browser package; existing encrypted provider state remains compatible.",
-      "rollback": "Restore v0.2.2; older directories continue to consume the legacy sdk_version compatibility alias."
+      "migration": "Run the additive effective-capability migration. This operator-preview release aligns capability persistence/matching and directory lifecycle transitions with the shared PHP contracts.",
+      "rollback": "Restore immutable 0.1.11 through the guarded updater. The expand-first capability columns may remain unused; PHP remains Genesis authority and no cutover is authorized."
+    },
+    {
+      "id": "client-python",
+      "version": "0.7.104",
+      "wire_behavior": "additive",
+      "conformance_impact": "changed",
+      "profiles": [
+        "service-lifecycle-v1",
+        "runtime-health-v1",
+        "managed-operator-v1",
+        "cip-consumer-cosignature-v1",
+        "effective-capability-v1",
+        "runtime-identity-context-v0",
+        "dispatch-route-ticket-v1"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "No persisted-state or base-wire migration is required. This release adds opt-in runtime identity composition, explicit effective-capability variants, and fail-closed proxy route-ticket verification. Existing behavior is preserved when the new local context is disabled and legacy discovery remains an explicit rollback mode.",
+      "rollback": "Install immutable 0.7.103. This removes the new runtime-identity and effective-capability interfaces and restores the previous proxy ticket behavior; do not use the rollback where verified ticketed discovery is required."
+    },
+    {
+      "id": "client-typescript",
+      "version": "0.7.104",
+      "wire_behavior": "additive",
+      "conformance_impact": "changed",
+      "profiles": [
+        "service-lifecycle-v1",
+        "runtime-health-v1",
+        "managed-operator-v1",
+        "cip-consumer-cosignature-v1",
+        "effective-capability-v1",
+        "runtime-identity-context-v0"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "No persisted-state or base-wire migration is required. This release adds opt-in runtime identity composition and explicit effective-capability variants. Existing requests remain unchanged when runtime identity is disabled.",
+      "rollback": "Install immutable 0.7.103. Existing wire behavior remains compatible; the runtime-identity and effective-capability interfaces are then unavailable."
+    },
+    {
+      "id": "client-rust",
+      "version": "0.7.104",
+      "wire_behavior": "additive",
+      "conformance_impact": "changed",
+      "profiles": [
+        "service-lifecycle-v1",
+        "runtime-health-v1",
+        "managed-operator-v1",
+        "cip-consumer-cosignature-v1",
+        "effective-capability-v1",
+        "runtime-identity-context-v0"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "No persisted-state or base-wire migration is required. This release adds opt-in runtime identity composition and explicit effective-capability variants while retaining the 0.7.103 portable single-instance security fix.",
+      "rollback": "Install immutable 0.7.103. Existing wire behavior and the single-instance fix remain available; the runtime-identity and effective-capability interfaces are then unavailable."
+    },
+    {
+      "id": "web-node",
+      "version": "0.2.4",
+      "wire_behavior": "additive",
+      "conformance_impact": "changed",
+      "profiles": [
+        "directory-implementation-metadata-v1",
+        "dispatch-route-ticket-v1",
+        "effective-capability-v1",
+        "runtime-identity-context-v0"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "Rebuild or install the browser package. The release adds fail-closed route-ticket verification, opt-in runtime identity composition and explicit effective-capability variants; existing encrypted provider state remains compatible.",
+      "rollback": "Restore immutable 0.2.3. This removes the new parity interfaces and browser ticket verification; do not use the rollback where verified ticketed discovery is required."
     }
   ]
 }
