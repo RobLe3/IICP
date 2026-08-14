@@ -1,6 +1,6 @@
 {
   "files": {
-    ".github/workflows/profile-fixtures.yml": "2cacdbf3d7bf80f4d7dad795571e08320f67d9dee5c00792fdbaf89b9c8aa9bd",
+    ".github/workflows/profile-fixtures.yml": "af5c62856690f10e558b455a0698ff787e86fd3e4fc78607fffec79e2326f6b4",
     "CHANGELOG.md": "adbe6e1201e22aa846b4e4145e39e030aafa28d03abea6a9f0611f4927f19341",
     "IMPLEMENTATIONS.md": "90ea44c94e8573c9af73a68577520b4684cd84291572f7c6d2fb36bf8dd02993",
     "README.md": "4153621ee3228e1f8fdddcaf80b23c788b89414a0e9f1c3d214cacaf9050aa94",
@@ -65,7 +65,7 @@
     "registry/schemas/safety-moderate-v1-input.json": "0df26d42bd9b96597e69397952af84a08fd60fd36a1963a31e1ca95368b63656",
     "registry/schemas/safety-moderate-v1-output.json": "2ad76c1f4fbcff037c68e2478c737da7ca879d60917c52369c5c965339bbe1d5",
     "registry/schemas/translate-v1-input.json": "197067000ec2acfeba9ab463c61d733008a302a4a836bebc5ba02eec228823e4",
-    "registry/source-classification.json": "43fbe1c04fa3eea2ea27175bb8ecfb6a4e04485f4c3505b0e628bce982cacc41",
+    "registry/source-classification.json": "df2c6ee932aa11901a323058339731ce3f90b4cbc83ef099ee474bd42751e601",
     "research/native-ai-infrastructure/fixtures/native-framing-fixture-manifest-v1.json": "a162b83304cc10cf07a73a70204a3fb7fc543a2c4f2f6585f6c58de92ab01245",
     "research/native-ai-infrastructure/fixtures/native-framing-v1.json": "e73a871c069f194c42716f462d2bde04fb79d769e1e98249c2d17c9af50bcfc1",
     "research/native-ai-infrastructure/fixtures/service-profiles-v1.json": "69fa2693d44a7d596cdabf433b284c07d27f4ab27433e2936c137de444cdaa9f",
@@ -74,7 +74,7 @@
     "research/pre-normative-profiles/fixtures/federation-chain-v0.json": "e747af2ff181b2bc1f4b7f4f37a362c99d537a1e6e5fa58b1834f6c5b72f168d",
     "research/pre-normative-profiles/fixtures/identity-evidence-layering-v0.json": "d96124f0dc8cba6aa38991fcf9a9da7c3083c569b3762a87574246113e683581",
     "research/pre-normative-profiles/fixtures/operator-onboarding-recovery-v1.json": "e946a86efdfaaa305077367b50c3649c1732424f0dfed998fd6d62520bb8ffc1",
-    "research/pre-normative-profiles/fixtures/profile-fixture-manifest-v0.json": "e60409703a3412aa1a79c34610a325391a6732e6f10794a803f96f2053a15d9b",
+    "research/pre-normative-profiles/fixtures/profile-fixture-manifest-v0.json": "141ac2c9d705c8b2ebfbc4759a79749d5bc3f722cad18c299f0988dd3cb11416",
     "research/pre-normative-profiles/fixtures/signed-message-envelope-boundary-v0.json": "17cb5f369d1658fee1784ddd96953aa882e007afd8571c5ec567ab8ddb039159",
     "research/strategic/2026-08-13-identity-and-evidence-layer-crosswalk.md": "d02c9ff8bf61eaae9f0663273f0c786afeee1d2d72dbe9d2c037ace52c3d9c2f",
     "research/strategic/2026-08-13-signed-message-envelope-boundary.md": "57276d3c5e53544da3c55b541b520b6591cadb9bb83575be9c56d070e0ac1d10",
