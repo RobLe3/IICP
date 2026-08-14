@@ -175,9 +175,19 @@ modifier    = 1*(ALPHA / DIGIT / "-")
 urn:iicp:intent:llm:chat:v1+attested
 ```
 
-**Backward compatibility**: Unrecognised modifiers SHOULD be treated as unknown and the
-request SHOULD be routed normally (fail-open). Implementations that wish to enforce a
-strict mode MAY reject unrecognised modifiers with `IICP-E028`.
+**Compatibility and deprecation**: The `+modifier` syntax is deprecated as a
+requirements channel. Senders MUST express additional required behavior through
+the corresponding required Profile identifier. Receivers MUST NOT strip a
+modifier and route the request as the base intent. An unknown modifier MUST be
+rejected before dispatch. A known modifier MAY be translated only when an
+accepted specification defines an exact mapping to a required Profile; otherwise
+it is rejected. Implementations SHOULD report `IICP-E028` when that error mapping
+is available.
+
+The official SDKs already reject `+` in intent identifiers. This rule therefore
+documents the deployed fail-closed boundary. It does not make `+attested`
+usable: that identifier remains reserved until its evidence, identity and
+security Profile is ratified.
 
 **Dependencies for `+attested`**:
 - `attestation_receipt` response field — `iicp-core.md` §3.2

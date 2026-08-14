@@ -1,0 +1,61 @@
+{
+  "decision_version": "1.0.0",
+  "status": "accepted-architecture-boundary",
+  "wire_change": false,
+  "extension_classes": {
+    "core": "logical operations and invariants required by every conforming implementation",
+    "profile": "optional interoperable semantics composed with Core",
+    "binding": "mapping of Core and negotiated profiles onto a transport or peer protocol",
+    "registry": "stable identifiers with lifecycle and compatibility metadata",
+    "implementation_extension": "local behavior with no interoperability claim that cannot weaken Core or negotiated requirements"
+  },
+  "invariants": [
+    "intent_transport_independent",
+    "capability_implementation_independent",
+    "identity_locator_distinct",
+    "advertisement_reachability_availability_eligibility_distinct",
+    "logical_task_attempt_distinct",
+    "execution_delivery_deadline_result_wait_time_distinct",
+    "qos_priority_delivery_execution_security_orthogonal",
+    "security_property_mechanism_distinct",
+    "message_semantics_encoding_distinct",
+    "fragmentation_task_semantics_distinct",
+    "continuous_connectivity_not_core_required",
+    "unknown_required_fails_closed"
+  ],
+  "current_classification": {
+    "http_projection": "binding",
+    "native_framing": "binding",
+    "mcp_mapping": "binding",
+    "a2a_mapping": "binding",
+    "service_lifecycle": "profile",
+    "provider_admission": "profile",
+    "cx_confidentiality": "profile",
+    "capability_vocabulary": "registry",
+    "billing_interoperability": "profile",
+    "reputation_interoperability": "profile",
+    "custom_frame_types": "binding_extension_point",
+    "local_candidate_ranker": "implementation_extension"
+  },
+  "profile_rules": {
+    "unknown_required": "reject_before_execution",
+    "unknown_optional": "omit_only_if_all_required_constraints_remain_satisfied",
+    "dependency": "all_transitive_dependencies_required",
+    "incompatibility": "reject_before_execution",
+    "downgrade": "prohibited",
+    "deprecation": "semantics_remain_stable_until_explicit_replacement"
+  },
+  "legacy_modifier_rules": {
+    "status": "deprecated-requirements-channel",
+    "unknown_modifier": "reject",
+    "strip_and_route_base_intent": false,
+    "replacement": "base_intent_plus_required_profile",
+    "attested": "reserved-unusable-until-profile-ratification"
+  },
+  "phase_8_reservation": {
+    "implementation_authorized": false,
+    "potential_profile": "delay-tolerant-delivery",
+    "potential_bindings": ["bpv7"],
+    "potential_security_mappings": ["bpsec"]
+  }
+}

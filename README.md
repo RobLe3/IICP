@@ -317,6 +317,13 @@ Directory implementations also share an implementation-neutral
 contract. Internal module or service placement cannot redefine public routes,
 event ownership, replication behavior or authorization.
 
+The accepted
+[environmental-independence and extension architecture](docs/architecture/environmental-independence-and-extension-architecture.md)
+separates Core semantics from Profiles, Bindings, Registry entries and local
+implementation extensions. It preserves current connected operation while
+keeping transport, locator, timing, encoding and execution-backend choices out
+of Core.
+
 The [public evidence access profile](docs/public-evidence-access.md) lists the
 version, implementation, registry, conformance, release and live-runtime
 artifacts intended for non-browser retrieval. Static source evidence has a

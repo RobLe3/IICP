@@ -1,4 +1,4 @@
-# IICP Extensions — Billing, Reputation, and Sub-Protocol Bindings
+# IICP Extensions — Profiles, Bindings, and Registry Entries
 
 **Version**: 1.0.1
 **Date**: 2026-06-06
@@ -11,9 +11,18 @@
 
 ## Purpose
 
-This document collects IICP extension mechanisms: optional protocol features that
-implementations MAY support to gain additional capabilities. Extensions do not break
-conformance — a Phase 1 node is fully conformant without implementing any extension.
+This document collects existing optional behavior. The authoritative extension
+classification is the architecture decision in
+`docs/architecture/environmental-independence-and-extension-architecture.md`.
+Implementations MUST classify interoperable additions as Profiles, Bindings or
+Registry entries rather than treating “extension” as one undifferentiated wire
+mechanism. Local implementation extensions make no interoperability claim and
+MUST NOT weaken Core or negotiated requirements.
+
+Optional behavior does not break baseline conformance. Required behavior,
+however, fails closed when its Profile or dependencies are unknown,
+incompatible or unsupported. A custom frame type cannot create semantic
+requirements without a negotiated Profile or Binding contract.
 
 Extensions covered:
 1. **Credits / Billing** — compute unit economy (Phase 3)
