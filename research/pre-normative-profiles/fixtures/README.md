@@ -13,6 +13,12 @@ adopted this draft profile must report the defined
 `unsupported_pre_normative_profile` status rather than inventing a different
 compatibility rule.
 
+`effective-capability-taxonomy-v0.json` is a research-only classification
+contract for effective service capabilities. It separates modalities, features,
+execution, limits, policy, bindings, identity, observations and evidence; it
+also records negative implications such as tool-call generation not implying
+tool execution. It is not a wire schema and does not authorize advertisement.
+
 `dispatch-route-ticket-v1.json` covers signed disclosure-only route tickets,
 including malformed, tampered, expired, issuer, audience, node and intent
 mismatches. It does not imply v1 node admission, single-use redemption or
