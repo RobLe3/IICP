@@ -25,6 +25,12 @@ stable protocol identity from supplied runtime facts, fixes a strict disclosure
 allow-list boundary, leaves non-chat payloads unchanged, and records one local
 token-overhead measurement. It is not a prompt default or wire schema.
 
+`environmental-independence-v0.json` is a research-only architecture contract
+for transport, timing, identity, reachability, encoding and extension-layer
+independence. It classifies Core, Profile, Binding, Registry and local
+implementation extensions and records terrestrial fault cases that a future
+binding must preserve. It does not define DTN, BPv7, BPSec or space support.
+
 `dispatch-route-ticket-v1.json` covers signed disclosure-only route tickets,
 including malformed, tampered, expired, issuer, audience, node and intent
 mismatches. It does not imply v1 node admission, single-use redemption or

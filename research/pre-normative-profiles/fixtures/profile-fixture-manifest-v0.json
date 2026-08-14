@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.20.0-draft",
+  "manifest_version": "0.21.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -16,6 +16,11 @@
       "path": "runtime-identity-context-v0.json",
       "fixture_version": "0.1.0-draft",
       "sha256": "ea8510d34179debabfe67231a332d97fbe376c16f3ae5a0550fa066910e064eb"
+    },
+    {
+      "path": "environmental-independence-v0.json",
+      "fixture_version": "0.1.0-research",
+      "sha256": "2abd53b495c749021cf291eca11a6d5de5d3d2d309ddc23a7a8b7df59307f42d"
     },
     {
       "path": "policy-data-handling-v0.json",
