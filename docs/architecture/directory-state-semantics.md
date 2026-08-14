@@ -98,24 +98,16 @@ It cannot make a node eligible in the current default view.
 
 ## Implementation parity boundary
 
-The 2026-08-14 source review found parity for registration liveness, heartbeat
-expiry, availability updates and default discovery's 90-second freshness
-filter. It also found two bounded Rust-preview gaps:
+The Rust operator preview now clears `dormant_since` and emits one `REACTIVATE`
+event when a dormant node resumes heartbeats. Its active probe confirms a
+failure before changing direct-route state and emits one demotion or restoration
+event per state transition. The implementation consumes this decision's shared
+scenario fixture. Release and operator evidence remain separate from this
+source-level parity result, and PHP remains the Genesis authority.
 
-- `MySqlRepo::heartbeat` restores `status = active` and `available`, but does
-  not clear `dormant_since` or emit the transition-only `REACTIVATE` evidence
-  produced by the PHP heartbeat path.
-- Rust's periodic active probe records telemetry but does not perform the
-  confirmed route-demotion and restoration transitions implemented by the PHP
-  node-lifecycle path.
-
-These are implementation gaps, not reasons to change the semantic contract or
-the PHP Genesis authority. They must be corrected and covered by lifecycle
-tests before Rust directory parity or cutover evidence relies on those
-transitions. The corrective work is tracked by
-`RobLe3/iicp-directory-rust#76`. Internal schemas and module names may differ, but neither
-implementation may collapse retained identity or advertisement state into
-current dispatch eligibility.
+Internal schemas and module names may differ, but neither implementation may
+collapse retained identity or advertisement state into current dispatch
+eligibility.
 
 Future implementation work must use the shared fixture before adding an
 offline, scheduled or historical view. Such a view must be explicit and must

@@ -66,17 +66,12 @@ class DirectoryStateSemanticsTest(unittest.TestCase):
         self.assertFalse(evidence["operator_assertion"]["proves_current_reachability"])
         self.assertEqual("heartbeat_window", evidence["authenticated_heartbeat"]["freshness"])
 
-    def test_directory_parity_review_records_confirmed_gaps(self) -> None:
+    def test_directory_parity_review_records_implemented_semantics(self) -> None:
         review = self.contract["implementation_review"]
-        self.assertEqual("implementation_follow_up_required", review["parity_status"])
-        self.assertEqual(
-            {
-                "heartbeat_does_not_clear_dormant_since",
-                "heartbeat_does_not_emit_reactivate_transition",
-                "active_probe_does_not_apply_route_demotion_or_restore",
-            },
-            set(review["confirmed_rust_gaps"]),
-        )
+        self.assertEqual("implemented_pending_release_evidence", review["parity_status"])
+        self.assertEqual([], review["confirmed_rust_gaps"])
+        self.assertIn("dormant_reactivation", review["rust_directory"])
+        self.assertIn("confirmed_route_demotion_and_restore", review["rust_directory"])
 
     def test_no_phase_8_or_wire_claim(self) -> None:
         self.assertFalse(self.contract["wire_change"])

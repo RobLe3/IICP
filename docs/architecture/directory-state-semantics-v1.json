@@ -154,16 +154,14 @@
     "rust_directory": [
       "registration_liveness",
       "heartbeat_expiry",
+      "dormant_reactivation",
       "availability_filter",
-      "active_probe_telemetry"
+      "active_probe_telemetry",
+      "confirmed_route_demotion_and_restore"
     ],
-    "confirmed_rust_gaps": [
-      "heartbeat_does_not_clear_dormant_since",
-      "heartbeat_does_not_emit_reactivate_transition",
-      "active_probe_does_not_apply_route_demotion_or_restore"
-    ],
+    "confirmed_rust_gaps": [],
     "semantic_parity_required": true,
-    "parity_status": "implementation_follow_up_required"
+    "parity_status": "implemented_pending_release_evidence"
   },
   "explicit_non_claims": [
     "no_offline_discovery_endpoint",
