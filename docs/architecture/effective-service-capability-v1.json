@@ -1,0 +1,148 @@
+{
+  "decision_version": "1.0.0",
+  "status": "accepted-semantic-foundation",
+  "wire_change": false,
+  "definition": "behavior usable through the complete advertised service path for an intent",
+  "path_components": ["model_or_service", "adapter_or_template", "runtime", "provider_interface", "iicp_adapter"],
+  "classes": [
+    "intent",
+    "modality",
+    "capability_feature",
+    "execution_capability",
+    "quantitative_limit",
+    "policy_permission",
+    "profile_or_binding",
+    "implementation_identity",
+    "claim_evidence",
+    "performance_observation",
+    "semantic_quality"
+  ],
+  "base_object": {
+    "required": ["intent"],
+    "optional": ["version", "phase", "variant_id", "input_modalities", "output_modalities", "features", "limits", "supported_profiles", "claim_provenance", "extensions"],
+    "conditional": {
+      "models": "required only where model identity or selection is part of the intent contract",
+      "max_tokens": "required only where an output-token limit is meaningful"
+    }
+  },
+  "cardinality": {
+    "multiple_variants_per_intent": true,
+    "variant_id_scope": "node_advertisement",
+    "unique_when_present": ["intent", "variant_id"],
+    "exact_duplicates_allowed": false,
+    "cross_variant_field_union_allowed": false
+  },
+  "extensions": {
+    "container": "extensions",
+    "keys": "stable namespaced registry identifiers",
+    "unknown_required": "ineligible",
+    "unknown_optional": "consumer_may_ignore",
+    "accepted_extension_preserved": true,
+    "unknown_top_level_implies_support": false
+  },
+  "matching": {
+    "requires": "eligibility",
+    "prefers": "post_eligibility_ranking",
+    "limits": "typed_numeric_comparison",
+    "portable_refusals": [
+      "required_capability_unknown",
+      "required_capability_unsupported",
+      "required_capability_stale",
+      "capability_limit_unsatisfied",
+      "capability_policy_denied"
+    ]
+  },
+  "provenance": {
+    "classes": ["heuristic_fallback", "operator_assertion", "provider_metadata", "runtime_introspection", "conformance_probe"],
+    "freshness_fields": ["observed_at", "valid_until"],
+    "absent": "unknown",
+    "expired": "stale",
+    "heuristic_is_verified": false,
+    "operator_assertion_is_verified": false
+  },
+  "scenarios": [
+    {
+      "name": "complete_image_chat_path",
+      "expected": {"advertise": true, "class": "modality", "does_not_imply": ["tool_calling", "tool_execution", "agentic_loop"]}
+    },
+    {
+      "name": "provider_api_blocks_model_vision",
+      "expected": {"advertise": false, "reason": "effective_path_incomplete"}
+    },
+    {
+      "name": "tool_call_generation",
+      "expected": {"advertise": true, "class": "capability_feature", "does_not_imply": ["tool_execution", "mcp_binding", "shell_access", "network_access", "agentic_loop"]}
+    },
+    {
+      "name": "mcp_tool_execution",
+      "expected": {"advertise": true, "class": "execution_capability", "does_not_imply": ["model_tool_calling", "agentic_loop", "unrestricted_execution"]}
+    },
+    {
+      "name": "structured_output",
+      "expected": {"advertise": true, "class": "capability_feature", "does_not_imply": ["semantic_correctness", "tool_calling"]}
+    },
+    {
+      "name": "streaming",
+      "expected": {"representation": "service_lifecycle_profile", "buffered_call_change": false}
+    },
+    {
+      "name": "ambiguous_agent_flag",
+      "expected": {"advertise": false, "reason": "ambiguous_composite_capability"}
+    },
+    {
+      "name": "same_intent_distinct_modalities",
+      "expected": {"valid": true, "variant_count": 2, "field_union_for_matching": false}
+    },
+    {
+      "name": "non_model_tool_service",
+      "expected": {"valid_without_models": true, "valid_without_max_tokens": true}
+    },
+    {
+      "name": "unknown_required",
+      "expected": {"eligible": false, "reason": "required_capability_unknown"}
+    },
+    {
+      "name": "unknown_preferred",
+      "expected": {"eligible": true, "reason": "preference_unavailable"}
+    },
+    {
+      "name": "known_but_unsupported_required",
+      "expected": {"eligible": false, "reason": "required_capability_unsupported"}
+    },
+    {
+      "name": "absent_required",
+      "expected": {"eligible": false, "reason": "required_capability_unsupported"}
+    },
+    {
+      "name": "absent_optional",
+      "expected": {"eligible": true, "reason": "optional_capability_absent"}
+    },
+    {
+      "name": "stale_required_claim",
+      "expected": {"eligible": false, "reason": "required_capability_stale"}
+    },
+    {
+      "name": "policy_denies_available_tool",
+      "expected": {"eligible": false, "capability_present": true, "reason": "capability_policy_denied"}
+    },
+    {
+      "name": "context_limit_too_small",
+      "expected": {"eligible": false, "reason": "capability_limit_unsatisfied"}
+    },
+    {
+      "name": "heuristic_model_name",
+      "expected": {"may_be_fallback": true, "verified": false}
+    },
+    {
+      "name": "accepted_unknown_optional_extension",
+      "expected": {"directory_preserves": true, "consumer_may_ignore": true}
+    }
+  ],
+  "explicit_non_claims": [
+    "no_new_intent_hierarchy",
+    "no_global_quality_score",
+    "no_general_discovery_wire_change",
+    "no_streaming_semantic_change",
+    "no_sdk_or_directory_rollout_in_this_decision"
+  ]
+}

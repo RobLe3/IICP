@@ -24,6 +24,9 @@
 - Separates directory identity, advertisement, reachability, availability and
   dispatch-eligibility state while preserving current default discovery and
   connected-mesh behavior.
+- Defines effective service capabilities, conditional model-specific fields,
+  same-intent variants, extension preservation, required/preferred/limit
+  matching and bounded claim provenance without changing the current wire.
 
 ## v1.10.13 — 2026-08-12
 

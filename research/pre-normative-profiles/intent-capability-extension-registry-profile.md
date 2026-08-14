@@ -50,6 +50,13 @@ The research-only classification fixture at
 negative implications. It is not a wire schema and does not authorize runtime
 advertisement.
 
+The accepted semantic/schema foundation is
+`docs/architecture/effective-service-capability-semantics.md`. Capability
+vocabulary entries use this existing registry Profile and must define
+applicable intents, representation, dependencies, incompatibilities,
+`does_not_imply`, evidence expectations, lifecycle, introduction version,
+deprecation and replacement. No separate capability registry is created.
+
 ## Compatibility rules
 
 - Existing active URNs remain valid.

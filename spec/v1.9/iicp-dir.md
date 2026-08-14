@@ -131,6 +131,17 @@ register multiple capability objects with the same `intent` but different `input
 text-only chat capability and an image-capable chat capability). The directory stores the set and
 exposes it on discover (§3.4); clients filter on it via `?modality=` (§3.3).
 
+**Effective service capability foundation (v1.1.25, #156):** capability objects
+describe behavior usable through the complete serving path. Multiple entries for
+one intent are variants, not separate intents, and matching must not combine
+features from different variants. Inference-only `models` and `max_tokens` are
+conditional rather than universal semantic fields. Required capabilities,
+preferences and quantitative limits are separate matching inputs; policy denial
+remains distinct from absence. Unknown required declarations fail closed.
+Existing `?modality=` behavior remains unchanged, and the general matching
+contract adds no wire field in this release. See
+`docs/architecture/effective-service-capability-semantics.md`.
+
 **`operator_delegation` (v1.10.0, ADR-045 Phase A — verifiable operator identity)**: an OPTIONAL
 ed25519 token binding this node to a fleet operator. Fields: `node_id` (MUST equal the registering
 node's id), `operator_pub` (base64 32-byte ed25519 public key), `not_after` (unix seconds; short-TTL

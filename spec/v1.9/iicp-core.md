@@ -132,10 +132,21 @@ Content-Type: `application/json`
 | `region` | string | IANA-style tag (e.g., `us-west`, `eu-central`); max 64 chars |
 | `capabilities` | array | MUST contain at least one capability object |
 | `capabilities[].intent` | string | Standard: `urn:iicp:intent:<domain>:<action>:v<N>`; Custom: `urn:iicp:intent:x.<vendor>:<action>:v<N>` — see `iicp-semantics.md §1.1` |
-| `capabilities[].models` | array | At least one model name string |
-| `capabilities[].max_tokens` | integer | MUST be > 0 |
+| `capabilities[].models` | array | Legacy connected-profile projection: at least one string until the coordinated conditional-field rollout |
+| `capabilities[].max_tokens` | integer | Legacy connected-profile projection: MUST be > 0 until that rollout |
 | `limits.max_concurrent` | integer | MUST be in range 1–256 |
 | `limits.tokens_per_min` | integer | MUST be > 0 |
+
+`capabilities[].models` and `capabilities[].max_tokens` are conditional fields,
+not universal base requirements. `models` is required only when model identity
+or selection is part of the intent contract; `max_tokens` is required only when
+an output-token bound is meaningful. MCP tools, batch processors, retrieval
+services and future non-model capabilities must not treat compatibility
+placeholders as semantic claims. The current connected-profile projection above
+remains unchanged until both directories and all maintained SDKs adopt the
+conditional schema together.
+The accepted semantics and compatibility boundary are defined in
+`docs/architecture/effective-service-capability-semantics.md`.
 
 **Optional fields**
 
