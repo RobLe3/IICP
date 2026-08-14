@@ -17,6 +17,10 @@
 - Defines internal RFC 8126-style assignment policies and records `x.<label>`
   and `x.exp` as IICP Private/Experimental Use conventions rather than IETF
   allocations.
+- Separates provider execution timeout, delivery lifetime, logical-task
+  deadline, result validity and caller wait timeout. Existing `timeout_ms`
+  remains the provider attempt budget; no new field or timeout default is
+  introduced.
 
 ## v1.10.13 — 2026-08-12
 

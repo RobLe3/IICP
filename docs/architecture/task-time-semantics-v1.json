@@ -1,0 +1,246 @@
+{
+  "decision_version": "1.0.0",
+  "status": "accepted-semantic-boundary",
+  "wire_change": false,
+  "axes": {
+    "execution_timeout": {
+      "origin": "provider_receipt",
+      "current_mapping": "constraints.timeout_ms and native CALL key 6",
+      "meaning": "provider attempt budget covering admission, queueing, execution and terminal response creation"
+    },
+    "delivery_lifetime": {
+      "origin": "binding_acceptance",
+      "current_mapping": null,
+      "meaning": "maximum time a delivery binding may retain or forward an attempt before provider receipt"
+    },
+    "task_deadline": {
+      "origin": "explicit absolute deadline in a future profile",
+      "current_mapping": null,
+      "meaning": "latest acceptable completion time for the logical task"
+    },
+    "result_validity": {
+      "origin": "result completion or explicit absolute expiry in a future profile",
+      "current_mapping": null,
+      "meaning": "period in which a completed result remains useful or retrievable"
+    },
+    "caller_wait_timeout": {
+      "origin": "local caller operation start",
+      "current_mapping": "implementation-local network or API timeout",
+      "meaning": "caller patience only; not proof of cancellation"
+    }
+  },
+  "identity": {
+    "task_id": "stable logical task identifier",
+    "call_id": "attempt identifier that changes for a new attempt",
+    "idempotency_key": "replay-safe execution and billing binding",
+    "transport_retransmission_creates_task": false
+  },
+  "native_ttl_key_22": {
+    "status": "legacy-binding-local-hint",
+    "logical_task_deadline": false,
+    "general_delivery_lifetime": false,
+    "result_retention_promise": false
+  },
+  "clock_rules": {
+    "local_intervals": "monotonic",
+    "future_absolute_deadlines": "utc-with-profile-defined-skew",
+    "wall_clock_adjustment_changes_local_interval": false
+  },
+  "scenarios": [
+    {
+      "name": "current_timeout_maps_to_provider_attempt_budget",
+      "expected": {
+        "wire_change": false,
+        "origin": "provider_receipt"
+      }
+    },
+    {
+      "name": "caller_wait_expires_without_cancel_ack",
+      "expected": {
+        "provider_state": "unknown",
+        "confirmed_cancelled": false
+      }
+    },
+    {
+      "name": "retry_after_ambiguous_disconnect",
+      "expected": {
+        "task_id": "same",
+        "idempotency_key": "same",
+        "call_id": "new"
+      }
+    },
+    {
+      "name": "transport_retransmission",
+      "expected": {
+        "new_task": false,
+        "new_execution": false
+      }
+    },
+    {
+      "name": "deadline_expired_before_dispatch",
+      "expected": {
+        "dispatch": "reject",
+        "execution_started": false
+      }
+    },
+    {
+      "name": "late_result_after_caller_wait",
+      "expected": {
+        "may_remain_valid": true,
+        "requires_result_policy": true
+      }
+    },
+    {
+      "name": "wall_clock_moves_backward",
+      "expected": {
+        "local_execution_budget_changed": false
+      }
+    },
+    {
+      "name": "retention_exceeds_binding_capacity",
+      "expected": {
+        "silent_shortening": false,
+        "binding_may_refuse": true
+      }
+    },
+    {
+      "name": "native_ttl_without_profile",
+      "expected": {
+        "task_deadline_inferred": false,
+        "delivery_lifetime_inferred": false
+      }
+    },
+    {
+      "name": "credential_expiry",
+      "expected": {
+        "task_time_axis": false,
+        "security_freshness_axis": true
+      }
+    }
+  ],
+  "source_inventory": [
+    {
+      "path": "schemas/conformance-badge.json",
+      "matches": 1,
+      "owner": "conformance evidence timestamp"
+    },
+    {
+      "path": "schemas/samples/task-batch.json",
+      "matches": 1,
+      "owner": "base task execution budget sample"
+    },
+    {
+      "path": "schemas/samples/task-invalid-intent.json",
+      "matches": 1,
+      "owner": "base task execution budget sample"
+    },
+    {
+      "path": "schemas/samples/task-invalid-missing-auth.json",
+      "matches": 1,
+      "owner": "base task execution budget sample"
+    },
+    {
+      "path": "schemas/samples/task-valid.json",
+      "matches": 1,
+      "owner": "base task execution budget sample"
+    },
+    {
+      "path": "schemas/task.json",
+      "matches": 6,
+      "owner": "base task execution budget"
+    },
+    {
+      "path": "spec/v1.9/IICP-core-phase1-profile.md",
+      "matches": 5,
+      "owner": "base conformance and execution timeout"
+    },
+    {
+      "path": "spec/v1.9/conformance-test-suite.md",
+      "matches": 17,
+      "owner": "multiple bounded test-specific timers"
+    },
+    {
+      "path": "spec/v1.9/iicp-billing-extension.md",
+      "matches": 21,
+      "owner": "reservation, receipt and security expiry"
+    },
+    {
+      "path": "spec/v1.9/iicp-cbor-wire.md",
+      "matches": 4,
+      "owner": "wire timeout projection"
+    },
+    {
+      "path": "spec/v1.9/iicp-confidentiality.md",
+      "matches": 2,
+      "owner": "key and envelope freshness"
+    },
+    {
+      "path": "spec/v1.9/iicp-cooperative-inference.md",
+      "matches": 6,
+      "owner": "worker execution timers"
+    },
+    {
+      "path": "spec/v1.9/iicp-core.md",
+      "matches": 9,
+      "owner": "base execution timeout"
+    },
+    {
+      "path": "spec/v1.9/iicp-dir.md",
+      "matches": 24,
+      "owner": "control-plane freshness and operation timers"
+    },
+    {
+      "path": "spec/v1.9/iicp-extensions.md",
+      "matches": 1,
+      "owner": "extension example execution budget"
+    },
+    {
+      "path": "spec/v1.9/iicp-federated-directory.md",
+      "matches": 6,
+      "owner": "federation freshness and retention"
+    },
+    {
+      "path": "spec/v1.9/iicp-framing.md",
+      "matches": 17,
+      "owner": "native attempt timeout and binding-local ttl"
+    },
+    {
+      "path": "spec/v1.9/iicp-provider-admission-profile.md",
+      "matches": 6,
+      "owner": "admission evidence freshness and deadline"
+    },
+    {
+      "path": "spec/v1.9/iicp-recognition.md",
+      "matches": 6,
+      "owner": "recognition record validity"
+    },
+    {
+      "path": "spec/v1.9/iicp-sdk-request-projection-profile.md",
+      "matches": 1,
+      "owner": "provider-facing execution constraint projection"
+    },
+    {
+      "path": "spec/v1.9/iicp-semantics.md",
+      "matches": 4,
+      "owner": "routing and retry guidance"
+    },
+    {
+      "path": "spec/v1.9/iicp-service-lifecycle-profile.md",
+      "matches": 7,
+      "owner": "provider attempt timeout and terminal state"
+    },
+    {
+      "path": "spec/v1.9/validation-methodology.md",
+      "matches": 1,
+      "owner": "validation time budget guidance"
+    }
+  ],
+  "explicit_non_claims": [
+    "no_new_request_field",
+    "no_timeout_default_change",
+    "no_persistent_queue",
+    "no_result_store",
+    "no_dtn_or_bpv7_support",
+    "no_exactly_once_transport_claim"
+  ]
+}

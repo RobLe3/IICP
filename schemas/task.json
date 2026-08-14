@@ -10,7 +10,7 @@
     "task_id": {
       "type": "string",
       "format": "uuid",
-      "description": "UUID v4 unique identifier for this task. MUST be globally unique per CALL."
+      "description": "UUID v4 identifying one logical task. An unprofiled base CALL has one attempt; lifecycle retries retain task_id and use a new attempt call_id."
     },
     "intent": {
       "type": "string",
@@ -30,7 +30,7 @@
           "type": "integer",
           "minimum": 100,
           "maximum": 300000,
-          "description": "Maximum execution time in milliseconds. Provider MUST abort task if exceeded."
+          "description": "Provider attempt budget in milliseconds measured from provider receipt through admission, execution and terminal response creation. It is not a delivery lifetime, absolute task deadline, result-retention promise or caller wait timeout."
         },
         "qos": {
           "type": "string",
