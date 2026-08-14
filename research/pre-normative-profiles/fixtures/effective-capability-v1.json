@@ -51,7 +51,7 @@
         }
       },
       {
-        "intent": "urn:iicp:intent:tool:invoke:v1",
+        "intent": "urn:iicp:intent:mcp:tools/call:v1",
         "variant_id": "sandboxed-tool",
         "execution_capabilities": ["tool_execution"],
         "limits": {"payload_bytes": {"value": 1048576, "unit": "bytes"}},
@@ -98,12 +98,12 @@
     {
       "name": "stale_required_claim_fails_closed",
       "evaluation_time": "2026-08-16T12:00:00Z",
-      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:tool:invoke:v1", "requires": [{"class": "execution_capability", "id": "tool_execution"}]},
+      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:mcp:tools/call:v1", "requires": [{"class": "execution_capability", "id": "tool_execution"}]},
       "expected": {"eligible": false, "refusal": {"schema_version": "1.0.0", "code": "required_capability_stale"}}
     },
     {
       "name": "policy_denial_is_not_capability_absence",
-      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:tool:invoke:v1", "requires": [{"class": "execution_capability", "id": "tool_execution"}]},
+      "request": {"schema_version": "1.0.0", "intent": "urn:iicp:intent:mcp:tools/call:v1", "requires": [{"class": "execution_capability", "id": "tool_execution"}]},
       "policy_denials": [{"class": "execution_capability", "id": "tool_execution"}],
       "expected": {"eligible": false, "refusal": {"schema_version": "1.0.0", "code": "capability_policy_denied"}}
     },

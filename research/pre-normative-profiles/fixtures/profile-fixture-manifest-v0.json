@@ -15,7 +15,7 @@
     {
       "path": "effective-capability-v1.json",
       "fixture_version": "1.0.0",
-      "sha256": "cdc8fa5131525ba5ef49cbea2aba02c9183411e01b1ead7ea3bd1503ba528d88"
+      "sha256": "e6e3c32aa7c4cf814e639d3a97cd1c1cb49ac020ed6ebe7e1e16bc2314e14761"
     },
     {
       "path": "runtime-identity-context-v0.json",

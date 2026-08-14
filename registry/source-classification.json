@@ -669,6 +669,7 @@
             "research/pre-normative-profiles/fixtures/dispatch-ticket-trust-v2-crypto.json",
             "research/pre-normative-profiles/fixtures/dns-aid-import-export-v0.json",
             "research/pre-normative-profiles/fixtures/effective-capability-taxonomy-v0.json",
+            "research/pre-normative-profiles/fixtures/effective-capability-v1.json",
             "research/pre-normative-profiles/fixtures/environmental-independence-v0.json",
             "research/pre-normative-profiles/fixtures/policy-detail-disclosure-v0.json",
             "research/pre-normative-profiles/fixtures/profile-compatibility-v0.json",
@@ -888,6 +889,7 @@
             "parity/cip-consumer-cosignature-transcript-v1.json",
             "parity/cip-consumer-cosignature-v1.json",
             "parity/dispatch-route-ticket-v1.json",
+            "parity/effective-capability-v1/fixture.json",
             "parity/policy-detail-disclosure-v0.json",
             "scripts/seed_operator_benchmark.py",
             "spec/proposals/fixtures/profile-compatibility-v0.json",
@@ -900,6 +902,7 @@
             "tests/Feature/DiscoverTest.php",
             "tests/Feature/DispatchRouteTicketTest.php",
             "tests/Feature/DispatchUsageCounterTest.php",
+            "tests/Feature/EffectiveCapabilityProfileTest.php",
             "tests/Feature/EventsTest.php",
             "tests/Feature/FederationIntegrationTest.php",
             "tests/Feature/FounderRecognitionE2ETest.php",
@@ -933,6 +936,7 @@
             "parity/dispatch-route-ticket-v1.json",
             "parity/policy-detail-disclosure-v0.json",
             "parity/profile-compatibility-v0.json",
+            "src/db.rs",
             "src/federation.rs",
             "src/main_tests.rs",
             "src/policy.rs",
@@ -1402,9 +1406,16 @@
           "paths": [
             "registry/intents.json",
             "research/pre-normative-profiles/fixtures/effective-capability-taxonomy-v0.json",
+            "research/pre-normative-profiles/fixtures/effective-capability-v1.json",
             "research/pre-normative-profiles/fixtures/runtime-identity-context-v0.json",
             "spec/v1.9/iicp-mcp-binding.md",
             "spec/v1.9/node-capability-format.md"
+          ]
+        },
+        {
+          "repository": "iicp-directory-php",
+          "paths": [
+            "parity/effective-capability-v1/fixture.json"
           ]
         }
       ]
