@@ -11,6 +11,12 @@
 - Deprecates intent `+modifier` suffixes as a requirements channel and aligns
   the specification with the official SDKs' existing fail-closed validation.
   Required optional behavior belongs in a negotiated Profile.
+- Defines the project identifier and registry boundary without claiming an
+  IANA assignment: released `urn:iicp:` values remain stable opaque project
+  identifiers while a formal namespace path remains governance-gated.
+- Defines internal RFC 8126-style assignment policies and records `x.<label>`
+  and `x.exp` as IICP Private/Experimental Use conventions rather than IETF
+  allocations.
 
 ## v1.10.13 — 2026-08-12
 

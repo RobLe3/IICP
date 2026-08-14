@@ -190,9 +190,11 @@ confidence levels; do not cite simulations as production measurements.
 
 ---
 
-## Intent URN Registry
+## Intent identifier registry
 
-Intent URNs identify *what* is being requested, independent of model or backend:
+IICP intent identifiers name *what* is being requested, independent of model or
+backend. The deployed `urn:iicp:` form is preserved as a stable project-defined
+identifier while formal namespace registration is pending:
 
 ```
 urn:iicp:intent:<domain>:<action>:v<version>
@@ -200,7 +202,7 @@ urn:iicp:intent:<domain>:<action>:v<version>
 
 Examples from [`registry/intents.json`](registry/intents.json):
 
-| URN | Purpose |
+| Identifier | Purpose |
 |-----|---------|
 | `urn:iicp:intent:llm:chat:v1` | Conversational LLM completion |
 | `urn:iicp:intent:llm:embedding:v1` | Text embedding / vector |
