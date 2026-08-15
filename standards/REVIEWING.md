@@ -13,7 +13,8 @@ Start with:
 1. [`standards/IICP_PROTOCOL_POSITIONING.md`](IICP_PROTOCOL_POSITIONING.md)
    for the narrow problem and protocol boundary;
 2. [`standards/PROTOCOL_COMPARISON_2026-08-15.md`](PROTOCOL_COMPARISON_2026-08-15.md)
-   for current overlap with IAIP, AIDIP, MCP, A2A and related work;
+   for current overlap, per-dimension evidence maturity and chronology across
+   IAIP, AIDIP, MCP, A2A and related work;
 3. `standards/ietf/draft-roble-iicp-peer.md`;
 4. `standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_2026-08-13.md`;
 5. [`standards/ietf/evidence-matrix.md`](ietf/evidence-matrix.md);

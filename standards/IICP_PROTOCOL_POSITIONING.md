@@ -86,8 +86,8 @@ not independent interoperability or standards adoption. The native peer draft
 is an unsubmitted individual-draft candidate. `urn:iicp:` identifiers and port
 9484 have no IANA assignment.
 
-For the mechanism-level comparison and primary sources, read
+For the feature comparison, per-dimension evidence-maturity ratings, chronology
+and primary sources, read
 [`PROTOCOL_COMPARISON_2026-08-15.md`](PROTOCOL_COMPARISON_2026-08-15.md). The
 same dated facts are available as
 [`protocol-comparison-v1.json`](protocol-comparison-v1.json).
-

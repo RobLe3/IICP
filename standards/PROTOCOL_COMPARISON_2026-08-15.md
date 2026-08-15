@@ -1,4 +1,4 @@
-# IICP and adjacent protocols: mechanism-level comparison
+# IICP and adjacent protocols: features, chronology and evidence maturity
 
 **Evidence date:** 2026-08-15  
 **Status:** informative research; no interoperability or endorsement claim
@@ -21,6 +21,68 @@ The comparison uses responsibilities rather than feature counts:
 | Not in scope | The source deliberately does not own the responsibility. |
 | Not established | The reviewed source does not establish the behavior. |
 
+The report also rates the public evidence behind each work. These ratings do
+not name a winner and are not a certification, adoption measure or estimate of
+future success. A mature implementation of a different protocol role can score
+well without overlapping IICP, while a useful new proposal can score lower
+because it has not yet produced implementation or deployment evidence.
+
+| Score | Evidence represented by the score |
+|---:|---|
+| 0 | No reviewed public evidence for this dimension. |
+| 1 | Conceptual or incomplete treatment without an executable interoperability contract. |
+| 2 | Concrete specification, schema, flow or project evidence, with material gaps. |
+| 3 | Detailed contract plus maintained implementation, test or operational evidence. |
+| 4 | Detailed contract plus multiple independently maintained implementations or externally governed interoperability evidence. |
+| Unknown | The reviewed evidence was insufficient to assign a score. |
+
+Every machine-readable rating includes a short rationale and primary source in
+[`protocol-comparison-v1.json`](protocol-comparison-v1.json). Scores should be
+compared by dimension, not added into a composite total.
+
+## Chronology
+
+### First public evidence of each work
+
+`First public` means the earliest dated specification submission, protocol
+repository or equivalent artifact found in the reviewed primary sources. It
+does not establish invention, influence, implementation maturity or priority.
+
+| Work | First public evidence | Artifact | Relative to IICP's first public draft |
+|---|---:|---|---|
+| MCP | 2024-09-24 | Public protocol repository | Predates |
+| ANP | 2024-10-23 | Public protocol repository | Predates |
+| AGNTCY | 2025-02-05 | `agntcy/acp-spec` repository | Predates |
+| A2A | 2025-03-25 | Public protocol repository | Predates |
+| AIDIP | 2025-10-15 | `draft-cui-ai-agent-discovery-invocation-00` | Predates |
+| DNS-AID predecessor | 2025-10-16 | `draft-mozleywilliams-dnsop-bandaid-00` | Predates |
+| IICP | 2025-10-27 | IICP v1.4.2 public draft | Baseline |
+| IAIP | 2026-02-09 | `draft-sz-dmsc-iaip-00` | Postdates |
+| AIPF | 2026-06-23 | `draft-zahed-agent-comm-framework-00` | Postdates |
+| IACP | 2026-06-26 | `draft-gebauer-iacp-00` | Postdates |
+
+### Mechanism chronology relevant to the overlap
+
+Protocol age and mechanism age are different. A work can predate IICP while a
+particular overlapping mechanism appeared later. The dated record supports the
+following narrower statements:
+
+| Date | Work | Public mechanism evidence |
+|---:|---|---|
+| 2025-10-15 | AIDIP -00 | Agent metadata, discovery and REST invocation |
+| 2025-10-27 | IICP v1.4.2 | Intent and capability discovery with route selection |
+| 2026-02-09 | IAIP -00 | Intent resolution, matching and selection at an agent gateway |
+| 2026-02-12 | AIDIP -01 | Optional intent-based agent selection |
+| 2026-05-15 | IICP split suite | Explicit provider-eligibility vocabulary in the public suite |
+| 2026-07-06 | AIDIP -02 | Ranked intent-selection candidates |
+| 2026-08-15 | IICP positioning | Narrow standards-facing eligibility and selection boundary |
+
+The initial IICP intent-routing draft therefore predates IAIP -00 and AIDIP's
+intent-selection extension, but AIDIP's discovery and invocation work predates
+IICP. IICP's current explicit provider-eligibility vocabulary postdates both
+February 2026 intent-selection drafts. This sequence does not prove that one
+project influenced another or owns a mechanism.
+
 ## Protocol roles and current status
 
 | Work | Current source | Primary role | Relationship to IICP |
@@ -38,6 +100,53 @@ The comparison uses responsibilities rather than feature counts:
 
 Every IETF item above is an individual Internet-Draft. An I-D is work in
 progress and has no IETF endorsement or formal standards standing.
+
+## Evidence maturity by dimension
+
+| Work | Spec | Versioning | Security | Implementations | Conformance | Independent implementations | Deployment | Governance |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| IICP | 3 | 3 | 3 | 3 | 3 | 1 | 2 | 2 |
+| IAIP | 2 | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
+| AIDIP | 2 | 2 | 1 | 0 | 0 | 0 | 0 | 1 |
+| AIPF | 2 | 1 | 2 | 0 | 0 | 0 | 0 | 1 |
+| IACP | 2 | 2 | 2 | 0 | 0 | 0 | 0 | 1 |
+| A2A | 4 | 4 | 3 | 4 | 2 | 3 | 2 | 4 |
+| MCP | 4 | 4 | 3 | 4 | 2 | 4 | 2 | 4 |
+| DNS-AID | 3 | 2 | 3 | 0 | 0 | 0 | 0 | 1 |
+| AGNTCY | 3 | 3 | 3 | 4 | 2 | 2 | 2 | 4 |
+| ANP | 3 | 3 | 3 | 3 | 2 | 1 | 1 | 2 |
+
+The evidence supports several bounded conclusions:
+
+- MCP and A2A have stronger independent implementation and governance evidence
+  than IICP. Their roles also differ from IICP's proposed eligibility layer.
+- IICP has more same-project implementation and conformance evidence than the
+  reviewed individual Internet-Drafts. That is not independent interoperability
+  evidence.
+- DNS-AID has a precise, security-aware discovery proposal, but the reviewed
+  sources do not establish implementations or deployment evidence.
+- AGNTCY and ANP are broader suites. Their scores describe their public
+  artifacts, not compatibility with IICP or fitness for IICP's narrow role.
+
+### Maturity of the directly overlapping mechanisms
+
+This second table rates only the seven responsibilities in the responsibility
+matrix. It helps distinguish a precise execution lifecycle from a precise
+eligibility contract.
+
+| Work | Semantic request | Capability advertisement | Eligibility | Selection | Route authorization | Execution lifecycle | Transport |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| IICP | 3 | 3 | 3 | 3 | 3 | 3 | 3 |
+| IAIP | 2 | 2 | 2 | 2 | 1 | 1 | 2 |
+| AIDIP | 2 | 2 | 2 | 2 | 1 | 2 | 2 |
+| A2A | 2 | 4 | 0 | 0 | 2 | 4 | 4 |
+| MCP | 2 | 4 | 0 | 0 | 3 | 3 | 4 |
+| DNS-AID | 0 | 2 | 0 | 0 | 2 | 0 | 3 |
+
+A zero here means that the reviewed protocol does not provide public evidence
+for that comparison dimension. It does not mean the protocol is poor. For
+example, A2A and MCP leave provider eligibility and selection to another layer
+while defining mature execution or integration contracts.
 
 ## Responsibility matrix
 
@@ -132,4 +241,3 @@ Native framing, credits, marketplace policy, model-quality prediction,
 federation and cooperative inference should remain outside that initial
 problem statement unless evidence demonstrates that one is necessary to the
 minimal exchange.
-

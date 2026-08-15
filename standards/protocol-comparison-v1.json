@@ -21,6 +21,33 @@
     "execution_lifecycle",
     "transport"
   ],
+  "rating_rubric": {
+    "0": "No reviewed public evidence for this dimension.",
+    "1": "Conceptual or incomplete treatment without an executable interoperability contract.",
+    "2": "Concrete specification, schema, flow, or project evidence, with material gaps.",
+    "3": "Detailed contract plus maintained implementation, test, or operational evidence.",
+    "4": "Detailed contract plus multiple independently maintained implementations or externally governed interoperability evidence.",
+    "unknown": "Evidence was insufficient to assign a score."
+  },
+  "rating_warning": "Scores are evidence-maturity assessments by dimension, not a composite quality rank, certification, adoption measure, or statement of protocol priority.",
+  "maturity_dimensions": [
+    "specification_precision",
+    "extension_versioning",
+    "security_trust_model",
+    "implementation_availability",
+    "conformance_evidence",
+    "independent_implementation",
+    "deployment_evidence",
+    "governance_change_control"
+  ],
+  "overlap_evidence_subjects": [
+    "iicp",
+    "iaip",
+    "aidip",
+    "a2a",
+    "mcp",
+    "dns-aid"
+  ],
   "entries": [
     {
       "id": "iicp",
@@ -39,7 +66,57 @@
         "route_authorization": "profile",
         "execution_lifecycle": "core",
         "transport": "binding"
-      }
+      },
+      "maturity": {
+        "specification_precision": {
+          "score": 3,
+          "rationale": "Normative profiles, schemas and bounded failure semantics are public, but some profiles remain pre-normative.",
+          "source": "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/IICP-core-phase1-profile.md"
+        },
+        "extension_versioning": {
+          "score": 3,
+          "rationale": "The suite separates wire, registry, profile and package versions and documents compatibility rules.",
+          "source": "https://github.com/RobLe3/IICP/blob/main/VERSIONING.md"
+        },
+        "security_trust_model": {
+          "score": 3,
+          "rationale": "Security boundaries, residual risks and fail-closed profiles are documented and tested; external review and confidential-execution evidence remain incomplete.",
+          "source": "https://github.com/RobLe3/IICP/blob/main/standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_2026-08-13.md"
+        },
+        "implementation_availability": {
+          "score": 3,
+          "rationale": "Public Python, TypeScript, Rust, browser and two directory implementations are listed, mostly under one project.",
+          "source": "https://github.com/RobLe3/IICP/blob/main/IMPLEMENTATIONS.md"
+        },
+        "conformance_evidence": {
+          "score": 3,
+          "rationale": "A public runner, versioned fixtures and negative vectors are maintained.",
+          "source": "https://github.com/RobLe3/IICP/tree/main/conformance-runner"
+        },
+        "independent_implementation": {
+          "score": 1,
+          "rationale": "Clean-room and external-run formats exist, but no completed independently maintained implementation is claimed.",
+          "source": "https://github.com/RobLe3/IICP/blob/main/conformance-runner/CLEAN_ROOM_IMPLEMENTATION.md"
+        },
+        "deployment_evidence": {
+          "score": 2,
+          "rationale": "A project-operated reference network and public evidence surfaces exist; they are not broad independent deployment evidence.",
+          "source": "https://iicp.network/external-evidence"
+        },
+        "governance_change_control": {
+          "score": 2,
+          "rationale": "Public governance and release rules exist, while backup-editor and formal submission authority remain unresolved.",
+          "source": "https://github.com/RobLe3/IICP/blob/main/GOVERNANCE.md"
+        }
+      },
+      "first_public_evidence": {
+        "date": "2025-10-27",
+        "kind": "initial_public_spec_commit",
+        "artifact": "IICP v1.4.2 initial public draft",
+        "source": "https://github.com/RobLe3/IICP/commit/686676ea24a620f6db4e62e8c1900ba75217d3e2",
+        "confidence": "high"
+      },
+      "relative_to_iicp_first_public": "same_day"
     },
     {
       "id": "iaip",
@@ -58,7 +135,57 @@
         "route_authorization": "partial",
         "execution_lifecycle": "partial",
         "transport": "core"
-      }
+      },
+      "maturity": {
+        "specification_precision": {
+          "score": 2,
+          "rationale": "The individual draft defines gateway components, procedures and message formats, but several interoperability details remain draft work.",
+          "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+        },
+        "extension_versioning": {
+          "score": 2,
+          "rationale": "Revision history and protocol negotiation are described, without a mature extension registry or compatibility corpus.",
+          "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+        },
+        "security_trust_model": {
+          "score": 1,
+          "rationale": "Security bindings are discussed, while cross-domain trust, advertisement integrity and end-to-end confidentiality remain incomplete.",
+          "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+        },
+        "implementation_availability": {
+          "score": 0,
+          "rationale": "No maintained public implementation is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+        },
+        "conformance_evidence": {
+          "score": 0,
+          "rationale": "The reviewed draft does not publish an executable conformance suite.",
+          "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+        },
+        "independent_implementation": {
+          "score": 0,
+          "rationale": "No independent implementation evidence is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+        },
+        "deployment_evidence": {
+          "score": 0,
+          "rationale": "No operational deployment evidence is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+        },
+        "governance_change_control": {
+          "score": 1,
+          "rationale": "Datatracker revision history exists, but the document remains an individual Internet-Draft without a working-group change process.",
+          "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+        }
+      },
+      "first_public_evidence": {
+        "date": "2026-02-09",
+        "kind": "internet_draft_00",
+        "artifact": "draft-sz-dmsc-iaip-00",
+        "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/history/",
+        "confidence": "high"
+      },
+      "relative_to_iicp_first_public": "postdates"
     },
     {
       "id": "aidip",
@@ -77,7 +204,57 @@
         "route_authorization": "partial",
         "execution_lifecycle": "core",
         "transport": "core"
-      }
+      },
+      "maturity": {
+        "specification_precision": {
+          "score": 2,
+          "rationale": "The draft defines metadata, discovery, ranked candidates and REST invocation with concrete examples; several trust and lifecycle details remain open.",
+          "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+        },
+        "extension_versioning": {
+          "score": 2,
+          "rationale": "The -01 and -02 revisions add intent selection compatibly, but no mature extension registry or conformance contract is established.",
+          "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+        },
+        "security_trust_model": {
+          "score": 1,
+          "rationale": "Authentication and trust are discussed at guidance level rather than as a complete interoperable authorization model.",
+          "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+        },
+        "implementation_availability": {
+          "score": 0,
+          "rationale": "No maintained public implementation is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+        },
+        "conformance_evidence": {
+          "score": 0,
+          "rationale": "The reviewed draft does not publish an executable conformance suite.",
+          "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+        },
+        "independent_implementation": {
+          "score": 0,
+          "rationale": "No independent implementation evidence is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+        },
+        "deployment_evidence": {
+          "score": 0,
+          "rationale": "No operational deployment evidence is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+        },
+        "governance_change_control": {
+          "score": 1,
+          "rationale": "Datatracker revision history exists, but the document remains an individual Internet-Draft without a working-group change process.",
+          "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+        }
+      },
+      "first_public_evidence": {
+        "date": "2025-10-15",
+        "kind": "internet_draft_00",
+        "artifact": "draft-cui-ai-agent-discovery-invocation-00",
+        "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/history/",
+        "confidence": "high"
+      },
+      "relative_to_iicp_first_public": "predates"
     },
     {
       "id": "aipf",
@@ -96,7 +273,57 @@
         "route_authorization": "partial",
         "execution_lifecycle": "partial",
         "transport": "binding"
-      }
+      },
+      "maturity": {
+        "specification_precision": {
+          "score": 2,
+          "rationale": "The draft gives a layered framework and component responsibilities, but is not a complete drop-in wire contract.",
+          "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/"
+        },
+        "extension_versioning": {
+          "score": 1,
+          "rationale": "The framework is versioned as an individual draft; a mature profile or registry lifecycle is not established.",
+          "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/"
+        },
+        "security_trust_model": {
+          "score": 2,
+          "rationale": "Cross-domain trust and federation are architectural concerns in the draft, without complete implementation evidence.",
+          "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/"
+        },
+        "implementation_availability": {
+          "score": 0,
+          "rationale": "No maintained public implementation is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/"
+        },
+        "conformance_evidence": {
+          "score": 0,
+          "rationale": "No executable conformance suite is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/"
+        },
+        "independent_implementation": {
+          "score": 0,
+          "rationale": "No independent implementation evidence is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/"
+        },
+        "deployment_evidence": {
+          "score": 0,
+          "rationale": "No operational deployment evidence is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/"
+        },
+        "governance_change_control": {
+          "score": 1,
+          "rationale": "The document is an individual Internet-Draft with public revision history, not a working-group specification.",
+          "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/"
+        }
+      },
+      "first_public_evidence": {
+        "date": "2026-06-23",
+        "kind": "internet_draft_00",
+        "artifact": "draft-zahed-agent-comm-framework-00",
+        "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/history/",
+        "confidence": "high"
+      },
+      "relative_to_iicp_first_public": "postdates"
     },
     {
       "id": "iacp",
@@ -115,7 +342,57 @@
         "route_authorization": "core",
         "execution_lifecycle": "core",
         "transport": "core"
-      }
+      },
+      "maturity": {
+        "specification_precision": {
+          "score": 2,
+          "rationale": "The draft defines a broad architecture, sessions and route behavior, with work remaining across its large scope.",
+          "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/"
+        },
+        "extension_versioning": {
+          "score": 2,
+          "rationale": "Several rapid public revisions exist, but stable extension and compatibility evidence is not yet established.",
+          "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/"
+        },
+        "security_trust_model": {
+          "score": 2,
+          "rationale": "Identity and route authorization are specified more directly than in many drafts, without public conformance evidence.",
+          "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/"
+        },
+        "implementation_availability": {
+          "score": 0,
+          "rationale": "No maintained public implementation is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/"
+        },
+        "conformance_evidence": {
+          "score": 0,
+          "rationale": "No executable conformance suite is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/"
+        },
+        "independent_implementation": {
+          "score": 0,
+          "rationale": "No independent implementation evidence is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/"
+        },
+        "deployment_evidence": {
+          "score": 0,
+          "rationale": "No operational deployment evidence is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/"
+        },
+        "governance_change_control": {
+          "score": 1,
+          "rationale": "The document is an individual Internet-Draft with public revision history, not a working-group specification.",
+          "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/"
+        }
+      },
+      "first_public_evidence": {
+        "date": "2026-06-26",
+        "kind": "internet_draft_00",
+        "artifact": "draft-gebauer-iacp-00",
+        "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/history/",
+        "confidence": "high"
+      },
+      "relative_to_iicp_first_public": "postdates"
     },
     {
       "id": "a2a",
@@ -134,7 +411,57 @@
         "route_authorization": "external",
         "execution_lifecycle": "core",
         "transport": "binding"
-      }
+      },
+      "maturity": {
+        "specification_precision": {
+          "score": 4,
+          "rationale": "The 1.0 specification defines Agent Cards, messages, tasks, artifacts, streaming and multiple bindings in detail.",
+          "source": "https://a2a-protocol.org/latest/specification/"
+        },
+        "extension_versioning": {
+          "score": 4,
+          "rationale": "The project publishes versioned specifications, compatibility material and a governed change process.",
+          "source": "https://github.com/a2aproject/A2A"
+        },
+        "security_trust_model": {
+          "score": 3,
+          "rationale": "Authentication schemes and authorization expectations are specified, while deployment policy remains external.",
+          "source": "https://a2a-protocol.org/latest/specification/"
+        },
+        "implementation_availability": {
+          "score": 4,
+          "rationale": "The project publishes SDKs and implementation artifacts under a multi-organization project.",
+          "source": "https://github.com/a2aproject/A2A"
+        },
+        "conformance_evidence": {
+          "score": 2,
+          "rationale": "Schemas, tests and implementation checks exist, but this review did not establish an external certification or cross-project conformance program.",
+          "source": "https://github.com/a2aproject/A2A"
+        },
+        "independent_implementation": {
+          "score": 3,
+          "rationale": "Multiple organizations participate in implementations and governance; this is stronger than one-project parity but is not rated as universal interoperability proof.",
+          "source": "https://github.com/a2aproject/A2A/blob/main/GOVERNANCE.md"
+        },
+        "deployment_evidence": {
+          "score": 2,
+          "rationale": "Public SDK and integration evidence exists; this review did not audit representative production deployments.",
+          "source": "https://github.com/a2aproject/A2A"
+        },
+        "governance_change_control": {
+          "score": 4,
+          "rationale": "A public multi-company Technical Steering Committee and contribution process govern the project.",
+          "source": "https://github.com/a2aproject/A2A/blob/main/GOVERNANCE.md"
+        }
+      },
+      "first_public_evidence": {
+        "date": "2025-03-25",
+        "kind": "public_repository_created",
+        "artifact": "a2aproject/A2A repository",
+        "source": "https://api.github.com/repos/a2aproject/A2A",
+        "confidence": "high"
+      },
+      "relative_to_iicp_first_public": "predates"
     },
     {
       "id": "mcp",
@@ -153,7 +480,57 @@
         "route_authorization": "external",
         "execution_lifecycle": "core",
         "transport": "binding"
-      }
+      },
+      "maturity": {
+        "specification_precision": {
+          "score": 4,
+          "rationale": "The dated specification defines protocol primitives, schemas, transports and lifecycle behavior in detail.",
+          "source": "https://modelcontextprotocol.io/specification/2026-07-28"
+        },
+        "extension_versioning": {
+          "score": 4,
+          "rationale": "Dated releases, schema versions and a public enhancement-proposal process are maintained.",
+          "source": "https://github.com/modelcontextprotocol/modelcontextprotocol"
+        },
+        "security_trust_model": {
+          "score": 3,
+          "rationale": "Authorization and security guidance are substantial, while server and host policy remain deployment responsibilities.",
+          "source": "https://modelcontextprotocol.io/specification/2026-07-28"
+        },
+        "implementation_availability": {
+          "score": 4,
+          "rationale": "Official SDKs and numerous separately maintained clients and servers are linked from the public project.",
+          "source": "https://github.com/modelcontextprotocol/modelcontextprotocol"
+        },
+        "conformance_evidence": {
+          "score": 2,
+          "rationale": "Schemas and implementation tests are public, but this review did not establish a universal external certification suite.",
+          "source": "https://github.com/modelcontextprotocol/modelcontextprotocol"
+        },
+        "independent_implementation": {
+          "score": 4,
+          "rationale": "Multiple independently maintained client and server implementations use the public specification.",
+          "source": "https://github.com/modelcontextprotocol/modelcontextprotocol"
+        },
+        "deployment_evidence": {
+          "score": 2,
+          "rationale": "Public integrations are documented; this comparison does not convert adoption claims into audited deployment evidence.",
+          "source": "https://github.com/modelcontextprotocol/modelcontextprotocol"
+        },
+        "governance_change_control": {
+          "score": 4,
+          "rationale": "The specification is governed as an LF Projects series with public contribution and governance material.",
+          "source": "https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/GOVERNANCE.md"
+        }
+      },
+      "first_public_evidence": {
+        "date": "2024-09-24",
+        "kind": "public_repository_created",
+        "artifact": "modelcontextprotocol/modelcontextprotocol repository",
+        "source": "https://api.github.com/repos/modelcontextprotocol/modelcontextprotocol",
+        "confidence": "high"
+      },
+      "relative_to_iicp_first_public": "predates"
     },
     {
       "id": "dns-aid",
@@ -172,7 +549,57 @@
         "route_authorization": "not_in_scope",
         "execution_lifecycle": "not_in_scope",
         "transport": "core"
-      }
+      },
+      "maturity": {
+        "specification_precision": {
+          "score": 3,
+          "rationale": "The draft maps discovery data to established DNS mechanisms and defines concrete records and retrieval behavior.",
+          "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+        },
+        "extension_versioning": {
+          "score": 2,
+          "rationale": "The draft has a named predecessor and public revisions; registry and long-term compatibility work remain draft-stage.",
+          "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+        },
+        "security_trust_model": {
+          "score": 3,
+          "rationale": "The design reuses DNSSEC and DANE for provenance and endpoint authentication, without claiming caller-policy authorization.",
+          "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+        },
+        "implementation_availability": {
+          "score": 0,
+          "rationale": "No maintained public implementation is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+        },
+        "conformance_evidence": {
+          "score": 0,
+          "rationale": "No executable conformance suite is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+        },
+        "independent_implementation": {
+          "score": 0,
+          "rationale": "No independent implementation evidence is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+        },
+        "deployment_evidence": {
+          "score": 0,
+          "rationale": "No operational deployment evidence is identified by the reviewed draft.",
+          "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+        },
+        "governance_change_control": {
+          "score": 1,
+          "rationale": "The document is an individual Internet-Draft with public revision history, not a working-group specification.",
+          "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+        }
+      },
+      "first_public_evidence": {
+        "date": "2025-10-16",
+        "kind": "predecessor_internet_draft_00",
+        "artifact": "draft-mozleywilliams-dnsop-bandaid-00",
+        "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/history/",
+        "confidence": "high"
+      },
+      "relative_to_iicp_first_public": "predates"
     },
     {
       "id": "agntcy",
@@ -191,7 +618,57 @@
         "route_authorization": "partial",
         "execution_lifecycle": "partial",
         "transport": "core"
-      }
+      },
+      "maturity": {
+        "specification_precision": {
+          "score": 3,
+          "rationale": "The suite publishes separate schemas and contracts for description, directory, identity and messaging components.",
+          "source": "https://docs.agntcy.org/"
+        },
+        "extension_versioning": {
+          "score": 3,
+          "rationale": "Component repositories publish versions and release processes, though the suite is not one unified wire version.",
+          "source": "https://github.com/agntcy"
+        },
+        "security_trust_model": {
+          "score": 3,
+          "rationale": "Identity and secure messaging components are public, with guarantees varying by component and deployment.",
+          "source": "https://docs.agntcy.org/"
+        },
+        "implementation_availability": {
+          "score": 4,
+          "rationale": "Multiple maintained public component implementations and services are available.",
+          "source": "https://github.com/agntcy"
+        },
+        "conformance_evidence": {
+          "score": 2,
+          "rationale": "Component tests and CSIT material exist, but this review did not establish one suite-wide external conformance result.",
+          "source": "https://github.com/agntcy"
+        },
+        "independent_implementation": {
+          "score": 2,
+          "rationale": "The project has multi-party participation, while many compared components remain within the same umbrella.",
+          "source": "https://github.com/agntcy/governance"
+        },
+        "deployment_evidence": {
+          "score": 2,
+          "rationale": "Public integration and testbed material exists; representative production operation was not audited here.",
+          "source": "https://docs.agntcy.org/"
+        },
+        "governance_change_control": {
+          "score": 4,
+          "rationale": "A public governance repository, charter and working-group process are maintained.",
+          "source": "https://github.com/agntcy/governance"
+        }
+      },
+      "first_public_evidence": {
+        "date": "2025-02-05",
+        "kind": "public_protocol_repository_created",
+        "artifact": "agntcy/acp-spec repository",
+        "source": "https://api.github.com/repos/agntcy/acp-spec",
+        "confidence": "high"
+      },
+      "relative_to_iicp_first_public": "predates"
     },
     {
       "id": "anp",
@@ -210,7 +687,403 @@
         "route_authorization": "partial",
         "execution_lifecycle": "core",
         "transport": "binding"
+      },
+      "maturity": {
+        "specification_precision": {
+          "score": 3,
+          "rationale": "Versioned documents cover description, discovery, identity, messaging and encryption in concrete detail.",
+          "source": "https://agent-network-protocol.com/specs/"
+        },
+        "extension_versioning": {
+          "score": 3,
+          "rationale": "The project has versioned releases and separated protocol documents, with compatibility still controlled by one project.",
+          "source": "https://github.com/agent-network-protocol/AgentNetworkProtocol"
+        },
+        "security_trust_model": {
+          "score": 3,
+          "rationale": "DID-based identity and encrypted messaging are specified, while broader trust policy remains deployment-specific.",
+          "source": "https://agent-network-protocol.com/specs/"
+        },
+        "implementation_availability": {
+          "score": 3,
+          "rationale": "The repository publishes implementations, examples and tests alongside the specifications.",
+          "source": "https://github.com/agent-network-protocol/AgentNetworkProtocol"
+        },
+        "conformance_evidence": {
+          "score": 2,
+          "rationale": "Tests exist in the project repository; independent cross-implementation conformance was not established.",
+          "source": "https://github.com/agent-network-protocol/AgentNetworkProtocol"
+        },
+        "independent_implementation": {
+          "score": 1,
+          "rationale": "The reviewed evidence is primarily maintained by the same project.",
+          "source": "https://github.com/agent-network-protocol/AgentNetworkProtocol"
+        },
+        "deployment_evidence": {
+          "score": 1,
+          "rationale": "Examples and applications are public, but representative production evidence was not audited.",
+          "source": "https://github.com/agent-network-protocol/AgentNetworkProtocol"
+        },
+        "governance_change_control": {
+          "score": 2,
+          "rationale": "Contribution guidance and releases are public, without an external standards-body or multi-party TSC process identified here.",
+          "source": "https://github.com/agent-network-protocol/AgentNetworkProtocol"
+        }
+      },
+      "first_public_evidence": {
+        "date": "2024-10-23",
+        "kind": "public_repository_created",
+        "artifact": "AgentNetworkProtocol repository",
+        "source": "https://api.github.com/repos/agent-network-protocol/AgentNetworkProtocol",
+        "confidence": "high"
+      },
+      "relative_to_iicp_first_public": "predates"
+    }
+  ],
+  "overlap_evidence": {
+    "iicp": {
+      "semantic_request": {
+        "score": 3,
+        "rationale": "Versioned Intent identifiers and request constraints are normative and fixture-backed.",
+        "source": "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/IICP-core-phase1-profile.md"
+      },
+      "capability_advertisement": {
+        "score": 3,
+        "rationale": "Effective service-path capability semantics and shared fixtures are public.",
+        "source": "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/IICP-core-phase1-profile.md"
+      },
+      "eligibility": {
+        "score": 3,
+        "rationale": "Directory and client policy eligibility are specified with negative cases.",
+        "source": "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/IICP-core-phase1-profile.md"
+      },
+      "selection": {
+        "score": 3,
+        "rationale": "Selection profiles and cross-SDK fixtures exist; ranking policy remains deployment-defined.",
+        "source": "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/IICP-core-phase1-profile.md"
+      },
+      "route_authorization": {
+        "score": 3,
+        "rationale": "A signed dispatch-ticket profile and vectors exist, while network migration is incomplete.",
+        "source": "https://github.com/RobLe3/IICP/blob/main/standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_2026-08-13.md"
+      },
+      "execution_lifecycle": {
+        "score": 3,
+        "rationale": "CALL/RESPONSE and lifecycle profiles are specified and exercised across maintained SDKs.",
+        "source": "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/IICP-core-phase1-profile.md"
+      },
+      "transport": {
+        "score": 3,
+        "rationale": "HTTP and native mappings are public; some bindings remain pre-normative.",
+        "source": "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/IICP-core-phase1-profile.md"
       }
+    },
+    "iaip": {
+      "semantic_request": {
+        "score": 2,
+        "rationale": "The draft defines an intent descriptor and gateway resolution procedure.",
+        "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+      },
+      "capability_advertisement": {
+        "score": 2,
+        "rationale": "Registration and capability validation are concrete draft procedures.",
+        "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+      },
+      "eligibility": {
+        "score": 2,
+        "rationale": "Gateway matching considers capabilities and constraints, without executable conformance evidence.",
+        "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+      },
+      "selection": {
+        "score": 2,
+        "rationale": "Ranking and selection are draft gateway functions.",
+        "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+      },
+      "route_authorization": {
+        "score": 1,
+        "rationale": "Security bindings are discussed but an equivalent bounded dispatch artifact is not established.",
+        "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+      },
+      "execution_lifecycle": {
+        "score": 1,
+        "rationale": "Forwarding behavior exists without a detailed reusable task lifecycle comparable to A2A.",
+        "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+      },
+      "transport": {
+        "score": 2,
+        "rationale": "Transport and security bindings are specified at draft level.",
+        "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/"
+      }
+    },
+    "aidip": {
+      "semantic_request": {
+        "score": 2,
+        "rationale": "Intent fields and semantic resolution are specified from revision -01 onward.",
+        "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+      },
+      "capability_advertisement": {
+        "score": 2,
+        "rationale": "Common agent metadata and capability schemas are central to the draft.",
+        "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+      },
+      "eligibility": {
+        "score": 2,
+        "rationale": "Filtering and semantic search produce candidates, but caller-policy eligibility is not a separate complete contract.",
+        "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+      },
+      "selection": {
+        "score": 2,
+        "rationale": "Ranked candidate selection is concrete in -02 without public conformance evidence.",
+        "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+      },
+      "route_authorization": {
+        "score": 1,
+        "rationale": "Authentication is discussed, but no equivalent short-lived selection authorization was established in this review.",
+        "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+      },
+      "execution_lifecycle": {
+        "score": 2,
+        "rationale": "A unified REST invocation request and response are specified.",
+        "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+      },
+      "transport": {
+        "score": 2,
+        "rationale": "HTTP invocation is concrete at draft level.",
+        "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/"
+      }
+    },
+    "a2a": {
+      "semantic_request": {
+        "score": 2,
+        "rationale": "Skills and messages express requested work, but not an IICP-style canonical Intent registry.",
+        "source": "https://a2a-protocol.org/latest/specification/"
+      },
+      "capability_advertisement": {
+        "score": 4,
+        "rationale": "Agent Cards and skills are detailed, versioned and implemented.",
+        "source": "https://a2a-protocol.org/latest/specification/"
+      },
+      "eligibility": {
+        "score": 0,
+        "rationale": "Current policy-aware provider eligibility is outside the A2A task protocol.",
+        "source": "https://a2a-protocol.org/latest/specification/"
+      },
+      "selection": {
+        "score": 0,
+        "rationale": "Choosing among eligible agents remains a client or deployment concern.",
+        "source": "https://a2a-protocol.org/latest/specification/"
+      },
+      "route_authorization": {
+        "score": 2,
+        "rationale": "Agent Card security schemes and endpoint authorization are defined; selection authorization is external.",
+        "source": "https://a2a-protocol.org/latest/specification/"
+      },
+      "execution_lifecycle": {
+        "score": 4,
+        "rationale": "Messages, tasks, artifacts, cancellation, streaming and push updates are detailed and implemented.",
+        "source": "https://a2a-protocol.org/latest/specification/"
+      },
+      "transport": {
+        "score": 4,
+        "rationale": "JSON-RPC, gRPC and HTTP bindings are specified.",
+        "source": "https://a2a-protocol.org/latest/specification/"
+      }
+    },
+    "mcp": {
+      "semantic_request": {
+        "score": 2,
+        "rationale": "Named tools, resources and prompts are precise but do not form a general provider-neutral Intent registry.",
+        "source": "https://modelcontextprotocol.io/specification/2026-07-28"
+      },
+      "capability_advertisement": {
+        "score": 4,
+        "rationale": "Initialization and server capability negotiation are detailed and implemented.",
+        "source": "https://modelcontextprotocol.io/specification/2026-07-28"
+      },
+      "eligibility": {
+        "score": 0,
+        "rationale": "Policy-aware choice among interchangeable providers is outside MCP core.",
+        "source": "https://modelcontextprotocol.io/specification/2026-07-28"
+      },
+      "selection": {
+        "score": 0,
+        "rationale": "Server selection remains a host or application concern.",
+        "source": "https://modelcontextprotocol.io/specification/2026-07-28"
+      },
+      "route_authorization": {
+        "score": 3,
+        "rationale": "Authorization profiles are detailed for protected MCP resources, but do not authorize an IICP-style selection result.",
+        "source": "https://modelcontextprotocol.io/specification/2026-07-28"
+      },
+      "execution_lifecycle": {
+        "score": 3,
+        "rationale": "Requests, progress, cancellation and optional Tasks are specified, with Tasks remaining extension-scoped.",
+        "source": "https://modelcontextprotocol.io/specification/2026-07-28"
+      },
+      "transport": {
+        "score": 4,
+        "rationale": "Supported JSON-RPC transports and session behavior are versioned and implemented.",
+        "source": "https://modelcontextprotocol.io/specification/2026-07-28"
+      }
+    },
+    "dns-aid": {
+      "semantic_request": {
+        "score": 0,
+        "rationale": "Semantic request description is outside the DNS publication mechanism.",
+        "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+      },
+      "capability_advertisement": {
+        "score": 2,
+        "rationale": "DNS records publish connectivity and capability-document references rather than the complete capability contract.",
+        "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+      },
+      "eligibility": {
+        "score": 0,
+        "rationale": "Current caller-policy eligibility is outside DNS-AID.",
+        "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+      },
+      "selection": {
+        "score": 0,
+        "rationale": "Consumers or another service select among discovered records.",
+        "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+      },
+      "route_authorization": {
+        "score": 2,
+        "rationale": "DNSSEC and DANE can authenticate data and endpoints, but do not grant application dispatch permission.",
+        "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+      },
+      "execution_lifecycle": {
+        "score": 0,
+        "rationale": "Task execution is outside DNS-AID.",
+        "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+      },
+      "transport": {
+        "score": 3,
+        "rationale": "The mapping reuses deployed DNS/SVCB mechanisms with draft-stage AI-specific conventions.",
+        "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/"
+      }
+    }
+  },
+  "mechanism_chronology": [
+    {
+      "date": "2024-09-24",
+      "subject": "mcp",
+      "mechanism": "public protocol repository",
+      "artifact": "modelcontextprotocol/modelcontextprotocol created",
+      "source": "https://api.github.com/repos/modelcontextprotocol/modelcontextprotocol",
+      "confidence": "high"
+    },
+    {
+      "date": "2024-10-23",
+      "subject": "anp",
+      "mechanism": "agent description, discovery, identity and messaging suite",
+      "artifact": "AgentNetworkProtocol repository created",
+      "source": "https://api.github.com/repos/agent-network-protocol/AgentNetworkProtocol",
+      "confidence": "high"
+    },
+    {
+      "date": "2025-02-05",
+      "subject": "agntcy",
+      "mechanism": "agent protocol and messaging suite",
+      "artifact": "agntcy/acp-spec repository created",
+      "source": "https://api.github.com/repos/agntcy/acp-spec",
+      "confidence": "high"
+    },
+    {
+      "date": "2025-03-25",
+      "subject": "a2a",
+      "mechanism": "agent task, message and artifact protocol",
+      "artifact": "a2aproject/A2A repository created",
+      "source": "https://api.github.com/repos/a2aproject/A2A",
+      "confidence": "high"
+    },
+    {
+      "date": "2025-10-15",
+      "subject": "aidip",
+      "mechanism": "agent metadata, discovery and REST invocation",
+      "artifact": "draft-cui-ai-agent-discovery-invocation-00",
+      "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/history/",
+      "confidence": "high"
+    },
+    {
+      "date": "2025-10-16",
+      "subject": "dns-aid",
+      "mechanism": "DNS-based agent discovery predecessor",
+      "artifact": "draft-mozleywilliams-dnsop-bandaid-00",
+      "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/history/",
+      "confidence": "high"
+    },
+    {
+      "date": "2025-10-27",
+      "subject": "iicp",
+      "mechanism": "Intent and capability discovery with route selection",
+      "artifact": "IICP v1.4.2 initial public draft",
+      "source": "https://github.com/RobLe3/IICP/commit/686676ea24a620f6db4e62e8c1900ba75217d3e2",
+      "confidence": "high"
+    },
+    {
+      "date": "2026-02-09",
+      "subject": "iaip",
+      "mechanism": "intent resolution, matching and selection at an agent gateway",
+      "artifact": "draft-sz-dmsc-iaip-00",
+      "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/history/",
+      "confidence": "high"
+    },
+    {
+      "date": "2026-02-12",
+      "subject": "aidip",
+      "mechanism": "optional intent-based agent selection",
+      "artifact": "draft-cui-ai-agent-discovery-invocation-01",
+      "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/history/",
+      "confidence": "high"
+    },
+    {
+      "date": "2026-02-24",
+      "subject": "dns-aid",
+      "mechanism": "DNS-AID name and replacement chain",
+      "artifact": "draft-mozleywilliams-dnsop-dnsaid-00 replaces bandaid",
+      "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/history/",
+      "confidence": "high"
+    },
+    {
+      "date": "2026-05-15",
+      "subject": "iicp",
+      "mechanism": "explicit provider eligibility vocabulary in split public suite",
+      "artifact": "IICP v1.5.0-draft repository restructure",
+      "source": "https://github.com/RobLe3/IICP/commit/a5363d264583b31e0795ceb82c422717c203b52c",
+      "confidence": "high"
+    },
+    {
+      "date": "2026-06-23",
+      "subject": "aipf",
+      "mechanism": "layered agent interoperability framework",
+      "artifact": "draft-zahed-agent-comm-framework-00",
+      "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/history/",
+      "confidence": "high"
+    },
+    {
+      "date": "2026-06-26",
+      "subject": "iacp",
+      "mechanism": "broad Internet agent communication architecture",
+      "artifact": "draft-gebauer-iacp-00",
+      "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/history/",
+      "confidence": "high"
+    },
+    {
+      "date": "2026-07-06",
+      "subject": "aidip",
+      "mechanism": "ranked intent-selection candidates",
+      "artifact": "draft-cui-ai-agent-discovery-invocation-02",
+      "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/history/",
+      "confidence": "high"
+    },
+    {
+      "date": "2026-08-15",
+      "subject": "iicp",
+      "mechanism": "narrow standards-facing eligibility and selection positioning",
+      "artifact": "IICP protocol positioning comparison",
+      "source": "https://github.com/RobLe3/IICP/blob/main/standards/IICP_PROTOCOL_POSITIONING.md",
+      "confidence": "high"
     }
   ]
 }

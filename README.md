@@ -69,6 +69,20 @@ It can select a policy-compliant provider before MCP, A2A, HTTP or another
 negotiated binding performs the task. It does not replace those execution
 protocols or the transports and security standards beneath them.
 
+| Question | IICP | Adjacent protocol examples |
+|---|---|---|
+| How is the requested operation named? | Versioned Intent identifier plus constraints | A2A skills/messages and MCP tool, resource or prompt names describe different execution-layer concepts |
+| How are usable service properties advertised? | Effective capabilities exposed by the complete service path | A2A Agent Cards and MCP server discovery describe their own execution or integration surfaces |
+| Who applies eligibility and selects a provider? | Directory filtering plus client policy and final validation | A2A and MCP normally leave provider choice to the application; IAIP and AIDIP directly overlap this area |
+| How is the task executed? | A negotiated binding | MCP, A2A, HTTP APIs and IICP peer framing can carry the selected task |
+| What does the directory see? | Intent and bounded routing metadata, not the task payload | Depends on the adjacent protocol and deployment |
+
+The comparison rates public evidence separately for specification precision,
+versioning, security, implementations, conformance, independent implementation,
+deployment and governance. It does not calculate a winner score. The chronology
+also separates the age of a protocol from the first public appearance of an
+overlapping mechanism.
+
 This boundary has real overlap with current IAIP and AIDIP Internet-Drafts.
 Review the concise [`IICP protocol positioning`](standards/IICP_PROTOCOL_POSITIONING.md)
 and the dated, source-backed
@@ -292,9 +306,9 @@ The mesh is usable for its current capabilities, while relay hardening, broader 
 | Operator identity (Ed25519 delegation) | 🟢 Phase A live | ADR-045 — operators sign a delegation binding their Ed25519 key to each node; the directory verifies + resolves a public `operator_display_name` in discovery. `operator_pubkey` is directory-private, never served. |
 | Founder recognition | 🟢 Live | Time-gated founder ordinals (iicp-recognition §5.4) — #1 reserved for the maintainer, #2..N earned by genuine served nodes; dedicated non-federated signed chain |
 
-**Estimated progress toward closed beta: ~80%**
+**IICP is currently in Beta. You can join and test it if its current scope fits your use case.**
 
-The mesh works end-to-end, the SDKs are publicly installable with full three-language parity, and a browser tab can both consume the mesh and (via relay) serve into it. The remaining gaps before closed beta are:
+The mesh works end-to-end, the SDKs are publicly installable with full three-language parity, and a browser tab can both consume the mesh and (via relay) serve into it. Current maturation work includes:
 - A standing public relay (the transport is built and verified; one reachable host activates browser/CGNAT serving for everyone)
 - A portable operator identity wallet (so node identities survive machine changes)
 - Security and authentication hardening to production standard
