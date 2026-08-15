@@ -17,6 +17,11 @@ private development methods or production systems.
    a specification explicitly makes it normative.
 5. Use [`standards/REVIEWING.md`](standards/REVIEWING.md) for an independent
    standards review or Internet-Draft candidate review.
+6. Use [`standards/IICP_PROTOCOL_POSITIONING.md`](standards/IICP_PROTOCOL_POSITIONING.md)
+   and the dated [protocol comparison](standards/PROTOCOL_COMPARISON_2026-08-15.md)
+   before changing IICP's boundary with IAIP, AIDIP, MCP, A2A or discovery
+   protocols. The machine-readable facts live in
+   `standards/protocol-comparison-v1.json`.
 
 ## What an independent implementation needs
 

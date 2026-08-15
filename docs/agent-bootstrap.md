@@ -5,6 +5,12 @@ reasoning loop, tool model or task language. The directory handles
 registration, health and discovery; the selected agents exchange the task
 directly.
 
+For the boundary with IAIP, AIDIP, MCP, A2A and DNS-based discovery, read the
+[protocol positioning](../standards/IICP_PROTOCOL_POSITIONING.md) and
+[source-backed comparison](../standards/PROTOCOL_COMPARISON_2026-08-15.md).
+The short version is that IICP selects an eligible provider; the selected
+execution protocol defines how that provider performs the task.
+
 ## Choose a role
 
 - A **consumer** discovers a provider for an intent and sends it a task.

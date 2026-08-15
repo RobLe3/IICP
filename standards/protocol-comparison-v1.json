@@ -1,0 +1,216 @@
+{
+  "schema": "iicp.protocol-comparison.v1",
+  "as_of": "2026-08-15",
+  "status": "informative_research_not_endorsement",
+  "date_semantics": "Each entry updated value is the cited source revision date when published; otherwise it is the verification date.",
+  "comparison_values": [
+    "core",
+    "profile",
+    "binding",
+    "external",
+    "partial",
+    "not_in_scope",
+    "not_established"
+  ],
+  "dimensions": [
+    "semantic_request",
+    "capability_advertisement",
+    "eligibility",
+    "selection",
+    "route_authorization",
+    "execution_lifecycle",
+    "transport"
+  ],
+  "entries": [
+    {
+      "id": "iicp",
+      "name": "Intent-based Inter-agent Communication Protocol",
+      "category": "subject",
+      "version": "suite-1.10.13-wire-1.9.0",
+      "formal_status": "project_normative_beta_not_externally_ratified",
+      "updated": "2026-08-15",
+      "source": "https://github.com/RobLe3/IICP",
+      "role": "intent_resolution_eligibility_selection_and_optional_execution_bindings",
+      "dimensions": {
+        "semantic_request": "core",
+        "capability_advertisement": "core",
+        "eligibility": "core",
+        "selection": "core",
+        "route_authorization": "profile",
+        "execution_lifecycle": "core",
+        "transport": "binding"
+      }
+    },
+    {
+      "id": "iaip",
+      "name": "Intent-based Agent Interconnection Protocol at Agent Gateway",
+      "category": "direct_overlap",
+      "version": "draft-sz-dmsc-iaip-02",
+      "formal_status": "active_individual_internet_draft_not_ietf_endorsed",
+      "updated": "2026-05-25",
+      "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/",
+      "role": "gateway_registration_intent_resolution_selection_and_forwarding",
+      "dimensions": {
+        "semantic_request": "core",
+        "capability_advertisement": "core",
+        "eligibility": "core",
+        "selection": "core",
+        "route_authorization": "partial",
+        "execution_lifecycle": "partial",
+        "transport": "core"
+      }
+    },
+    {
+      "id": "aidip",
+      "name": "AI Agent Discovery and Invocation Protocol",
+      "category": "direct_overlap",
+      "version": "draft-cui-ai-agent-discovery-invocation-02",
+      "formal_status": "active_individual_internet_draft_not_ietf_endorsed",
+      "updated": "2026-07-06",
+      "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/",
+      "role": "agent_metadata_intent_discovery_ranked_candidates_and_rest_invocation",
+      "dimensions": {
+        "semantic_request": "partial",
+        "capability_advertisement": "core",
+        "eligibility": "partial",
+        "selection": "core",
+        "route_authorization": "partial",
+        "execution_lifecycle": "core",
+        "transport": "core"
+      }
+    },
+    {
+      "id": "aipf",
+      "name": "AI Agent Interoperable Protocol Framework",
+      "category": "architecture_adjacent",
+      "version": "draft-zahed-agent-comm-framework-01",
+      "formal_status": "active_individual_internet_draft_not_ietf_endorsed",
+      "updated": "2026-07-19",
+      "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/",
+      "role": "layered_agent_to_agent_and_agent_to_tool_framework",
+      "dimensions": {
+        "semantic_request": "partial",
+        "capability_advertisement": "partial",
+        "eligibility": "partial",
+        "selection": "partial",
+        "route_authorization": "partial",
+        "execution_lifecycle": "partial",
+        "transport": "binding"
+      }
+    },
+    {
+      "id": "iacp",
+      "name": "Internet Agent Communication Protocol",
+      "category": "architecture_adjacent",
+      "version": "draft-gebauer-iacp-03",
+      "formal_status": "active_individual_internet_draft_not_ietf_endorsed",
+      "updated": "2026-07-28",
+      "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/",
+      "role": "broad_internet_agent_communication_architecture",
+      "dimensions": {
+        "semantic_request": "partial",
+        "capability_advertisement": "partial",
+        "eligibility": "partial",
+        "selection": "partial",
+        "route_authorization": "core",
+        "execution_lifecycle": "core",
+        "transport": "core"
+      }
+    },
+    {
+      "id": "a2a",
+      "name": "Agent2Agent Protocol",
+      "category": "execution_adjacent",
+      "version": "1.0",
+      "formal_status": "project_specification",
+      "updated": "2026-08-15",
+      "source": "https://a2a-protocol.org/latest/specification/",
+      "role": "agent_discovery_messages_tasks_artifacts_streaming_and_bindings",
+      "dimensions": {
+        "semantic_request": "partial",
+        "capability_advertisement": "core",
+        "eligibility": "external",
+        "selection": "external",
+        "route_authorization": "external",
+        "execution_lifecycle": "core",
+        "transport": "binding"
+      }
+    },
+    {
+      "id": "mcp",
+      "name": "Model Context Protocol",
+      "category": "execution_adjacent",
+      "version": "2026-07-28",
+      "formal_status": "project_specification",
+      "updated": "2026-07-28",
+      "source": "https://modelcontextprotocol.io/specification/2026-07-28",
+      "role": "llm_application_integration_with_context_resources_prompts_tools_and_extensions",
+      "dimensions": {
+        "semantic_request": "partial",
+        "capability_advertisement": "core",
+        "eligibility": "external",
+        "selection": "external",
+        "route_authorization": "external",
+        "execution_lifecycle": "core",
+        "transport": "binding"
+      }
+    },
+    {
+      "id": "dns-aid",
+      "name": "DNS for AI Discovery",
+      "category": "discovery_input",
+      "version": "draft-mozleywilliams-dnsop-dnsaid-02",
+      "formal_status": "active_individual_internet_draft_not_ietf_endorsed",
+      "updated": "2026-05-27",
+      "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/",
+      "role": "dns_svcb_agent_connectivity_and_capability_document_discovery",
+      "dimensions": {
+        "semantic_request": "not_in_scope",
+        "capability_advertisement": "partial",
+        "eligibility": "not_in_scope",
+        "selection": "external",
+        "route_authorization": "not_in_scope",
+        "execution_lifecycle": "not_in_scope",
+        "transport": "core"
+      }
+    },
+    {
+      "id": "agntcy",
+      "name": "AGNTCY",
+      "category": "multi_component_adjacent",
+      "version": "rolling_documentation",
+      "formal_status": "linux_foundation_project_suite",
+      "updated": "2026-08-15",
+      "source": "https://docs.agntcy.org/",
+      "role": "directory_schema_identity_messaging_observability_and_testing_components",
+      "dimensions": {
+        "semantic_request": "partial",
+        "capability_advertisement": "core",
+        "eligibility": "partial",
+        "selection": "partial",
+        "route_authorization": "partial",
+        "execution_lifecycle": "partial",
+        "transport": "core"
+      }
+    },
+    {
+      "id": "anp",
+      "name": "Agent Network Protocol",
+      "category": "peer_network_adjacent",
+      "version": "1.1",
+      "formal_status": "project_specification",
+      "updated": "2026-08-15",
+      "source": "https://agent-network-protocol.com/specs/",
+      "role": "agent_description_discovery_identity_messaging_encryption_and_federation_profiles",
+      "dimensions": {
+        "semantic_request": "partial",
+        "capability_advertisement": "core",
+        "eligibility": "partial",
+        "selection": "partial",
+        "route_authorization": "partial",
+        "execution_lifecycle": "core",
+        "transport": "binding"
+      }
+    }
+  ]
+}
