@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-14",
+  "generated_at": "2026-08-15",
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.13",
+      "version": "1.10.14",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -12,16 +12,17 @@
         "directory-dispatch-v1",
         "directory-lifecycle-v1",
         "service-lifecycle-v1",
-        "mcp-era-negotiation-v0"
+        "mcp-era-negotiation-v0",
+        "runtime-identity-context-v0"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No base-wire, directory-schema or persisted-state migration is required. The negotiated service-lifecycle profile now has a defined native lifecycle envelope; Registry 1.4 validation is stricter while preserving existing intent URNs and legacy payload_schema fields.",
-      "rollback": "Continue using immutable v1.10.11 artifacts; implementations must not claim the corrected native lifecycle-envelope mapping or strict Registry 1.4 evidence validation."
+      "migration": "No base-wire, directory-schema or persisted-state migration is required. The pre-normative runtime-identity context now defaults to automatic composition in compatible conversational helpers; raw submit and non-chat intents remain byte-compatible.",
+      "rollback": "Continue using immutable v1.10.13 artifacts. Implementations then retain opt-in runtime identity rather than the coordinated automatic conversational default."
     },
     {
       "id": "directory-php",
-      "version": "1.10.91",
+      "version": "1.10.92",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -31,12 +32,12 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Run the additive capability version/phase migration. The directory preserves, projects and matches explicit effective-capability variants while retaining legacy capability fields and default discovery behavior.",
-      "rollback": "Restore immutable 1.10.90 application code. The expand-first capability columns may remain unused; do not destructively roll back the schema. Genesis deployment requires a separate operator decision."
+      "migration": "No database or HTTP migration is required. Discovery now reports 0.7.105 as the latest known coordinated SDK line while preserving eligibility, security and deployment behavior.",
+      "rollback": "Restore immutable 1.10.91 application code to report 0.7.104 as the latest known SDK. Genesis deployment remains a separate operator decision."
     },
     {
       "id": "directory-rust",
-      "version": "0.1.12",
+      "version": "0.1.13",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -47,12 +48,12 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Run the additive effective-capability migration. This operator-preview release aligns capability persistence/matching and directory lifecycle transitions with the shared PHP contracts.",
-      "rollback": "Restore immutable 0.1.11 through the guarded updater. The expand-first capability columns may remain unused; PHP remains Genesis authority and no cutover is authorized."
+      "migration": "No database or HTTP migration is required. The operator preview reports 0.7.105 as the latest known coordinated SDK line and pins PHP 1.10.92 parity.",
+      "rollback": "Restore immutable 0.1.12 through the guarded updater to report 0.7.104 as the latest known SDK. PHP remains Genesis authority and no cutover is authorized."
     },
     {
       "id": "client-python",
-      "version": "0.7.104",
+      "version": "0.7.105",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -66,12 +67,12 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state or base-wire migration is required. This release adds opt-in runtime identity composition, explicit effective-capability variants, and fail-closed proxy route-ticket verification. Existing behavior is preserved when the new local context is disabled and legacy discovery remains an explicit rollback mode.",
-      "rollback": "Install immutable 0.7.103. This removes the new runtime-identity and effective-capability interfaces and restores the previous proxy ticket behavior; do not use the rollback where verified ticketed discovery is required."
+      "migration": "No persisted-state or base-wire migration is required. Compatible chat helpers now add the bounded IICP runtime identity context automatically. Raw submit, non-chat intents, explicit disabled mode and unsupported channels remain unchanged.",
+      "rollback": "Install immutable 0.7.104 to restore opt-in-only runtime identity composition. Wire compatibility and explicit effective-capability support remain available."
     },
     {
       "id": "client-typescript",
-      "version": "0.7.104",
+      "version": "0.7.105",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -84,12 +85,12 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state or base-wire migration is required. This release adds opt-in runtime identity composition and explicit effective-capability variants. Existing requests remain unchanged when runtime identity is disabled.",
-      "rollback": "Install immutable 0.7.103. Existing wire behavior remains compatible; the runtime-identity and effective-capability interfaces are then unavailable."
+      "migration": "No persisted-state or base-wire migration is required. Compatible chat helpers now add the bounded IICP runtime identity context automatically. Raw submit, non-chat intents, explicit disabled mode and unsupported channels remain unchanged.",
+      "rollback": "Install immutable 0.7.104 to restore opt-in-only runtime identity composition. Wire compatibility and explicit effective-capability support remain available."
     },
     {
       "id": "client-rust",
-      "version": "0.7.104",
+      "version": "0.7.105",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -102,12 +103,12 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state or base-wire migration is required. This release adds opt-in runtime identity composition and explicit effective-capability variants while retaining the 0.7.103 portable single-instance security fix.",
-      "rollback": "Install immutable 0.7.103. Existing wire behavior and the single-instance fix remain available; the runtime-identity and effective-capability interfaces are then unavailable."
+      "migration": "No persisted-state or base-wire migration is required. Compatible chat helpers now add the bounded IICP runtime identity context automatically. Raw submit, non-chat intents, explicit disabled mode and unsupported channels remain unchanged.",
+      "rollback": "Install immutable 0.7.104 to restore opt-in-only runtime identity composition. Wire compatibility and explicit effective-capability support remain available."
     },
     {
       "id": "web-node",
-      "version": "0.2.4",
+      "version": "0.2.5",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -118,8 +119,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Rebuild or install the browser package. The release adds fail-closed route-ticket verification, opt-in runtime identity composition and explicit effective-capability variants; existing encrypted provider state remains compatible.",
-      "rollback": "Restore immutable 0.2.3. This removes the new parity interfaces and browser ticket verification; do not use the rollback where verified ticketed discovery is required."
+      "migration": "Rebuild or install the browser package. Compatible chat requests now receive bounded IICP runtime identity context automatically; non-chat requests and explicit disabled mode remain unchanged.",
+      "rollback": "Restore immutable 0.2.4 to return to opt-in-only runtime identity composition while retaining route-ticket and effective-capability support."
     }
   ]
 }

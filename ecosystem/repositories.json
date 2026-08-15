@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-14",
+  "generated_at": "2026-08-15",
   "current_namespace": "RobLe3",
   "planned_namespace": "iicp-protocol",
   "organization_plan": "github-free",
@@ -14,7 +14,7 @@
       "authority": "normative protocol, registries and reviewed research",
       "language": "specification",
       "protocol": "1.9",
-      "release": "1.10.13"
+      "release": "1.10.14"
     },
     {
       "id": "directory-php",
@@ -25,7 +25,7 @@
       "authority": "PHP reference directory implementation and current Genesis Seed code line",
       "language": "php",
       "protocol": "1.9",
-      "release": "1.10.91"
+      "release": "1.10.92"
     },
     {
       "id": "directory-rust",
@@ -36,7 +36,7 @@
       "authority": "pre-1.0 Rust directory operator preview; not the production Genesis authority",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.1.12"
+      "release": "0.1.13"
     },
     {
       "id": "client-python",
@@ -47,7 +47,7 @@
       "authority": "Python consumer and provider SDK",
       "language": "python",
       "protocol": "1.9",
-      "release": "0.7.104",
+      "release": "0.7.105",
       "package": "pypi:iicp-client"
     },
     {
@@ -59,7 +59,7 @@
       "authority": "TypeScript consumer and provider SDK",
       "language": "typescript",
       "protocol": "1.9",
-      "release": "0.7.104",
+      "release": "0.7.105",
       "package": "npm:@iicp/client"
     },
     {
@@ -71,7 +71,7 @@
       "authority": "Rust consumer and provider SDK",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.7.104",
+      "release": "0.7.105",
       "package": "crates:iicp-client"
     },
     {
@@ -83,7 +83,7 @@
       "authority": "browser-native IICP consumer and provider implementation",
       "language": "typescript",
       "protocol": "1.9",
-      "release": "0.2.4",
+      "release": "0.2.5",
       "package": "npm:@iicp/web-node"
     }
   ]

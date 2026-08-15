@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+## v1.10.14 — 2026-08-15
+
+Additive pre-normative runtime-context and ecosystem release. It does not
+change the stable v1.9 base wire, directory schema or intent registry.
+
+- Advances the runtime-identity parity fixture to `0.3.0-draft` and makes
+  `auto` the default only for compatible chat helpers.
+- Requires client implementation/version facts, bounded disclosure, duplicate
+  suppression and candidate-specific recomposition from original messages.
+- Keeps raw task submission and every non-chat intent unchanged, and retains
+  explicit `disabled`, `explicit` and `required` controls.
+- Records coordinated Python, TypeScript and Rust `0.7.105` plus browser
+  `0.2.5` implementation candidates without changing the base wire.
+- Records PHP directory `1.10.92` and Rust directory preview `0.1.13`
+  candidates for the same SDK release-currency evidence; neither changes Genesis deployment.
+
 - Defines the accepted environmental-independence and extension architecture:
   Core, Profile, Binding, Registry and local implementation extensions now
   have explicit ownership and compatibility rules.
@@ -27,9 +43,10 @@
 - Defines effective service capabilities, conditional model-specific fields,
   same-intent variants, extension preservation, required/preferred/limit
   matching and bounded claim provenance without changing the current wire.
-- Defines a small, opt-in runtime-identity composition contract for chat-only
-  requests. It preserves application instructions, omits unknown facts and never
-  injects identity text into non-chat operations or creates an IICP persona.
+- Defines a small runtime-identity composition contract for chat-only requests.
+  Compatible chat helpers use it automatically; explicit disabled mode, raw
+  submission and non-chat operations remain unchanged. The context preserves
+  application instructions, omits unknown facts and never creates an IICP persona.
 
 ## v1.10.13 — 2026-08-12
 

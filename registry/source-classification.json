@@ -130,6 +130,7 @@
         {
           "repository": "iicp-client-python",
           "paths": [
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/iicp_client/backends/base.py",
             "tests/test_backends.py"
           ]
@@ -137,6 +138,7 @@
         {
           "repository": "iicp-client-rust",
           "paths": [
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/backends/openai_compat.rs",
             "tests/backends_tests.rs"
           ]
@@ -144,6 +146,7 @@
         {
           "repository": "iicp-client-typescript",
           "paths": [
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/backends/base.ts",
             "tests/backends.test.ts"
           ]
@@ -158,6 +161,12 @@
           "repository": "iicp-directory-rust",
           "paths": [
             "src/federation.rs"
+          ]
+        },
+        {
+          "repository": "iicp-web-node",
+          "paths": [
+            "parity/runtime-identity-context-v0/fixture.json"
           ]
         }
       ]
@@ -713,8 +722,10 @@
             "parity/dispatch-admission-v2.json",
             "parity/dispatch-route-ticket-v1.json",
             "parity/dispatch-ticket-trust-v2-crypto.json",
+            "parity/effective-capability-v1/fixture.json",
             "parity/policy-detail-disclosure-v0.json",
             "parity/profile-compatibility-v0.json",
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/iicp_client/backends/anthropic.py",
             "src/iicp_client/backends/base.py",
             "src/iicp_client/backends/meshllm.py",
@@ -729,6 +740,7 @@
             "src/iicp_client/proxy/openai_compat/translator.py",
             "src/iicp_client/proxy/plugin/iicp_provider.py",
             "src/iicp_client/relay_worker_client.py",
+            "src/iicp_client/runtime_identity.py",
             "src/iicp_client/trust_auditor.py",
             "tests/fixtures/candidate-ranker-v0.json",
             "tests/proxy/test_aggregator.py",
@@ -744,6 +756,7 @@
             "tests/proxy/test_otel_proxy_spans.py",
             "tests/proxy/test_peer_cache.py",
             "tests/proxy/test_router.py",
+            "tests/proxy/test_runtime_identity.py",
             "tests/proxy/test_translator.py",
             "tests/test_backends.py",
             "tests/test_candidate_ranker.py",
@@ -758,6 +771,8 @@
             "tests/test_discovery_evidence.py",
             "tests/test_dispatch_admission.py",
             "tests/test_dispatch_ticket.py",
+            "tests/test_effective_capability.py",
+            "tests/test_effective_capability_provider.py",
             "tests/test_iicp_tcp.py",
             "tests/test_integration.py",
             "tests/test_model_drift_reregister.py",
@@ -784,8 +799,10 @@
             "parity/dispatch-admission-v2.json",
             "parity/dispatch-route-ticket-v1.json",
             "parity/dispatch-ticket-trust-v2-crypto.json",
+            "parity/effective-capability-v1/fixture.json",
             "parity/policy-detail-disclosure-v0.json",
             "parity/profile-compatibility-v0.json",
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/backends/anthropic.rs",
             "src/backends/meshllm.rs",
             "src/backends/openai_compat.rs",
@@ -801,6 +818,7 @@
             "src/proxy/mod.rs",
             "src/relay_session.rs",
             "src/relay_worker_client.rs",
+            "src/runtime_identity.rs",
             "src/selection.rs",
             "src/trust_auditor.rs",
             "tests/backends_tests.rs",
@@ -811,6 +829,7 @@
             "tests/consumer_token_tests.rs",
             "tests/dispatch_admission_sqlite.rs",
             "tests/e2e_local.rs",
+            "tests/effective_capability_fixture.rs",
             "tests/fixtures/candidate-ranker-v0.json",
             "tests/iicp_tcp_tests.rs",
             "tests/integration.rs",
@@ -836,8 +855,10 @@
             "parity/dispatch-admission-v2.json",
             "parity/dispatch-route-ticket-v1.json",
             "parity/dispatch-ticket-trust-v2-crypto.json",
+            "parity/effective-capability-v1/fixture.json",
             "parity/policy-detail-disclosure-v0.json",
             "parity/profile-compatibility-v0.json",
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/backends/anthropic.ts",
             "src/backends/base.ts",
             "src/backends/meshllm.ts",
@@ -848,6 +869,7 @@
             "src/identity.ts",
             "src/iicp_tcp.ts",
             "src/proxy/index.ts",
+            "src/runtime_identity.ts",
             "src/trust_auditor.ts",
             "tests/backends.test.ts",
             "tests/candidate_ranker.test.ts",
@@ -864,6 +886,7 @@
             "tests/discovery_evidence.test.ts",
             "tests/dispatch_admission.test.ts",
             "tests/dispatch_ticket.test.ts",
+            "tests/effective_capability.test.ts",
             "tests/fixtures/candidate-ranker-v0.json",
             "tests/iicp_tcp.test.ts",
             "tests/integration.test.ts",
@@ -899,6 +922,7 @@
             "tests/Feature/ConsumerTokenTest.php",
             "tests/Feature/CreditSummaryTest.php",
             "tests/Feature/CreditsReadTest.php",
+            "tests/Feature/DataSubjectRightsCommandTest.php",
             "tests/Feature/DiscoverTest.php",
             "tests/Feature/DispatchRouteTicketTest.php",
             "tests/Feature/DispatchUsageCounterTest.php",
@@ -934,6 +958,7 @@
             "parity/cip-consumer-cosignature-transcript-v1.json",
             "parity/cip-consumer-cosignature-v1.json",
             "parity/dispatch-route-ticket-v1.json",
+            "parity/effective-capability-v1/fixture.json",
             "parity/policy-detail-disclosure-v0.json",
             "parity/profile-compatibility-v0.json",
             "src/db.rs",
@@ -950,10 +975,14 @@
           "paths": [
             "README.md",
             "parity/dispatch-route-ticket-v1.json",
+            "parity/effective-capability-v1/fixture.json",
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/browserNodeProvider.ts",
             "src/iicpConsumer.ts",
+            "src/runtimeIdentity.ts",
             "tests/client.test.ts",
             "tests/cx.test.ts",
+            "tests/effectiveCapability.test.ts",
             "tests/provider.test.ts"
           ]
         }
@@ -1079,6 +1108,7 @@
         {
           "repository": "iicp-client-python",
           "paths": [
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/iicp_client/backends/base.py",
             "tests/test_backends.py"
           ]
@@ -1086,6 +1116,7 @@
         {
           "repository": "iicp-client-rust",
           "paths": [
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/backends/openai_compat.rs",
             "tests/backends_tests.rs"
           ]
@@ -1093,6 +1124,7 @@
         {
           "repository": "iicp-client-typescript",
           "paths": [
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/backends/base.ts",
             "src/backends/openai_compat.ts",
             "tests/backends.test.ts"
@@ -1102,6 +1134,12 @@
           "repository": "iicp-directory-php",
           "paths": [
             "tests/Feature/RegistryTest.php"
+          ]
+        },
+        {
+          "repository": "iicp-web-node",
+          "paths": [
+            "parity/runtime-identity-context-v0/fixture.json"
           ]
         }
       ]
@@ -1147,10 +1185,12 @@
             "parity/dispatch-route-ticket-v1.json",
             "parity/policy-detail-disclosure-v0.json",
             "parity/profile-compatibility-v0.json",
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/iicp_client/backends/base.py",
             "src/iicp_client/node.py",
             "tests/test_backends.py",
-            "tests/test_capabilities.py"
+            "tests/test_capabilities.py",
+            "tests/test_runtime_identity.py"
           ]
         },
         {
@@ -1160,10 +1200,12 @@
             "parity/dispatch-route-ticket-v1.json",
             "parity/policy-detail-disclosure-v0.json",
             "parity/profile-compatibility-v0.json",
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/backends/anthropic.rs",
             "src/backends/openai_compat.rs",
             "src/node.rs",
-            "tests/backends_tests.rs"
+            "tests/backends_tests.rs",
+            "tests/runtime_identity_fixture.rs"
           ]
         },
         {
@@ -1173,11 +1215,13 @@
             "parity/dispatch-route-ticket-v1.json",
             "parity/policy-detail-disclosure-v0.json",
             "parity/profile-compatibility-v0.json",
+            "parity/runtime-identity-context-v0/fixture.json",
             "src/backends/base.ts",
             "src/backends/openai_compat.ts",
             "src/node.ts",
             "tests/backends.test.ts",
-            "tests/capabilities.test.ts"
+            "tests/capabilities.test.ts",
+            "tests/runtime_identity.test.ts"
           ]
         },
         {
@@ -1200,7 +1244,9 @@
         {
           "repository": "iicp-web-node",
           "paths": [
-            "parity/dispatch-route-ticket-v1.json"
+            "parity/dispatch-route-ticket-v1.json",
+            "parity/runtime-identity-context-v0/fixture.json",
+            "tests/runtimeIdentity.test.ts"
           ]
         }
       ]
@@ -1413,9 +1459,43 @@
           ]
         },
         {
+          "repository": "iicp-client-python",
+          "paths": [
+            "parity/effective-capability-v1/fixture.json",
+            "parity/runtime-identity-context-v0/fixture.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-rust",
+          "paths": [
+            "parity/effective-capability-v1/fixture.json",
+            "parity/runtime-identity-context-v0/fixture.json"
+          ]
+        },
+        {
+          "repository": "iicp-client-typescript",
+          "paths": [
+            "parity/effective-capability-v1/fixture.json",
+            "parity/runtime-identity-context-v0/fixture.json"
+          ]
+        },
+        {
           "repository": "iicp-directory-php",
           "paths": [
             "parity/effective-capability-v1/fixture.json"
+          ]
+        },
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "parity/effective-capability-v1/fixture.json"
+          ]
+        },
+        {
+          "repository": "iicp-web-node",
+          "paths": [
+            "parity/effective-capability-v1/fixture.json",
+            "parity/runtime-identity-context-v0/fixture.json"
           ]
         }
       ]

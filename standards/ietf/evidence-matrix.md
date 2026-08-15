@@ -2,7 +2,7 @@
 
 **Status:** informative review aid  
 **Draft:** `draft-roble-iicp-peer`  
-**Protocol baseline:** IICP 1.9 wire compatibility; suite release 1.10.13
+**Protocol baseline:** IICP 1.9 wire compatibility; suite release 1.10.14
 
 This matrix connects each requirement class in the peer-transport candidate to
 public specifications, fixtures and implementation tests. The Internet-Draft

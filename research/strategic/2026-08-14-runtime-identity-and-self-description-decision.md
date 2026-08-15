@@ -1,8 +1,8 @@
 # Runtime identity and self-description decision
 
 **Date:** 2026-08-14  
-**Status:** Reviewed pre-normative composition contract; opt-in only, not an SDK default
-**Tracker:** [IICP #158](https://github.com/RobLe3/IICP/issues/158)
+**Status:** Implemented pre-normative parity contract; default-auto on compatible chat helpers
+**Trackers:** [IICP #158](https://github.com/RobLe3/IICP/issues/158), [IICP #178](https://github.com/RobLe3/IICP/issues/178)
 
 ## Decision
 
@@ -16,12 +16,12 @@ context with a compact conversational rendering. It is not a new intent, an
 assistant persona, a directory response, a replacement for routing receipts,
 or a general prompt-management framework.
 
-The initial profile should remain research-only and explicitly enabled. It
-applies only to `urn:iicp:intent:llm:chat:v1`. Raw `submit()` calls and all
-non-chat intents remain byte-for-byte unchanged. A default for user-facing
-CLI, Web, or compatibility-proxy surfaces requires shared semantics,
-cross-SDK parity, provider compatibility evidence, and an explicit migration
-decision.
+The profile remains pre-normative, but the implementation evidence now supports
+a default-auto composition rule on compatible `urn:iicp:intent:llm:chat:v1`
+helpers. Raw `submit()` calls and all non-chat intents remain byte-for-byte
+unchanged. Applications can disable the context, opt into the legacy explicit
+mode, or require it before dispatch. This changes local chat prompt semantics;
+it does not change the IICP base wire or make the profile normative.
 
 ## Sources inspected
 
@@ -124,7 +124,7 @@ The stable text remains pre-normative, but the composition contract is now revie
 | active intent | validated task request | safe |
 | protocol/profile version | negotiated runtime fact | safe when present |
 | coarse selection summary | client decision enum | safe: matched intent and constraints |
-| client implementation/version | local client | optional; can fingerprint callers |
+| client implementation/version | local client | safe by default on compatible chat helpers; applications may disable the capsule |
 | selected model | explicit pin or provider-resolved model | optional; omit if unresolved |
 | effective capabilities | reviewed #156 projection | optional and intent-scoped |
 | coarse region | policy-approved route fact | policy-controlled |
@@ -142,8 +142,8 @@ Initial applicability is deliberately narrow:
 
 | Intent or surface | Action |
 | --- | --- |
-| `llm:chat:v1` with compatible system/instruction support | eligible for explicit experimental composition |
-| raw `submit()` | unchanged unless the caller explicitly supplies the profile |
+| `llm:chat:v1` with compatible system/instruction support | compose in `auto` by default; `disabled`, `explicit` and `required` remain available |
+| raw `submit()` | always unchanged by the chat helper contract |
 | embeddings | never inject text; it would change the vector |
 | transcription, speech, image, moderation, reranking | never inject text |
 | MCP or tool execution | do not inject a chat persona into structured calls |
@@ -156,8 +156,7 @@ would not make an executing model aware of the current request.
 
 ## Composition and precedence
 
-The profile must not become a universal prompt owner. The reviewed opt-in
-composition rules are deliberately mechanical:
+The profile must not become a universal prompt owner. The reviewed composition rules are deliberately mechanical:
 
 1. preserve every application, developer, provider-safety, and user message
    without rewriting its role or content;
@@ -171,8 +170,12 @@ composition rules are deliberately mechanical:
 6. cap the UTF-8 rendering at 2,048 bytes and reject prohibited facts before
    composition;
 7. do not claim that a system message prevents prompt injection;
-8. in `explicit` mode, leave the request unchanged when the instruction channel
-   is unsupported; in `required` mode, refuse before dispatch.
+8. in `auto` or `explicit` mode, leave the request unchanged when the
+   instruction channel is unsupported; in `required` mode, refuse before
+   dispatch;
+9. resolve client identity for every compatible chat call and rebuild model,
+   capability and selection facts from the original application messages for
+   each fallback candidate.
 
 These rules define portable observable behavior, not provider-internal prompt
 precedence. A provider may still apply its own safety prompt outside the caller's
@@ -195,8 +198,22 @@ Ollama with `qwen2.5:0.5b`, `max_tokens=1`, and the same user question:
 
 This is one runtime measurement, not a cross-tokenizer guarantee. Dynamic facts
 add further cost and should be limited to facts relevant to the active request.
-The profile should set a small serialized-size limit and test more than one
-backend before any default is enabled.
+The profile keeps a 2,048-byte serialized-size limit. The default decision is
+bounded to compatible chat helpers and remains reversible with `disabled`;
+additional tokenizer measurements remain useful evidence rather than a timed
+gate.
+
+## Representative semantic smoke test
+
+A content-free local smoke test on 2026-08-15 exercised six self-description
+questions through Ollama. `phi3:mini` followed all six supplied facts and
+boundaries. `qwen2.5:0.5b` and `llama3.2:1b` understood the IICP relationship
+but did not reproduce every model or capability fact reliably. This is useful
+evidence for the mechanism and a limit on its claim: the capsule supplies
+authoritative context, but model instruction-following remains model-dependent.
+It is not semantic conformance or a security boundary. The report retains only
+classifications, not prompts, answers, endpoints or routing data:
+[`runtime-identity-semantic-smoke-2026-08-15.json`](runtime-identity-semantic-smoke-2026-08-15.json).
 
 ## Security boundary
 
@@ -207,47 +224,40 @@ and potentially to the user. Requests to print hidden routing data do not widen
 the allowed field set. The capsule contains no secrets, and exact system-prompt
 secrecy is not a security assumption.
 
-## Issue audit
+## Issue audit and implementation evidence
 
-| Issue | Disposition | Reason |
+| Issue | Disposition | Evidence |
 | --- | --- | --- |
-| IICP #158 | **OPEN / owner** | New semantic gap; owns representation, composition, privacy and fixtures. |
-| IICP #156 | **BLOCKS capability facts only** | Runtime identity reuses its effective-capability vocabulary; base identity can proceed independently. |
-| IICP #55 | **KEEP** | Registry ratification is not blocked by runtime identity. Do not merge the scopes. |
-| IICP #70 | **KEEP CLOSED / reuse** | Already separates implementation identity from SDK compatibility. |
-| iicp.network #614 | **KEEP CLOSED / reuse** | Output notice is complementary and complete; no reopening. |
-| iicp.network #585 | **KEEP CLOSED / reuse** | Existing pre-dispatch privacy policy remains authoritative. |
-| IICP #56 | **KEEP** | Policy/data-handling ratification is related but not an identity-capsule implementation issue. |
+| IICP #158 | **CLOSED / semantic foundation** | Decision record, capsule marker and original opt-in fixture were reviewed and implemented. |
+| IICP #178 | **IMPLEMENTATION OWNER** | Defines auto default, candidate recomposition, client identity, proxy/browser behavior and coordinated release evidence. |
+| Python #101 | **IMPLEMENTED CANDIDATE** | Chat and proxy paths default to auto; raw submit remains unchanged; serial and parallel candidates recompose from original messages. |
+| TypeScript #89 | **IMPLEMENTED CANDIDATE** | Chat defaults to auto and recomposes for the selected fallback candidate. |
+| Rust #101 | **IMPLEMENTED CANDIDATE** | `chat()` defaults to auto; `chat_with_runtime_identity` retains explicit control; raw `submit()` is unchanged. |
+| Browser #19 | **IMPLEMENTED CANDIDATE** | Browser chat adds client, selected advertised model and complete advertised capability facts when available. |
+| Website #41 | **IMPLEMENTED, NOT DEPLOYED** | Mesh chat and local WebLLM use the shared contract; local mode explicitly says that no remote provider was selected. Deployment requires separate authorization. |
+| IICP #156 | **REUSED** | Effective capability facts use its vocabulary only when the complete selected variant is available. |
 
-No Web-only issue is justified. The Web path reproduced a shared architectural
-gap. The shared semantics are now reviewed for an opt-in implementation chain. Directories remain out of scope because composition belongs at the client/provider execution boundary.
+The canonical fixture is `0.3.0-draft`, remains pre-normative, and is copied
+byte-for-byte into the official SDK/browser parity directories. The release
+changes a chat-helper default, not a directory contract or base-wire field.
 
-## Dependency order
+## Implemented dependency order
 
 ```text
 IICP #158 semantic decision and fixture
-        |
-        +---- #156 effective capability projection (optional fact only)
-        |
-        v
-shared formatter and composition contract
-        |
-        v
-coordinated Python / TypeScript / Rust / browser provider parity
-        |
-        v
-provider compatibility and semantic self-description tests
-        |
-        v
-opt-in user-facing CLI / Web / proxy experiment
-        |
-        v
-measured migration and explicit default decision
+        ↓
+IICP #178 default-auto migration contract
+        ↓
+Python / TypeScript / Rust / browser parity
+        ↓
+compatibility proxy and website browser/local composition
+        ↓
+coordinated package evidence and separately authorized website deployment
 ```
 
-Directories do not need to generate prompts. They may later provide already
-public, policy-approved facts, but prompt composition belongs at the
-client/provider execution boundary.
+Directories do not generate prompts. Candidate facts are composed at the
+client boundary after eligibility and selection, and are re-evaluated for each
+fallback attempt.
 
 ## Long-term alignment
 
@@ -259,4 +269,3 @@ and migration work. It would still be useful with any model vendor or runtime.
 The proposal should be rejected if it becomes an IICP persona, a hidden
 marketing prompt, a directory-side answer bot, a new capability registry, or a
 way to expose private routing state.
-

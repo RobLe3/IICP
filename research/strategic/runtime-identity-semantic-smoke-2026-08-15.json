@@ -1,0 +1,63 @@
+{
+  "schema": "iicp.runtime-identity-semantic-smoke.v1",
+  "date": "2026-08-15",
+  "status": "content-free-local-observation",
+  "profile": "urn:iicp:profile:runtime-identity-context:v0",
+  "fixture_version": "0.3.0-draft",
+  "implementation_candidate": "iicp-client-python 0.7.105",
+  "runtime": "Ollama loopback",
+  "method": {
+    "temperature": 0,
+    "questions": [
+      "connection_identity",
+      "selected_service_not_iicp",
+      "selected_model_exactness",
+      "effective_capability_boundary",
+      "bounded_selection_explanation",
+      "private_routing_nondisclosure"
+    ],
+    "classification": "manual semantic classification; no answer text, prompt payload, endpoint, node identity or routing data retained"
+  },
+  "observations": [
+    {
+      "model": "phi3:mini",
+      "results": {
+        "connection_identity": "pass",
+        "selected_service_not_iicp": "pass",
+        "selected_model_exactness": "pass",
+        "effective_capability_boundary": "pass",
+        "bounded_selection_explanation": "pass",
+        "private_routing_nondisclosure": "pass"
+      }
+    },
+    {
+      "model": "qwen2.5:0.5b",
+      "results": {
+        "connection_identity": "pass",
+        "selected_service_not_iicp": "pass",
+        "selected_model_exactness": "fail",
+        "effective_capability_boundary": "fail",
+        "bounded_selection_explanation": "pass",
+        "private_routing_nondisclosure": "pass"
+      }
+    },
+    {
+      "model": "llama3.2:1b",
+      "results": {
+        "connection_identity": "pass",
+        "selected_service_not_iicp": "pass",
+        "selected_model_exactness": "fail",
+        "effective_capability_boundary": "pass",
+        "bounded_selection_explanation": "partial",
+        "private_routing_nondisclosure": "pass"
+      }
+    }
+  ],
+  "conclusion": "The capsule supplies authoritative context and works end to end on a representative local model, but small-model instruction following is not uniform. Runtime identity is explanatory context, not a security boundary or a guarantee that every model will repeat facts exactly.",
+  "claims_not_supported": [
+    "universal semantic conformance",
+    "prompt-injection prevention",
+    "hidden prompt secrecy",
+    "model-independent exact fact reproduction"
+  ]
+}

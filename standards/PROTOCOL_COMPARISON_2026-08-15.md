@@ -87,7 +87,7 @@ project influenced another or owns a mechanism.
 
 | Work | Current source | Primary role | Relationship to IICP |
 |---|---|---|---|
-| IICP | Project suite 1.10.13; stable wire baseline 1.9.0 | Intent registry, effective-capability advertisement, directory discovery, eligibility, selection and dispatch authorization; optional execution bindings | Subject of this comparison; project-normative beta, not externally ratified |
+| IICP | Project suite 1.10.14; stable wire baseline 1.9.0 | Intent registry, effective-capability advertisement, directory discovery, eligibility, selection and dispatch authorization; optional execution bindings | Subject of this comparison; project-normative beta, not externally ratified |
 | IAIP | [draft-sz-dmsc-iaip-02](https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/), active individual I-D, 2026-05-25 | Agent-gateway registration, capability validation, intent resolution, matching, ranking, selection and forwarding | Direct overlap; compare gateway payload path, trust model and selection-result semantics |
 | AIDIP | [draft-cui-ai-agent-discovery-invocation-02](https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/), active individual I-D, 2026-07-06 | Common agent metadata, capability/intent discovery, ranked candidates and REST invocation | Direct overlap in discovery and intent-based candidate selection; AIDIP also defines a unified invocation API |
 | AIPF | [draft-zahed-agent-comm-framework-01](https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/), active individual I-D, 2026-07-19 | Layered framework for interoperable agent-to-agent and agent-to-tool communication | Architecture and federation/trust crosswalk; not a drop-in execution binding |
