@@ -4,7 +4,7 @@
 **Issue**: #171 (REP5: Whitewash and adversarial scenarios — modeling)
 **Date**: 2026-05-24
 **Status**: Complete — all five attack vectors modeled; design holds
-**Author**: RESA loop, FORGE iter963
+**Status**: public adversarial research record
 **Simulation evidence**: `research/simulation/rep/harness.py`, sweep F6–F12, F16
 **Related findings**: `research/findings/REP-adversarial-sensitivity-2026-05-18.md`
 **Depends on**: REP1 (#167), REP2 (#168), REP4 (#170)

@@ -221,3 +221,7 @@ No UDP port, ALPN identifier, media type, or CBOR tag is requested here.
 The public IICP specifications, conformance fixtures, and maintained language
 implementations informed this draft.  Those implementations are evidence and
 are not normative authority.
+
+An informative, version-controlled evidence matrix and independent review
+instructions are published with the draft source. They are review aids rather
+than part of this protocol definition.

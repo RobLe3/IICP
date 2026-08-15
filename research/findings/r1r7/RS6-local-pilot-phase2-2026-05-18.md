@@ -1,11 +1,11 @@
 # RS6 — Phase 2 Local Inference Pilot
 
-**Track**: REP (Reputation & Tiered Access) × RS6 (Live Pilot Gate)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, iter93  
-**Harness**: `research/rs6-local-pilot.py`  
-**Results**: `research/results/rs6/rs6_phase2_results.json`  
-**Seeds**: 42, 43, 44 | **Tasks**: 30 | **Nodes**: 2  
+**Track**: REP (Reputation & Tiered Access) × RS6 (Live Pilot Gate)
+**Date**: 2026-05-18
+**Status**: public live-pilot research record
+**Harness**: `research/rs6-local-pilot.py`
+**Results**: `research/results/rs6/rs6_phase2_results.json`
+**Seeds**: 42, 43, 44 | **Tasks**: 30 | **Nodes**: 2
 **Confidence**: HIGH — actual Ollama inference (phi3:mini, qwen2.5:0.5b); 90 total task executions.
 
 ---
@@ -36,11 +36,11 @@ latency/availability effects.
 
 ### 2.2 Protocol parameters
 
-- Starting credit: sc=0.50 (REP1 recommendation)  
-- Selection: ε-greedy, ε=0.05 (Algorithm B, production default)  
-- Task-outcome delta: +0.01 success, −0.05 failure (REP1)  
-- Quality modifier: (intent_match − 3) × 0.001 per task (REP4)  
-- Floor: R_FLOOR = 0.30  
+- Starting credit: sc=0.50 (REP1 recommendation)
+- Selection: ε-greedy, ε=0.05 (Algorithm B, production default)
+- Task-outcome delta: +0.01 success, −0.05 failure (REP1)
+- Quality modifier: (intent_match − 3) × 0.001 per task (REP4)
+- Floor: R_FLOOR = 0.30
 
 ### 2.3 Tasks
 

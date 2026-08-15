@@ -3,7 +3,7 @@
 **Track**: REP (Reputation & Tiered Access)  
 **Issue**: #168 (REP2: Tier structure and transition rules)  
 **Date**: 2026-05-18  
-**Author**: RESA loop, iter 6  
+**Status**: public research record
 **Evidence basis**: F1 (scale invariance), F2 (adversarial isolation), F5 (demotion asymmetry), F7 (adversarial equilibrium), F10/F12 (identity-age gate validation)
 
 ---
@@ -105,7 +105,7 @@ Before #168 can be closed, the following parameters need explicit ratification:
 ADR-026 currently lists tier thresholds as "candidates". This REP2 recommendation upgrades them
 to **recommended defaults** based on simulation evidence. The next SPEC iteration should:
 1. Update ADR-026 §Decision to replace "candidate" with "recommended"
-2. Add note about 90-day gate variant (not yet tested — coordinated collusion model RESA iter7)
+2. Add note about the 90-day gate variant (not yet tested; see `REP4-coordinated-collusion-2026-05-18.md`).
 3. Update spec/iicp-cooperative-inference.md §5 with final tier values (after REP1/REP2 formal closure)
 
 ---
@@ -113,6 +113,6 @@ to **recommended defaults** based on simulation evidence. The next SPEC iteratio
 ## Open items for REP2 closure
 
 - [ ] Formal Protocol Steward ratification of the above tier boundary table
-- [ ] 90-day gate variant simulation (coordinated collusion — RESA iter7, RS2 gap)
+- [ ] 90-day gate variant simulation (coordinated-collusion and RS2 evidence gap)
 - [ ] Spec update: `spec/iicp-cooperative-inference.md §5.1` — tier thresholds as normative values
 - [ ] ADR-026 updated from "candidate" → "recommended" for all threshold values listed above

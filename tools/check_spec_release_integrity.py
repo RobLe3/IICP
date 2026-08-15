@@ -38,9 +38,20 @@ def main() -> int:
             errors.append(f"missing required file: {relative}")
         elif digest(path) != expected:
             errors.append(f"digest mismatch: {relative}")
+    from check_public_artifact_closure import validate as validate_public_artifacts
+    errors.extend(
+        f"public artifact closure: {finding.path}:{finding.line}: {finding.message}"
+        for finding in validate_public_artifacts(ROOT)
+    )
     required = {
+        "LICENSE",
+        "GOVERNANCE.md",
+        "SECURITY.md",
+        "CONTRIBUTING.md",
+        "CONTINUATION.md",
         "CHANGELOG.md",
         "ecosystem/repositories.json",
+        "ecosystem/public-repositories.json",
         "SPEC_STATUS.md",
         "VERSIONING.md",
         "registry/intents.json",
@@ -58,6 +69,8 @@ def main() -> int:
         "research/native-ai-infrastructure/fixtures/service-profiles-v1.json",
         "tools/test_service_lifecycle_fixture.py",
         "docs/operator-onboarding-recovery.md",
+        "docs/governance/public-artifact-boundary.md",
+        "docs/security/privacy-adversary-and-trust-model.md",
         "docs/architecture/environmental-independence-and-extension-architecture.md",
         "docs/architecture/environmental-independence-v1.json",
         "tools/test_environmental_independence_decision.py",
@@ -105,6 +118,8 @@ def main() -> int:
         "tools/test_signed_message_envelope_boundary.py",
         "tools/check_public_evidence_access.py",
         "tools/test_public_evidence_access.py",
+        "tools/check_public_artifact_closure.py",
+        "tools/test_public_artifact_closure.py",
     }
     missing_pins = sorted(required - set(manifest["files"]))
     if missing_pins:

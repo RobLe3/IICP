@@ -1,0 +1,80 @@
+{
+  "generated_at": "2026-08-14",
+  "repositories": [
+    {
+      "authority": "normative protocol, registries and reviewed research",
+      "id": "specification",
+      "language": "specification",
+      "lifecycle": "active",
+      "name": "IICP",
+      "protocol": "1.9",
+      "release": "1.10.13",
+      "url": "https://github.com/RobLe3/IICP"
+    },
+    {
+      "authority": "PHP reference directory implementation and current Genesis Seed code line",
+      "id": "directory-php",
+      "language": "php",
+      "lifecycle": "active",
+      "name": "iicp-directory-php",
+      "protocol": "1.9",
+      "release": "1.10.91",
+      "url": "https://github.com/RobLe3/iicp-directory-php"
+    },
+    {
+      "authority": "pre-1.0 Rust directory operator preview; not the production Genesis authority",
+      "id": "directory-rust",
+      "language": "rust",
+      "lifecycle": "operator-preview",
+      "name": "iicp-directory-rust",
+      "protocol": "1.9",
+      "release": "0.1.12",
+      "url": "https://github.com/RobLe3/iicp-directory-rust"
+    },
+    {
+      "authority": "Python consumer and provider SDK",
+      "id": "client-python",
+      "language": "python",
+      "lifecycle": "active",
+      "name": "iicp-client-python",
+      "package": "pypi:iicp-client",
+      "protocol": "1.9",
+      "release": "0.7.104",
+      "url": "https://github.com/RobLe3/iicp-client-python"
+    },
+    {
+      "authority": "TypeScript consumer and provider SDK",
+      "id": "client-typescript",
+      "language": "typescript",
+      "lifecycle": "active",
+      "name": "iicp-client-typescript",
+      "package": "npm:@iicp/client",
+      "protocol": "1.9",
+      "release": "0.7.104",
+      "url": "https://github.com/RobLe3/iicp-client-typescript"
+    },
+    {
+      "authority": "Rust consumer and provider SDK",
+      "id": "client-rust",
+      "language": "rust",
+      "lifecycle": "active",
+      "name": "iicp-client-rust",
+      "package": "crates:iicp-client",
+      "protocol": "1.9",
+      "release": "0.7.104",
+      "url": "https://github.com/RobLe3/iicp-client-rust"
+    },
+    {
+      "authority": "browser-native IICP consumer and provider implementation",
+      "id": "web-node",
+      "language": "typescript",
+      "lifecycle": "experimental",
+      "name": "iicp-web-node",
+      "package": "npm:@iicp/web-node",
+      "protocol": "1.9",
+      "release": "0.2.4",
+      "url": "https://github.com/RobLe3/iicp-web-node"
+    }
+  ],
+  "schema": "iicp.public-repositories.v1"
+}

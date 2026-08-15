@@ -4,7 +4,7 @@
 **Date**: 2026-05-24
 **Status**: Research / Pre-spec
 **Issue**: #303
-**Author**: CORC sub-loop, FORGE iter-957
+**Status**: public security research record
 **Feeds**: spec/iicp-dir.md §field-integrity, ADR-030 §Tier-2 attestation, NodeScorer.php, RegisterController.php
 
 ---
@@ -203,7 +203,7 @@ the operator intended this registration with this payload. This is sufficient.
 |-----------|--------|---------|
 | `spec/iicp-dir.md` | Add `§Field Integrity and Injection Resistance` | New §5.x |
 | `spec/iicp-dir.md` | Remove or sentinel `latency_estimate_ms` field | §3.3 discover response |
-| `project/decisions/ADR-030.md` | Add `jurisdiction_cc` to DID:web operator document | §Tier 2 DID:web |
+| Public identity-profile decision | Add `jurisdiction_cc` to the reviewed operator-identity contract, if accepted | §Tier 2 DID:web |
 
 These are informational — spec authors should pull from this document.
 
@@ -215,7 +215,7 @@ These are informational — spec authors should pull from this document.
 - `directory/app/Services/NodeScorer.php` — score computation (region diversity)
 - `directory/app/Services/ReputationService.php` — DELTA constants (-0.05, -0.05)
 - `directory/app/Http/Controllers/AuditReportController.php` — audit pattern reference
-- `project/security/THREAT_MODEL.md` — TC-1 through TC-8 threat scope
+- [`docs/security/privacy-adversary-and-trust-model.md`](../../docs/security/privacy-adversary-and-trust-model.md) — public adversary and trust boundary
 - `research/credit-economy/02-routing-cost-design.md` — tier_weight table (for F4-M1 p95 thresholds)
 - ADR-030 §Tier 2 attestation
 - Issue #300 (latency_estimate_ms directory-measured)

@@ -102,8 +102,8 @@ Even if we never build it, the dogfood-angle document serves three purposes:
 runs one season. File a research-track issue in 2027 to re-evaluate; until then, this is
 folklore, not a roadmap item.
 
-The dogfood angle is captured in `project/gamification.md` ("a future operator narrative") and
-in `project/ARCHITECTURE.md` future-section as appropriate. No active work item.
+This document preserves the public product rationale. It does not create an
+active protocol work item or depend on private development-process material.
 
 ---
 

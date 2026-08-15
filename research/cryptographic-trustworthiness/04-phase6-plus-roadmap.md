@@ -99,7 +99,7 @@ zkML addresses all three. A zkML proof asserts: "Model M with weight commitment 
 | zkML proof generation for 7B in < 1 second | 2028+ | Custom ASICs for proving, or breakthrough algorithms |
 | IICP Phase 7 zkML track opens | When < 10 seconds achieved | Open implementation track per spec |
 
-**Decision trigger**: When a publicly available, open-source zkML framework can prove a 7B parameter model inference in under 10 seconds on commodity cloud GPU hardware, open the IICP Phase 7 zkML implementation track. Until then, track as a research milestone in `FORGE_STATE.json`.
+**Decision trigger**: When a publicly available, open-source zkML framework can prove a 7B parameter model inference in under 10 seconds on commodity cloud GPU hardware, open a public IICP Phase 7 zkML implementation proposal. Until then, retain this as a research milestone rather than an implementation claim.
 
 ---
 
@@ -277,9 +277,9 @@ Challenge prompts must be:
 | Phase 6 (+ TEE + challenge-response) | Above + code/hardware integrity for TEE nodes; probabilistic quality floor; model identity signal via probe performance |
 | Phase 7+ (+ zkML) | Above + cryptographic proof of full computation; model weight identity; no trust-in-coordinator needed for hash verification |
 
-### Research Trigger Conditions (Recommendations for FORGE State)
+### Public research trigger conditions
 
-Add to `project/FORGE_STATE.json` under a new `research_triggers` section:
+Reassess this research when one of these evidence thresholds is met:
 
 1. **zkML trigger**: When any open-source framework proves 7B parameter LLM inference in under 10 seconds on an H100 GPU, open Phase 7 zkML implementation issue and ADR.
 2. **TEE trigger**: When at least 3 node operators have expressed interest in running TEE-attested nodes (GitHub issue survey), draft Phase 6 TEE spec additions.

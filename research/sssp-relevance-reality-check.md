@@ -1,10 +1,10 @@
 # R7 — SSSP Relevance Reality Check
 
-**Track**: R1R7 — Provider Selection & Multi-Path Routing  
-**Issue**: #179 (R7: SSSP reality check — does shortest-path matter at any plausible scale?)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter 82  
-**Length**: ≈1600 words (within ≤2000 limit)  
+**Track**: R1R7 — Provider Selection & Multi-Path Routing
+**Issue**: #179 (R7: SSSP reality check — does shortest-path matter at any plausible scale?)
+**Date**: 2026-05-18
+**Status**: public relevance assessment
+**Length**: ≈1600 words (within ≤2000 limit)
 **Recommendation**: **Defer SSSP entirely** — trigger condition specified in §5.
 
 ---

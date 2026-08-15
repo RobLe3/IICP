@@ -103,8 +103,8 @@ IICP v1.5
 │
 ├── Semantics (SHOULD)
 │   └── spec/iicp-semantics.md
-│       → Scoring formula: project/ARCHITECTURE.md §ADR-008
-│       → Retry policy: project/RELIABILITY.md §Retry
+│       → Scoring and selection: spec/iicp-semantics.md §4
+│       → Retry policy: spec/iicp-semantics.md §5
 │
 ├── Sub-protocols
 │   ├── spec/iicp-dir.md        (IICP-DIR — directory)

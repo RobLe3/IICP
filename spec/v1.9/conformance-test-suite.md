@@ -376,7 +376,7 @@ runtime (transient network or node issue).
 | `SEC-TLS-01` | All directory connections over TLS 1.3 | Verified via `openssl s_client` in production | `reach/src/reach/probes/directory_conformance.py::probe_tls_version` |
 | `SEC-NONCE-01` | Duplicate Ed25519 gossip signature on peers endpoint → 409 | Replay detected and rejected within the peer replay window | `adapter/tests/test_nonce_replay.py::test_duplicate_nonce_rejected` |
 | `SEC-LEAK-01` | No stack trace in any error response | Automated scan: `grep -r "Traceback\|at line"` | `reach/src/reach/probes/directory_conformance.py::probe_no_stack_trace` |
-| `SEC-LEAK-02` | No internal file paths in any response body | Automated scan: `grep -r "/home/\|/Users/"` | `reach/src/reach/probes/directory_conformance.py::probe_no_path_leak` |
+| `SEC-LEAK-02` | No internal file paths in any response body | Automated scan for common Unix and Windows home-directory prefixes | `reach/src/reach/probes/directory_conformance.py::probe_no_path_leak` |
 | `SEC-RN-01` | Rust node rejects empty `auth.node_token` → 401 | Validates `validate_token` never enters open-mode | `iicp-node/tests/` (Rust integration tests) |
 | `SEC-RN-02` | Rust node rejects request with no `auth` field → 401 | Missing auth treated same as invalid token | `iicp-node/tests/` (Rust integration tests) |
 | `SEC-LOG-01` | Task payload content absent from adapter and proxy logs | Submit task with known content; grep adapter+proxy logs — payload must not appear | `adapter/tests/test_coverage_gates.py` |

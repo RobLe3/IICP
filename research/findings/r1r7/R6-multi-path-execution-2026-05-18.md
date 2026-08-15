@@ -1,15 +1,15 @@
 # R6 — Multi-Path Execution: Trade-Off Curves and Strategy Recommendations
 
-**Track**: R1R7 — Provider Selection & Multi-Path Routing  
-**Issue**: #178 (R6: Multi-path execution simulation)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter90  
-**Depends on**: R2 (#174 — protocol requirements), R4 (#176 — selection policy baseline)  
-**Harness**: `research/multi-path-execution-sim.py`  
-**Results**: `research/results/r6/r6_multipath_results.json`  
-**Seeds**: 42, 43, 44 (3-run average per configuration)  
-**Network sizes**: 100, 1000, 10000 nodes | **Jobs**: 2000 per run  
-**Selection policy**: ε-greedy (ε=0.05, from R4 algorithm B recommendation)  
+**Track**: R1R7 — Provider Selection & Multi-Path Routing
+**Issue**: #178 (R6: Multi-path execution simulation)
+**Date**: 2026-05-18
+**Status**: public research record
+**Depends on**: R2 (#174 — protocol requirements), R4 (#176 — selection policy baseline)
+**Harness**: `research/multi-path-execution-sim.py`
+**Results**: `research/results/r6/r6_multipath_results.json`
+**Seeds**: 42, 43, 44 (3-run average per configuration)
+**Network sizes**: 100, 1000, 10000 nodes | **Jobs**: 2000 per run
+**Selection policy**: ε-greedy (ε=0.05, from R4 algorithm B recommendation)
 **Confidence**: MED — quality model uses static node scores; no latency variance or churn.
 
 ---
@@ -35,7 +35,7 @@
 | verifiable | 2.5 | Medium (0.8×) | Medium-high (1.5) |
 | unverifiable | 2.0 | Medium (1.0×) | Very high (2.5) — client can't detect |
 
-**Net value formula** (per job):  
+**Net value formula** (per job):
 `nv = (value × success_rate) − (cost_multiplier × cost_weight × 0.15) − (mal_accepted_rate × mal_penalty)`
 
 ### 1.3 Provider pool

@@ -1,12 +1,12 @@
 # MESH2 — Consolidator Pool Dynamics and Capability Probes
 
-**Track**: MESH — Consolidator Pattern, Role-Based Routing, Load-Aware Selection  
-**Issue**: #181 (MESH2: Consolidator pool dynamics and capability probes)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter83  
+**Track**: MESH — Consolidator Pattern, Role-Based Routing, Load-Aware Selection
+**Issue**: #181 (MESH2: Consolidator pool dynamics and capability probes)
+**Date**: 2026-05-18
+**Status**: public research record
 **Depends on**: MESH1 (#180) — role-assignment algorithm; Algorithm A (conjunctive) and
-operator-diversity HARD constraint are inputs to this document.  
-**Length**: ≈2000 words  
+operator-diversity HARD constraint are inputs to this document.
+**Length**: ≈2000 words
 **ADR impact**: Expands ADR-028 §Open Questions (MESH2 item). Interaction with ADR-013
 (signed event log for probe results) and ADR-026 (reputation as earned signal).
 

@@ -2,7 +2,7 @@
 
 **Issue**: #230 (Transport: IICP network-layer standard)
 **Date**: 2026-05-24
-**Author**: RESA loop, FORGE iter963
+**Status**: public transport research record
 
 ---
 

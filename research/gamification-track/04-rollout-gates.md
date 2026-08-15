@@ -1,14 +1,14 @@
 # Gamification Track 04 — Rollout Gates
 
-**Status**: Draft (iter-299, 2026-05-21)
+**Status**: Draft research record (2026-05-21)
 **Companion**: `01-design-rationale.md`, `02-metric-mapping.md`, `03-anti-gaming.md`
-**Tracking**: #267
+**Tracking**: no active protocol implementation issue
 
 ---
 
 ## Purpose
 
-Define the explicit conditions under which the gamification framework (#267) is **safe to
+Define the explicit conditions under which the recognition framework is **safe to
 ship**. Gates are sequenced: a gate cannot open until all prior gates open. The maintainer is
 the sole authority on each gate decision; this document specifies the *evidence* required for
 disposition, not the disposition itself.
@@ -20,11 +20,11 @@ can disposition without re-investigating prior gates.
 
 ### Gate G1 — Identity layer in place
 
-**Required artifact**: ADR-030 (Operator Identity & Anti-Sybil) at status Accepted, with
-implementation shipped to production directory.
+**Required artifact**: a reviewed public operator-identity and anti-Sybil
+decision, with its implementation released by the directory owner.
 
 **Evidence**:
-- `project/decisions/ADR-030.md` status = Accepted
+- the public decision has accepted status and testable acceptance criteria
 - `directory/database/migrations/...operators` migration applied to production
 - `POST /v1/operator` returning 201 in live API
 - ≥1 attested operator visible via `GET /v1/operator/{handle}/profile`
@@ -33,16 +33,16 @@ implementation shipped to production directory.
 **Why**: Without operator identity, every sock-puppet attack from deliverable 03 succeeds.
 Shipping gamification before identity = leaderboards full of phantom operators.
 
-### Gate G2 — Public-launch gate (#260) resolved
+### Gate G2 — Public-launch decision resolved
 
-**Required artifact**: `project/gates/CLOSED_BETA_TO_PUBLIC_GATE.md` either:
+**Required artifact**: a public launch decision that either:
 - Documents the path to public launch with concrete completion criteria, AND those criteria
   are met, OR
 - Explicitly documents indefinite closed-beta posture with maintainer rationale (in which
   case gamification rollout is restricted to invited operators only, per Gate G4).
 
 **Evidence**:
-- File exists, signed off by maintainer
+- The decision exists in a public operator-facing artifact and is approved by the maintainer
 - If "public" path: all checklist items in gate doc are ✅
 - If "indefinite closed-beta" path: rationale documented + Gate G4 adjusted
 
@@ -72,7 +72,7 @@ IICP working group.
 
 **Evidence**:
 - `SELECT COUNT(DISTINCT operator_id) FROM operators WHERE attestation_status='attested' AND operator_id != 'genesis-cohort' ≥ 10`
-- W-016 / FC-001 D7 score correction applied to FORGE5_STATE.json reflecting the new reality
+- A public, content-free operator-count snapshot confirms the threshold
 
 **Why**: Gamifying a single-operator-group mesh is embarrassing. Leaderboards work as a
 recruiting tool only when there's a non-trivial population to compete in. The 10-operator
@@ -120,8 +120,7 @@ Normative spec prevents drift between client implementations and the directory.
 
 ### Gate G7 — Privacy & moderation policy
 
-**Required artifact**: `project/RECOGNITION_PRIVACY_POLICY.md` and
-`project/RECOGNITION_MODERATION_POLICY.md`.
+**Required artifact**: public recognition privacy and moderation policies.
 
 **Evidence**:
 - Privacy policy covers: data retained, what's public, how operators opt out of leaderboards,
@@ -136,7 +135,7 @@ Moderation must be predictable so operators don't fear arbitrary deplatforming.
 
 ### Gate G8 — Founding Cohort migration plan
 
-**Required artifact**: `project/FOUNDING_COHORT_MIGRATION.md`.
+**Required artifact**: a public founding-cohort migration policy.
 
 **Evidence**:
 - Lists the existing 8 active nodes' `operator_id` assignments (Genesis Cohort)
@@ -156,14 +155,14 @@ their badges.
 
 | Gate | Owner | Disposition trigger | Status check |
 |---|---|---|---|
-| G1 Identity | PS + maintainer | ADR-030 Accepted + schema migrated | `ls project/decisions/ADR-030.md` + check status field |
-| G2 Public-launch | Maintainer | #260 gate doc signed off | `project/gates/CLOSED_BETA_TO_PUBLIC_GATE.md` exists + maintainer signature |
+| G1 Identity | protocol and directory owners | Identity decision accepted + schema migrated | public decision status plus released schema evidence |
+| G2 Public-launch | Maintainer | Public launch decision approved | public decision plus maintainer approval |
 | G3 REACH multi-region | Maintainer + ops | ≥3 probe regions live for ≥90d | `/api/v1/stats` exposes ≥3 region keys |
 | G4 External operators | Auto-observed | ≥10 attested distinct operators | `gh issue view 269` comment with operator count snapshot |
-| G5 Telemetry | CORC | All deliverable-02 partial items resolved | grep schema migrations |
-| G6 Spec + conformance | ARCS | `spec/iicp-recognition.md` v ≥ 1.0 + REACH probes registered | `git log -- spec/iicp-recognition.md` shows v1.0 tag |
-| G7 Policies | Maintainer | Both policy docs land | `ls project/RECOGNITION_*_POLICY.md` |
-| G8 Founding Cohort | Maintainer | Migration plan committed | `ls project/FOUNDING_COHORT_MIGRATION.md` |
+| G5 Telemetry | implementation owners | All deliverable-02 partial items resolved | released schema and migration evidence |
+| G6 Spec + conformance | protocol owner | `spec/iicp-recognition.md` v ≥ 1.0 + probes registered | public release tag and conformance evidence |
+| G7 Policies | Maintainer | Both policies published | stable public policy URLs |
+| G8 Founding Cohort | Maintainer | Migration plan published | stable public policy URL |
 
 ---
 
@@ -224,10 +223,9 @@ Prefer narrow halts (specific badge disabled, season paused) over full rollback.
 - `01-design-rationale.md` — principle (earn-by-existing, multi-axis identity)
 - `02-metric-mapping.md` — telemetry-readiness verification (16/23 fully computable, 7 partial)
 - `03-anti-gaming.md` — threat model + 6 hard normative rules + operator identity as central mitigation
-- `project/decisions/ADR-030.md` — Operator Identity & Anti-Sybil Layer (G1 prerequisite)
-- `project/gamification.md` — public-facing concept doc
-- **Issues**: #267 (parent), #260 (G2), #269 (G1 = ADR-030)
-- **WARDEN**: W-016 (G4 evidence — D7 score correction lands when external operator count is honest)
+- [`iicp-identity-slot.md`](../../spec/v1.9/iicp-identity-slot.md) — public identity boundary
+- [`iicp-recognition.md`](../../spec/v1.9/iicp-recognition.md) — public recognition semantics
+- [`privacy-adversary-and-trust-model.md`](../../docs/security/privacy-adversary-and-trust-model.md) — public threat boundary
 
 ---
 

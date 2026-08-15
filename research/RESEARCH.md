@@ -1,12 +1,12 @@
 # IICP Research Outcomes — Consolidated Reference
 
-**Maintained by**: RESA loop (`project/resa-loop-prompt.md`), SPEC loop, and FORGE-5 ADOPTION sub-loop  
-**State file**: `project/RESA_STATE.json` (RESA tracks); WORK_QUEUE.json (ADOPTION-driven tracks)  
+**Authority**: public product research and decision evidence; normative status
+is assigned only by the specification and release process
 **Last updated**: 2026-08-12 (heterogeneous routing and execution-privacy boundary research added)
 
-> **Simulation-vs-live status (updated iter93)**: REP findings (F1–F16) and R1–R7 design findings derive from discrete-event simulation (Python harness, bounded network sizes 100–10,000). RS6 Phase 2 (iter93) added actual Ollama inference validation (phi3:mini vs qwen2.5:0.5b, 90 calls) — the quality-feedback loop is now partially cross-validated against real inference. Treat REP equilibrium findings as directional until REP6 full pilot completes. R4/R5/R6 routing findings are validated at simulation scale; real-pool behaviour to be confirmed by RS6 Phase 3.
+> **Simulation-vs-live status (2026-05-18)**: REP findings (F1–F16) and R1–R7 design findings derive from discrete-event simulation (Python harness, bounded network sizes 100–10,000). RS6 Phase 2 added actual Ollama inference validation (phi3:mini vs qwen2.5:0.5b, 90 calls), so the quality-feedback result is partially cross-validated against real inference. Treat REP equilibrium findings as directional until the full pilot completes. R4/R5/R6 routing findings are validated at simulation scale; real-pool behaviour remains to be confirmed.
 
-> **ADOPTION research status (added iter-301, 2026-05-21)**: GAMIFICATION + COMMUNITY-PLATFORM research tracks added to address ADOPTION binding constraint (W-016 / FC-001 — no confirmed external operators, D7 score corrected from 91 to ~60). These tracks are FORGE-5 ADOPTION sub-loop deliverables, distinct from RESA simulation tracks. Both research tracks have completed all design deliverables (5/5 each); implementation gated on #260 public-launch + ADR-030 operator identity layer.
+> **Adoption research status (2026-05-21)**: the gamification and community-platform tracks document product options rather than protocol requirements. Both completed their design deliverables; implementation remains gated on a public-launch decision and the operator-identity prerequisite.
 
 > **Operational evidence checkpoint (2026-06-29)**: the reference implementation
 > now distinguishes live observation, controlled validation, simulation and
@@ -57,24 +57,23 @@ spec writers, ADR authors, and implementation teams.
 | **REP** — Reputation & Tiered Access | #167-#172 | Design+Pilot complete | REP1-REP5 closed; REP6 (#172) simulation pending |
 | **R1R7** — Provider Selection & Multi-Path | #173-#179 | All design+simulation done | R1–R7 all closed; RS6 Phase 2 pilot complete |
 | **MESH** — Consolidator / Role-Routing | #180-#184 | Design phase | MESH1-MESH4 design done; MESH5 pilot pending |
-| **GAMIFICATION** — Operator Recognition (Nerd Legacy) | #267, #269 (ADR-030) | **Research COMPLETE 5/5** (iter-294..300) | Awaiting PS review + #260 public-launch gate + ADR-030 Accepted before implementation |
-| **COMMUNITY-PLATFORM** — Forum / BBS choice | #268 | **Research COMPLETE 5/5** (iter-301) | Lemmy recommended; awaiting maintainer sign-off |
-| **INBOUND-ADAPTERS** — LLM API compat layer | #273 | **Research COMPLETE 1/1** (iter-370) | Priority matrix done: Ollama-compat Phase A, Anthropic-compat Phase B; implementation issues to be filed |
+| **GAMIFICATION** — Operator Recognition (Nerd Legacy) | #267, #269 (ADR-030) | **Research complete: 5/5 deliverables** | Awaiting public product decision and operator-identity prerequisite before implementation |
+| **COMMUNITY-PLATFORM** — Forum / BBS choice | #268 | **Research complete: 5/5 deliverables** | Lemmy recommended; awaiting maintainer product decision |
+| **INBOUND-ADAPTERS** — LLM API compatibility layer | #273 | **Research complete: 1/1 deliverable** | Priority matrix recommends Ollama compatibility before Anthropic compatibility; implementation remains separately tracked |
 | **OPER-EVIDENCE** — live implementation evidence discipline | Reference implementation | **Active** | Separate live, validated, simulated and future claims; see validation methodology §7 |
-| **STRATEGIC-PROFILES** — layered intent/capability/policy/evidence research | `iicp.network#619`, `RobLe3/IICP#2` | **Research complete; ratification gated** | Preserve stable URNs; publish profiles and shared fixtures before normative changes. |
+| **STRATEGIC-PROFILES** — layered intent/capability/policy/evidence research | [IICP #55](https://github.com/RobLe3/IICP/issues/55) | **Research complete; ratification gated** | Preserve stable URNs; publish profiles and shared fixtures before normative changes. |
 | **HETEROGENEOUS-QUALITY** — evaluator-owned learned backend selection | [#135](https://github.com/RobLe3/IICP/issues/135) | **Initial experiment complete; Rust seam gated** | Pinned MetaHarness reproduction supports a client-only experiment after eligibility; an IICP-specific heterogeneous benchmark remains required before shared profile work. |
 | **EXECUTION-PRIVACY** — attested confidential execution | [#136](https://github.com/RobLe3/IICP/issues/136) | **Synthetic boundary vectors pass; hardware proof gated** | Ten content-free negative/positive vectors now exercise verifier signature, freshness, nonce, key binding, measurement, debug, TCB, boundary and downgrade checks. AMD SEV-SNP is the selected first hardware target; private-key containment and a complete measured worker remain unproven. |
 
-**RESA composite**: **92.36/90.0 CONVERGED** (iter93, 2026-05-18). R-GATE-1 OPEN.
-
-**ADOPTION-driven research**: Gamification + Community-Platform tracks complete; both gated on maintainer review + #260 public-launch decision. See sections below.
+Internal development scores are not public research evidence. The tables below
+record the reproducible inputs, confidence limits and product-facing decisions.
 
 ---
 
 ## REP Track
 
-**Charter**: `research/reputation-and-tiers-charter.md`  
-**ADRs**: ADR-026 (reputation as earned signal), ADR-027 (premium as paid axis)  
+**Charter**: `research/reputation-and-tiers-charter.md`
+**ADRs**: ADR-026 (reputation as earned signal), ADR-027 (premium as paid axis)
 **Harness**: `research/simulation/rep/harness.py`
 
 ### Issue Map
@@ -84,7 +83,7 @@ spec writers, ADR authors, and implementation teams.
 | REP1 #167 | Reputation mechanics and starting credit | Simulation | **OPEN** (ratification pending) | F1–F9, F16 — `REP1-starting-credit-recommendation-2026-05-18.md` |
 | REP2 #168 | Tier structure and transition rules | Simulation | **OPEN** (ratification pending) | F1–F12 — `REP2-tier-boundaries-recommendation-2026-05-18.md` |
 | REP3 #169 | Premium services taxonomy | Design-only | Closed | `REP3-premium-services-taxonomy.md` |
-| REP4 #170 | Two-sided feedback collection | Design+schema | **CLOSED** iter93 | `REP4-feedback-mechanism-2026-05-18.md`, `research/rep-track/feedback-mechanism.md`, `spec/schemas/feedback-envelope.json` |
+| REP4 #170 | Two-sided feedback collection | Design+schema | **CLOSED** | `REP4-feedback-mechanism-2026-05-18.md`, `research/rep-track/feedback-mechanism.md`, `spec/schemas/feedback-envelope.json` |
 | REP5 #171 | Whitewash and adversarial scenarios | Simulation | **CLOSED** | `REP5-adversarial-modeling-2026-05-18.md` |
 | REP6 #172 | Simulation harness + local pilot gate | Simulation+local | **OPEN** (simulation pending) | RS6-F1 (Phase 1 shadow), RS6-F2..F5 (Phase 2 Ollama pilot) |
 
@@ -166,7 +165,7 @@ Confidence levels: **HIGH** = simulation-validated with sound methodology; **MED
 
 | Gap | Spec change needed | File | Status |
 |-----|-------------------|------|--------|
-| Telemetry trust model | §T4 PROXY_TOKEN_AUTH + SYBIL_QUORUM + OUTLIER_WEIGHT | spec/iicp-telemetry.md | **DONE** (iter72) |
+| Telemetry trust model | §T4 PROXY_TOKEN_AUTH + SYBIL_QUORUM + OUTLIER_WEIGHT | spec/iicp-telemetry.md | **DONE** |
 | T4.3 Outlier detection | Implement §T4.3 OUTLIER_WEIGHT — F14 confirmed latency is capturable | spec/iicp-telemetry.md | **OPEN** (#187 — ratification pending) |
 | Bootstrap traffic floor | §5.1.2: 1 job/session, threshold=100, session=30min, pool-guard=3 | spec/iicp-cooperative-inference.md | **DRAFTED** v0.6.2-draft; PENDING ratification (#168) |
 | Tier structure | §5.1.1: silver=0.40, gold=0.65, platinum=0.85, identity-age=720h | spec/iicp-cooperative-inference.md | **DRAFTED** v0.6.1-draft; PENDING ratification (#168) |
@@ -180,7 +179,7 @@ Confidence levels: **HIGH** = simulation-validated with sound methodology; **MED
 
 ## R1R7 Track
 
-**Charter**: `project/cc-instructions/CC-provider-selection-R1-R7-2026-05-17.md`  
+**Public evidence**: `research/findings/r1r7/` and the simulation sources listed below
 **ADRs**: ADR-025 (provider selection research track)
 
 ### Issue Map
@@ -192,7 +191,7 @@ Confidence levels: **HIGH** = simulation-validated with sound methodology; **MED
 | R3 #175 | Discovery: centralized vs. DHT | Design | **CLOSED** | `R3-discovery-layer-2026-05-18.md` — R3-F1 |
 | R4 #176 | Selection policy comparison: ε-greedy vs harmonic/UCB/etc | Simulation | **CLOSED** | `R4-selection-policy-comparison-2026-05-18.md` — R4-F1..Fn |
 | R5 #177 | Adversarial robustness of selection policies | Simulation | **CLOSED** | `R5-adversarial-robustness-2026-05-18.md` — R5-F1..Fn |
-| R6 #178 | Multi-path N-of-M strategies | Simulation | **CLOSED** iter90 | `R6-multi-path-execution-2026-05-18.md` — R6-F1..F6 |
+| R6 #178 | Multi-path N-of-M strategies | Simulation | **CLOSED** | `R6-multi-path-execution-2026-05-18.md` — R6-F1..F6 |
 | R7 #179 | SSSP reality check | Design | **CLOSED** | `research/sssp-relevance-reality-check.md` — R7-F1 |
 
 ### Key Findings
@@ -211,7 +210,7 @@ Confidence levels: **HIGH** = simulation-validated with sound methodology; **MED
 
 ## MESH Track
 
-**Charter**: `project/cc-instructions/CC-mesh-consolidator-role-routing-MESH1-MESH5-2026-05-17.md`  
+**Public evidence**: `research/mesh-track/` and `research/simulation/mesh/`
 **ADRs**: ADR-028 (consolidator pattern + role-routing)
 
 ### Issue Map
@@ -274,17 +273,17 @@ REP1/REP2 (tier thresholds ratified)  ← PENDING PS ratification #168
 **Issues**: #267 (research), #269 (ADR-030 Operator Identity & Anti-Sybil — prerequisite)
 **Deliverables location**: `research/gamification-track/`
 **Status**: Research COMPLETE (5/5 deliverables) — awaiting PS review + 8 rollout gates
-**Concept doc**: `project/gamification.md` (public-facing project-level doc)
+**Concept and decision evidence**: the five public deliverables in `research/gamification-track/`
 
-### Deliverables (all complete iter-294..300)
+### Deliverables
 
-| # | File | Purpose | iter |
-|---|------|---------|------|
-| 01 | `01-design-rationale.md` | Earn-by-existing principle, multi-axis identity, prior art survey (StackOverflow / GitHub / Foldit / BOINC / Strava), constraints | 294 |
-| 02 | `02-metric-mapping.md` | Rank/badge → telemetry mapping. 16/23 fully computable today; 7 partial bounded extensions; composite rank_score formula proposed | 296 |
-| 03 | `03-anti-gaming.md` | 7 attack categories (sock-puppet, metric-stuffing, time-boxing, tier-surfing, identity-laundering, geographic spoofing, collusion); per-rank/badge mitigations; **hybrid operator identity proposed (→ ADR-030 candidate)**; 6 hard normative rules | 297 |
-| 04 | `04-rollout-gates.md` | 8 sequential gates (G1 Identity → G2 Public-launch → G3 REACH multi-region → G4 ≥10 external operators → G5 Telemetry → G6 Spec+conformance → G7 Privacy+moderation → G8 Founding Cohort migration); 4-phase staged rollout (R1 quiet → R2 internal → R3 public → R4 first season close) | 299 |
-| 05 | `05-api-surface.md` | 7 endpoints (4 public reads cacheable + 3 operator-authenticated writes); 4 tables (2 from ADR-030 + 2 new); 8 conformance test IDs (RECOG-PROF-01..PRIV-01); ~10 commits implementation estimate | 300 |
+| # | File | Purpose |
+|---|------|---------|
+| 01 | `01-design-rationale.md` | Earn-by-existing principle, multi-axis identity, prior-art survey and constraints |
+| 02 | `02-metric-mapping.md` | Rank/badge-to-telemetry mapping, coverage gaps and proposed composite score |
+| 03 | `03-anti-gaming.md` | Seven attack categories, mitigations, operator-identity dependency and six proposed hard rules |
+| 04 | `04-rollout-gates.md` | Eight evidence gates and four staged rollout states |
+| 05 | `05-api-surface.md` | Proposed endpoints, persistence, conformance identifiers and implementation estimate |
 
 ### Key research findings
 
@@ -309,7 +308,7 @@ REP1/REP2 (tier thresholds ratified)  ← PENDING PS ratification #168
 **Status**: Research COMPLETE (5/5 deliverables) — awaiting maintainer sign-off
 **Recommendation**: **Lemmy** (Rust + Postgres + AGPL + ActivityPub native)
 
-### Deliverables (all complete iter-301)
+### Deliverables
 
 | # | File | Purpose |
 |---|------|---------|
@@ -341,12 +340,10 @@ REP1/REP2 (tier thresholds ratified)  ← PENDING PS ratification #168
 
 ---
 
-## Maintenance Protocol
+## Maintenance contract
 
-**This document is a mandatory output of multiple loops — RESA (simulation tracks) AND FORGE-5 ADOPTION (Gamification / Community-Platform / future ADOPTION research) — update every iteration that touches a research track.**
-
-After each iteration that affects research:
-1. Update "Last updated" header (date + iter number + composite score where applicable)
+When public research changes:
+1. Update the date and evidence classification.
 2. Update Track Index status row for the affected track
 3. Update Issue Map row: change Status and Findings columns
 4. Add new findings to the finding table (sequentially numbered within track)
@@ -355,8 +352,8 @@ After each iteration that affects research:
 7. Update spec gaps table when new gaps are identified or existing ones closed
 8. Update Cross-Track Insights if a new finding changes architectural understanding
 9. Update High-Confidence Constraints if a finding changes a constraint
-10. **For ADOPTION-driven tracks** (Gamification, Community-Platform): add a deliverable row to the track's section when a new research doc lands
+10. Add a deliverable row when a new public research document lands.
 
-**Never skip this step.** RESEARCH.md is the authoritative consolidated reference — staleness here makes it useless as a reference for ARCS, CORC, and implementation teams.
-
-The SPEC loop bumps the spec version and deploys to iicp.network when spec files change.
+This index is product-facing research history. It neither changes normative
+status nor authorizes a release or deployment. Specification versions change
+only through the public release process.

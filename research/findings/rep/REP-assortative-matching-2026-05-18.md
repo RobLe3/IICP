@@ -3,7 +3,7 @@
 **Track**: REP (Reputation & Tiered Access) — RS2 open work  
 **Issues**: #167 (REP1: reputation mechanics), #168 (REP2: tier structure)  
 **Date**: 2026-05-18  
-**Author**: RESA loop, iter 8  
+**Status**: public research record
 **Simulation**: `research/simulation/rep/assortative_matching.py`, 500 steps, n=100  
 **Results**: `research/results/rep/assortative/assortative_summary_steps500.json`  
 **Answers**: Does assortative matching create an ossified tier system excluding newcomers?

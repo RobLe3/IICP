@@ -3,7 +3,7 @@
 **Track**: #273 — Inbound LLM adapter parity  
 **Status**: Research complete — implementation issues to be filed  
 **Date**: 2026-05-21  
-**FORGE iter**: 370 (ADOPTION)
+**Status**: public adapter-priority research
 
 ---
 

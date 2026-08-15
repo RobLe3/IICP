@@ -1,10 +1,10 @@
 # R1 — Protocol/Policy Boundary for Provider Selection
 
-**Track**: R1R7 — Provider Selection & Multi-Path Routing  
-**Issue**: #173 (R1: Protocol/policy boundary for provider selection)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter82  
-**Length**: ≈1800 words (within ≤2000 limit)  
+**Track**: R1R7 — Provider Selection & Multi-Path Routing
+**Issue**: #173 (R1: Protocol/policy boundary for provider selection)
+**Date**: 2026-05-18
+**Status**: public research record
+**Length**: ≈1800 words (within ≤2000 limit)
 **ADR impact**: Expands ADR-025; identifies 5 follow-up gaps.
 
 ---

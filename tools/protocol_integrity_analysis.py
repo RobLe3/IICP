@@ -17,6 +17,8 @@ from typing import Dict, List, Optional, Tuple
 from enum import Enum
 import random
 import statistics
+import argparse
+from pathlib import Path
 
 class MessageType(Enum):
     INIT = 0x01
@@ -569,10 +571,19 @@ predictions than static analytical models.
 """
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("build/validation_results_v1.4.2.json"),
+        help="JSON result path (default: build/validation_results_v1.4.2.json)",
+    )
+    args = parser.parse_args()
     results = create_performance_validation_report()
     
     # Save results to JSON for documentation
-    with open('/Users/roble/Library/Mobile Documents/com~apple~CloudDocs/Blog Article/IICP/validation_results_v1.4.2.json', 'w') as f:
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    with args.output.open('w', encoding='utf-8') as f:
         json.dump({
             'timestamp': time.time(),
             'version': '1.4.2',
@@ -591,5 +602,5 @@ if __name__ == "__main__":
             'methodology': results['methodology']
         }, f, indent=2)
     
-    print(f"\n📄 Results saved to validation_results_v1.4.2.json")
+    print(f"\n📄 Results saved to {args.output}")
     print("\n✅ Performance validation complete!")

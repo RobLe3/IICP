@@ -3,7 +3,7 @@
 **Date**: 2026-05-26 (iter-1394)
 **Trigger**: Live UPnP test against maintainer FRITZ!Box 6591 + VPN exposed a class of bugs the original PoC didn't anticipate. Maintainer directive: *"make sure you test more edge cases regarding the VPN, NAT and UPNP detection and it also would probably make sense to think about including this either in the dependencies or maybe add this as part fo the code within the different clients"*.
 
-**Companion to**: `01-prior-art-survey.md` (the high-level design) + `project/decisions/ADR-041.md` (the architectural decision).
+**Companion to**: `01-prior-art-survey.md` (the high-level design). This record contains the public rationale; it does not depend on a private decision file.
 
 ---
 
@@ -189,9 +189,9 @@ For Phase 6+:
 ## References
 
 - `01-prior-art-survey.md` — survey of WebRTC/libp2p/Tailscale/CF Tunnel/UPnP
-- `project/decisions/ADR-041.md` — the architectural decision this work derives from
+- `01-prior-art-survey.md` — the public prior-art and architectural rationale
 - `adapter/src/adapter/network/nat_detector.py` — implementation (current state)
-- Issue [#328](https://github.com/RobLe3/iicp.network/issues/328) — NAT-aware research arc
-- Issue [#330](https://github.com/RobLe3/iicp.network/issues/330) — live FRITZ!Box test findings (CGNAT misdiagnosis corrected)
+- [IICP #42](https://github.com/RobLe3/IICP/issues/42) — transport, port and NAT claim boundary
+- [IICP #59](https://github.com/RobLe3/IICP/issues/59) — relay eligibility profile
 - `docs/nat-aware-adapter-setup.md` — operator-facing recipe
 - Live verification 2026-05-26 against FRITZ!Box 6591 Cable + WireGuard VPN

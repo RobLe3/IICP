@@ -4,7 +4,7 @@
 **Issue**: #172 (REP6: Simulation harness, local pilot, and live-readiness gate)
 **Date**: 2026-05-24
 **Status**: Complete — simulation harness validated, local pilot assessed, live-readiness gate: NOT READY
-**Author**: RESA loop, FORGE iter963
+**Status**: public readiness research record
 **Prereqs**: REP1 (#167) ✓, REP2 (#168) ✓, REP3 (#169) ✓, REP4 (#170) ✓, REP5 (#171) ✓
 **Harness**: `research/simulation/rep/harness.py`, `research/simulation/rep/sweep_adversarial.py`
 **Prior runs**: 72 adversarial sweep runs (F6–F12), F16 routing concentration

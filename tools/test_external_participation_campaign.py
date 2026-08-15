@@ -15,7 +15,7 @@ class ExternalParticipationCampaignTest(unittest.TestCase):
     def test_missing_lane_fails(self) -> None:
         record = copy.deepcopy(self.record)
         record["lanes"].pop()
-        self.assertTrue(any("six unique" in error for error in validate(record)))
+        self.assertTrue(any("five unique" in error for error in validate(record)))
 
     def test_result_or_consent_claim_fails(self) -> None:
         record = copy.deepcopy(self.record)

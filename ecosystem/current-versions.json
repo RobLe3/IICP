@@ -41,12 +41,6 @@
       "name": "iicp-web-node",
       "release": "0.2.4",
       "visibility": "public"
-    },
-    "website": {
-      "lifecycle": "active",
-      "name": "iicp-website",
-      "release": "0.1.0",
-      "visibility": "private"
     }
   },
   "generated_at": "2026-08-14",

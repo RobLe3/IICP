@@ -1,7 +1,7 @@
 # Gamification Track 02 — Metric Mapping
 
 **Status**: Draft (iter-296, 2026-05-21)
-**Companion**: `01-design-rationale.md`, `project/gamification.md`
+**Companion**: `01-design-rationale.md`
 **Tracking**: #267
 
 ---

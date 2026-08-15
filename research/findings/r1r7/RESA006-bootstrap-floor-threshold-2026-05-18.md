@@ -1,11 +1,11 @@
 # RESA-006 — Bootstrap Floor Threshold Validation
 
-**Track**: REP + SPEC (feeds §5.1.2 ratification)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter92  
-**Harness**: `research/resa006-transient-window-sim.py`  
-**Results**: `research/results/resa006/resa006_results.json`  
-**Seeds**: 42, 43, 44 | **Pool sizes**: 100, 1000, 10000  
+**Track**: REP + SPEC (feeds §5.1.2 ratification)
+**Date**: 2026-05-18
+**Status**: public research record
+**Harness**: `research/resa006-transient-window-sim.py`
+**Results**: `research/results/resa006/resa006_results.json`
+**Seeds**: 42, 43, 44 | **Pool sizes**: 100, 1000, 10000
 **Confidence**: MED — static quality model; real node success rates vary over time.
 
 ---

@@ -13,7 +13,7 @@ result independent.
 The machine-readable campaign index is
 [`external-participation-campaign-v1.json`](../evidence/external-participation-campaign-v1.json).
 It fixes the participant class, artifact versions, record, validation command
-and submission path for the six current lanes. Every repository-owned state is
+and submission path for the five public protocol and implementation lanes. Every repository-owned state is
 `awaiting-participant`; the project does not infer acceptance, consent, a
 result or a decision. Validate the index with:
 
@@ -29,14 +29,13 @@ python3 tools/check_external_participation_campaign.py
 | Newcomer usability | IICP #94 | At least one non-technical reader, one developer, and one prospective node operator | The script below and the published website/operator guide | Three consented, anonymized session records and a findings summary |
 | Linux watchdog | Rust SDK #66 | A representative Linux/systemd operator, preferably including ARM | Rust SDK `0.7.104` and its opt-in native watchdog | Slow-start, pressure, reboot/logout, linger, restart, and rollback record |
 | Relay eligibility | IICP #59 | An independent relay operator and topology measurement environment | Current pre-normative relay research | Stale, forged, replayed, overloaded and partial-evidence cases without topology leakage |
-| Qualified EU review | Root #768 and #801 | A qualified EU privacy and AI-law reviewer | The dated qualified-review packet | An attributable decision record and review memorandum |
 | Standards governance | IICP #47 | A consenting lead editor, backup editor, and change controller | The current draft candidate and governance decision contract | A non-sensitive governance decision with named stewardship roles |
 
-The qualified reviewer starts with the dated packet linked from root #768 and
-#801. The standards-governance lane starts from
+Website and operator legal review is managed separately because its source
+packet is not a protocol or implementation dependency. The standards-governance lane starts from
 [`submission-governance-decision-v1.json`](../standards/submission-governance-decision-v1.json)
-and requires a consenting backup editor before IICP #47 can close. Neither lane
-authorizes a deployment, publication or standards submission.
+and requires a consenting backup editor before IICP #47 can close. That lane
+does not authorize a deployment, publication or standards submission.
 
 Two related paths are documented below but are not campaign intake lanes.
 Public evidence access is a repeatable availability check for the evidence

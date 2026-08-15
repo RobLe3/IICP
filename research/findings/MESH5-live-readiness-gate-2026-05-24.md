@@ -4,7 +4,7 @@
 **Issue**: #184 (MESH5: Local pilot and live-readiness gate for MESH track)
 **Date**: 2026-05-24
 **Status**: Complete — live-readiness assessed: NOT READY for consolidator pattern (insufficient operators)
-**Author**: RESA loop, FORGE iter963
+**Status**: public readiness research record
 **Prereqs**: MESH1 (#180) ✓, MESH2 (#181) ✓, MESH3 (#182) ✓, MESH4 (#183) ✓
 **Live mesh**: 8 nodes, operational since 2026-05-16
 

@@ -1,11 +1,11 @@
 # R3 — Discovery Layer: Centralized Directory vs. DHT
 
-**Track**: R1R7 — Provider Selection & Multi-Path Routing  
-**Issue**: #175 (R3: Discovery layer — centralized directory vs. DHT)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter82  
-**Depends on**: R1 (#173) — protocol/policy boundary complete  
-**Length**: ≈1900 words (within ≤2000 limit)  
+**Track**: R1R7 — Provider Selection & Multi-Path Routing
+**Issue**: #175 (R3: Discovery layer — centralized directory vs. DHT)
+**Date**: 2026-05-18
+**Status**: public research record
+**Depends on**: R1 (#173) — protocol/policy boundary complete
+**Length**: ≈1900 words (within ≤2000 limit)
 **Recommendation**: **Stay centralized through Phase 5; begin federated substrate with ADR-013; DHT gated on concrete trigger (§5).**
 
 ---

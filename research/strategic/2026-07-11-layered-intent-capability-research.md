@@ -55,8 +55,8 @@ Before any profile becomes normative, the project requires:
 
 Tracking: [`RobLe3/IICP#2`](https://github.com/RobLe3/IICP/issues/2) for
 spec-source governance and
-[`iicp.network#619`](https://github.com/RobLe3/iicp.network/issues/619) for
-the strategic substrate.
+[`RobLe3/IICP#55`](https://github.com/RobLe3/IICP/issues/55) for the intent,
+capability and extension registry ratification gate.
 
 ## Interoperability boundary
 

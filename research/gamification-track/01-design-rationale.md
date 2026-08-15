@@ -2,7 +2,7 @@
 
 **Status**: Draft (iter-294, 2026-05-21)
 **Tracking**: #267 (research) | gated on #260 (public-launch) for implementation
-**Author**: FORGE-5 iter-294 ADOPTION work, maintainer concept
+**Status**: public design-rationale record
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Issue**: #307 (Research: portable identity UX — onboarding wizard)
 **Date**: 2026-05-24
-**Author**: RESA loop, FORGE iter963
+**Status**: public identity UX research record
 
 ---
 

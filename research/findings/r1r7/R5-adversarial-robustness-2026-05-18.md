@@ -1,16 +1,16 @@
 # R5 — Adversarial Robustness of Selection Policies
 
-**Track**: R1R7 — Provider Selection & Multi-Path Routing  
-**Issue**: #177 (R5: Adversarial robustness)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter87  
-**Depends on**: R4 (#176), R5 harness extends `selection_policy_sim.py`  
-**Harness**: `research/selection-policy-sim/adversarial_sim.py`  
-**Results**: `research/results/r5/r5_summary.json`  
-**Seed**: 42, 43, 44 (3 independent runs per configuration)  
-**Network sizes**: 100, 1000, 10000 nodes  
-**Jobs per run**: 10,000  
-**Detection threshold**: 20 consecutive failures → node demoted  
+**Track**: R1R7 — Provider Selection & Multi-Path Routing
+**Issue**: #177 (R5: Adversarial robustness)
+**Date**: 2026-05-18
+**Status**: public research record
+**Depends on**: R4 (#176), R5 harness extends `selection_policy_sim.py`
+**Harness**: `research/selection-policy-sim/adversarial_sim.py`
+**Results**: `research/results/r5/r5_summary.json`
+**Seed**: 42, 43, 44 (3 independent runs per configuration)
+**Network sizes**: 100, 1000, 10000 nodes
+**Jobs per run**: 10,000
+**Detection threshold**: 20 consecutive failures → node demoted
 **Confidence**: MED — detection model is simplified (threshold, not probabilistic reputation);
 real-world detection would use reputation scoring not binary consecutive-failure counts.
 
