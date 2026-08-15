@@ -1,9 +1,9 @@
 {
-  "fixture_version": "0.2.0-draft",
+  "fixture_version": "0.3.0-draft",
   "status": "pre-normative-parity-contract",
   "wire_contract": false,
-  "tracking_issue": "https://github.com/RobLe3/IICP/issues/158",
-  "purpose": "Classify lean model-visible IICP runtime identity context without creating an assistant persona, changing non-chat semantics, or exposing private routing state.",
+  "tracking_issue": "https://github.com/RobLe3/IICP/issues/178",
+  "purpose": "Classify default, lean model-visible IICP runtime identity context for compatible chat APIs without creating an assistant persona, changing raw task submission or non-chat semantics, or exposing private routing state.",
   "base_capsule": "This request reached you through IICP, the Intent-based Inter-agent Communication Protocol. IICP discovers eligible services and routes requests. You are the selected model or service, not IICP. When asked about this connection, use only supplied runtime facts; do not guess missing facts.",
   "base_capsule_measurement": {
     "date": "2026-08-14",
@@ -14,7 +14,7 @@
     "measured_overhead_tokens": 42,
     "capsule_characters": 289,
     "capsule_words": 42,
-    "scope": "single local runtime measurement; not a tokenizer-independent guarantee"
+    "scope": "historical base-capsule measurement; dynamic runtime fact lines add tokenizer-dependent overhead"
   },
   "initial_applicability": [
     "urn:iicp:intent:llm:chat:v1"
@@ -29,7 +29,8 @@
     "matched_intent_and_constraints",
     "explicit_model_match",
     "fallback_after_unavailable_candidate",
-    "intentional_exploration"
+    "intentional_exploration",
+    "local_browser_execution"
   ],
   "never_inject_fields": [
     "credentials",
@@ -47,10 +48,9 @@
   ],
   "cases": [
     {
-      "name": "chat_can_receive_explicit_identity_context",
+      "name": "omitted_chat_mode_defaults_to_auto",
       "request": {
         "intent": "urn:iicp:intent:llm:chat:v1",
-        "mode": "explicit",
         "messages": [
           {
             "role": "user",
@@ -59,6 +59,12 @@
         ]
       },
       "facts": {
+        "client": {
+          "name": "iicp-client-python",
+          "version": "0.7.105",
+          "source": "client_runtime",
+          "disclosure": "safe_default"
+        },
         "intent": {
           "value": "urn:iicp:intent:llm:chat:v1",
           "source": "validated_task",
@@ -69,7 +75,9 @@
         "action": "compose_once",
         "identity_boundary": "selected_service_not_iicp",
         "missing_facts": "omit_and_do_not_guess",
-        "application_messages": "preserve"
+        "application_messages": "preserve",
+        "resolved_mode": "auto",
+        "rendered_client": "iicp-client-python 0.7.105"
       }
     },
     {
@@ -253,10 +261,10 @@
       }
     },
     {
-      "name": "unsupported_instruction_channel_degrades_in_optional_mode",
+      "name": "unsupported_instruction_channel_degrades_in_auto_mode",
       "request": {
         "intent": "urn:iicp:intent:llm:chat:v1",
-        "mode": "explicit"
+        "mode": "auto"
       },
       "provider": {
         "instruction_channel": "unsupported"
@@ -280,6 +288,116 @@
         "action": "refuse_before_dispatch",
         "reason": "required_identity_context_unsupported",
         "prompt_sent": false
+      }
+    },
+    {
+      "name": "explicit_disabled_mode_overrides_auto_default",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "mode": "disabled",
+        "messages": [
+          {
+            "role": "user",
+            "content": "What is this?"
+          }
+        ]
+      },
+      "expected": {
+        "action": "no_change",
+        "application_messages": "byte_equivalent"
+      }
+    },
+    {
+      "name": "candidate_fallback_recomposes_from_original_messages",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "mode": "auto",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Which model is answering?"
+          }
+        ]
+      },
+      "attempts": [
+        {
+          "candidate": 1,
+          "facts": {
+            "selected_model": {
+              "value": "model-a",
+              "source": "directory_advertisement",
+              "disclosure": "optional"
+            }
+          },
+          "outcome": "unavailable"
+        },
+        {
+          "candidate": 2,
+          "facts": {
+            "selected_model": {
+              "value": "model-b",
+              "source": "directory_advertisement",
+              "disclosure": "optional"
+            },
+            "selection_reason": {
+              "value": "fallback_after_unavailable_candidate",
+              "source": "client_selection",
+              "disclosure": "safe_default"
+            }
+          },
+          "outcome": "dispatch"
+        }
+      ],
+      "expected": {
+        "action": "recompose_for_each_candidate",
+        "second_attempt_contains": "model-b",
+        "second_attempt_excludes": "model-a",
+        "source_messages": "original_application_messages"
+      }
+    },
+    {
+      "name": "local_browser_mode_is_not_described_as_remote_routing",
+      "request": {
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "mode": "auto"
+      },
+      "facts": {
+        "client": {
+          "name": "@iicp/web-node",
+          "version": "0.2.5",
+          "source": "client_runtime",
+          "disclosure": "safe_default"
+        },
+        "connection_mode": {
+          "value": "local_browser",
+          "source": "client_runtime",
+          "disclosure": "safe_default"
+        }
+      },
+      "expected": {
+        "action": "compose_once",
+        "rendered_connection": "This model is running locally in the browser; no remote IICP provider was selected.",
+        "must_not_claim": "remote_provider_selected"
+      }
+    },
+    {
+      "name": "raw_submit_remains_byte_equivalent",
+      "request": {
+        "surface": "raw_submit",
+        "intent": "urn:iicp:intent:llm:chat:v1",
+        "payload": {
+          "messages": [
+            {
+              "role": "user",
+              "content": "What is this?"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "action": "no_change",
+        "payload": "byte_equivalent",
+        "reason": "runtime_identity_is_chat_helper_behavior"
       }
     },
     {
@@ -336,9 +454,16 @@
     "duplicate_suppression": "any existing system or developer message containing the exact context marker suppresses insertion",
     "unsupported_optional": "no_change",
     "unsupported_required": "refuse_before_dispatch",
-    "max_rendered_utf8_bytes": 2048
+    "max_rendered_utf8_bytes": 2048,
+    "default_chat_mode": "auto",
+    "auto_behavior": "compose_when_the_chat_instruction_channel_is_supported",
+    "candidate_facts": "recompose_from_original_application_messages_for_each_dispatch_candidate",
+    "raw_submit": "no_change",
+    "client_identity": "include_implementation_name_and_version_from_the_running_client",
+    "local_browser_connection": "state_that_execution_is_local_and_no_remote_provider_was_selected"
   },
   "modes": [
+    "auto",
     "disabled",
     "explicit",
     "required"

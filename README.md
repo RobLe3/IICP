@@ -4,7 +4,7 @@
 
 *Building the HTTP for the Age of Generative AI*
 
-**Protocol-suite release**: v1.10.13<br>
+**Protocol-suite release**: v1.10.14<br>
 **Wire compatibility baseline**: v1.9.0<br>
 **Reference implementation**: [iicp.network](https://iicp.network)
 **Status**: Project-normative beta suite; individual profiles retain their own status
@@ -61,6 +61,19 @@ Current IICP-CX clients encrypt requests across the network and relays when a pr
 ```
 
 An **intent URN** expresses what you want, not which model or endpoint to call. The network finds the best available node that can serve that intent, routes the task, and returns a structured response.
+
+### Factual runtime self-description
+
+Official `chat()` helpers give compatible models a small, versioned IICP
+runtime context by default. It explains that the model or service was selected
+through IICP and is not IICP itself. The client includes the active intent and
+its implementation version, then adds a model, effective-capability or bounded
+selection fact only when the current route supplies it authoritatively.
+Applications can disable the capsule or require a supported instruction
+channel. Raw task submission, embeddings, transcription, MCP calls and other
+non-chat operations are unchanged. The context is not an assistant persona, a
+secret prompt or a prompt-injection defense. See the
+[runtime identity decision](research/strategic/2026-08-14-runtime-identity-and-self-description-decision.md).
 
 ### Protocol role and adjacent work
 

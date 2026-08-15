@@ -53,7 +53,7 @@
       "id": "iicp",
       "name": "Intent-based Inter-agent Communication Protocol",
       "category": "subject",
-      "version": "suite-1.10.13-wire-1.9.0",
+      "version": "suite-1.10.14-wire-1.9.0",
       "formal_status": "project_normative_beta_not_externally_ratified",
       "updated": "2026-08-15",
       "source": "https://github.com/RobLe3/IICP",

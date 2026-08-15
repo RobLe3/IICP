@@ -25,11 +25,14 @@ matching, typed limits, unknown required and preferred declarations, stale
 claims, policy denial and extension preservation. It does not add an HTTP
 endpoint or enable the Profile in an implementation by itself.
 
-`runtime-identity-context-v0.json` is a research-only classification contract
-for lean model-visible IICP context on conversational requests. It separates
-stable protocol identity from supplied runtime facts, fixes a strict disclosure
-allow-list boundary, leaves non-chat payloads unchanged, and records one local
-token-overhead measurement. It is not a prompt default or wire schema.
+`runtime-identity-context-v0.json` is the pre-normative parity contract for
+lean model-visible IICP context on compatible conversational requests. Official
+chat helpers use its `auto` mode by default, while `disabled`, `explicit` and
+`required` remain available. It separates stable protocol identity from
+candidate-specific runtime facts, requires fallback recomposition, fixes a
+strict disclosure allow-list boundary, leaves raw submit and non-chat payloads
+unchanged, and records one local token-overhead measurement. It is not a wire
+schema or an IICP assistant persona.
 
 `environmental-independence-v0.json` is a research-only architecture contract
 for transport, timing, identity, reachability, encoding and extension-layer

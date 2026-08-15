@@ -3,48 +3,48 @@
     "client-python": {
       "lifecycle": "active",
       "name": "iicp-client-python",
-      "release": "0.7.104",
+      "release": "0.7.105",
       "visibility": "public"
     },
     "client-rust": {
       "lifecycle": "active",
       "name": "iicp-client-rust",
-      "release": "0.7.104",
+      "release": "0.7.105",
       "visibility": "public"
     },
     "client-typescript": {
       "lifecycle": "active",
       "name": "iicp-client-typescript",
-      "release": "0.7.104",
+      "release": "0.7.105",
       "visibility": "public"
     },
     "directory-php": {
       "lifecycle": "active",
       "name": "iicp-directory-php",
-      "release": "1.10.91",
+      "release": "1.10.92",
       "visibility": "public"
     },
     "directory-rust": {
       "lifecycle": "operator-preview",
       "name": "iicp-directory-rust",
-      "release": "0.1.12",
+      "release": "0.1.13",
       "visibility": "public"
     },
     "specification": {
       "lifecycle": "active",
       "name": "IICP",
-      "release": "1.10.13",
+      "release": "1.10.14",
       "visibility": "public"
     },
     "web-node": {
       "lifecycle": "experimental",
       "name": "iicp-web-node",
-      "release": "0.2.4",
+      "release": "0.2.5",
       "visibility": "public"
     }
   },
-  "generated_at": "2026-08-14",
-  "protocol_suite_release": "1.10.13",
+  "generated_at": "2026-08-15",
+  "protocol_suite_release": "1.10.14",
   "schema": "iicp.ecosystem-current-versions.v1",
   "wire_compatibility_baseline": "1.9.0"
 }
