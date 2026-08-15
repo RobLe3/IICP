@@ -12,6 +12,10 @@ reference. The stable descriptive subtitle is:
 
 The subtitle describes the control-plane role. It does not mean that IICP
 defines every agent task format, identity system, transport, or runtime.
+The current mechanism-level boundary is recorded in
+[`standards/IICP_PROTOCOL_POSITIONING.md`](standards/IICP_PROTOCOL_POSITIONING.md)
+and the dated
+[`standards/PROTOCOL_COMPARISON_2026-08-15.md`](standards/PROTOCOL_COMPARISON_2026-08-15.md).
 
 ## Term map
 

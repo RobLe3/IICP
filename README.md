@@ -62,6 +62,20 @@ Current IICP-CX clients encrypt requests across the network and relays when a pr
 
 An **intent URN** expresses what you want, not which model or endpoint to call. The network finds the best available node that can serve that intent, routes the task, and returns a structured response.
 
+### Protocol role and adjacent work
+
+IICP's narrow role is intent resolution and provider eligibility/selection.
+It can select a policy-compliant provider before MCP, A2A, HTTP or another
+negotiated binding performs the task. It does not replace those execution
+protocols or the transports and security standards beneath them.
+
+This boundary has real overlap with current IAIP and AIDIP Internet-Drafts.
+Review the concise [`IICP protocol positioning`](standards/IICP_PROTOCOL_POSITIONING.md)
+and the dated, source-backed
+[`mechanism comparison`](standards/PROTOCOL_COMPARISON_2026-08-15.md) before
+making differentiation or standards claims. Internet-Drafts are work in
+progress and are not IETF endorsement.
+
 ---
 
 ## Specification Documents

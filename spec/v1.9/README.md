@@ -6,6 +6,12 @@
 
 This directory contains the normative and informational protocol documents for IICP.
 
+Before interpreting IICP as a replacement for another agent protocol, read the
+informative [protocol positioning](../../standards/IICP_PROTOCOL_POSITIONING.md)
+and dated [adjacent-protocol comparison](../../standards/PROTOCOL_COMPARISON_2026-08-15.md).
+They separate IICP's intent-resolution and provider-selection role from MCP,
+A2A, discovery inputs and transports.
+
 ---
 
 ## Recommended reading order
