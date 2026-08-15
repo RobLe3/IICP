@@ -1,13 +1,13 @@
 # MESH3 — Load-Aware Selection: Preventing Oscillation in Role-Filtered Pools
 
-**Track**: MESH — Consolidator Pattern, Role-Based Routing, Load-Aware Selection  
-**Issue**: #182 (MESH3: Load-aware selection — preventing oscillation)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter83  
-**Depends on**: MESH1 (#180)  
-**Harness**: `research/simulation/mesh/load_selection.py`  
-**Results**: `research/results/mesh/load_selection_all.json`  
-**Seed**: 42 · Pool: 10 nodes · Steps: 500 · Tasks/step: 20 · Capacity: 4/node  
+**Track**: MESH — Consolidator Pattern, Role-Based Routing, Load-Aware Selection
+**Issue**: #182 (MESH3: Load-aware selection — preventing oscillation)
+**Date**: 2026-05-18
+**Status**: public research record
+**Depends on**: MESH1 (#180)
+**Harness**: `research/simulation/mesh/load_selection.py`
+**Results**: `research/results/mesh/load_selection_all.json`
+**Seed**: 42 · Pool: 10 nodes · Steps: 500 · Tasks/step: 20 · Capacity: 4/node
 **Confidence**: MED — simulation validates relative ordering of formulas; absolute
 oscillation counts are harness-specific (task-drain-per-step model, not real-world duration).
 

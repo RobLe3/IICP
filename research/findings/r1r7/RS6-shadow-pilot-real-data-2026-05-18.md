@@ -1,11 +1,11 @@
 # RS6 Shadow Pilot — Real-Data Validation of Selection Policy Simulations
 
-**Status**: RS6 Phase 1 (desk-based shadow test)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter87  
-**RESA dimension**: RS6 — Live Pilot Gate  
-**Data source**: Live `https://iicp.network/api/v1/registry/nodes` (2026-05-18T12:xx UTC)  
-**Method**: Real node reputation scores as quality proxy; 10,000 synthetic jobs; all 5 R4 algorithms  
+**Status**: RS6 Phase 1 (desk-based shadow test)
+**Date**: 2026-05-18
+**Status**: public research record
+**RESA dimension**: RS6 — Live Pilot Gate
+**Data source**: Live `https://iicp.network/api/v1/registry/nodes` (2026-05-18T12:xx UTC)
+**Method**: Real node reputation scores as quality proxy; 10,000 synthetic jobs; all 5 R4 algorithms
 
 ---
 

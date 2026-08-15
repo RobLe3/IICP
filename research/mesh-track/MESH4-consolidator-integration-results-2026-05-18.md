@@ -1,13 +1,13 @@
 # MESH4 — Consolidator-Pattern Integration and Disagreement Resolution
 
-**Track**: MESH — Consolidator Pattern, Role-Based Routing, Load-Aware Selection  
-**Issue**: #183 (MESH4: Consolidator-pattern integration and disagreement resolution)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter84  
-**Depends on**: MESH1 (#180), MESH2 (#181)  
-**Harness**: `research/simulation/mesh/consolidator_integration.py`  
-**Results**: `research/results/mesh/consolidator_integration_all.json`  
-**Seed**: 42 · 300 trials per combination · 20 inference nodes · 10 consolidators  
+**Track**: MESH — Consolidator Pattern, Role-Based Routing, Load-Aware Selection
+**Issue**: #183 (MESH4: Consolidator-pattern integration and disagreement resolution)
+**Date**: 2026-05-18
+**Status**: public research record
+**Depends on**: MESH1 (#180), MESH2 (#181)
+**Harness**: `research/simulation/mesh/consolidator_integration.py`
+**Results**: `research/results/mesh/consolidator_integration_all.json`
+**Seed**: 42 · 300 trials per combination · 20 inference nodes · 10 consolidators
 **Confidence**: MED — quality model is a proxy; real synthesis quality depends on model
 capability and task type. Cost ratios are calibrated from realistic token estimates but
 not validated against live pricing data.

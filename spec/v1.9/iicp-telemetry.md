@@ -79,7 +79,7 @@ implementation that accepts `node_token` Bearer on telemetry submissions is
 **non-conformant**.
 
 On auth failure, the directory MUST return HTTP 401 with error code `IICP-E032`
-(see `project/ARCHITECTURE.md` Phase 5 proxy telemetry error codes).
+(see `iicp-core.md` §7).
 
 The `proxy_node_id` field is REQUIRED in the request body. If absent, the directory
 MUST return HTTP 401 with `IICP-E032`.

@@ -639,7 +639,8 @@ Conformance: REP-07 (conformance-test-suite.md §13.6).
 This section consolidates the normative anti-sybil mitigations scattered across §11, the
 recognition spec, and the security model. It provides a single threat model, a table of
 enumerated mitigations with conformance IDs, an attack verification analysis, and an honest
-gap table covering what is **not** yet mitigated. Cross-reference: `project/SECURITY.md` §TC-9,
+gap table covering what is **not** yet mitigated. Cross-reference:
+`docs/security/privacy-adversary-and-trust-model.md` and
 `spec/iicp-recognition.md` §8.
 
 ### 12.1 Threat model
@@ -671,7 +672,7 @@ but directory-grade conformance is NOT broken by their absence.
 | SYB-05 | T-SYB-03 | MUST | Quorum reporter independence: proxy reporters that do not satisfy age ≥ 3 days AND reputation ≥ 0.55 MUST be acknowledged but MUST NOT count toward quorum (RT-03b, §11.7). | REP-06 |
 | SYB-06 | T-SYB-04 | MUST | Per-reporter audit rate limit: ≤1 audit report per reporter per 24h per target, AND ≤2 distinct reporters per target per day counted toward score (RT-05, §11.5). | REP-03 |
 | SYB-07 | T-SYB-04 | MUST | Audit-report reporter eligibility: reporter MUST satisfy age ≥ 3 days AND reputation ≥ 0.55; ineligible reports acknowledged (HTTP 202) but MUST NOT reduce the target score (RT-05b, §11.8). | REP-07 |
-| SYB-08 | T-SYB-05 | MUST | Credit laundering rate limit: ≤1,000 credits awarded per `node_id` per hour; excess MUST be rejected with HTTP 429 (TC-9b, `project/SECURITY.md §TC-9b`). | — |
+| SYB-08 | T-SYB-05 | MUST | Credit laundering rate limit: ≤1,000 credits awarded per `node_id` per hour; excess MUST be rejected with HTTP 429 (TC-9b; see `iicp-cooperative-inference.md` §10.6). | — |
 | SYB-09 | T-SYB-06 | MUST | Identity permanence: operator `identity_uri` is pinned on first-use (ADR-034); re-registration with a different `identity_uri` creates a new zero-reputation operator; re-registration with the same `identity_uri` after a flag does NOT clear the flag (`spec/iicp-recognition.md §8` rule 5). | RECOG-AG-05 |
 | SYB-10 | T-SYB-07 | MUST | Badge task-count collusion barrier: task counts toward badge thresholds with a `≥1,000` task requirement MUST require ≥3 distinct proxy `node_id` contributors (`spec/iicp-recognition.md §8` rule 3). | RECOG-AG-03 |
 | SYB-11 | T-SYB-07 | MUST | Multi-node operator diversity isolation: same operator's multiple nodes MUST NOT multiply operator-diversity scores (Country Pioneer, Diversity Champion, Founding Cohort) (`spec/iicp-recognition.md §8` rule 1). | RECOG-AG-01 |

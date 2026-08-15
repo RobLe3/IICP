@@ -57,7 +57,7 @@ The directory and relay do not need plaintext. The selected node does.
 - Rust `confidentiality.rs`, Python `_confidentiality.py` and TypeScript `confidentiality.ts` generate or load a node CX key from local persistent storage.
 - Rust `node.rs`, Python `node.py` and TypeScript `node.ts` decrypt in the ordinary node process before invoking the handler/backend.
 - All three SDKs advertise and enforce `response_encryption_v1`, but response encryption does not change the executor trust boundary.
-- The existing compliance attestation is a signed project/conformance statement. It is not hardware remote attestation and must not be presented as such.
+- The existing compliance attestation is a signed implementation-conformance statement. It is not hardware remote attestation and must not be presented as such.
 
 The June 2026 privacy reports reached the correct high-level conclusion: local execution is the strongest current option; TEE-attested execution is the realistic remote research direction; FHE is longer-term. This report updates and narrows that proposal against the current implementation and standards. It does not create a second privacy architecture.
 
@@ -109,7 +109,7 @@ IICP should use the RATS role model rather than inventing a second attestation v
 | Verifier | local consumer verifier or an explicitly trusted verification service |
 | Attestation Results | normalized, time-bounded result consumed by client policy |
 | Relying Party | IICP consumer deciding whether to release the CX-encrypted task |
-| Endorsements/reference values | vendor roots, firmware/runtime reference values and project/operator policy inputs |
+| Endorsements/reference values | vendor roots, firmware/runtime reference values and reviewed operator policy inputs |
 
 RFC 9711 provides a standardized EAT claims framework and nonce-based freshness, but it is not a universal vendor-evidence decoder or protocol flow. Composite CPU/GPU attestation may use EAT submodules or platform-specific nested results. The selected research representation is an EAT Claims-Set encoded as a CWT, signed in tagged COSE_Sign1 and transported as `application/eat+cwt` with a provisional IICP profile identifier. Vendor evidence remains adapter-specific.
 

@@ -4,7 +4,7 @@
 **Issue**: #167 (REP1: Reputation mechanics and starting credit)  
 **Date**: 2026-05-18  
 **Status**: Design complete — pending Protocol Steward ratification  
-**Author**: RESA loop, iter8  
+**Status**: public research record
 **Simulation evidence**: `research/simulation/rep/harness.py`, F1–F9, F16  
 **Findings**: `research/findings/rep/REP1-starting-credit-recommendation-2026-05-18.md`
 

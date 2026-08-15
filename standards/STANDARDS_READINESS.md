@@ -13,8 +13,8 @@ If the fixed-port evidence gate passes, the first candidate is service name
 `iicp`, port 9484, TCP only, through RFC 6335 Expert Review. Port 9484 is
 currently unassigned. It is not reserved for IICP.
 
-Before applying, issue RobLe3/iicp.network#669 must compare the dedicated port
-with:
+Before applying, public IICP issue #42 must record evidence comparing the
+dedicated port with:
 
 - signed route metadata carrying a dynamic port;
 - DNS SRV, SVCB or HTTPS discovery;

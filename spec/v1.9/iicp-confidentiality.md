@@ -14,7 +14,7 @@ REGISTER/storage and `cx_public_key` is the sole discover/NODELIST CX field. The
 `IICP-E050` (collapsed decrypt/no-support) + `IICP-E049` (cx_public_key update auth) — see §6
 implementation status. Full E060–E064 model is the Tier-2 target. (#360)
 **Tracking**: #360 (E2E payload confidentiality), #361 (privacy threat model)
-**Foundation**: `project/SECURITY.md §Privacy Adversary Model` (PA-1..PA-4),
+**Foundation**: `docs/security/privacy-adversary-and-trust-model.md` (PA-1..PA-4),
 `spec/iicp-core.md §8 Security` (SEC-PRIV-04/05/09)
 
 ---
@@ -39,7 +39,7 @@ Tier 1 responses are **not** E2E encrypted; bidirectional response encryption is
   inference (TEE attestation) and metadata privacy are separate, tracked work (P2 / #361).
 
 This specification directly addresses Privacy Adversary classes PA-2 and PA-3 from
-`project/SECURITY.md`:
+the public privacy adversary and trust model:
 - **PA-2** (relay operator coercion): relay sees ciphertext only
 - **PA-3** (directory operator coercion): directory never sees task payloads (preserved from ADR-001/003)
 

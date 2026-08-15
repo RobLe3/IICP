@@ -1,15 +1,15 @@
 # R4 — Selection Policy Comparison: Weighted Scoring, ε-Greedy, Harmonic/Fractal, UCB
 
-**Track**: R1R7 — Provider Selection & Multi-Path Routing  
-**Issue**: #176 (R4: Selection policy comparison)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter85  
-**Depends on**: R1 (#173)  
-**Harness**: `research/selection-policy-sim/selection_policy_sim.py`  
-**Results**: `research/results/r4/r4_summary.json`  
-**Seed**: 42, 43, 44 (3 independent runs per configuration)  
-**Network sizes**: 100, 1000, 10000 nodes  
-**Jobs per run**: 10,000  
+**Track**: R1R7 — Provider Selection & Multi-Path Routing
+**Issue**: #176 (R4: Selection policy comparison)
+**Date**: 2026-05-18
+**Status**: public research record
+**Depends on**: R1 (#173)
+**Harness**: `research/selection-policy-sim/selection_policy_sim.py`
+**Results**: `research/results/r4/r4_summary.json`
+**Seed**: 42, 43, 44 (3 independent runs per configuration)
+**Network sizes**: 100, 1000, 10000 nodes
+**Jobs per run**: 10,000
 **Confidence**: MED — quality model uses static node scores; real deployment has score decay,
 latency variation, and provider joins/departures that are not modeled.
 

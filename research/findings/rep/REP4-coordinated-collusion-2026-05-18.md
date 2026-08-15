@@ -3,7 +3,7 @@
 **Track**: REP (Reputation & Tiered Access) + RS2 (Harness Quality)  
 **Issues**: #170 (REP4: feedback), #171 (REP5: adversarial) + RS2 open work  
 **Date**: 2026-05-18  
-**Author**: RESA loop, iter 7  
+**Status**: public research record
 **Simulation**: `research/simulation/rep/coordinated_collusion.py`, 1000 steps, n_honest=10  
 **Results**: `research/results/rep/collusion/collusion_summary_steps1000.json`  
 **Answers Q7**: Does a coordinated feedback ring (3+ high-reputation proxies) significantly inflate reputation?
@@ -123,6 +123,6 @@ feedback signal by a factor of ~24×.
 
 - [ ] Assortative-matching ossification run: do high-reputation nodes preferentially
   route to each other, forming reputation cliques that exclude newcomers? Requires
-  a graph-based routing simulation (RESA iter8).
+  the graph-based routing simulation in `REP-assortative-matching-2026-05-18.md`.
 - [ ] 90-day identity-age gate variant: does a longer gate (2160h) reduce the
   strategic whitewash attack to near-zero? (F11 showed 3 cycles remain at 720h/3000 steps)

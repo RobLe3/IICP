@@ -357,6 +357,15 @@ than inferred from source metadata.
 
 All normative language follows RFC 2119 / BCP 14.
 
+For an independent protocol or standards review, start with
+[`standards/REVIEWING.md`](standards/REVIEWING.md). The public
+[`ecosystem/public-repositories.json`](ecosystem/public-repositories.json)
+identifies the repositories and roles needed to continue implementation work.
+The specification release and review-bundle procedures are reproducible from
+public inputs and do not depend on the project's private development methods.
+[`CONTINUATION.md`](CONTINUATION.md) explains how an independent implementation
+or successor effort can preserve compatibility and release history.
+
 ---
 
 ## Tools
@@ -365,3 +374,8 @@ All normative language follows RFC 2119 / BCP 14.
 |------|---------|
 | [tools/protocol_integrity_analysis.py](tools/protocol_integrity_analysis.py) | Analyses a spec file for internal consistency |
 | [tools/quick_validation.py](tools/quick_validation.py) | Quick syntax + field validation against v1.4.2 |
+
+The simulation-oriented tools use optional scientific dependencies. Install
+them in an isolated environment with
+`python3 -m pip install -r tools/research-requirements.txt`. They are historical
+research aids, not normative conformance or release gates.

@@ -66,4 +66,6 @@ Each REP issue identifies its testing phase:
 
 Charter created 2026-05-17. Issues REP1 through REP6 filed. ADR-026 (two-sided reputation) and ADR-027 (premium services axis) created as stubs. Execution order: maintainer triages.
 
-**Context anchor**: STATE.md commit `a7fd2bf`, FORGE-5 C4_CONVERGED (composite 93.62, iter 57), Sentrux 7151, active_nodes=7, S.12 v0.6.0 normative (§5.1 reputation decay), ADR-013 Draft (federated control plane, hybrid trust), ADR-019 Accepted (declarative pricing).
+**Context anchor**: the then-current S.12 reputation-decay semantics,
+federated-control-plane research and declarative-pricing decision. Historical
+internal quality scores and live node counts are not protocol evidence.

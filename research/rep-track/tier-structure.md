@@ -4,7 +4,7 @@
 **Issue**: #168 (REP2: Tier structure and transition rules)  
 **Date**: 2026-05-18  
 **Status**: Design complete — pending Protocol Steward ratification  
-**Author**: RESA loop, iter8  
+**Status**: public research record
 **Simulation evidence**: `research/simulation/rep/harness.py`, identity_age_gate.py, F1–F16  
 **Findings**: `research/findings/rep/REP2-tier-boundaries-recommendation-2026-05-18.md`
 

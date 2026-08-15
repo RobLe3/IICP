@@ -11,7 +11,8 @@ MANIFEST = ROOT / "ecosystem" / "repositories.json"
 OUTPUT = ROOT / "IMPLEMENTATIONS.md"
 CURRENT_JSON = ROOT / "ecosystem" / "current-versions.json"
 CURRENT_MARKDOWN = ROOT / "ecosystem" / "CURRENT_VERSIONS.md"
-VISIBILITIES = {"public", "private"}
+PUBLIC_JSON = ROOT / "ecosystem" / "public-repositories.json"
+VISIBILITIES = {"public"}
 LIFECYCLES = {
     "active",
     "experimental",
@@ -43,18 +44,15 @@ def render(data: dict) -> str:
         "",
         "This index is generated from `ecosystem/repositories.json`. Repositories are",
         "independently versioned; they are logical members of the IICP ecosystem, not",
-        "Git submodules. Visibility describes source access, not protocol maturity.",
+        "Git submodules. Private operations, website and development-method sources are",
+        "not public build, conformance or governance dependencies.",
         "",
         "| Component | Authority | Language | Visibility | Lifecycle | Release |",
         "|---|---|---|---|---|---|",
     ]
     for item in data["repositories"]:
         release = item["release"] or "—"
-        component = (
-            f"[{item['name']}]({item['url']})"
-            if item["visibility"] == "public"
-            else f"{item['name']} (source private)"
-        )
+        component = f"[{item['name']}]({item['url']})"
         lines.append(
             f"| {component} | {item['authority']} | "
             f"{item['language']} | {item['visibility']} | {item['lifecycle']} | {release} |"
@@ -72,6 +70,29 @@ def render(data: dict) -> str:
         "",
     ]
     return "\n".join(lines)
+
+
+def public_projection(data: dict) -> dict:
+    """Return the stable machine-readable public repository handoff."""
+    fields = (
+        "id",
+        "name",
+        "url",
+        "authority",
+        "language",
+        "protocol",
+        "lifecycle",
+        "release",
+        "package",
+    )
+    return {
+        "schema": "iicp.public-repositories.v1",
+        "generated_at": data["generated_at"],
+        "repositories": [
+            {field: item[field] for field in fields if field in item}
+            for item in data["repositories"]
+        ],
+    }
 
 
 def current_projection(data: dict) -> dict:
@@ -133,16 +154,20 @@ def main() -> None:
     data = load()
     rendered = render(data)
     projection = current_projection(data)
+    repositories_projection = public_projection(data)
     rendered_projection = json.dumps(projection, indent=2, sort_keys=True) + "\n"
+    rendered_repositories = json.dumps(repositories_projection, indent=2, sort_keys=True) + "\n"
     rendered_current_markdown = render_current_markdown(projection)
     if "--check" in __import__("sys").argv:
         assert OUTPUT.exists() and OUTPUT.read_text() == rendered, "IMPLEMENTATIONS.md is stale"
         assert CURRENT_JSON.exists() and CURRENT_JSON.read_text() == rendered_projection, "current-versions.json is stale"
         assert CURRENT_MARKDOWN.exists() and CURRENT_MARKDOWN.read_text() == rendered_current_markdown, "CURRENT_VERSIONS.md is stale"
+        assert PUBLIC_JSON.exists() and PUBLIC_JSON.read_text() == rendered_repositories, "public-repositories.json is stale"
     else:
         OUTPUT.write_text(rendered)
         CURRENT_JSON.write_text(rendered_projection)
         CURRENT_MARKDOWN.write_text(rendered_current_markdown)
+        PUBLIC_JSON.write_text(rendered_repositories)
 
 
 if __name__ == "__main__":

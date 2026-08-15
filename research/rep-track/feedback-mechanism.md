@@ -4,7 +4,7 @@
 **Issue**: #170 (REP4: Two-sided feedback collection)  
 **Date**: 2026-05-18  
 **Status**: Design complete — schema stub at `spec/schemas/feedback-envelope.json`  
-**Author**: RESA loop, iter93  
+**Status**: public research record
 **Depends on**: REP1 (`reputation-mechanics.md`), ADR-026  
 **Schema draft**: `spec/schemas/feedback-envelope.json`
 

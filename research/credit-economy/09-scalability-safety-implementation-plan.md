@@ -660,7 +660,7 @@ Single-operator Mint (launch) has no attack surface — it's the directory maint
 | 7 Mint governance | 4h | MintController.php, routes/api.php | Parameter ossification |
 | 8 Non-CIP routing | 3h | adapter task.py, directory router | Free-rider (pending #302) |
 | 9 REACH probes | 2h | reach/probes/directory_conformance.py | Undetected failures |
-| 10 ADR-031 + spec | 3h | project/decisions/ADR-031.md, spec/iicp-dir.md | Spec drift |
+| 10 credit decision + spec | 3h | public decision record and `spec/v1.9/iicp-dir.md` | Spec drift |
 | **Total** | **32h** | | |
 
 **Order**: 1A → 1B → 3 → 2 → 4A → 5 → 6 → 7 → 4B → 9 → 8 → 10

@@ -1,0 +1,4 @@
+# Optional dependencies for the historical simulation and validation scripts.
+# Normative schema, fixture and release checks use tools/requirements.txt.
+numpy>=2.2,<3
+matplotlib>=3.10,<4

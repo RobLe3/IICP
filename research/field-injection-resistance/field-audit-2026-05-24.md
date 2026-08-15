@@ -1,5 +1,5 @@
 # Field Injection Resistance Audit
-**Issue**: #303 | **Date**: 2026-05-24 | **Author**: CORC iter-879
+**Status**: public security audit | **Date**: 2026-05-24
 
 ---
 
@@ -63,8 +63,8 @@ Both can be implemented before Phase 6 identity work (ADR-030) is finalized.
 
 ## Related
 
-- Issue: [#303](https://github.com/RobLe3/iicp.network/issues/303)
-- Issue: [#300](https://github.com/RobLe3/iicp.network/issues/300) — latency_estimate_ms
+- [`node-capability-format.md`](../../spec/v1.9/node-capability-format.md) — current public capability and evidence boundary
+- [IICP issue #90](https://github.com/RobLe3/IICP/issues/90) — privacy-preserving multi-signal Sybil research
 - ADR-013 — Ed25519 operator identity
 - ADR-030 — Operator identity & anti-sybil (ADR draft)
 - `directory/app/Services/TrustAuditorService.php` — existing auditor

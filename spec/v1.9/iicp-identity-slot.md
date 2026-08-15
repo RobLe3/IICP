@@ -6,7 +6,8 @@
 **Authority**: Protocol Steward
 **Linked ADRs**: ADR-034 (this slot; Proposed), ADR-019 (declarative pricing), ADR-020 (reputation stub), ADR-018 (federation), ADR-024 (signed message envelope; pending), ADR-030 (operator identity & anti-Sybil)
 **Tracking issues**: #150 (Identity Slot work package), #151 (this spec — D1)
-**Bounded context**: BC-12 (Identity Context — see `project/ddd/BC-12-identity.md`)
+**Bounded context**: identity assertions carried by protocol messages; issuance,
+resolution policy and identity governance remain outside the slot.
 
 ---
 
@@ -354,8 +355,8 @@ Reserved in the `IICP-IDSLOT-NN` namespace:
 
 ## 11. Threat Model Summary
 
-See `project/security/THREAT_MODEL.md §TC-10` for federation-specific threats.
-Slot-specific threats:
+Federation-specific and slot-specific threats are summarized in
+`docs/security/privacy-adversary-and-trust-model.md`. Slot-specific controls:
 
 - **Signature replay across messages**: mitigated by including message-specific
   fields (`task_id`, `seq`, `snapshot_seq`) in the canonical input. Replays

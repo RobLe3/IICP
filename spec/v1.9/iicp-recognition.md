@@ -5,8 +5,8 @@
 **Date**: 2026-06-05 (updated from 2026-05-26)
 **Changelog**: 0.6.0 — §5.4 reconciled to the **shipped** #310 lock-in detector (SPEC_UPDATE_PLAN Unit A, D5-A): keyed on `operator_pubkey` (not DID `identity_uri`); **genuine-served-node** gate (operator_verified + public_reachable + active + available) replaces the demand-scaled task-floor; **#1 reserved + 30-day-gate-exempt**; **GENESIS_MS = 2026-06-06** anchor named; FOUNDER_LOCKIN/SUCCESSION ride a **dedicated non-federated** signed chain (DIR-FED-16) with emission a tracked follow-up; §8 rule 8 + RECOG-FND-01/05/06 aligned; RECOG-FND IDs marked pending in conformance-suite. 0.5.0 — §5.4 Founder ordinals + §8 founder hard rules (8–12) + §10 RECOG-FND-01..06 (#309/#461, ratified tiers). 0.4.0 — §12 proposed defaults.
 **Tracking**: #309 (this spec graduation), #267 (research), #269 (ADR-030 — closed 2026-05-26, file exists at Proposed)
-**Foundation**: ADR-034 (Identity Slot), S.15 (`spec/iicp-identity-slot.md`), BC-12 (`project/ddd/BC-12-identity.md`) — operator identity composes on top of the Identity Slot
-**Companion**: `project/gamification.md` (project-level concept), `research/gamification-track/` (rationale, metric mapping, anti-gaming, rollout gates, API surface)
+**Foundation**: ADR-034 (Identity Slot), S.15 (`spec/iicp-identity-slot.md`) — operator identity composes on top of the Identity Slot
+**Companion**: `research/gamification-track/` (rationale, metric mapping, anti-gaming, rollout gates, API surface)
 
 ---
 
@@ -437,7 +437,9 @@ Per `research/gamification-track/04-rollout-gates.md`, this spec MUST NOT have a
 RECOG-Provider implementation deployed to production until ALL of these gates clear:
 
 - **G1**: ADR-030 Accepted + operator identity implementation shipped
-- **G2**: `project/gates/CLOSED_BETA_TO_PUBLIC_GATE.md` resolved (either path)
+- **G2**: a public maintainer decision records either launch authorization or a
+  continued-beta posture after the external-operator, incident-response,
+  installation, abuse-mitigation and contributor-readiness evidence is reviewed
 - **G3**: REACH geographic expansion to ≥3 probe origins
 - **G4**: ≥10 attested external operators in production
 - **G5**: All "partial" telemetry items from gamification deliverable 02 resolved

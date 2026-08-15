@@ -15,7 +15,6 @@ LANES = {
     "newcomer-validation",
     "linux-systemd-operator",
     "relay-operator",
-    "qualified-eu-review",
     "standards-governance",
 }
 LOCAL_RECORDS = {
@@ -38,7 +37,7 @@ def validate(record: dict, root: Path = ROOT) -> list[str]:
     lanes = record.get("lanes", [])
     ids = [lane.get("id") for lane in lanes]
     if set(ids) != LANES or len(ids) != len(set(ids)):
-        errors.append("campaign must contain the six unique participation lanes")
+        errors.append("campaign must contain the five unique public participation lanes")
     for lane in lanes:
         lane_id = lane.get("id")
         for field in ("tracker", "participant", "fixed_inputs", "record", "validator", "submission"):
@@ -73,7 +72,7 @@ def main() -> int:
         for error in errors:
             print(f"ERROR: {error}")
         return 1
-    print("external participation campaign valid: 6 awaiting-participant lanes")
+    print("external participation campaign valid: 5 awaiting-participant lanes")
     return 0
 
 

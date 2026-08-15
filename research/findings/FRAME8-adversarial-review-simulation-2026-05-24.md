@@ -11,7 +11,7 @@
 **Issue**: #242 (FRAME8: Adversarial network expert review)
 **Date**: 2026-05-24
 **Status**: Internal simulation complete — external expert review remains externally blocked
-**Author**: RESA loop, FORGE iter963
+**Status**: public adversarial research record
 **Parent**: #231 (iicp-framing.md spec)
 
 ---

@@ -1,11 +1,11 @@
 # MESH1 — Role-Assignment Algorithm Design
 
-**Track**: MESH — Consolidator Pattern, Role-Based Routing, Load-Aware Selection  
-**Issue**: #180 (MESH1: Role-assignment algorithm for general, specialist, and consolidator roles)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter82  
-**Depends on**: REP1 (#167), REP2 (#168) — thresholds informative; design proceeds without ratified values  
-**Length**: ≈1900 words (within ≤2000 limit)  
+**Track**: MESH — Consolidator Pattern, Role-Based Routing, Load-Aware Selection
+**Issue**: #180 (MESH1: Role-assignment algorithm for general, specialist, and consolidator roles)
+**Date**: 2026-05-18
+**Status**: public research record
+**Depends on**: REP1 (#167), REP2 (#168) — thresholds informative; design proceeds without ratified values
+**Length**: ≈1900 words (within ≤2000 limit)
 **ADR impact**: Expands ADR-028; specifies event-log format for ADR-013 compatibility.
 
 ---

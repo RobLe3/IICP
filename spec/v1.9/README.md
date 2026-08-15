@@ -80,8 +80,10 @@ Which ADR is authoritative for a given spec section:
 | `iicp-framing.md` | Binary framing, CBOR | ADR-002 (Phase 1+), ADR-024 |
 | `iicp-billing-extension.md` | Pricing declaration | ADR-019 |
 
-For implementation ADRs and their current evidence, see the
-[reference repository decision index](https://github.com/RobLe3/iicp.network/tree/main/project/decisions).
+The public specifications and architecture records in `docs/architecture/`
+state the current decisions. Historical implementation ADR identifiers in the
+table above are provenance labels; they are not required to interpret the
+normative text.
 
 ---
 

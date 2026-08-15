@@ -65,20 +65,6 @@
       "state": "awaiting-participant"
     },
     {
-      "id": "qualified-eu-review",
-      "tracker": "https://github.com/RobLe3/iicp.network/issues/768",
-      "related_tracker": "https://github.com/RobLe3/iicp.network/issues/801",
-      "participant": "qualified EU privacy and AI-law reviewer",
-      "fixed_inputs": [
-        "qualified review packet dated 2026-08-13",
-        "final Article 50 guidance dated 2026-07-20"
-      ],
-      "record": "https://github.com/RobLe3/iicp.network/blob/main/project/compliance/qualified-review-decision-v1.json",
-      "validator": "python3 scripts/check_qualified_review_packet.py <completed-decision.json>",
-      "submission": "return an attributable decision record and review memorandum for root #768 and #801",
-      "state": "awaiting-participant"
-    },
-    {
       "id": "standards-governance",
       "tracker": "https://github.com/RobLe3/IICP/issues/47",
       "participant": "consenting lead editor, backup editor and change controller",

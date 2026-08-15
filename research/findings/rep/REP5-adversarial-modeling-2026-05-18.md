@@ -3,7 +3,7 @@
 **Track**: REP (Reputation & Tiered Access)  
 **Issue**: #171 (REP5: Whitewash and adversarial scenarios — modeling)  
 **Date**: 2026-05-18  
-**Author**: RESA loop, iter 5  
+**Status**: public research record
 **Related findings**: F7 (adversarial equilibrium), F8 (zero whitewash resets), F9 (adversarial fraction resilience)  
 **Simulation**: `research/simulation/rep/identity_age_gate.py`, 3000 steps, size=200
 

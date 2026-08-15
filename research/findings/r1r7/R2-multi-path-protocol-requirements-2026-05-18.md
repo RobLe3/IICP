@@ -1,11 +1,11 @@
 # R2 — Multi-Path Inference: Protocol Requirements and Threat Model
 
-**Track**: R1R7 — Provider Selection & Multi-Path Routing  
-**Issue**: #174 (R2: Multi-path inference requirements and threat model)  
-**Date**: 2026-05-18  
-**Author**: RESA loop, FORGE iter82  
-**Depends on**: R1 (#173) — protocol/policy boundary complete  
-**Length**: ≈1950 words (within ≤2000 limit)  
+**Track**: R1R7 — Provider Selection & Multi-Path Routing
+**Issue**: #174 (R2: Multi-path inference requirements and threat model)
+**Date**: 2026-05-18
+**Status**: public research record
+**Depends on**: R1 (#173) — protocol/policy boundary complete
+**Length**: ≈1950 words (within ≤2000 limit)
 **ADR impact**: Proposes ADR-029 (multi-path envelope extension); flags ADR-024 and ADR-019 updates needed.
 
 ---

@@ -1,7 +1,7 @@
 # NAT Traversal — Prior-Art Survey
 
-**Date**: 2026-05-26 (iter-1381)
-**Issue**: [#328](https://github.com/RobLe3/iicp.network/issues/328) — NAT-aware client + node architecture
+**Date**: 2026-05-26
+**Public tracking**: [IICP #42](https://github.com/RobLe3/IICP/issues/42) for transport/NAT claim boundaries and [IICP #59](https://github.com/RobLe3/IICP/issues/59) for relay eligibility
 **Maintainer directive**: 2026-05-26 *"we need to make the clients/nodes NAT aware and NAT enable with automatic adaption to the circumstance if NAT is detected"*
 
 ---
@@ -302,5 +302,5 @@ adapter_start():
 - Tailscale "How NAT traversal works": tailscale.com/blog/how-nat-traversal-works
 - Cloudflare Tunnel docs: developers.cloudflare.com/cloudflare-one/connections/connect-networks
 - BitTorrent BEP 32: stigmund.bitcheese.net/bep-0032.html (UPnP usage in BT)
-- IICP issues: [#325](https://github.com/RobLe3/iicp.network/issues/325), [#326](https://github.com/RobLe3/iicp.network/issues/326), [#328](https://github.com/RobLe3/iicp.network/issues/328)
+- Public protocol tracking: [IICP #42](https://github.com/RobLe3/IICP/issues/42) and [IICP #59](https://github.com/RobLe3/IICP/issues/59)
 - Maintainer directive 2026-05-26

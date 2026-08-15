@@ -3,7 +3,7 @@
 **Date**: 2026-05-30
 **Track**: Security (red-team #363 follow-up)
 **Status**: Research — proposes ADR-030 amendment + phased MVF sequence
-**Author**: FORGE iter-1556 deep-research pass (Opus)
+**Status**: public security research record
 **Inputs**: red-team Block 1 (`reports/redteam/01-directory-control-plane.md`), adversarial bypass review (RT-01b/02b/03b/05b), concept review (F1–F10), ADR-030, `research/cryptographic-trustworthiness/`, `research/results/rep/identity_age/`, `research/findings/REP-adversarial-sensitivity-2026-05-18.md`, `research/gamification-track/03-anti-gaming.md`
 
 ---

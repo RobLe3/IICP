@@ -2,7 +2,7 @@
 
 **Issue**: #292 (ADOPTION: WASM client adapter — browser-installable IICP mesh client)
 **Date**: 2026-05-24
-**Author**: RESA loop, FORGE iter963
+**Status**: public feasibility research record
 
 ---
 

@@ -24,6 +24,9 @@ implementation worktree.
    A draft profile or fixture update does not by itself ratify a suite release.
 7. Build the release archive from a clean detached tag. Publish only immutable
    assets with SHA-256 checksums; never rebuild or replace an existing tag.
+8. Run `tools/check_public_artifact_closure.py`. A release or standards-review
+   input that depends on a private repository, missing local file or
+   workstation path is not portable and MUST NOT be published.
 
 ## Promotion checklist
 
@@ -37,6 +40,11 @@ implementation worktree.
 - Verify that status terms follow `SPEC_STATUS.md` and version axes follow
   `VERSIONING.md`.
 - Recheck every external registry claim immediately before publishing.
+- Confirm that the archive contains its root license, governance, security,
+  contribution and continuation instructions.
+- Run `python3 tools/check_public_artifact_closure.py --all-public` to catch
+  stale private dependencies elsewhere in the tracked public research and
+  documentation corpus before tagging.
 
 ## Boundaries
 
@@ -48,3 +56,7 @@ implementation worktree.
   and cross-implementation evidence package. Semantic profiles are preferred.
 - Website and implementation-repository documentation are public references,
   not substitutes for this canonical source.
+- Public technical research records the evidence and reasoning behind product
+  decisions. Private development methodology is neither normative evidence nor
+  a release dependency. The boundary is defined in
+  `docs/governance/public-artifact-boundary.md`.

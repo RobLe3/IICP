@@ -161,5 +161,8 @@ injection, measured ARM/Pi timing, and a separate default-enable decision.
 | Rust SDK | [#65](https://github.com/RobLe3/iicp-client-rust/issues/65) | complete: effective service lifecycle |
 | Python SDK | [#68](https://github.com/RobLe3/iicp-client-python/issues/68) | complete: effective service lifecycle |
 | TypeScript SDK | [#62](https://github.com/RobLe3/iicp-client-typescript/issues/62) | complete: effective service lifecycle |
-| Website | `iicp-website#24` (private) | complete in source; no deployment included |
-| Operations | `iicp-network-ops#24` (private) | open: sanitized Pi incident classification |
+
+Website presentation and operator incident handling are separate deployment
+concerns. They are not dependencies for the public runtime-health semantics or
+SDK implementations listed above. The historical Pi incident remains
+unclassified unless new evidence identifies its failure class.

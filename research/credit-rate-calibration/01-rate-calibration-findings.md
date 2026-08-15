@@ -4,7 +4,7 @@
 **Date**: 2026-05-24
 **Status**: Research / Pre-spec
 **Issue**: #305
-**Author**: ADOPTION sub-loop, FORGE iter-958
+**Status**: public research record
 **Depends on**: `research/credit-economy/02-routing-cost-design.md`, `research/credit-economy/05-spec-and-implementation-plan.md`
 **Feeds**: `spec/iicp-core.md §routing-costs`, `spec/iicp-dir.md §credit-economy`, proxy spend logic, `/api/v1/stats`
 

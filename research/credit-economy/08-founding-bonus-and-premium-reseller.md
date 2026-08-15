@@ -2,7 +2,7 @@
 
 **Date**: 2026-05-22
 **Status**: Research / Pre-spec
-**Feeds**: ADR-031, ADR-032, spec/iicp-dir.md §registration, project/FOUNDING_COHORT_MIGRATION.md
+**Feeds**: the credit-economy decisions and directory registration semantics
 **Depends on**: 01-model-tier-roi-simulation.md (Scheme C weights), 04-premium-credit-design.md (P-Credit system), 06-monetary-policy-mint-system.md (Mint structure)
 
 ---
@@ -163,7 +163,8 @@ public function earn(string $nodeId, int $outputTokens, string $tier, string $ta
 ```
 
 **Link to FOUNDING_COHORT_MIGRATION.md**: migration of the 8 current seed nodes to
-the founding cohort status is covered in `project/FOUNDING_COHORT_MIGRATION.md`.
+founding-cohort migration requires a separately reviewed, public operator
+policy before it can affect protocol-visible behavior.
 All 8 seed nodes should receive `founding_multiplier = 4.0` at migration time (they
 registered before public launch and are treated as Day 0 registrants).
 

@@ -2,7 +2,7 @@
 
 **Issue**: #277 (ARCS+RESA mesh telemetry)
 **Date**: 2026-05-24
-**Author**: RESA loop, FORGE iter963
+**Status**: public telemetry research record
 **Status**: Complete
 
 ---

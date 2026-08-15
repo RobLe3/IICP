@@ -411,7 +411,8 @@ the HTTPS endpoint configured by the operator and is not required to use 9484.
 
 **Phase 1 rationale (ADR-002)**: JSON over HTTPS was chosen for Phase 1 to maximise
 tooling compatibility and minimise implementation risk at PoC scale. CBOR and QUIC were
-deferred explicitly to Phase 3 (see `project/decisions/ADR-002-phase1-transport.md`).
+deferred; the current transport boundary and evidence are recorded in
+`docs/architecture/environmental-independence-and-extension-architecture.md`.
 
 **Current transport evidence**: Maintained implementations support HTTP task
 endpoints and a native framed TCP profile. Deployment metadata can negotiate or
@@ -458,8 +459,8 @@ All error responses MUST use structured JSON:
 { "error": { "code": "<code>", "message": "<human-readable>" } }
 ```
 
-The full IICP-E numeric code registry (IICP-E001 through IICP-E032) is maintained in
-`project/ARCHITECTURE.md §Error Codes`. Implementations MUST use those codes on the wire;
+The IICP-E numeric code catalog is maintained in this section and its referenced
+sub-protocol specifications. Implementations MUST use those codes on the wire;
 the slug codes above are the Phase 1 canonical names. Phase 2 / Phase 3 / Phase 5 codes
 in active use:
 
@@ -504,7 +505,7 @@ in active use:
 - Relay nodes and directory operators MUST NOT log task payload content beyond the TTL required for rate-limiting. [→ SEC-PRIV-03]
 - Registration `node_id` MUST default to an anonymized UUID not tied to hardware or operator identity. [→ SEC-PRIV-08]
 - All IICP connections MUST use TLS 1.3 or higher with ephemeral key exchange (forward secrecy). [→ SEC-TLS-01, SEC-PRIV-09]. Same Phase 3+ port-9484 exception applies as above.
-- **Privacy adversary model** (PA-1..PA-4) and IICP Privacy Tier taxonomy are normative in `project/SECURITY.md §Privacy Adversary Model` and SHALL be considered when implementing any component that handles task routing or node metadata.
+- **Privacy adversary model** (PA-1..PA-4) and its trust boundaries are defined in `docs/security/privacy-adversary-and-trust-model.md` and SHALL be considered when implementing any component that handles task routing or node metadata.
 
 ---
 

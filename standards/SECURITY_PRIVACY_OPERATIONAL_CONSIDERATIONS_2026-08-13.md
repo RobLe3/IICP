@@ -54,9 +54,11 @@ SSRF guards, authenticate providers independently and treat DNS/mDNS records as
 untrusted bootstrap candidates. Ticketed-dispatch adoption and any retirement
 of the legacy projection require a separate measured cutover decision.
 
-**Future:** root #612 and profile gate #58. No current document should imply
-that all discovery is route-free or that route tickets provide single-use task
-admission.
+**Future:** public standards gate #58 owns the endpoint-safe route-ticket and
+receipt semantics. Deployment-specific retirement of the legacy projection is
+an operator decision, not a protocol dependency. No current document should
+imply that all discovery is route-free or that route tickets provide
+single-use task admission.
 
 ## Authentication and authorization
 
@@ -129,9 +131,9 @@ discovery, task, receipt and relay costs.
 **Implemented evidence:** parser, framing, malformed-input, size, SSRF and
 timeout cases exist across the conformance suite and maintained components.
 
-**Future:** registration burst and steady-state tuning remains PHP issue #65;
-relay production abuse hardening remains root #524. Neither absence authorizes
-unbounded defaults.
+**Future:** registration burst and steady-state tuning remains PHP directory
+issue #65; the public relay eligibility work remains IICP issue #59. Neither
+absence authorizes unbounded defaults.
 
 ## Endpoint exposure, NAT and local discovery
 

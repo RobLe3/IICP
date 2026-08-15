@@ -3,7 +3,7 @@
 **Track**: REP (Reputation & Tiered Access)  
 **Issue**: #167 (REP1: Reputation mechanics and starting credit)  
 **Date**: 2026-05-18  
-**Author**: RESA loop, iter 5  
+**Status**: public research record
 **Evidence basis**: F4 (silver/gold boundary positioning), F6 (convergence invariance)  
 **Simulation**: `research/simulation/rep/harness.py` preliminary runs (iter69) + adversarial sweep (iter73)
 

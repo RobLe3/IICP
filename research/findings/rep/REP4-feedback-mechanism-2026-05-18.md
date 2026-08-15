@@ -3,7 +3,7 @@
 **Track**: REP (Reputation & Tiered Access)  
 **Issue**: #170 (REP4: Two-sided feedback collection)  
 **Date**: 2026-05-18  
-**Author**: RESA loop, iter 6  
+**Status**: public research record
 **Phase**: Design (no simulation required — mechanism design)  
 **Related ADRs**: ADR-012 (reputation weight W_REP), ADR-023 (reputation delta rules), ADR-026 (earned signal)
 
@@ -158,7 +158,7 @@ own provider nodes.
 **Defenses** (weaker here):
 - This requires coordinated operators with high identity_age and high reputation
 - The investment required (maintaining high-reputation proxies for 720h+ each) is a significant economic barrier
-- Coordinated collusion is modeled in RESA iter7 (RS2→100 work)
+- Coordinated collusion is modeled in `REP4-coordinated-collusion-2026-05-18.md`.
 
 ---
 
@@ -215,5 +215,5 @@ REP4 issue #170 should remain open until:
 |---|---------|---------|--------|
 | Q5 | Does α_fb = 0.05 prevent feedback from overwhelming telemetry signal? | REP4 | Not simulated |
 | Q6 | Does commit-reveal with 10-min blind period adequately prevent anchoring? | REP4 | Not simulated |
-| Q7 | Does coordinated feedback ring (3+ high-rep proxies) significantly inflate provider reputation? | REP4+RS2 | Coordinated collusion model (RESA iter7) |
+| Q7 | Does coordinated feedback ring (3+ high-rep proxies) significantly inflate provider reputation? | REP4+RS2 | Coordinated-collusion model |
 | Q4 | Does client feedback suppress Sybil rating farms? | REP4 | Partially answered — identity weighting + quorum gate are the primary defenses |

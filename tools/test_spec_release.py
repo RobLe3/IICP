@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -33,6 +34,19 @@ class SpecReleaseTest(unittest.TestCase):
                 hashlib.sha256(left.read_bytes()).digest(),
                 hashlib.sha256(right.read_bytes()).digest(),
             )
+            with zipfile.ZipFile(left) as archive:
+                prefix = f"iicp-spec-v{version}/"
+                names = set(archive.namelist())
+                for required in (
+                    "LICENSE",
+                    "GOVERNANCE.md",
+                    "SECURITY.md",
+                    "CONTRIBUTING.md",
+                    "CONTINUATION.md",
+                    "docs/governance/public-artifact-boundary.md",
+                    "ecosystem/public-repositories.json",
+                ):
+                    self.assertIn(prefix + required, names)
 
 
 if __name__ == "__main__":
