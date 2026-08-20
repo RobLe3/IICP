@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/restricted-trust-domain-membership-v0.schema.json",
+  "title": "IICP restricted trust-domain membership assertion fixture",
+  "type": "object",
+  "required": ["fixture_version", "status", "canonicalization", "authority_public_key_ed25519", "vectors", "gossip_vectors"],
+  "properties": {
+    "fixture_version": {"const": "0.1.0-draft"},
+    "status": {"const": "pre-normative"},
+    "canonicalization": {"const": "RFC8785-JCS"},
+    "authority_public_key_ed25519": {"type": "string", "pattern": "^[A-Za-z0-9_-]{43}$"},
+    "vectors": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/vector"}},
+    "gossip_vectors": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/gossipVector"}}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "signature": {"type": "object", "required": ["algorithm", "value"], "properties": {"algorithm": {"const": "Ed25519"}, "key_id": {"type": "string"}, "value": {"type": "string"}}, "additionalProperties": false},
+    "assertion": {"type": "object", "required": ["schema", "profile", "assertion_id", "domain_id", "subject", "issuer", "issued_at", "expires_at", "generation", "scopes", "audience"], "properties": {"schema": {"const": "iicp.restricted-trust-domain.membership-assertion.v0"}, "profile": {"const": "urn:iicp:profile:restricted-trust-domain:v1"}, "assertion_id": {"type": "string", "format": "uuid"}, "domain_id": {"type": "string", "minLength": 1}, "subject": {"type": "object", "required": ["kind", "id", "key_id", "public_key_ed25519"], "properties": {"kind": {"enum": ["node", "client", "directory"]}, "id": {"type": "string", "minLength": 1}, "key_id": {"type": "string", "minLength": 1}, "public_key_ed25519": {"type": "string", "pattern": "^[A-Za-z0-9_-]{43}$"}}, "additionalProperties": false}, "issuer": {"type": "object", "required": ["id", "key_id"], "properties": {"id": {"type": "string", "minLength": 1}, "key_id": {"type": "string", "minLength": 1}}, "additionalProperties": false}, "issued_at": {"type": "integer", "minimum": 0}, "expires_at": {"type": "integer", "minimum": 1}, "generation": {"type": "integer", "minimum": 1}, "scopes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["bootstrap", "peers", "relay", "execution", "cip", "federation"]}}, "audience": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}}, "additionalProperties": false},
+    "envelope": {"type": "object", "required": ["assertion", "signature"], "properties": {"assertion": {"$ref": "#/$defs/assertion"}, "signature": {"$ref": "#/$defs/signature"}}, "additionalProperties": false},
+    "vector": {"type": "object", "required": ["id", "envelope", "expected"], "properties": {"id": {"type": "string"}, "envelope": {"$ref": "#/$defs/envelope"}, "expected": {"enum": ["valid", "invalid_signature"]}}, "additionalProperties": false},
+    "gossipVector": {"type": "object", "required": ["id", "membership", "gossip", "payload_utf8", "expected"], "properties": {"id": {"type": "string"}, "membership": {"$ref": "#/$defs/envelope"}, "gossip": {"type": "object", "required": ["proof", "signature"], "properties": {"proof": {"type": "object", "required": ["sender_id", "domain_id", "sent_at", "replay_id", "payload_sha256", "membership_assertion_id"], "properties": {"sender_id": {"type": "string", "minLength": 1}, "domain_id": {"type": "string", "minLength": 1}, "sent_at": {"type": "integer", "minimum": 0}, "replay_id": {"type": "string", "format": "uuid"}, "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "membership_assertion_id": {"type": "string", "format": "uuid"}}, "additionalProperties": false}, "signature": {"$ref": "#/$defs/signature"}}, "additionalProperties": false}, "payload_utf8": {"type": "string"}, "seen_replay_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "format": "uuid"}}, "expected": {"enum": ["valid", "replay_detected"]}}, "additionalProperties": false}
+  }
+}

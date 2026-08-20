@@ -67,6 +67,14 @@ to CUG-10, plus malformed, expiry, replay, wrong-domain, downgrade, relay and
 restart cases. Its companion JSON Schema fixes the portable shape. Passing the
 fixture does not claim that a runtime or directory implements the Profile.
 
+`restricted-trust-domain-membership-v0.json` defines the deterministic signed
+membership and authenticated-gossip binding for that Profile. It separates the
+directory bearer credential from a short-lived, peer-verifiable assertion,
+binds each member to its existing Ed25519 identity key and includes negative
+signature and replay vectors. The fixture contains test public keys and
+signatures only; it does not contain a reusable credential or enable restricted
+mode.
+
 `profile-negotiation-v0.json` covers additive directory capability negotiation
 for a caller-requested pre-normative profile. No request preserves legacy
 discovery; unsupported required requests fail closed, while optional requests
