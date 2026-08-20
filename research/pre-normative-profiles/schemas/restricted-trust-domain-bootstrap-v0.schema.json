@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/restricted-trust-domain-bootstrap-v0.schema.json",
+  "title": "IICP restricted trust-domain bootstrap projection fixture",
+  "type": "object",
+  "required": ["fixture_version", "status", "membership_fixture", "vectors"],
+  "properties": {
+    "fixture_version": {"const": "0.1.0-draft"},
+    "status": {"const": "pre-normative"},
+    "membership_fixture": {"const": "restricted-trust-domain-membership-v0.json"},
+    "vectors": {
+      "type": "array", "minItems": 7,
+      "items": {
+        "type": "object",
+        "required": ["id", "mode", "response", "now", "minimum_generation", "expected"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "mode": {"enum": ["public", "restricted"]},
+          "response": {
+            "type": "object", "required": ["peers"],
+            "properties": {"peers": {"type": "array", "items": {
+              "type": "object", "required": ["node_id", "endpoint", "region", "last_seen"],
+              "properties": {
+                "node_id": {"type": "string", "minLength": 1},
+                "endpoint": {"type": "string", "format": "uri"},
+                "region": {"type": "string"}, "last_seen": {"type": "string"},
+                "membership_vector": {"type": "string"}
+              }, "additionalProperties": false
+            }}}, "additionalProperties": false
+          },
+          "now": {"type": "integer", "minimum": 0},
+          "minimum_generation": {"type": "integer", "minimum": 0},
+          "previously_admitted": {"type": "array", "items": {"type": "string"}},
+          "expected": {
+            "type": "object", "required": ["admitted", "evicted", "reason"],
+            "properties": {
+              "admitted": {"type": "array", "items": {"type": "string"}},
+              "evicted": {"type": "array", "items": {"type": "string"}},
+              "reason": {"enum": ["public_legacy", "valid", "membership_missing", "subject_mismatch", "expired", "generation_stale", "partial_absence_is_not_revocation"]}
+            }, "additionalProperties": false
+          }
+        }, "additionalProperties": false
+      }
+    }
+  }, "additionalProperties": false
+}
