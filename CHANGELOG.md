@@ -1,5 +1,12 @@
 # IICP Changelog
 
+## Unreleased
+
+- Adds a pre-normative, deterministic Ed25519 binding for restricted-domain
+  membership assertions and authenticated gossip. Directory bearer credentials
+  remain confined to directory operations; the peer artifacts contain no
+  reusable bearer secret and do not change public defaults or the base wire.
+
 ## v1.10.16 — 2026-08-20
 
 - Defines the `outcome-v2` reputation model: successful execution outcomes are

@@ -1,0 +1,193 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "canonicalization": "RFC8785-JCS",
+  "authority_public_key_ed25519": "ebVWLo_mVPlAeLES6KmLp5AfhTrmlb7X4OORC60ElmQ",
+  "vectors": [
+    {
+      "id": "membership-valid",
+      "envelope": {
+        "assertion": {
+          "schema": "iicp.restricted-trust-domain.membership-assertion.v0",
+          "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+          "assertion_id": "00000000-0000-4000-8000-000000000001",
+          "domain_id": "domain-test-a",
+          "subject": {
+            "kind": "node",
+            "id": "did:iicp:test:node-a",
+            "key_id": "did:iicp:test:node-a#key-1",
+            "public_key_ed25519": "5_FioQvsVZr-oZXk3OhLaVaNXSywlj60RsBoXisX8vA"
+          },
+          "issuer": {
+            "id": "did:iicp:test:directory-a",
+            "key_id": "did:iicp:test:directory-a#key-1"
+          },
+          "issued_at": 1800000000,
+          "expires_at": 1800000300,
+          "generation": 7,
+          "scopes": [
+            "bootstrap",
+            "peers",
+            "relay"
+          ],
+          "audience": [
+            "domain-test-a"
+          ]
+        },
+        "signature": {
+          "algorithm": "Ed25519",
+          "value": "qIJRiBzjxHznHbWvTyWuq2_w4c94AyMIvKg4KsDMHBvaJCekmpOurGQr07bwQ_WxdFWMfCFUiRhmEL2t25W1CA"
+        }
+      },
+      "expected": "valid"
+    },
+    {
+      "id": "membership-wrong-domain-tamper",
+      "envelope": {
+        "assertion": {
+          "schema": "iicp.restricted-trust-domain.membership-assertion.v0",
+          "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+          "assertion_id": "00000000-0000-4000-8000-000000000001",
+          "domain_id": "domain-test-b",
+          "subject": {
+            "kind": "node",
+            "id": "did:iicp:test:node-a",
+            "key_id": "did:iicp:test:node-a#key-1",
+            "public_key_ed25519": "5_FioQvsVZr-oZXk3OhLaVaNXSywlj60RsBoXisX8vA"
+          },
+          "issuer": {
+            "id": "did:iicp:test:directory-a",
+            "key_id": "did:iicp:test:directory-a#key-1"
+          },
+          "issued_at": 1800000000,
+          "expires_at": 1800000300,
+          "generation": 7,
+          "scopes": [
+            "bootstrap",
+            "peers",
+            "relay"
+          ],
+          "audience": [
+            "domain-test-a"
+          ]
+        },
+        "signature": {
+          "algorithm": "Ed25519",
+          "value": "qIJRiBzjxHznHbWvTyWuq2_w4c94AyMIvKg4KsDMHBvaJCekmpOurGQr07bwQ_WxdFWMfCFUiRhmEL2t25W1CA"
+        }
+      },
+      "expected": "invalid_signature"
+    }
+  ],
+  "gossip_vectors": [
+    {
+      "id": "gossip-valid",
+      "membership": {
+        "assertion": {
+          "schema": "iicp.restricted-trust-domain.membership-assertion.v0",
+          "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+          "assertion_id": "00000000-0000-4000-8000-000000000001",
+          "domain_id": "domain-test-a",
+          "subject": {
+            "kind": "node",
+            "id": "did:iicp:test:node-a",
+            "key_id": "did:iicp:test:node-a#key-1",
+            "public_key_ed25519": "5_FioQvsVZr-oZXk3OhLaVaNXSywlj60RsBoXisX8vA"
+          },
+          "issuer": {
+            "id": "did:iicp:test:directory-a",
+            "key_id": "did:iicp:test:directory-a#key-1"
+          },
+          "issued_at": 1800000000,
+          "expires_at": 1800000300,
+          "generation": 7,
+          "scopes": [
+            "bootstrap",
+            "peers",
+            "relay"
+          ],
+          "audience": [
+            "domain-test-a"
+          ]
+        },
+        "signature": {
+          "algorithm": "Ed25519",
+          "value": "qIJRiBzjxHznHbWvTyWuq2_w4c94AyMIvKg4KsDMHBvaJCekmpOurGQr07bwQ_WxdFWMfCFUiRhmEL2t25W1CA"
+        }
+      },
+      "gossip": {
+        "proof": {
+          "sender_id": "did:iicp:test:node-a",
+          "domain_id": "domain-test-a",
+          "sent_at": 1800000010,
+          "replay_id": "00000000-0000-4000-8000-000000000002",
+          "payload_sha256": "f4d849192ee9df78674456159e3fa9c72d27eac78c4d340c827fa90153933dcd",
+          "membership_assertion_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "did:iicp:test:node-a#key-1",
+          "value": "HicFAjc-v46v1XSCvMkJbsTewvagN0Kuxkzyv3v_yw02y_OmIb0vzGt8nfw5Ad6cGmli81SK0vKjeZW3YLczCQ"
+        }
+      },
+      "payload_utf8": "{\"peers\":[]}",
+      "expected": "valid"
+    },
+    {
+      "id": "gossip-replay",
+      "membership": {
+        "assertion": {
+          "schema": "iicp.restricted-trust-domain.membership-assertion.v0",
+          "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+          "assertion_id": "00000000-0000-4000-8000-000000000001",
+          "domain_id": "domain-test-a",
+          "subject": {
+            "kind": "node",
+            "id": "did:iicp:test:node-a",
+            "key_id": "did:iicp:test:node-a#key-1",
+            "public_key_ed25519": "5_FioQvsVZr-oZXk3OhLaVaNXSywlj60RsBoXisX8vA"
+          },
+          "issuer": {
+            "id": "did:iicp:test:directory-a",
+            "key_id": "did:iicp:test:directory-a#key-1"
+          },
+          "issued_at": 1800000000,
+          "expires_at": 1800000300,
+          "generation": 7,
+          "scopes": [
+            "bootstrap",
+            "peers",
+            "relay"
+          ],
+          "audience": [
+            "domain-test-a"
+          ]
+        },
+        "signature": {
+          "algorithm": "Ed25519",
+          "value": "qIJRiBzjxHznHbWvTyWuq2_w4c94AyMIvKg4KsDMHBvaJCekmpOurGQr07bwQ_WxdFWMfCFUiRhmEL2t25W1CA"
+        }
+      },
+      "gossip": {
+        "proof": {
+          "sender_id": "did:iicp:test:node-a",
+          "domain_id": "domain-test-a",
+          "sent_at": 1800000010,
+          "replay_id": "00000000-0000-4000-8000-000000000002",
+          "payload_sha256": "f4d849192ee9df78674456159e3fa9c72d27eac78c4d340c827fa90153933dcd",
+          "membership_assertion_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "signature": {
+          "algorithm": "Ed25519",
+          "key_id": "did:iicp:test:node-a#key-1",
+          "value": "HicFAjc-v46v1XSCvMkJbsTewvagN0Kuxkzyv3v_yw02y_OmIb0vzGt8nfw5Ad6cGmli81SK0vKjeZW3YLczCQ"
+        }
+      },
+      "payload_utf8": "{\"peers\":[]}",
+      "seen_replay_ids": [
+        "00000000-0000-4000-8000-000000000002"
+      ],
+      "expected": "replay_detected"
+    }
+  ]
+}
