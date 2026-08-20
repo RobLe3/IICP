@@ -1,6 +1,15 @@
 # IICP Changelog
 
-## Unreleased
+## v1.10.16 — 2026-08-20
+
+- Defines the `outcome-v2` reputation model: successful execution outcomes are
+  not penalized for latency, while latency, health, semantic quality and
+  integrity evidence remain separately labelled signals.
+- Adds an opaque reputation epoch and retry-safe `metrics_batch_id`
+  acknowledgement contract so reconnects cannot apply one heartbeat metrics
+  batch more than once.
+- Adds machine-readable cross-implementation fixtures for slow success,
+  failures, caps, duplicate batches, legacy evidence and score-epoch cutover.
 
 ## v1.10.15 — 2026-08-20
 

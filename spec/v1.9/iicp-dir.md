@@ -1,7 +1,7 @@
 # IICP-DIR — Directory Sub-Protocol Specification
 
-**Version**: 1.1.24
-**Date**: 2026-08-02
+**Version**: 1.1.25
+**Date**: 2026-08-20
 **Status**: draft
 **Issue**: #14
 **Authority**: Protocol Steward
@@ -378,10 +378,27 @@ Authorization: `Bearer <node_token>` header REQUIRED.
 **Response (PONG)**:
 
 ```json
-{ "ok": true, "next_heartbeat_ms": 30000, "reputation_score": 0.82, "challenge": "<hex nonce>" }
+{ "ok": true, "next_heartbeat_ms": 30000, "reputation_score": 0.82, "reputation_model": "outcome-v2", "reputation_epoch": "<opaque epoch>", "metrics_batch_accepted": "<opaque batch id or null>", "challenge": "<hex nonce>" }
 ```
 
 `reputation_score` — the node's current reputation [0.0, 1.0] as stored in the directory. Allows operators to observe their reputation on every heartbeat cycle. Default 0.5 for nodes with no history.
+
+`reputation_model` and `reputation_epoch` identify the semantics and score epoch.
+An absent model identifier denotes legacy evidence and MUST NOT be presented as
+`outcome-v2`.
+
+When `metrics` is present, the heartbeat MUST include an opaque
+`metrics_batch_id` of 1–64 printable ASCII characters. A node MUST retain and
+retry the same batch until the directory acknowledges it in
+`metrics_batch_accepted`. A directory MUST apply a `(node_id,
+metrics_batch_id)` batch at most once and MUST acknowledge a duplicate without
+reapplying it. The batch identifier is correlation metadata and MUST NOT contain
+task content, a node secret or a user identifier.
+
+A node MUST have at most one unacknowledged metrics batch. This permits a
+directory to retain only the last accepted batch identifier per node. Older
+nodes that omit `metrics_batch_id` remain compatible, but their retry cannot be
+proven idempotent and MUST be treated as legacy evidence.
 
 **Liveness challenge-response (v1.10.0, ADR-047 Part A — cryptographic liveness without dial-back)**:
 The directory issues a fresh `challenge` nonce in each PONG. On the next HEARTBEAT the node SHOULD return
@@ -1179,10 +1196,9 @@ A registered node (the *reporter*) submits a peer-divergence finding about a *ta
 
 - A reporter MUST NOT report on itself → `422 invalid_target`.
 - **Per-reporter rate limit**: at most one accepted report per `(reporter, target)` per 24h → `429` with `reason: "rate_limited"`.
-- **Per-target griefing cap (RT-05, spec §11.5)**: at most **2 distinct reporters** MAY apply a reputation delta against one target per 24h. Reports beyond the cap return `202` but MUST NOT reduce reputation further; the emitted event carries `delta_suppressed: true`.
-- On an applied report: reputation delta = **−0.05**, floored at 0.0 (see iicp-semantics §11.2).
-- Every report (applied or suppressed) emits an `AUDIT_REPORT` event to the append-only event log with `{reporter_node_id, finding, reputation_delta, delta_suppressed, old_score, new_score}`.
-- The directory MUST dual-write the new score to both `reputations.score` and `nodes.reputation_score`.
+- **Per-target griefing cap (RT-05, spec §11.5)**: at most **2 distinct eligible reporters** MAY contribute integrity evidence about one target per 24h. Reports beyond the cap return `202` but MUST be marked suppressed.
+- An accepted report MUST NOT alter `outcome-v2` reputation. Integrity findings are a separately labelled evidence dimension and MUST NOT be presented as execution-outcome history.
+- Every report (accepted or suppressed) emits an `AUDIT_REPORT` event to the append-only event log with `{reporter_node_id, finding, integrity_evidence_accepted, delta_suppressed}`. Legacy score fields MAY be retained as labelled audit history but MUST report a zero `outcome-v2` delta.
 
 **Response**: `202 {"accepted": true}` on success; `429`/`422` per above.
 
@@ -1855,6 +1871,7 @@ Tracking: #508
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1.25 | 2026-08-20 | HEARTBEAT adds `reputation_model`, opaque epoch and retry-safe metrics batch acknowledgement. AUDIT_REPORT integrity evidence is separated from `outcome-v2` execution-outcome reputation. |
 | 1.1.23 | 2026-07-18 | #534 clarifies adoption-gated strict E050: every re-registration of an existing secured node requires the current token, including unchanged routes, so a tokenless refresh cannot mint a credential and then authorize a second-step route takeover. Transitional old-endpoint-absence behavior remains unchanged until an explicit cutover. |
 | 1.1.22 | 2026-07-11 | #618 accountless operator-key lifecycle: dual-key signed normal rotation preserves linked-node, credit/reputation and recognition continuity atomically while policy manifests remain independently re-signed; signed revocation fails closed for node operator bindings. Old keys become ineligible for new claims, and public receipts remain redacted/no-store. |
 | 1.1.21 | 2026-07-10 | #557 completes the CX discovery-name cutover: discover/NODELIST and authenticated dispatch routes emit only canonical `cx_public_key`. The deprecated CX `public_key` alias is removed from directory output and schema; SDK consumers may retain read fallback for one further release. Node-detail `public_key` remains the distinct Ed25519 gossip key. |

@@ -1,7 +1,7 @@
 # IICP Semantics — Routing, QoS, and Node Selection
 
-**Version**: 1.6.4
-**Date**: 2026-07-15
+**Version**: 1.7.0
+**Date**: 2026-08-20
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -498,25 +498,47 @@ This section is **normative** (RFC 2119). It defines the events that cause reput
 | `batch` | 10000 |
 | `best-effort` | no budget (latency is never penalised) |
 
-When the QoS class is unknown (e.g. heartbeat does not carry it), the directory SHOULD use the `interactive` budget (2000 ms) as the default.
+Latency budgets are performance constraints, not evidence that an otherwise
+successful execution failed. When the QoS class is unknown, the directory MUST
+record latency as advisory performance evidence only. It MUST NOT infer an
+`interactive` requirement or apply an outcome-reputation penalty.
 
 ### 11.2 Per-task delta rules
 
 | Event | Reputation delta |
 |-------|-----------------|
-| Task completed, `avg_latency_ms` ≤ budget | **+0.01** |
-| Task completed, budget < `avg_latency_ms` ≤ 2 × budget | **+0.00** (no change) |
-| Task completed, `avg_latency_ms` > 2 × budget | **−0.05** |
+| Task completed successfully | **+0.01** |
 | Task failed (adapter error, 5xx backend) | **−0.05** |
 | Task timed out (504 gateway timeout) | **−0.10** |
-| Node advertised `available: true` but failed liveness check | **−0.20** |
-| Node missed ≥ 3 consecutive heartbeats and reappears | reputation reset to **0.5** (probation default) |
 
 Deltas from a single heartbeat batch MUST be summed and applied atomically:
 
 ```
 new_score = clamp(old_score + Σ(per_task_delta), 0.0, 1.0)
 ```
+
+The model defined by this section is identified as `outcome-v2`. Latency,
+reachability, operational health, semantic quality and integrity/fraud findings
+are separate evidence dimensions. A directory MUST NOT describe a low
+`outcome-v2` score as evidence of fraud unless a separately identified integrity
+mechanism supplied that evidence.
+
+If a request carried an explicit QoS class or deadline, a directory MAY expose
+whether the performance constraint was met as a separate performance signal.
+Missing the performance constraint does not change a successful execution into
+a reputation failure. A protocol timeout remains a timeout outcome.
+
+Directories adopting `outcome-v2` MUST expose `reputation_model: "outcome-v2"`
+alongside a reputation value. Existing scores calculated with the earlier
+latency-coupled rules MUST NOT be silently relabelled. At cutover, a directory
+MUST begin a new score epoch at the neutral value `0.5`, retain the prior score
+only as labelled audit history, and publish the new epoch identifier. Mixed
+deployments MUST treat an absent model identifier as legacy evidence.
+
+Elapsed time, missed heartbeats and reachability probes MUST NOT directly alter
+an `outcome-v2` score. They belong to freshness, availability and operational
+health evidence. An implementation MAY age confidence in old outcome evidence,
+but MUST NOT express that loss of confidence by silently decreasing the score.
 
 **Per-heartbeat positive delta cap (RT-01 / #375)**: To prevent reputation self-inflation via
 self-reported metrics, the positive component of the summed delta from a single heartbeat call
@@ -564,22 +586,22 @@ persisting. Conformance tests: REP-01 through REP-03 (see conformance-test-suite
 ### 11.5 Peer audit-report griefing cap (RT-05 / #379)
 
 A registered node MAY submit a peer audit-report (`POST /v1/audit-report`) reporting a
-`declaration_divergence` finding against a target node. The directory applies a
-`REPUTATION_DELTA = −0.05` on acceptance.
+`declaration_divergence` finding against a target node. An accepted report is integrity
+evidence. It MUST NOT alter the target's `outcome-v2` execution-outcome reputation.
 
 To prevent coordinated reputation griefing (multiple colluding reporters targeting one
 node), the following MUST be enforced:
 
 1. **Per-reporter rate limit**: A given reporter node MUST NOT have more than one accepted
    report against the same target accepted within any 24-hour window.
-2. **Per-target global cap**: At most **2 distinct reporters** MAY have their delta applied
-   against any single target within a 24-hour window. Reports from additional reporters
-   within the window MUST be acknowledged (HTTP 202) but MUST NOT reduce the target's
-   reputation further. The `delta_suppressed: true` flag SHOULD be included in the event log.
+2. **Per-target global cap**: At most **2 distinct reporters** MAY contribute accepted
+   integrity evidence against any single target within a 24-hour window. Reports from
+   additional reporters MUST be acknowledged (HTTP 202) but marked suppressed. The
+   `delta_suppressed: true` flag SHOULD be included in the event log for compatibility.
 
-Rationale: without the global cap, 10 colluding nodes each filing one report (within their
-individual rate windows) can reduce a target from 0.5 → 0.0 in a single day. The cap limits
-total daily damage to −0.10 regardless of how many distinct reporters participate.
+Rationale: the cap limits evidence flooding and routing capture. Consumers may apply an
+explicit integrity policy to the separate evidence, but directories cannot silently fold it
+into an outcome score whose meaning is task completion history.
 
 ### 11.6 Hourly reputation velocity ceiling (RT-01b / #381)
 
@@ -617,12 +639,12 @@ Conformance: REP-06 (conformance-test-suite.md §13.6).
 ### 11.8 Audit-report reporter eligibility (RT-05b / #383)
 
 The per-reporter rate limit in §11.5 can be bypassed by registering new nodes. To prevent
-this, directories MUST verify reporter eligibility before accepting a reputation delta:
+this, directories MUST verify reporter eligibility before accepting integrity evidence:
 
 - Reporter node age MUST be **≥ 3 days** since first registration
 - Reporter reputation score MUST be **≥ 0.55**
-- Reports from ineligible reporters MUST be acknowledged (HTTP 202) but MUST NOT reduce
-  the target's reputation (same behavior as `delta_suppressed: true`)
+- Reports from ineligible reporters MUST be acknowledged (HTTP 202) but MUST be marked
+  suppressed and MUST NOT change `outcome-v2` reputation.
 
 This gate applies in addition to the rate-limit and global cap in §11.5, not instead of them.
 
@@ -670,8 +692,8 @@ but directory-grade conformance is NOT broken by their absence.
 | SYB-03 | T-SYB-02 | MUST | Per-heartbeat positive delta cap: +0.10 maximum per heartbeat (RT-01, §11.2). | REP-01–03 |
 | SYB-04 | T-SYB-02 | MUST | Hourly reputation velocity ceiling: +0.20 maximum per 1-hour rolling window regardless of heartbeat frequency (RT-01b, §11.6). | REP-04 |
 | SYB-05 | T-SYB-03 | MUST | Quorum reporter independence: proxy reporters that do not satisfy age ≥ 3 days AND reputation ≥ 0.55 MUST be acknowledged but MUST NOT count toward quorum (RT-03b, §11.7). | REP-06 |
-| SYB-06 | T-SYB-04 | MUST | Per-reporter audit rate limit: ≤1 audit report per reporter per 24h per target, AND ≤2 distinct reporters per target per day counted toward score (RT-05, §11.5). | REP-03 |
-| SYB-07 | T-SYB-04 | MUST | Audit-report reporter eligibility: reporter MUST satisfy age ≥ 3 days AND reputation ≥ 0.55; ineligible reports acknowledged (HTTP 202) but MUST NOT reduce the target score (RT-05b, §11.8). | REP-07 |
+| SYB-06 | T-SYB-04 | MUST | Per-reporter audit rate limit: ≤1 audit report per reporter per 24h per target, AND ≤2 distinct eligible reporters per target per day contribute integrity evidence (RT-05, §11.5). | REP-08 |
+| SYB-07 | T-SYB-04 | MUST | Audit-report reporter eligibility: reporter MUST satisfy age ≥ 3 days AND reputation ≥ 0.55; ineligible reports are acknowledged (HTTP 202) but suppressed. Audit evidence never changes `outcome-v2` reputation (RT-05b, §11.8). | REP-07, REP-08 |
 | SYB-08 | T-SYB-05 | MUST | Credit laundering rate limit: ≤1,000 credits awarded per `node_id` per hour; excess MUST be rejected with HTTP 429 (TC-9b; see `iicp-cooperative-inference.md` §10.6). | — |
 | SYB-09 | T-SYB-06 | MUST | Identity permanence: operator `identity_uri` is pinned on first-use (ADR-034); re-registration with a different `identity_uri` creates a new zero-reputation operator; re-registration with the same `identity_uri` after a flag does NOT clear the flag (`spec/iicp-recognition.md §8` rule 5). | RECOG-AG-05 |
 | SYB-10 | T-SYB-07 | MUST | Badge task-count collusion barrier: task counts toward badge thresholds with a `≥1,000` task requirement MUST require ≥3 distinct proxy `node_id` contributors (`spec/iicp-recognition.md §8` rule 3). | RECOG-AG-03 |
@@ -732,6 +754,7 @@ residual risk, its current partial mitigation (if any), and the intended remedia
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.7.0 | 2026-08-20 | Defines `outcome-v2`: latency, liveness, semantic quality and integrity remain separate evidence; slow successful tasks earn the normal success delta; elapsed time does not silently decay the outcome score; cutover starts a labelled neutral epoch. |
 | 1.6.3 | 2026-07-02 | §1.3 adds compliance-readiness prohibited-practice intent guardrails for official clients: clear prohibited intent URNs are refused locally before discovery/routing with `IICP-POLICY-001`; this prevents prompt/task leakage for structurally unsupported use cases without claiming full legal classification. |
 | 1.6.2 | 2026-06-28 | §6.4 adds provider public-reachability fallback semantics for SDK 0.7.75: direct route → accountless external tunnel → relay → local-only, with tunnel pacing/cooldown treated as a fallback trigger rather than a retry loop. |
 | 1.0.0 | 2026-05-15 | Initial draft — extracted from ARCHITECTURE.md, RELIABILITY.md, and prior spec work as part of S.5 spec split |

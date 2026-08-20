@@ -1,0 +1,20 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "normative-candidate",
+  "reputation_model": "outcome-v2",
+  "initial_score": 0.5,
+  "cases": [
+    {"name":"successful_fast","input":{"score":0.5,"tasks_success":1,"tasks_failed":0,"avg_latency_ms":500,"qos":"interactive"},"expected":{"score":0.51,"latency_outcome":"met"}},
+    {"name":"successful_slow_unknown_qos","input":{"score":0.5,"tasks_success":1,"tasks_failed":0,"avg_latency_ms":7272},"expected":{"score":0.51,"latency_outcome":"advisory"}},
+    {"name":"successful_slow_explicit_interactive","input":{"score":0.5,"tasks_success":1,"tasks_failed":0,"avg_latency_ms":7272,"qos":"interactive"},"expected":{"score":0.51,"latency_outcome":"missed"}},
+    {"name":"successful_batch","input":{"score":0.5,"tasks_success":1,"tasks_failed":0,"avg_latency_ms":9000,"qos":"batch"},"expected":{"score":0.51,"latency_outcome":"met"}},
+    {"name":"successful_best_effort","input":{"score":0.5,"tasks_success":1,"tasks_failed":0,"avg_latency_ms":30000,"qos":"best-effort"},"expected":{"score":0.51,"latency_outcome":"not_applicable"}},
+    {"name":"failed","input":{"score":0.5,"tasks_success":0,"tasks_failed":1,"avg_latency_ms":100},"expected":{"score":0.45}},
+    {"name":"mixed_batch","input":{"score":0.5,"tasks_success":3,"tasks_failed":1,"avg_latency_ms":8000},"expected":{"score":0.48}},
+    {"name":"positive_cap","input":{"score":0.5,"tasks_success":100,"tasks_failed":0,"avg_latency_ms":10},"expected":{"score":0.6}},
+    {"name":"lower_bound","input":{"score":0.01,"tasks_success":0,"tasks_failed":1,"avg_latency_ms":10},"expected":{"score":0.0}},
+    {"name":"duplicate_batch","input":{"score":0.5,"metrics_batch_id":"batch-a","deliveries":2,"tasks_success":1,"tasks_failed":0},"expected":{"score":0.51,"applied_batches":1,"acknowledged_deliveries":2}},
+    {"name":"legacy_missing_model","input":{"reputation_score":0.1},"expected":{"classification":"legacy","may_label_outcome_v2":false}},
+    {"name":"cutover_epoch","input":{"legacy_score":0.1,"target_model":"outcome-v2"},"expected":{"new_score":0.5,"legacy_score_retained_as_audit":true,"new_epoch_required":true}}
+  ]
+}

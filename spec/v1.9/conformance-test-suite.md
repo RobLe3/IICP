@@ -1,7 +1,7 @@
 # IICP Conformance Test Suite
 
-**Version**: 4.50.0
-**Date**: 2026-08-02
+**Version**: 4.51.0
+**Date**: 2026-08-20
 **Status**: draft
 **Issue**: #22
 **Authority**: Protocol Steward + Integration Validator
@@ -724,17 +724,19 @@ These tests verify §4.1/§4.2 normative field validation. All MUST trigger `IIC
 
 ### 13.6 Reputation Update Rules (Phase 5 — MUST)
 
-These tests verify §11 normative delta rules. Implementations MUST pass REP-01..07.
+These tests verify §11 normative signal and delta rules. Implementations MUST pass REP-01..09.
 
 | Test ID | Requirement | Spec ref | Test file |
 |---------|-------------|----------|-----------|
-| `REP-01` | Successful task within latency budget increases `reputation_score` | §11.2, §11.4 | `directory/tests/Feature/ReputationServiceTest.php` |
+| `REP-01` | Every successful task increases `outcome-v2` reputation, including success beyond a latency budget | §11.1, §11.2, §11.4 | Shared outcome-v2 fixture + directory reputation tests |
 | `REP-02` | Failed task decreases `reputation_score` | §11.2, §11.4 | `directory/tests/Feature/ReputationServiceTest.php` |
 | `REP-03` | `reputation_score` never falls below 0.0 or exceeds 1.0 | §11.4 | `directory/tests/Feature/ReputationServiceTest.php` |
 | `REP-04` | Per-node hourly reputation gain MUST NOT exceed MAX_HOURLY_GAIN (0.20) regardless of heartbeat frequency (RT-01b, #381) | §11.2 | `directory/tests/Feature/ReputationServiceTest.php::test_rt01b_hourly_velocity_ceiling_caps_gain` |
 | `REP-05` | Free credit allocation MUST be gated per source IP — per-node_id gate alone is insufficient (RT-02b, #380) | §6.5 | `directory/tests/Feature/CreditHarvestRegressionTest.php::test_new_node_id_from_same_ip_is_blocked_by_ip_gate` |
 | `REP-06` | Proxy reporters for Sybil latency-EMA quorum MUST be ≥3 days old with reputation ≥0.55 — fresh nodes do not satisfy the quorum gate (RT-03b, #382) | §T4.3 | `directory/tests/Feature/ProxyTelemetryTest.php::test_rt03b_fresh_proxy_nodes_do_not_count_toward_quorum` |
-| `REP-07` | Audit-report reporters MUST be ≥3 days old with reputation ≥0.55 for their report to carry a reputation delta — fresh reporter rotation is blocked (RT-05b, #383) | §7 | `directory/tests/Feature/AuditReportTest.php::test_rt05b_fresh_reporter_delta_suppressed` |
+| `REP-07` | Audit-report reporters MUST be ≥3 days old with reputation ≥0.55 for their report to contribute integrity evidence — fresh reporter rotation is blocked (RT-05b, #383) | §7 | Directory audit-report eligibility tests |
+| `REP-08` | Audit reports MUST NOT alter `outcome-v2` execution-outcome reputation | §11.5, §11.8 | Shared outcome-v2 fixture + directory audit-report separation tests |
+| `REP-09` | Repeating one `(node_id, metrics_batch_id)` MUST acknowledge but MUST NOT reapply counters or reputation delta | iicp-dir §3.2 | Shared outcome-v2 fixture + directory heartbeat idempotency tests |
 
 **Implementation**: `directory/app/Services/ReputationService.php` (iter 30, closes #113). Security hardening REP-04..07 added 2026-06-01 (iter-1736, #380-383).
 
@@ -997,6 +999,7 @@ canonical fixture and schema are
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.51.0 | 2026-08-20 | REP-01 now covers slow successful execution; REP-08 separates audit integrity evidence from outcome reputation; REP-09 requires idempotent metrics-batch retries. |
 | 4.50.0 | 2026-08-02 | §3.3l registers DIR-LIFECYCLE-01..06 for registration, authenticated heartbeat, token-authenticated refresh, stale-token rejection and deregistration. Runner state is ephemeral and result bundles remain content-free. Existing public and dispatch fixtures remain immutable. |
 | 4.49.0 | 2026-08-02 | §3.3k registers the loopback-only DIR-DISPATCH-01..05 ticket-safety profile and reconciles the suite header and single changelog authority. Existing 4.45 result manifests remain immutable and verifiable. |
 | 4.48.0 | 2026-07-14 | §17 adds proposed service-lifecycle and provider-admission vectors. They are additive draft profiles and do not alter base-wire or Phase 1 conformance. This corrects the previously colliding 4.47 label. |
