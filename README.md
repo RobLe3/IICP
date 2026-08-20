@@ -4,7 +4,7 @@
 
 *Building the HTTP for the Age of Generative AI*
 
-**Protocol-suite release**: v1.10.15<br>
+**Protocol-suite release**: v1.10.16<br>
 **Wire compatibility baseline**: v1.9.0<br>
 **Reference implementation**: [iicp.network](https://iicp.network)
 **Status**: Project-normative beta suite; individual profiles retain their own status

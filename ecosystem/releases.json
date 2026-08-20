@@ -4,7 +4,7 @@
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.15",
+      "version": "1.10.16",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -18,8 +18,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No base-wire, directory-schema or persisted-state migration is required. This release defines a pre-normative restricted trust-domain Profile and portable semantic fixtures; it does not enable private mode in an implementation or change public defaults.",
-      "rollback": "Continue using immutable v1.10.14 artifacts. Implementations remain compatible because the restricted trust-domain Profile is pre-normative and optional."
+      "migration": "Directories start a new outcome-v2 reputation epoch at 0.5. Latency, health, integrity and semantic quality remain separately labelled evidence. Heartbeat metrics batches gain additive retry-safe acknowledgement; older clients and directories remain compatible but cannot prove retry idempotency.",
+      "rollback": "Restore immutable v1.10.15 artifacts and retain any outcome-v2 epoch data as labelled audit evidence. Do not relabel a legacy score as outcome-v2."
     },
     {
       "id": "directory-php",

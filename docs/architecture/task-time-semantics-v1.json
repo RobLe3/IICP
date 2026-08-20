@@ -221,7 +221,7 @@
     },
     {
       "path": "spec/v1.9/iicp-semantics.md",
-      "matches": 4,
+      "matches": 7,
       "owner": "routing and retry guidance"
     },
     {
