@@ -7,7 +7,7 @@
     "gold_min_tasks": 100,
     "gold_min_reputation_score": 0.65,
     "sdk_compatibility_baseline": "0.7.68",
-    "sdk_latest_known_version": "0.7.105",
+    "sdk_latest_known_version": "0.7.106",
     "failure_domain_basis": "not_attested",
     "identity_material_exposed": false
   },
