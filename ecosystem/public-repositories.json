@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-15",
+  "generated_at": "2026-08-20",
   "repositories": [
     {
       "authority": "normative protocol, registries and reviewed research",
@@ -8,7 +8,7 @@
       "lifecycle": "active",
       "name": "IICP",
       "protocol": "1.9",
-      "release": "1.10.14",
+      "release": "1.10.15",
       "url": "https://github.com/RobLe3/IICP"
     },
     {

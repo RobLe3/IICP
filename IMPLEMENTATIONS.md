@@ -7,7 +7,7 @@ not public build, conformance or governance dependencies.
 
 | Component | Authority | Language | Visibility | Lifecycle | Release |
 |---|---|---|---|---|---|
-| [IICP](https://github.com/RobLe3/IICP) | normative protocol, registries and reviewed research | specification | public | active | 1.10.14 |
+| [IICP](https://github.com/RobLe3/IICP) | normative protocol, registries and reviewed research | specification | public | active | 1.10.15 |
 | [iicp-directory-php](https://github.com/RobLe3/iicp-directory-php) | PHP reference directory implementation and current Genesis Seed code line | php | public | active | 1.10.92 |
 | [iicp-directory-rust](https://github.com/RobLe3/iicp-directory-rust) | pre-1.0 Rust directory operator preview; not the production Genesis authority | rust | public | operator-preview | 0.1.13 |
 | [iicp-client-python](https://github.com/RobLe3/iicp-client-python) | Python consumer and provider SDK | python | public | active | 0.7.105 |

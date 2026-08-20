@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## v1.10.15 — 2026-08-20
+
+Additive pre-normative security-profile release. It does not change the stable v1.9 base wire, directory schema or public defaults.
+
+- Defines the pre-normative restricted trust-domain boundary for private,
+  federated-private and local-only operation without changing public defaults
+  or the base wire.
+- Adds schema-validated CUG-01 through CUG-10 semantic vectors for membership,
+  gossip, revocation, protected discovery, CIP inheritance, explicit
+  federation and network-isolated local operation.
+- Pins stable first-match refusal reasons and adversarial downgrade, replay,
+  wrong-domain, poisoned-bootstrap, relay and restart cases. Passing these
+  fixtures is not an implementation or deployment claim.
+
 ## v1.10.14 — 2026-08-15
 
 Additive pre-normative runtime-context and ecosystem release. It does not
