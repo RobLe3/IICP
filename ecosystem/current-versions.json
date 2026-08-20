@@ -3,31 +3,31 @@
     "client-python": {
       "lifecycle": "active",
       "name": "iicp-client-python",
-      "release": "0.7.105",
+      "release": "0.7.106",
       "visibility": "public"
     },
     "client-rust": {
       "lifecycle": "active",
       "name": "iicp-client-rust",
-      "release": "0.7.105",
+      "release": "0.7.106",
       "visibility": "public"
     },
     "client-typescript": {
       "lifecycle": "active",
       "name": "iicp-client-typescript",
-      "release": "0.7.105",
+      "release": "0.7.106",
       "visibility": "public"
     },
     "directory-php": {
       "lifecycle": "active",
       "name": "iicp-directory-php",
-      "release": "1.10.92",
+      "release": "1.10.93",
       "visibility": "public"
     },
     "directory-rust": {
       "lifecycle": "operator-preview",
       "name": "iicp-directory-rust",
-      "release": "0.1.13",
+      "release": "0.1.14",
       "visibility": "public"
     },
     "specification": {

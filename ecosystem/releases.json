@@ -23,38 +23,42 @@
     },
     {
       "id": "directory-php",
-      "version": "1.10.92",
+      "version": "1.10.93",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
         "directory-implementation-metadata-v1",
         "discovery-evidence-v1",
-        "effective-capability-v1"
+        "effective-capability-v1",
+        "restricted-trust-domain-v1",
+        "reputation-outcome-v2"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No database or HTTP migration is required. Discovery now reports 0.7.105 as the latest known coordinated SDK line while preserving eligibility, security and deployment behavior.",
-      "rollback": "Restore immutable 1.10.91 application code to report 0.7.104 as the latest known SDK. Genesis deployment remains a separate operator decision."
+      "migration": "Apply the reviewed outcome-v2 schema migration before serving traffic. Existing reputation is retained as legacy audit evidence and active scoring begins at a neutral outcome-v2 epoch. Restricted-domain support remains disabled by default.",
+      "rollback": "Restore immutable 1.10.92 application code and database backup before the migration, or retain the additive columns unused. Do not relabel outcome-v2 scores as legacy. Genesis deployment remains separately authorized."
     },
     {
       "id": "directory-rust",
-      "version": "0.1.13",
+      "version": "0.1.14",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
         "directory-implementation-metadata-v1",
         "discovery-evidence-v1",
         "runtime-health-v1",
-        "effective-capability-v1"
+        "effective-capability-v1",
+        "restricted-trust-domain-v1",
+        "reputation-outcome-v2"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No database or HTTP migration is required. The operator preview reports 0.7.105 as the latest known coordinated SDK line and pins PHP 1.10.92 parity.",
-      "rollback": "Restore immutable 0.1.12 through the guarded updater to report 0.7.104 as the latest known SDK. PHP remains Genesis authority and no cutover is authorized."
+      "migration": "Apply the matching outcome-v2 schema migration in a disposable or authorized operator-preview database. The release pins PHP 1.10.93 parity and keeps restricted-domain mode disabled by default.",
+      "rollback": "Restore immutable 0.1.13 through the guarded updater and restore the pre-migration database snapshot where required. PHP remains Genesis authority and no cutover is authorized."
     },
     {
       "id": "client-python",
-      "version": "0.7.105",
+      "version": "0.7.106",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -64,16 +68,17 @@
         "cip-consumer-cosignature-v1",
         "effective-capability-v1",
         "runtime-identity-context-v0",
-        "dispatch-route-ticket-v1"
+        "dispatch-route-ticket-v1",
+        "directory-lifecycle-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state or base-wire migration is required. Compatible chat helpers now add the bounded IICP runtime identity context automatically. Raw submit, non-chat intents, explicit disabled mode and unsupported channels remain unchanged.",
-      "rollback": "Install immutable 0.7.104 to restore opt-in-only runtime identity composition. Wire compatibility and explicit effective-capability support remain available."
+      "migration": "No persisted-state or base-wire migration is required. Heartbeat task metrics are retried as one idempotent batch until acknowledgement; older directories remain compatible but cannot acknowledge retry idempotency.",
+      "rollback": "Install immutable 0.7.105 to restore the previous at-most-once heartbeat metric delivery. Buffered calls, streaming and runtime identity behavior remain compatible."
     },
     {
       "id": "client-typescript",
-      "version": "0.7.105",
+      "version": "0.7.106",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -82,16 +87,17 @@
         "managed-operator-v1",
         "cip-consumer-cosignature-v1",
         "effective-capability-v1",
-        "runtime-identity-context-v0"
+        "runtime-identity-context-v0",
+        "directory-lifecycle-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state or base-wire migration is required. Compatible chat helpers now add the bounded IICP runtime identity context automatically. Raw submit, non-chat intents, explicit disabled mode and unsupported channels remain unchanged.",
-      "rollback": "Install immutable 0.7.104 to restore opt-in-only runtime identity composition. Wire compatibility and explicit effective-capability support remain available."
+      "migration": "No persisted-state or base-wire migration is required. Heartbeat task metrics are retried as one idempotent batch until acknowledgement; older directories remain compatible but cannot acknowledge retry idempotency.",
+      "rollback": "Install immutable 0.7.105 to restore the previous at-most-once heartbeat metric delivery. Buffered calls, streaming and runtime identity behavior remain compatible."
     },
     {
       "id": "client-rust",
-      "version": "0.7.105",
+      "version": "0.7.106",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -100,12 +106,13 @@
         "managed-operator-v1",
         "cip-consumer-cosignature-v1",
         "effective-capability-v1",
-        "runtime-identity-context-v0"
+        "runtime-identity-context-v0",
+        "directory-lifecycle-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state or base-wire migration is required. Compatible chat helpers now add the bounded IICP runtime identity context automatically. Raw submit, non-chat intents, explicit disabled mode and unsupported channels remain unchanged.",
-      "rollback": "Install immutable 0.7.104 to restore opt-in-only runtime identity composition. Wire compatibility and explicit effective-capability support remain available."
+      "migration": "No persisted-state or base-wire migration is required. Heartbeat task metrics are retried as one idempotent batch until acknowledgement; older directories remain compatible but cannot acknowledge retry idempotency.",
+      "rollback": "Install immutable 0.7.105 to restore the previous at-most-once heartbeat metric delivery. Buffered calls, streaming and runtime identity behavior remain compatible."
     },
     {
       "id": "web-node",

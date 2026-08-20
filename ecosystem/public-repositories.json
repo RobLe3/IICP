@@ -18,7 +18,7 @@
       "lifecycle": "active",
       "name": "iicp-directory-php",
       "protocol": "1.9",
-      "release": "1.10.92",
+      "release": "1.10.93",
       "url": "https://github.com/RobLe3/iicp-directory-php"
     },
     {
@@ -28,7 +28,7 @@
       "lifecycle": "operator-preview",
       "name": "iicp-directory-rust",
       "protocol": "1.9",
-      "release": "0.1.13",
+      "release": "0.1.14",
       "url": "https://github.com/RobLe3/iicp-directory-rust"
     },
     {
@@ -39,7 +39,7 @@
       "name": "iicp-client-python",
       "package": "pypi:iicp-client",
       "protocol": "1.9",
-      "release": "0.7.105",
+      "release": "0.7.106",
       "url": "https://github.com/RobLe3/iicp-client-python"
     },
     {
@@ -50,7 +50,7 @@
       "name": "iicp-client-typescript",
       "package": "npm:@iicp/client",
       "protocol": "1.9",
-      "release": "0.7.105",
+      "release": "0.7.106",
       "url": "https://github.com/RobLe3/iicp-client-typescript"
     },
     {
@@ -61,7 +61,7 @@
       "name": "iicp-client-rust",
       "package": "crates:iicp-client",
       "protocol": "1.9",
-      "release": "0.7.105",
+      "release": "0.7.106",
       "url": "https://github.com/RobLe3/iicp-client-rust"
     },
     {
