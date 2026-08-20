@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.23.0-draft",
+  "manifest_version": "0.24.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -161,6 +161,11 @@
       "path": "e050-client-credential-lifecycle-v1.json",
       "fixture_version": "1.0.0-implementation-evidence",
       "sha256": "4f71c44380f7a95249e7f6233fc4bce56de4e344b97a5ecc11c8740e88af12d6"
+    },
+    {
+      "path": "restricted-trust-domain-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "0b23cc925dd3409d1c39d788e54281e60255b16dcd83fe5e4be84720ddd6039f"
     }
   ]
 }

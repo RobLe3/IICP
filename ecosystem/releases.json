@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-15",
+  "generated_at": "2026-08-20",
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.14",
+      "version": "1.10.15",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -13,12 +13,13 @@
         "directory-lifecycle-v1",
         "service-lifecycle-v1",
         "mcp-era-negotiation-v0",
-        "runtime-identity-context-v0"
+        "runtime-identity-context-v0",
+        "restricted-trust-domain-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "No base-wire, directory-schema or persisted-state migration is required. The pre-normative runtime-identity context now defaults to automatic composition in compatible conversational helpers; raw submit and non-chat intents remain byte-compatible.",
-      "rollback": "Continue using immutable v1.10.13 artifacts. Implementations then retain opt-in runtime identity rather than the coordinated automatic conversational default."
+      "migration": "No base-wire, directory-schema or persisted-state migration is required. This release defines a pre-normative restricted trust-domain Profile and portable semantic fixtures; it does not enable private mode in an implementation or change public defaults.",
+      "rollback": "Continue using immutable v1.10.14 artifacts. Implementations remain compatible because the restricted trust-domain Profile is pre-normative and optional."
     },
     {
       "id": "directory-php",

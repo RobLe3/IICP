@@ -59,6 +59,14 @@ fail-closed decisions for authentication, protected identity storage,
 authenticated updates, rollback and explicitly approved UPnP/tunnel exposure.
 It changes no SDK default and contains no credential or endpoint material.
 
+`restricted-trust-domain-v0.json` is the implementation-neutral admission
+contract for the optional restricted trust-domain Profile. It covers private
+membership, gossip, revocation, protected discovery, public-fallback refusal,
+CIP inheritance, explicit federation and local-only isolation through CUG-01
+to CUG-10, plus malformed, expiry, replay, wrong-domain, downgrade, relay and
+restart cases. Its companion JSON Schema fixes the portable shape. Passing the
+fixture does not claim that a runtime or directory implements the Profile.
+
 `profile-negotiation-v0.json` covers additive directory capability negotiation
 for a caller-requested pre-normative profile. No request preserves legacy
 discovery; unsupported required requests fail closed, while optional requests

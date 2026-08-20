@@ -1,0 +1,591 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+  "reason_order": [
+    "invalid_input",
+    "unsupported_required_profile",
+    "local_only_external_forbidden",
+    "public_fallback_forbidden",
+    "authentication_required",
+    "replay_detected",
+    "membership_missing",
+    "membership_expired",
+    "membership_revoked",
+    "wrong_trust_domain",
+    "federation_untrusted",
+    "federation_scope_denied",
+    "policy_denied",
+    "route_authorization_required",
+    "allowed"
+  ],
+  "vectors": [
+    {
+      "id": "CUG-01-POS",
+      "case": "CUG-01",
+      "description": "Current member may register in its configured private domain",
+      "input": {
+        "operation": "registration",
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "allowed",
+        "network_activity_permitted": true
+      }
+    },
+    {
+      "id": "CUG-01-NEG",
+      "case": "CUG-01",
+      "description": "Unknown node cannot register in a private domain",
+      "input": {
+        "operation": "registration",
+        "mode": "private",
+        "authenticated": true,
+        "membership": "missing",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "membership_missing",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-02-POS",
+      "case": "CUG-02",
+      "description": "Authenticated member gossip admits an independently verified member",
+      "input": {
+        "operation": "gossip",
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "allowed",
+        "network_activity_permitted": true
+      }
+    },
+    {
+      "id": "CUG-02-NEG",
+      "case": "CUG-02",
+      "description": "Gossip from a member cannot confer membership on an unknown peer",
+      "input": {
+        "operation": "gossip",
+        "mode": "private",
+        "authenticated": true,
+        "membership": "missing",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "membership_missing",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-03-POS",
+      "case": "CUG-03",
+      "description": "Authenticated fresh gossip is admitted after membership validation",
+      "input": {
+        "operation": "gossip",
+        "replayed": false,
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "allowed",
+        "network_activity_permitted": true
+      }
+    },
+    {
+      "id": "CUG-03-NEG-AUTH",
+      "case": "CUG-03",
+      "description": "Unauthenticated gossip fails closed in private mode",
+      "input": {
+        "operation": "gossip",
+        "mode": "private",
+        "authenticated": false,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "authentication_required",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-03-NEG-REPLAY",
+      "case": "CUG-03",
+      "description": "Replayed authenticated gossip fails before membership evaluation",
+      "input": {
+        "operation": "gossip",
+        "replayed": true,
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "replay_detected",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-04-POS",
+      "case": "CUG-04",
+      "description": "Current membership remains usable after a clean restart",
+      "input": {
+        "operation": "bootstrap",
+        "after_restart": true,
+        "cached_authority": true,
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "allowed",
+        "network_activity_permitted": true
+      }
+    },
+    {
+      "id": "CUG-04-NEG",
+      "case": "CUG-04",
+      "description": "Revocation overrides cached authority after restart",
+      "input": {
+        "operation": "bootstrap",
+        "after_restart": true,
+        "cached_authority": true,
+        "mode": "private",
+        "authenticated": true,
+        "membership": "revoked",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "membership_revoked",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-05-POS",
+      "case": "CUG-05",
+      "description": "Authenticated member client may use private discovery",
+      "input": {
+        "operation": "discovery",
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "allowed",
+        "network_activity_permitted": true
+      }
+    },
+    {
+      "id": "CUG-05-NEG",
+      "case": "CUG-05",
+      "description": "Unauthenticated client cannot enumerate private discovery",
+      "input": {
+        "operation": "discovery",
+        "mode": "private",
+        "authenticated": false,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "authentication_required",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-06-POS",
+      "case": "CUG-06",
+      "description": "Private discovery stays on the configured private control plane",
+      "input": {
+        "operation": "discovery",
+        "public_fallback": false,
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "allowed",
+        "network_activity_permitted": true
+      }
+    },
+    {
+      "id": "CUG-06-NEG",
+      "case": "CUG-06",
+      "description": "Private mode prohibits fallback to public discovery",
+      "input": {
+        "operation": "discovery",
+        "public_fallback": true,
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "public_fallback_forbidden",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-07-POS",
+      "case": "CUG-07",
+      "description": "CIP participant in the originating domain with route authority is admitted",
+      "input": {
+        "operation": "cip",
+        "route_authorized": true,
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "allowed",
+        "network_activity_permitted": true
+      }
+    },
+    {
+      "id": "CUG-07-NEG",
+      "case": "CUG-07",
+      "description": "Foreign CIP worker cannot join private cooperative execution",
+      "input": {
+        "operation": "cip",
+        "route_authorized": true,
+        "mode": "private",
+        "authenticated": true,
+        "membership": "wrong_domain",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "wrong_trust_domain",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-08-POS",
+      "case": "CUG-08",
+      "description": "Explicitly trusted federation within capability scope is admitted",
+      "input": {
+        "operation": "federation",
+        "mode": "federated_private",
+        "federation_trusted": true,
+        "federation_scope_allowed": true,
+        "route_authorized": true,
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "allowed",
+        "network_activity_permitted": true
+      }
+    },
+    {
+      "id": "CUG-08-NEG",
+      "case": "CUG-08",
+      "description": "Trusted peer domain outside the allowed capability scope is rejected",
+      "input": {
+        "operation": "federation",
+        "mode": "federated_private",
+        "federation_trusted": true,
+        "federation_scope_allowed": false,
+        "route_authorized": true,
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "federation_scope_denied",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-09-POS",
+      "case": "CUG-09",
+      "description": "Authorized federation remains allowed only for the configured peer domain",
+      "input": {
+        "operation": "federation",
+        "mode": "federated_private",
+        "federation_trusted": true,
+        "federation_scope_allowed": true,
+        "route_authorized": true,
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "allowed",
+        "network_activity_permitted": true
+      }
+    },
+    {
+      "id": "CUG-09-NEG",
+      "case": "CUG-09",
+      "description": "Records from an untrusted federated domain are rejected",
+      "input": {
+        "operation": "federation",
+        "mode": "federated_private",
+        "federation_trusted": false,
+        "federation_scope_allowed": true,
+        "route_authorized": true,
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "federation_untrusted",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-10-POS",
+      "case": "CUG-10",
+      "description": "Local-only execution may proceed without external network activity",
+      "input": {
+        "operation": "execution",
+        "mode": "local_only",
+        "external_network": false,
+        "route_authorized": true,
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "allowed",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-10-NEG",
+      "case": "CUG-10",
+      "description": "Local-only mode rejects external bootstrap before network access",
+      "input": {
+        "operation": "bootstrap",
+        "mode": "local_only",
+        "external_network": true,
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "local_only_external_forbidden",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-01-NEG-EXPIRED",
+      "case": "CUG-01",
+      "description": "Expired membership cannot authorize registration",
+      "input": {
+        "operation": "registration",
+        "mode": "private",
+        "authenticated": true,
+        "membership": "expired",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "membership_expired",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-01-NEG-DOMAIN",
+      "case": "CUG-01",
+      "description": "Membership issued for another domain cannot authorize registration",
+      "input": {
+        "operation": "registration",
+        "mode": "private",
+        "authenticated": true,
+        "membership": "wrong_domain",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "wrong_trust_domain",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-02-NEG-BOOTSTRAP",
+      "case": "CUG-02",
+      "description": "Poisoned bootstrap entry without membership is rejected",
+      "input": {
+        "operation": "bootstrap",
+        "mode": "private",
+        "authenticated": true,
+        "membership": "missing",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "membership_missing",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-03-NEG-MALFORMED",
+      "case": "CUG-03",
+      "description": "Invalid operating mode fails before authentication or policy",
+      "input": {
+        "operation": "gossip",
+        "mode": "invalid",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "invalid_input",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-06-NEG-DOWNGRADE",
+      "case": "CUG-06",
+      "description": "Unknown optional Profile cannot downgrade configured private mode",
+      "input": {
+        "operation": "discovery",
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "unknown_optional",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "unsupported_required_profile",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-06-POS-PUBLIC",
+      "case": "CUG-06",
+      "description": "Unknown optional Profile preserves legacy public discovery behavior",
+      "input": {
+        "operation": "discovery",
+        "mode": "public",
+        "profile_support": "unknown_optional"
+      },
+      "expected": {
+        "decision": "allow",
+        "reason": "allowed",
+        "network_activity_permitted": true
+      }
+    },
+    {
+      "id": "CUG-07-NEG-RELAY",
+      "case": "CUG-07",
+      "description": "Member relay injection without route authority is rejected",
+      "input": {
+        "operation": "relay",
+        "route_authorized": false,
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "route_authorization_required",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-07-NEG-CIP-POLICY",
+      "case": "CUG-07",
+      "description": "Membership does not bypass a CIP execution policy denial",
+      "input": {
+        "operation": "cip",
+        "route_authorized": true,
+        "mode": "private",
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "supported",
+        "policy_allowed": false
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "policy_denied",
+        "network_activity_permitted": false
+      }
+    },
+    {
+      "id": "CUG-08-NEG-PROFILE",
+      "case": "CUG-08",
+      "description": "Unknown required Profile rejects before cross-domain activity",
+      "input": {
+        "operation": "federation",
+        "mode": "federated_private",
+        "federation_trusted": true,
+        "federation_scope_allowed": true,
+        "route_authorized": true,
+        "authenticated": true,
+        "membership": "valid",
+        "profile_support": "unknown_required",
+        "policy_allowed": true
+      },
+      "expected": {
+        "decision": "deny",
+        "reason": "unsupported_required_profile",
+        "network_activity_permitted": false
+      }
+    }
+  ]
+}

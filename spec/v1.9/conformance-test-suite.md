@@ -970,6 +970,27 @@ change Phase 1 conformance or the fixed native frame. The canonical fixture is
 | `ADMISSION-05` | An unachievable deadline rejects before acceptance. | Provider admission / `ADMISSION-05` |
 | `ADMISSION-06` | Admission capability data remains topology-redacted. | Provider admission / `ADMISSION-06` |
 
+### 17.1 Restricted trust-domain draft vectors
+
+These vectors are pre-normative and additive. They do not change public-mode
+behavior or claim that a maintained implementation supports the Profile. The
+canonical fixture and schema are
+`research/pre-normative-profiles/fixtures/restricted-trust-domain-v0.json` and
+`research/pre-normative-profiles/schemas/restricted-trust-domain-v0.schema.json`.
+
+| Test ID | Requirement |
+|---|---|
+| `CUG-01` | A current member may register; an unknown, expired or wrong-domain node is rejected. |
+| `CUG-02` | Gossip and bootstrap candidates receive independent membership validation. |
+| `CUG-03` | Private gossip requires authentication and replay protection. |
+| `CUG-04` | Revocation overrides cached authority, including after restart. |
+| `CUG-05` | Unauthorized clients cannot enumerate protected discovery. |
+| `CUG-06` | Private mode cannot downgrade or fall back to public discovery. |
+| `CUG-07` | CIP and relay participants inherit membership, policy and route authorization. |
+| `CUG-08` | Explicitly trusted, in-scope cross-domain operation succeeds. |
+| `CUG-09` | Untrusted or out-of-scope federation fails closed. |
+| `CUG-10` | Local-only mode performs no external control-plane or execution network activity. |
+
 ---
 
 ## Changelog
