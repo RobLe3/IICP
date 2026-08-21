@@ -28,6 +28,11 @@ on:
       - "schemas/effective-capability-advertisement-v1.json"
       - "schemas/capability-requirements-v1.json"
       - "schemas/capability-refusal-v1.json"
+      - "schemas/ecosystem-version-truth-v1.json"
+      - "schemas/samples/ecosystem-version-truth-*.json"
+      - "docs/ECOSYSTEM_VERSION_TRUTH.md"
+      - "tools/check_ecosystem_version_truth.py"
+      - "tools/test_ecosystem_version_truth.py"
       - "tools/test_effective_capability_wire_contract.py"
       - "tools/test_restricted_trust_domain_fixture.py"
       - "tools/test_restricted_trust_domain_bootstrap.py"
@@ -88,6 +93,11 @@ on:
       - "research/runtime-supervision/fixtures/**"
       - "research/pre-normative-profiles/*measurement*"
       - "research/pre-normative-profiles/fixtures/public-measurement-*"
+      - "schemas/ecosystem-version-truth-v1.json"
+      - "schemas/samples/ecosystem-version-truth-*.json"
+      - "docs/ECOSYSTEM_VERSION_TRUTH.md"
+      - "tools/check_ecosystem_version_truth.py"
+      - "tools/test_ecosystem_version_truth.py"
       - "research/pre-normative-profiles/schemas/public-measurement-*"
       - "research/pre-normative-profiles/*a2a*"
       - "research/pre-normative-profiles/fixtures/a2a-*"
@@ -200,6 +210,8 @@ jobs:
       - run: python3 tools/check_runtime_health_fixture.py
       - run: python3 tools/check_public_measurement_profile.py
       - run: python3 -m unittest discover -s tools -p 'test_public_measurement_profile.py'
+      - run: python3 tools/check_ecosystem_version_truth.py
+      - run: python3 -m unittest discover -s tools -p 'test_ecosystem_version_truth.py'
       - run: python3 tools/check_a2a_execution_binding.py
       - run: python3 -m unittest discover -s tools -p 'test_a2a_execution_binding.py'
       - run: python3 -m unittest discover -s tools -p 'test_a2a_cross_runtime_loopback.py'

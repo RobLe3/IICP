@@ -1,0 +1,17 @@
+{
+  "schema": "iicp.ecosystem-version-truth.v1",
+  "generated_at": "2026-08-21T10:00:00Z",
+  "content_free": true,
+  "published_release": {
+    "status": "observed", "observed_at": "2026-08-21T09:55:00Z", "evidence": "https://example.invalid/releases.json", "limitations": [],
+    "data": { "components": [{ "id": "specification", "version": "1.10.16", "lifecycle": "active" }] }
+  },
+  "deployed_release": {
+    "status": "unavailable", "observed_at": null, "evidence": null,
+    "limitations": ["No verified deployment observation was available."], "data": null
+  },
+  "observed_adoption": {
+    "status": "unavailable", "observed_at": null, "evidence": null,
+    "limitations": ["No adoption observation was available; published versions must not be substituted."], "data": null
+  }
+}

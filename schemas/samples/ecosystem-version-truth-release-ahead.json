@@ -1,0 +1,30 @@
+{
+  "schema": "iicp.ecosystem-version-truth.v1",
+  "generated_at": "2026-08-21T10:00:00Z",
+  "content_free": true,
+  "published_release": {
+    "status": "observed", "observed_at": "2026-08-21T09:55:00Z",
+    "evidence": "https://github.com/RobLe3/IICP/blob/main/ecosystem/current-versions.json", "limitations": [],
+    "data": { "components": [{ "id": "client-python", "version": "0.7.106", "lifecycle": "active" }] }
+  },
+  "deployed_release": {
+    "status": "observed", "observed_at": "2026-08-21T09:56:00Z",
+    "evidence": "https://iicp.network/.well-known/iicp-deployment.json", "limitations": ["This describes Genesis, not every IICP deployment."],
+    "data": {
+      "deployment": "genesis", "components": [{ "id": "directory-php", "version": "1.10.90", "lifecycle": "active" }],
+      "deployment_record": "https://iicp.network/.well-known/iicp-deployment.json",
+      "deployment_record_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  "observed_adoption": {
+    "status": "observed", "observed_at": "2026-08-21T09:57:00Z",
+    "evidence": "https://iicp.network/api/v1/stats.sdk_adoption", "limitations": ["Counts describe the observed active-node sample, not unique operators."],
+    "data": {
+      "population": "active nodes reporting SDK metadata to Genesis", "sample_size": 4,
+      "groups": [
+        { "implementation": "rust", "version": "0.7.104", "count": 3 },
+        { "implementation": "python", "version": "0.7.81", "count": 1 }
+      ]
+    }
+  }
+}
