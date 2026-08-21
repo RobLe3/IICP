@@ -120,6 +120,7 @@ def main() -> int:
         "tools/check_operator_onboarding_recovery.py",
         "tools/test_operator_onboarding_recovery.py",
         "docs/external-evidence-participation.md",
+        "docs/oia-application-matrix.md",
         "evidence/external-participation-campaign-v1.json",
         "evidence/newcomer-validation-record-v1.json",
         "evidence/clean-room-interoperability-record-v1.json",
