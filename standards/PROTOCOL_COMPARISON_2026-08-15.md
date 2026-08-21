@@ -7,6 +7,8 @@ This report updates the [2026-08-08 landscape](IETF_AGENT_PROTOCOL_LANDSCAPE_202
 External specifications and Internet-Drafts change independently. Recheck the
 linked primary source before using a row in outreach or implementation work.
 
+A [21 August boundary crosswalk](EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-08-21.md) separately evaluates newer session, principal-binding, delegated-authority, SCITT receipt and HTTP-signature drafts. Its result is boundary clarification and monitoring, not adoption of another draft.
+
 ## Reading the tables
 
 The comparison uses responsibilities rather than feature counts:

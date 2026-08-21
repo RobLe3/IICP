@@ -141,6 +141,7 @@ def main() -> int:
         "standards/SELECTION_TRUST_AND_REVALIDATION.md",
         "standards/REVIEWING.md",
         "standards/PROTOCOL_COMPARISON_2026-08-15.md",
+        "standards/EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-08-21.md",
         "standards/protocol-comparison-v1.json",
         "tools/check_protocol_comparison.py",
         "tools/test_protocol_comparison.py",
