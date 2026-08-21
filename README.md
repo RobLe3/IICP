@@ -107,7 +107,7 @@ also separates the age of a protocol from the first public appearance of an
 overlapping mechanism.
 
 This boundary has real overlap with current IAIP and AIDIP Internet-Drafts.
-Review the concise [`IICP protocol positioning`](standards/IICP_PROTOCOL_POSITIONING.md)
+Review the [`selection and eligibility problem statement`](standards/SELECTION_ELIGIBILITY_PROBLEM_STATEMENT.md), the concise [`IICP protocol positioning`](standards/IICP_PROTOCOL_POSITIONING.md)
 and the dated, source-backed
 [`mechanism comparison`](standards/PROTOCOL_COMPARISON_2026-08-15.md) before
 making differentiation or standards claims. Internet-Drafts are work in
