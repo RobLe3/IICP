@@ -195,6 +195,17 @@ consumer — with a connection console that shows every discover/dispatch wire s
 The SDKs are conformant reference clients — a good starting point for understanding the
 wire format in practice. Bug reports and PRs are welcome on each repository.
 
+### Community integrations — independently maintained
+
+| Project | Language | Integration surface | Status |
+|---------|----------|---------------------|--------|
+| [`michaeloboyle/iicp-node-monitor`](https://github.com/michaeloboyle/iicp-node-monitor) | Python | Local node events and health plus the public Directory Registry API | Independent community application; compatibility patch [under upstream review](https://github.com/michaeloboyle/iicp-node-monitor/pull/1) |
+
+Community integrations are maintained by their respective authors. They are not
+official SDK releases, protocol-conformance results, or evidence of support for
+every optional Profile. The node monitor was last reviewed against current public
+IICP interfaces on 21 August 2026; its upstream repository remains authoritative.
+
 If you are connecting an autonomous agent rather than calling the API by hand,
 start with [Connect an AI agent to IICP](docs/agent-bootstrap.md). It separates
 consumer discovery from provider registration and shows where MCP or A2A can
