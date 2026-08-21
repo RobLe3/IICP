@@ -2,7 +2,7 @@
 
 **Authority**: public product research and decision evidence; normative status
 is assigned only by the specification and release process
-**Last updated**: 2026-08-12 (heterogeneous routing and execution-privacy boundary research added)
+**Last updated**: 2026-08-21 (weekly standards and ecosystem intelligence disposition added)
 
 > **Simulation-vs-live status (2026-05-18)**: REP findings (F1–F16) and R1–R7 design findings derive from discrete-event simulation (Python harness, bounded network sizes 100–10,000). RS6 Phase 2 added actual Ollama inference validation (phi3:mini vs qwen2.5:0.5b, 90 calls), so the quality-feedback result is partially cross-validated against real inference. Treat REP equilibrium findings as directional until the full pilot completes. R4/R5/R6 routing findings are validated at simulation scale; real-pool behaviour remains to be confirmed.
 
@@ -43,6 +43,16 @@ is assigned only by the specification and release process
 > The first bounded learned-routing reproduction and redacted candidate
 > projection are under
 > [`research/strategic/learned-routing-experiment/`](strategic/learned-routing-experiment/README.md).
+
+> **Standards and ecosystem checkpoint (2026-08-21):** newer individual
+> Internet-Drafts strengthen the case for keeping discovery and eligibility
+> separate from sessions, endpoint authentication, delegated authority and
+> action evidence. They do not constitute IETF endorsement. The resulting work
+> is limited to a standards-reuse crosswalk, a federation state-scaling model
+> and a bounded implementation-experience note for `outcome-v2`. The website
+> version-drift concern in the source briefing is already resolved by the live
+> three-axis version projection. See
+> [`research/strategic/2026-08-21-weekly-intelligence-disposition.md`](strategic/2026-08-21-weekly-intelligence-disposition.md).
 
 This document consolidates all research outcomes, datasets, test cases, and design
 insights across the active research tracks. It is the primary reference for
