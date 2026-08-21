@@ -12,15 +12,17 @@ Start with:
 
 1. [`standards/SELECTION_ELIGIBILITY_PROBLEM_STATEMENT.md`](SELECTION_ELIGIBILITY_PROBLEM_STATEMENT.md)
    for the narrow interoperable function and its explicit exclusions;
-2. [`standards/IICP_PROTOCOL_POSITIONING.md`](IICP_PROTOCOL_POSITIONING.md)
+2. [`standards/SELECTION_TRUST_AND_REVALIDATION.md`](SELECTION_TRUST_AND_REVALIDATION.md)
+   for verifier, freshness, replay and consumer revalidation boundaries;
+3. [`standards/IICP_PROTOCOL_POSITIONING.md`](IICP_PROTOCOL_POSITIONING.md)
    for the narrow problem and protocol boundary;
-3. [`standards/PROTOCOL_COMPARISON_2026-08-15.md`](PROTOCOL_COMPARISON_2026-08-15.md)
+4. [`standards/PROTOCOL_COMPARISON_2026-08-15.md`](PROTOCOL_COMPARISON_2026-08-15.md)
    for current overlap, per-dimension evidence maturity and chronology across
    IAIP, AIDIP, MCP, A2A and related work;
-4. `standards/ietf/draft-roble-iicp-peer.md`;
-5. `standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_2026-08-13.md`;
-6. [`standards/ietf/evidence-matrix.md`](ietf/evidence-matrix.md);
-7. `spec/v1.9/iicp-framing.md` and the pinned native-framing fixtures when a
+5. `standards/ietf/draft-roble-iicp-peer.md`;
+6. `standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_2026-08-13.md`;
+7. [`standards/ietf/evidence-matrix.md`](ietf/evidence-matrix.md);
+8. `spec/v1.9/iicp-framing.md` and the pinned native-framing fixtures when a
    requirement needs implementation context.
 
 Implementations are evidence, not normative authority. A disagreement between
