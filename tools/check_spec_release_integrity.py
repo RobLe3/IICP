@@ -111,6 +111,7 @@ def main() -> int:
         "research/pre-normative-profiles/fixtures/restricted-trust-domain-bootstrap-v0.json",
         "tools/test_restricted_trust_domain_bootstrap.py",
         "research/strategic/2026-08-14-runtime-identity-and-self-description-decision.md",
+        "research/strategic/2026-08-21-outcome-v2-implementation-experience.md",
         "tools/test_runtime_identity_context.py",
         "research/pre-normative-profiles/fixtures/operator-onboarding-recovery-v1.json",
         "research/pre-normative-profiles/fixtures/e050-client-credential-lifecycle-v1.json",
