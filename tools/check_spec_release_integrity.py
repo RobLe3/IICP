@@ -134,6 +134,8 @@ def main() -> int:
         "standards/SUBMISSION_GOVERNANCE_DECISION.md",
         "standards/submission-governance-decision-v1.json",
         "standards/IICP_PROTOCOL_POSITIONING.md",
+        "standards/SELECTION_ELIGIBILITY_PROBLEM_STATEMENT.md",
+        "standards/REVIEWING.md",
         "standards/PROTOCOL_COMPARISON_2026-08-15.md",
         "standards/protocol-comparison-v1.json",
         "tools/check_protocol_comparison.py",
