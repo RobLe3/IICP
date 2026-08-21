@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "status": "project-architecture-candidate",
+  "wire_protocol": false,
+  "event_envelope": {
+    "required": ["ts", "event", "node_id", "details"],
+    "details_is_stable_grammar": false,
+    "content_forbidden": ["task_prompt", "task_result", "credential", "private_key", "membership_assertion", "private_topology"]
+  },
+  "events": [
+    {"name": "serve_start", "classification": "lifecycle", "canonical": true},
+    {"name": "register_ok", "classification": "control_success", "canonical": true},
+    {"name": "register_fail", "classification": "control_failure", "canonical": true},
+    {"name": "register_error", "classification": "control_failure", "canonical": false, "legacy_alias_for": "register_fail"},
+    {"name": "reregister_ok", "classification": "control_success", "canonical": true},
+    {"name": "reregister_fail", "classification": "control_failure", "canonical": true},
+    {"name": "heartbeat_ok", "classification": "control_success", "canonical": true},
+    {"name": "heartbeat_fail", "classification": "control_failure", "canonical": true},
+    {"name": "deregister_ok", "classification": "control_success", "canonical": true},
+    {"name": "deregister_fail", "classification": "control_failure", "canonical": true},
+    {"name": "future_event", "classification": "unknown", "canonical": false}
+  ],
+  "health_precedence": ["node_health_endpoint", "versioned_runtime_health_snapshot", "inferred_log_or_event_freshness"],
+  "inventory_precedence": ["configured_directory_registry", "labelled_legacy_discovery_fallback"],
+  "private_local_public_fallback": "forbidden",
+  "task_counter_delta": {
+    "event_name": "directory_task_delta",
+    "timestamp_semantics": "observation_time",
+    "original_node_event": false
+  },
+  "provenance": ["measured", "configured", "directory_reported", "locally_observed", "inferred", "legacy_fallback", "unavailable"]
+}
