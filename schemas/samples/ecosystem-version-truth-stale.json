@@ -1,0 +1,8 @@
+{
+  "schema": "iicp.ecosystem-version-truth.v1",
+  "generated_at": "2026-08-21T10:00:00Z",
+  "content_free": true,
+  "published_release": { "status": "stale", "observed_at": "2026-07-01T00:00:00Z", "evidence": "https://example.invalid/releases.json", "limitations": ["Observation age exceeds publisher policy."], "data": { "components": [{ "id": "specification", "version": "1.10.13", "lifecycle": "active" }] } },
+  "deployed_release": { "status": "stale", "observed_at": "2026-07-01T00:00:00Z", "evidence": "https://example.invalid/deployment.json", "limitations": ["Deployment may have changed since observation."], "data": { "deployment": "example", "components": [{ "id": "directory-php", "version": "1.10.89", "lifecycle": "active" }] } },
+  "observed_adoption": { "status": "stale", "observed_at": "2026-07-01T00:00:00Z", "evidence": "https://example.invalid/adoption.json", "limitations": ["Sample is historical and does not describe current adoption."], "data": { "population": "active nodes reporting SDK metadata", "sample_size": 2, "groups": [{ "implementation": "rust", "version": "0.7.100", "count": 2 }] } }
+}

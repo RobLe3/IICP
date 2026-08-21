@@ -290,6 +290,13 @@ See [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) SEC-* test 
 
 ## Development Status
 
+Published, deployed and observed versions are separate facts. The release map
+in [`ecosystem/current-versions.json`](ecosystem/current-versions.json) remains
+the authority for published component versions. The additive
+[`ecosystem version truth`](docs/ECOSYSTEM_VERSION_TRUTH.md) contract explains
+how public evidence can report deployment and adoption without treating either
+as a synonym for publication.
+
 **Cooperative Inference and routing hardening (active)**
 
 The [iicp.network](https://iicp.network) directory is live and the client SDK
