@@ -2,6 +2,8 @@
 
 **Date:** 2026-07-30
 
+The fixed-port and binding evidence was dispositioned on 2026-08-21 in [the transport binding and port decision](TRANSPORT_BINDING_AND_PORT_DECISION_2026-08-21.md). The current decision is to make no IANA request and retain native TCP as an optional project binding.
+
 This record separates work that can proceed now from actions that still need
 evidence or maintainer authority.
 
