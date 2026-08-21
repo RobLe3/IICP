@@ -139,6 +139,7 @@ def main() -> int:
         "standards/IICP_PROTOCOL_POSITIONING.md",
         "standards/SELECTION_ELIGIBILITY_PROBLEM_STATEMENT.md",
         "standards/SELECTION_TRUST_AND_REVALIDATION.md",
+        "standards/SELECTION_CANDIDATE_ADVERSARIAL_REVIEW_2026-08-21.md",
         "standards/SELECTION_REVIEW_BUNDLE_README.md",
         "standards/TRANSPORT_BINDING_AND_PORT_DECISION_2026-08-21.md",
         "standards/REVIEWING.md",
