@@ -139,6 +139,7 @@ def main() -> int:
         "standards/IICP_PROTOCOL_POSITIONING.md",
         "standards/SELECTION_ELIGIBILITY_PROBLEM_STATEMENT.md",
         "standards/SELECTION_TRUST_AND_REVALIDATION.md",
+        "standards/SELECTION_REVIEW_BUNDLE_README.md",
         "standards/TRANSPORT_BINDING_AND_PORT_DECISION_2026-08-21.md",
         "standards/REVIEWING.md",
         "standards/PROTOCOL_COMPARISON_2026-08-15.md",
@@ -156,6 +157,8 @@ def main() -> int:
         "tools/test_public_evidence_access.py",
         "tools/check_public_artifact_closure.py",
         "tools/test_public_artifact_closure.py",
+        "tools/build_selection_review_bundle.py",
+        "tools/test_selection_review_bundle.py",
     }
     missing_pins = sorted(required - set(manifest["files"]))
     if missing_pins:
