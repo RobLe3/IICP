@@ -1,0 +1,14 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "membership_fixture": "restricted-trust-domain-membership-v0.json",
+  "vectors": [
+    {"id":"public-legacy-peer-remains-compatible","mode":"public","response":{"peers":[{"node_id":"legacy-node","endpoint":"https://legacy.example","region":"eu","last_seen":"2026-08-20T10:00:00Z"}]},"now":1800000000,"minimum_generation":0,"expected":{"admitted":["legacy-node"],"evicted":[],"reason":"public_legacy"}},
+    {"id":"restricted-valid-membership","mode":"restricted","response":{"peers":[{"node_id":"did:iicp:test:node-a","endpoint":"https://node-a.example","region":"eu","last_seen":"2026-08-20T10:00:00Z","membership_vector":"membership-valid"}]},"now":1800000000,"minimum_generation":7,"expected":{"admitted":["did:iicp:test:node-a"],"evicted":[],"reason":"valid"}},
+    {"id":"restricted-membership-missing","mode":"restricted","response":{"peers":[{"node_id":"unknown-node","endpoint":"https://unknown.example","region":"eu","last_seen":"2026-08-20T10:00:00Z"}]},"now":1800000000,"minimum_generation":7,"expected":{"admitted":[],"evicted":[],"reason":"membership_missing"}},
+    {"id":"restricted-subject-mismatch","mode":"restricted","response":{"peers":[{"node_id":"did:iicp:test:node-b","endpoint":"https://node-b.example","region":"eu","last_seen":"2026-08-20T10:00:00Z","membership_vector":"membership-valid"}]},"now":1800000000,"minimum_generation":7,"expected":{"admitted":[],"evicted":[],"reason":"subject_mismatch"}},
+    {"id":"restricted-expired-membership","mode":"restricted","response":{"peers":[{"node_id":"did:iicp:test:node-a","endpoint":"https://node-a.example","region":"eu","last_seen":"2026-08-20T10:00:00Z","membership_vector":"membership-valid"}]},"now":1800000301,"minimum_generation":7,"expected":{"admitted":[],"evicted":[],"reason":"expired"}},
+    {"id":"restricted-stale-generation","mode":"restricted","response":{"peers":[{"node_id":"did:iicp:test:node-a","endpoint":"https://node-a.example","region":"eu","last_seen":"2026-08-20T10:00:00Z","membership_vector":"membership-valid"}]},"now":1800000000,"minimum_generation":8,"expected":{"admitted":[],"evicted":[],"reason":"generation_stale"}},
+    {"id":"restricted-partial-response-does-not-evict","mode":"restricted","response":{"peers":[]},"now":1800000000,"minimum_generation":7,"previously_admitted":["did:iicp:test:node-a"],"expected":{"admitted":[],"evicted":[],"reason":"partial_absence_is_not_revocation"}}
+  ]
+}
