@@ -46,7 +46,13 @@ PATH=".venv-ietf/bin:$PATH" bundle exec --gemfile standards/ietf/Gemfile \
 The build writes XML, plain text and HTML to `build/ietf/`. It also verifies
 that the candidate makes no IANA request and does not call port 9484 assigned.
 
-Create a deterministic review bundle after a successful build:
+Create the narrow selection-and-eligibility reviewer bundle without building or including the peer-transport draft:
+
+```bash
+python3 tools/build_selection_review_bundle.py
+```
+
+Create the separate peer-transport review bundle only after a successful Internet-Draft build:
 
 ```bash
 python3 tools/build_standards_review_bundle.py
