@@ -23,7 +23,8 @@ Start with:
 5. `standards/ietf/draft-roble-iicp-peer.md`;
 6. `standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_2026-08-13.md`;
 7. [`standards/ietf/evidence-matrix.md`](ietf/evidence-matrix.md);
-8. `spec/v1.9/iicp-framing.md` and the pinned native-framing fixtures when a
+8. [`standards/TRANSPORT_BINDING_AND_PORT_DECISION_2026-08-21.md`](TRANSPORT_BINDING_AND_PORT_DECISION_2026-08-21.md) for supported and unsupported binding evidence;
+9. `spec/v1.9/iicp-framing.md` and the pinned native-framing fixtures when a
    requirement needs implementation context.
 
 Implementations are evidence, not normative authority. A disagreement between
