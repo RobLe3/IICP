@@ -52,7 +52,8 @@ is assigned only by the specification and release process
 > and a bounded implementation-experience note for `outcome-v2`. The website
 > version-drift concern in the source briefing is already resolved by the live
 > three-axis version projection. See
-> [`research/strategic/2026-08-21-weekly-intelligence-disposition.md`](strategic/2026-08-21-weekly-intelligence-disposition.md).
+> [`research/strategic/2026-08-21-weekly-intelligence-disposition.md`](strategic/2026-08-21-weekly-intelligence-disposition.md). The implementation lesson is recorded separately in
+> [`research/strategic/2026-08-21-outcome-v2-implementation-experience.md`](strategic/2026-08-21-outcome-v2-implementation-experience.md).
 
 This document consolidates all research outcomes, datasets, test cases, and design
 insights across the active research tracks. It is the primary reference for
