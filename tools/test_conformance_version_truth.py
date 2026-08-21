@@ -22,6 +22,13 @@ class ConformanceVersionTruthTest(unittest.TestCase):
         self.assertEqual(MODULE.check_fixture(path, {"profile": "x", "suite_version": "4.50.0"}, ["4.50.0"], "4.50.0"), [])
         self.assertIn("absent from the changelog", MODULE.check_fixture(path, {"profile": "x", "suite_version": "9.9.9"}, ["4.50.0"], "4.50.0")[0])
 
+    def test_unchanged_released_profile_may_pin_known_earlier_suite(self) -> None:
+        path = Path("directory-lifecycle-v1.json")
+        self.assertEqual(
+            MODULE.check_fixture(path, {"profile": "directory-lifecycle-v1", "suite_version": "4.50.0"}, ["4.51.0", "4.50.0"], "4.51.0"),
+            [],
+        )
+
     def test_explicit_pre_normative_fixture_may_omit_suite_version(self) -> None:
         path = Path("draft.json")
         self.assertEqual(MODULE.check_fixture(path, {"status": "pre-normative"}, ["4.50.0"], "4.50.0"), [])

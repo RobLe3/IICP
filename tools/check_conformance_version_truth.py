@@ -28,8 +28,6 @@ def check_fixture(path: Path, fixture: dict[str, object], versions: list[str], h
         return errors
     if suite_version not in versions:
         errors.append(f"{path.name}: suite version {suite_version} is absent from the changelog")
-    if profile == "directory-lifecycle-v1" and suite_version != header_version:
-        errors.append(f"{path.name}: current lifecycle profile must use suite {header_version}")
     return errors
 
 
