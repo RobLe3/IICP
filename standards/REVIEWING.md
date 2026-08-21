@@ -52,6 +52,10 @@ Create the narrow selection-and-eligibility reviewer bundle without building or 
 python3 tools/build_selection_review_bundle.py
 ```
 
+Read the [adversarial review](SELECTION_CANDIDATE_ADVERSARIAL_REVIEW_2026-08-21.md)
+before treating the bundle as ready for review. It records direct overlap,
+residual evidence gates and the limits of that disposition.
+
 Create the separate peer-transport review bundle only after a successful Internet-Draft build:
 
 ```bash
