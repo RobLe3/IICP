@@ -2,6 +2,9 @@
 
 ![IICP Logo](IICP_Logo.webp)
 
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![OIA pending classification](https://agenticsorg.github.io/community-projects/badges/RobLe3/IICP.svg)](https://agenticsorg.github.io/community-projects/oia-matrix.html#oia-roble3-iicp)
+
 *Building the HTTP for the Age of Generative AI*
 
 **Protocol-suite release**: v1.10.16<br>
@@ -28,6 +31,13 @@ The terms **project-normative**, **stable**, **active draft**, **experimental**
 and **externally ratified** have distinct meanings. See
 [`SPEC_STATUS.md`](SPEC_STATUS.md). IICP has not been ratified by the IETF or
 assigned a service port by IANA.
+
+The Open Intelligence Architecture Application Matrix currently lists this
+repository in its **pending review** band. The badge above reports an automated
+structural classification, not approval, certification or endorsement. See the
+[IICP-to-OIA evidence map](docs/oia-application-matrix.md) for the intended
+layer boundaries and links to the implementation evidence a reviewer can
+inspect.
 
 ---
 
