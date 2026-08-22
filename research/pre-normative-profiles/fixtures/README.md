@@ -67,6 +67,12 @@ to CUG-10, plus malformed, expiry, replay, wrong-domain, downgrade, relay and
 restart cases. Its companion JSON Schema fixes the portable shape. Passing the
 fixture does not claim that a runtime or directory implements the Profile.
 
+`restricted-trust-domain-directory-decision-v0.json` defines how a client
+requiring the Profile validates the bounded decision returned after protected
+registration, discovery, bootstrap or credential/ticket issuance. It covers
+omission, malformed data, wrong operation/domain/authority, stale generation
+and expiry without exposing a subject identifier or credential material.
+
 `restricted-trust-domain-membership-v0.json` defines the deterministic signed
 membership and authenticated-gossip binding for that Profile. It separates the
 directory bearer credential from a short-lived, peer-verifiable assertion,

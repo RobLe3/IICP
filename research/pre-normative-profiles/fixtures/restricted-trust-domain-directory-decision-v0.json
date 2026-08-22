@@ -1,0 +1,202 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "schema": "iicp.restricted-trust-domain.directory-decision.fixture.v0",
+  "vectors": [
+    {
+      "id": "restricted-discovery-eligible",
+      "required": {
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "minimum_membership_generation": 7,
+        "now": 1800000010
+      },
+      "projection": {
+        "schema": "iicp.restricted-trust-domain.directory-decision.v0",
+        "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+        "decision": "eligible",
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "subject_kind": "client",
+        "membership_generation": 7,
+        "membership_expires_at": 1800000300
+      },
+      "expected": "eligible"
+    },
+    {
+      "id": "restricted-registration-node-eligible",
+      "required": {
+        "operation": "registration",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "minimum_membership_generation": 7,
+        "now": 1800000010
+      },
+      "projection": {
+        "schema": "iicp.restricted-trust-domain.directory-decision.v0",
+        "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+        "decision": "eligible",
+        "operation": "registration",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "subject_kind": "node",
+        "membership_generation": 8,
+        "membership_expires_at": 1800000300
+      },
+      "expected": "eligible"
+    },
+    {
+      "id": "public-response-omits-projection",
+      "required": null,
+      "projection": null,
+      "expected": "not_required"
+    },
+    {
+      "id": "required-projection-missing",
+      "required": {
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "minimum_membership_generation": 7,
+        "now": 1800000010
+      },
+      "projection": null,
+      "expected": "missing"
+    },
+    {
+      "id": "wrong-operation",
+      "required": {
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "minimum_membership_generation": 7,
+        "now": 1800000010
+      },
+      "projection": {
+        "schema": "iicp.restricted-trust-domain.directory-decision.v0",
+        "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+        "decision": "eligible",
+        "operation": "bootstrap",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "subject_kind": "client",
+        "membership_generation": 7,
+        "membership_expires_at": 1800000300
+      },
+      "expected": "mismatch"
+    },
+    {
+      "id": "wrong-domain",
+      "required": {
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "minimum_membership_generation": 7,
+        "now": 1800000010
+      },
+      "projection": {
+        "schema": "iicp.restricted-trust-domain.directory-decision.v0",
+        "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+        "decision": "eligible",
+        "operation": "discovery",
+        "domain_id": "domain-test-b",
+        "authority_id": "did:iicp:test:directory-a",
+        "subject_kind": "client",
+        "membership_generation": 7,
+        "membership_expires_at": 1800000300
+      },
+      "expected": "mismatch"
+    },
+    {
+      "id": "wrong-authority",
+      "required": {
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "minimum_membership_generation": 7,
+        "now": 1800000010
+      },
+      "projection": {
+        "schema": "iicp.restricted-trust-domain.directory-decision.v0",
+        "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+        "decision": "eligible",
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-b",
+        "subject_kind": "client",
+        "membership_generation": 7,
+        "membership_expires_at": 1800000300
+      },
+      "expected": "mismatch"
+    },
+    {
+      "id": "stale-generation",
+      "required": {
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "minimum_membership_generation": 8,
+        "now": 1800000010
+      },
+      "projection": {
+        "schema": "iicp.restricted-trust-domain.directory-decision.v0",
+        "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+        "decision": "eligible",
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "subject_kind": "client",
+        "membership_generation": 7,
+        "membership_expires_at": 1800000300
+      },
+      "expected": "stale"
+    },
+    {
+      "id": "expired-membership",
+      "required": {
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "minimum_membership_generation": 7,
+        "now": 1800000300
+      },
+      "projection": {
+        "schema": "iicp.restricted-trust-domain.directory-decision.v0",
+        "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+        "decision": "eligible",
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "subject_kind": "client",
+        "membership_generation": 7,
+        "membership_expires_at": 1800000300
+      },
+      "expected": "expired"
+    },
+    {
+      "id": "malformed-subject-identifier-forbidden",
+      "required": {
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "minimum_membership_generation": 7,
+        "now": 1800000010
+      },
+      "projection": {
+        "schema": "iicp.restricted-trust-domain.directory-decision.v0",
+        "profile": "urn:iicp:profile:restricted-trust-domain:v1",
+        "decision": "eligible",
+        "operation": "discovery",
+        "domain_id": "domain-test-a",
+        "authority_id": "did:iicp:test:directory-a",
+        "subject_kind": "client",
+        "subject_id": "did:iicp:test:client-a",
+        "membership_generation": 7,
+        "membership_expires_at": 1800000300
+      },
+      "expected": "malformed"
+    }
+  ]
+}

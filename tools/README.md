@@ -17,6 +17,7 @@ Validation and analysis tools for the IICP specification.
 | `test_provider_admission_capacity_fixture.py` | Validates bounded provider capacity, freshness, deadline, backpressure and redaction vectors |
 | `test_managed_operator_fixture.py` | Validates convenience compatibility and fail-closed managed-operation vectors |
 | `test_restricted_trust_domain_fixture.py` | Validates restricted-domain membership, gossip, revocation, federation and local-only semantic vectors |
+| `test_restricted_directory_decision_fixture.py` | Validates bounded directory decision projections and fail-closed client classification |
 | `test_restricted_trust_domain_membership.py` | Verifies deterministic authority-signed membership, member-signed gossip, payload binding and replay vectors |
 | `test_restricted_trust_domain_bootstrap.py` | Verifies additive restricted bootstrap evidence, subject binding, expiry/generation refusal and non-eviction on partial results |
 
@@ -39,6 +40,7 @@ python3 tools/check_external_participation_campaign.py
 python3 tools/test_provider_admission_capacity_fixture.py
 python3 tools/test_managed_operator_fixture.py
 python3 tools/test_restricted_trust_domain_fixture.py
+python3 tools/test_restricted_directory_decision_fixture.py
 python3 tools/test_restricted_trust_domain_membership.py
 python3 tools/test_restricted_trust_domain_bootstrap.py
 ```
