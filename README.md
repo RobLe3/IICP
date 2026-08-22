@@ -409,6 +409,11 @@ define capabilities as behavior exposed by the complete serving path. They
 separate modalities, features, runtime actions, limits, policy, Profiles,
 evidence, observations and evaluator-specific quality.
 
+The [architecture decision and documentation map](docs/architecture/decision-documentation-map.md)
+shows how accepted decisions move from public rationale into normative
+contracts, implementation guides, and user-facing explanations without turning
+the website into a second specification.
+
 The [public evidence access profile](docs/public-evidence-access.md) lists the
 version, implementation, registry, conformance, release and live-runtime
 artifacts intended for non-browser retrieval. Static source evidence has a
