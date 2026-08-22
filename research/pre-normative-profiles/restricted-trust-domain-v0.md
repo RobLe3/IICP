@@ -3,7 +3,7 @@
 **Version:** 0.1.0-draft<br>
 **Status:** pre-normative; not implemented or required for base IICP conformance<br>
 **Profile identifier:** `urn:iicp:profile:restricted-trust-domain:v1`<br>
-**Related issues:** IICP #53 and #180
+**Related issues:** IICP #53, #180 and #211
 
 ## 1. Purpose and terminology
 
@@ -134,6 +134,31 @@ that configuration but cannot introduce different semantics.
   is forbidden unless the caller explicitly selected a policy that permits it
   and the request does not require this Profile.
 
+### 6.1 Authenticated directory decision projection
+
+Sending membership headers does not prove that a directory applied restricted
+authorization. After successful membership and policy checks, a protected
+registration, discovery, bootstrap, dispatch-ticket or consumer-token response
+MUST therefore include `restricted_domain_decision` conforming to
+`schemas/restricted-trust-domain-directory-decision-v0.schema.json`.
+
+The projection binds the successful decision to the operation, configured
+domain and trusted directory authority. It also supplies the subject kind and
+the membership generation and expiry used for the decision. It MUST NOT include
+the subject identifier, credentials, membership lists, candidates or topology.
+It is a directory authorization result carried over the protected connection;
+it is not a signature, receipt, reputation statement or dispatch authority.
+
+A client requiring this Profile MUST fail closed if the projection is absent,
+malformed, expired, below its minimum accepted membership generation, or does
+not match the requested operation, configured domain and pinned authority. A
+client MUST NOT treat request headers, HTTP success or the presence of ordinary
+candidates as equivalent evidence. Redirects and caches MUST NOT permit a
+restricted request or its response to cross authority or subject boundaries.
+
+Public-mode responses omit the projection. Older clients may ignore the
+additive field, but cannot claim that they verified restricted eligibility.
+
 ## 7. Federation
 
 Federation is an explicit relationship between independently governed domains,
@@ -210,6 +235,8 @@ The canonical draft vectors and schema are:
 
 - `fixtures/restricted-trust-domain-v0.json`
 - `schemas/restricted-trust-domain-v0.schema.json`
+- `fixtures/restricted-trust-domain-directory-decision-v0.json`
+- `schemas/restricted-trust-domain-directory-decision-v0.schema.json`
 
 They cover CUG-01 through CUG-10 plus malformed, expiry, replay, wrong-domain,
 downgrade, poisoned-bootstrap, relay and restart cases. Passing the semantic

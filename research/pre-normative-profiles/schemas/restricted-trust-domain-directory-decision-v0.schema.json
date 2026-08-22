@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/restricted-trust-domain-directory-decision-v0.schema.json",
+  "title": "IICP restricted trust-domain directory decision",
+  "type": "object",
+  "required": [
+    "schema",
+    "profile",
+    "decision",
+    "operation",
+    "domain_id",
+    "authority_id",
+    "subject_kind",
+    "membership_generation",
+    "membership_expires_at"
+  ],
+  "properties": {
+    "schema": {"const": "iicp.restricted-trust-domain.directory-decision.v0"},
+    "profile": {"const": "urn:iicp:profile:restricted-trust-domain:v1"},
+    "decision": {"const": "eligible"},
+    "operation": {
+      "enum": ["registration", "discovery", "bootstrap", "dispatch_ticket", "consumer_token"]
+    },
+    "domain_id": {"type": "string", "minLength": 1, "maxLength": 255},
+    "authority_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "subject_kind": {"enum": ["node", "client", "directory"]},
+    "membership_generation": {"type": "integer", "minimum": 1},
+    "membership_expires_at": {"type": "integer", "minimum": 1}
+  },
+  "additionalProperties": false
+}

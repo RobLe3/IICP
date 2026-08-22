@@ -35,6 +35,7 @@ on:
       - "tools/test_ecosystem_version_truth.py"
       - "tools/test_effective_capability_wire_contract.py"
       - "tools/test_restricted_trust_domain_fixture.py"
+      - "tools/test_restricted_directory_decision_fixture.py"
       - "tools/test_restricted_trust_domain_bootstrap.py"
       - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
@@ -119,6 +120,7 @@ on:
       - "schemas/capability-refusal-v1.json"
       - "tools/test_effective_capability_wire_contract.py"
       - "tools/test_restricted_trust_domain_fixture.py"
+      - "tools/test_restricted_directory_decision_fixture.py"
       - "tools/test_restricted_trust_domain_bootstrap.py"
       - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
@@ -194,6 +196,7 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_effective_service_capability_semantics.py'
       - run: python3 -m unittest discover -s tools -p 'test_effective_capability_wire_contract.py'
       - run: python3 -m unittest discover -s tools -p 'test_restricted_trust_domain_fixture.py'
+      - run: python3 -m unittest discover -s tools -p 'test_restricted_directory_decision_fixture.py'
       - run: python3 -m unittest discover -s tools -p 'test_restricted_trust_domain_membership.py'
       - run: python3 -m unittest discover -s tools -p 'test_restricted_trust_domain_bootstrap.py'
       - run: python3 tools/check_intent_registry.py

@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.26.0-draft",
+  "manifest_version": "0.27.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -176,6 +176,11 @@
       "path": "reputation-outcome-v2.json",
       "fixture_version": "0.1.0-draft",
       "sha256": "dffa9bf108e23d5ce71acc44a1fa7567bcc76feba83291086873e2a64a98fa85"
+    },
+    {
+      "path": "restricted-trust-domain-directory-decision-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "d97cbccab0ca86b546a574aab0bd5e92d3138269f4a5adb3b99cfe9dac927d6b"
     }
   ]
 }
