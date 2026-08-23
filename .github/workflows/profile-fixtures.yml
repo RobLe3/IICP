@@ -37,6 +37,7 @@ on:
       - "tools/test_restricted_trust_domain_fixture.py"
       - "tools/test_restricted_directory_decision_fixture.py"
       - "tools/test_restricted_trust_domain_bootstrap.py"
+      - "tools/test_local_directory_discovery.py"
       - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
@@ -122,6 +123,7 @@ on:
       - "tools/test_restricted_trust_domain_fixture.py"
       - "tools/test_restricted_directory_decision_fixture.py"
       - "tools/test_restricted_trust_domain_bootstrap.py"
+      - "tools/test_local_directory_discovery.py"
       - "evidence/**"
       - "standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_*.md"
       - "standards/security-considerations-coverage-v1.json"
@@ -199,6 +201,7 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_restricted_directory_decision_fixture.py'
       - run: python3 -m unittest discover -s tools -p 'test_restricted_trust_domain_membership.py'
       - run: python3 -m unittest discover -s tools -p 'test_restricted_trust_domain_bootstrap.py'
+      - run: python3 -m unittest discover -s tools -p 'test_local_directory_discovery.py'
       - run: python3 tools/check_intent_registry.py
       - run: python3 tools/check_intent_registry_schema.py
       - run: python3 -m unittest discover -s tools -p 'test_intent_registry.py'

@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/local-directory-discovery-v0.schema.json",
+  "title": "IICP verified local-directory discovery vectors",
+  "type": "object",
+  "required": ["fixture_version", "status", "profile_id", "service_type", "defaults", "cases"],
+  "properties": {
+    "fixture_version": {"const": "0.1.0-draft"},
+    "status": {"const": "pre-normative"},
+    "profile_id": {"const": "urn:iicp:profile:local-directory-discovery:v1"},
+    "service_type": {"const": "_iicp-dir._tcp.local."},
+    "defaults": {
+      "type": "object",
+      "required": ["collection_window_ms", "maximum_collection_window_ms", "maximum_cache_seconds", "maximum_txt_bytes"],
+      "properties": {
+        "collection_window_ms": {"const": 1000},
+        "maximum_collection_window_ms": {"const": 3000},
+        "maximum_cache_seconds": {"const": 300},
+        "maximum_txt_bytes": {"const": 512}
+      },
+      "additionalProperties": false
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 12,
+      "items": {
+        "type": "object",
+        "required": ["id", "input", "expected"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "input": {
+            "type": "object",
+            "required": ["mode", "client_kind", "profile_enabled", "explicit_directory", "mdns", "candidates", "genesis_fallback_allowed", "now"],
+            "properties": {
+              "mode": {"enum": ["public", "private", "federated_private", "local_only", "custom"]},
+              "client_kind": {"enum": ["native", "operator_directory", "browser"]},
+              "profile_enabled": {"type": "boolean"},
+              "explicit_directory": {"type": ["string", "null"]},
+              "mdns": {"enum": ["available", "unavailable", "timeout", "ssdp_only"]},
+              "candidates": {"type": "array", "items": {"$ref": "#/$defs/candidate"}},
+              "genesis_fallback_allowed": {"type": "boolean"},
+              "now": {"type": "integer", "minimum": 0}
+            },
+            "additionalProperties": false
+          },
+          "expected": {
+            "type": "object",
+            "required": ["source", "selected", "reason", "mdns_query"],
+            "properties": {
+              "source": {"enum": ["explicit", "mdns", "genesis", "none"]},
+              "selected": {"type": ["string", "null"]},
+              "reason": {"type": "string", "minLength": 1},
+              "mdns_query": {"type": "boolean"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "required": ["endpoint", "txt", "txt_bytes", "descriptor_did", "descriptor_signature_valid", "descriptor_expires_at", "trust", "cache_expires_at"],
+      "properties": {
+        "endpoint": {"type": "string"},
+        "txt": {"type": "object", "additionalProperties": {"type": "string"}},
+        "txt_bytes": {"type": "integer", "minimum": 0},
+        "descriptor_did": {"type": "string"},
+        "descriptor_signature_valid": {"type": "boolean"},
+        "descriptor_expires_at": {"type": "integer", "minimum": 0},
+        "trust": {"enum": ["pinned", "domain", "federation", "untrusted", "revoked"]},
+        "cache_expires_at": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

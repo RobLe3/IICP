@@ -12,6 +12,13 @@ may advance only after deterministic simulation, cross-SDK fixture tests,
 implementation review, a migration path and spec-only repository release
 synchronization.
 
+`local-directory-discovery-v0.md` defines an optional, verified mDNS/DNS-SD
+candidate-discovery Profile. Explicit configuration remains authoritative;
+multicast observation never establishes trust; private and local-only modes
+cannot fall back to public Genesis. SSDP remains limited to its existing
+UPnP/IGD reachability role. No implementation or default advertisement is
+enabled by the draft.
+
 ## Current strategic decision
 
 The current direction is **a small stable intent core plus explicit capability,

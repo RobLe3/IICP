@@ -1,5 +1,5 @@
 {
-  "manifest_version": "0.27.0-draft",
+  "manifest_version": "0.28.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
@@ -110,7 +110,7 @@
     {
       "path": "discovery-evidence-v1.json",
       "fixture_version": "0.1.0-draft",
-      "sha256": "7aab59a1d7d2fc88b4638c9a1d0e01ccf45915220d638ce3b1a3f85fdfdcad56"
+      "sha256": "8db8d9d0150c7bc28a03ef955f498ff1e8e2eff7bc87c5b81029c186bb9b115a"
     },
     {
       "path": "public-measurement-v1-valid.json",
@@ -161,6 +161,11 @@
       "path": "e050-client-credential-lifecycle-v1.json",
       "fixture_version": "1.0.0-implementation-evidence",
       "sha256": "4f71c44380f7a95249e7f6233fc4bce56de4e344b97a5ecc11c8740e88af12d6"
+    },
+    {
+      "path": "local-directory-discovery-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "490bcc1a70153745a28299ff9680dc185312676ef06384789667174e61f374ed"
     },
     {
       "path": "restricted-trust-domain-v0.json",

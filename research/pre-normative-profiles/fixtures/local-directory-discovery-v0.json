@@ -1,0 +1,94 @@
+{
+  "fixture_version": "0.1.0-draft",
+  "status": "pre-normative",
+  "profile_id": "urn:iicp:profile:local-directory-discovery:v1",
+  "service_type": "_iicp-dir._tcp.local.",
+  "defaults": {
+    "collection_window_ms": 1000,
+    "maximum_collection_window_ms": 3000,
+    "maximum_cache_seconds": 300,
+    "maximum_txt_bytes": 512
+  },
+  "cases": [
+    {
+      "id": "explicit_configuration_wins",
+      "input": {"mode": "public", "client_kind": "native", "profile_enabled": true, "explicit_directory": "https://configured.example/api", "mdns": "available", "candidates": [], "genesis_fallback_allowed": true, "now": 1000},
+      "expected": {"source": "explicit", "selected": "https://configured.example/api", "reason": "explicit_configuration", "mdns_query": false}
+    },
+    {
+      "id": "valid_pinned_public_candidate",
+      "input": {"mode": "public", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "available", "candidates": [{"endpoint": "https://local-a.test/api", "txt": {"pv": "0", "path": "/.well-known/iicp-directory.json", "transport": "https", "did": "did:key:zA"}, "txt_bytes": 120, "descriptor_did": "did:key:zA", "descriptor_signature_valid": true, "descriptor_expires_at": 1300, "trust": "pinned", "cache_expires_at": 1200}], "genesis_fallback_allowed": true, "now": 1000},
+      "expected": {"source": "mdns", "selected": "https://local-a.test/api", "reason": "verified_local_candidate", "mdns_query": true}
+    },
+    {
+      "id": "spoofed_txt_did_rejected",
+      "input": {"mode": "public", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "available", "candidates": [{"endpoint": "https://spoof.test/api", "txt": {"pv": "0", "path": "/.well-known/iicp-directory.json", "transport": "https", "did": "did:key:zClaim"}, "txt_bytes": 130, "descriptor_did": "did:key:zOther", "descriptor_signature_valid": true, "descriptor_expires_at": 1300, "trust": "pinned", "cache_expires_at": 1200}], "genesis_fallback_allowed": true, "now": 1000},
+      "expected": {"source": "genesis", "selected": "https://iicp.network/api", "reason": "local_candidates_rejected", "mdns_query": true}
+    },
+    {
+      "id": "expired_descriptor_rejected",
+      "input": {"mode": "public", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "available", "candidates": [{"endpoint": "https://old.test/api", "txt": {"pv": "0", "path": "/.well-known/iicp-directory.json", "transport": "https"}, "txt_bytes": 90, "descriptor_did": "did:key:zOld", "descriptor_signature_valid": true, "descriptor_expires_at": 999, "trust": "pinned", "cache_expires_at": 999}], "genesis_fallback_allowed": true, "now": 1000},
+      "expected": {"source": "genesis", "selected": "https://iicp.network/api", "reason": "local_candidates_rejected", "mdns_query": true}
+    },
+    {
+      "id": "private_unknown_candidate_no_public_fallback",
+      "input": {"mode": "private", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "available", "candidates": [{"endpoint": "https://unknown.test/api", "txt": {"pv": "0", "path": "/.well-known/iicp-directory.json", "transport": "https"}, "txt_bytes": 90, "descriptor_did": "did:key:zUnknown", "descriptor_signature_valid": true, "descriptor_expires_at": 1300, "trust": "untrusted", "cache_expires_at": 1200}], "genesis_fallback_allowed": false, "now": 1000},
+      "expected": {"source": "none", "selected": null, "reason": "no_verified_directory", "mdns_query": true}
+    },
+    {
+      "id": "private_domain_candidate",
+      "input": {"mode": "private", "client_kind": "operator_directory", "profile_enabled": true, "explicit_directory": null, "mdns": "available", "candidates": [{"endpoint": "https://private.test/api", "txt": {"pv": "0", "path": "/.well-known/iicp-directory.json", "transport": "https"}, "txt_bytes": 90, "descriptor_did": "did:key:zPrivate", "descriptor_signature_valid": true, "descriptor_expires_at": 1300, "trust": "domain", "cache_expires_at": 1200}], "genesis_fallback_allowed": false, "now": 1000},
+      "expected": {"source": "mdns", "selected": "https://private.test/api", "reason": "verified_local_candidate", "mdns_query": true}
+    },
+    {
+      "id": "federated_private_relationship_candidate",
+      "input": {"mode": "federated_private", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "available", "candidates": [{"endpoint": "https://federated.test/api", "txt": {"pv": "0", "path": "/.well-known/iicp-directory.json", "transport": "https", "role": "replica"}, "txt_bytes": 105, "descriptor_did": "did:key:zFed", "descriptor_signature_valid": true, "descriptor_expires_at": 1300, "trust": "federation", "cache_expires_at": 1200}], "genesis_fallback_allowed": false, "now": 1000},
+      "expected": {"source": "mdns", "selected": "https://federated.test/api", "reason": "verified_local_candidate", "mdns_query": true}
+    },
+    {
+      "id": "local_only_never_queries",
+      "input": {"mode": "local_only", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "available", "candidates": [], "genesis_fallback_allowed": false, "now": 1000},
+      "expected": {"source": "none", "selected": null, "reason": "local_only_external_forbidden", "mdns_query": false}
+    },
+    {
+      "id": "multiple_candidates_deterministic",
+      "input": {"mode": "public", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "available", "candidates": [{"endpoint": "https://local-b.test/api", "txt": {"pv": "0", "path": "/.well-known/iicp-directory.json", "transport": "https"}, "txt_bytes": 90, "descriptor_did": "did:key:zB", "descriptor_signature_valid": true, "descriptor_expires_at": 1300, "trust": "pinned", "cache_expires_at": 1200}, {"endpoint": "https://local-a.test/api", "txt": {"pv": "0", "path": "/.well-known/iicp-directory.json", "transport": "https", "future": "ignored"}, "txt_bytes": 105, "descriptor_did": "did:key:zA", "descriptor_signature_valid": true, "descriptor_expires_at": 1300, "trust": "pinned", "cache_expires_at": 1200}], "genesis_fallback_allowed": true, "now": 1000},
+      "expected": {"source": "mdns", "selected": "https://local-a.test/api", "reason": "verified_local_candidate", "mdns_query": true}
+    },
+    {
+      "id": "secret_bearing_txt_rejected",
+      "input": {"mode": "public", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "available", "candidates": [{"endpoint": "https://leaky.test/api", "txt": {"pv": "0", "path": "/.well-known/iicp-directory.json", "transport": "https", "token": "secret-value"}, "txt_bytes": 140, "descriptor_did": "did:key:zLeak", "descriptor_signature_valid": true, "descriptor_expires_at": 1300, "trust": "pinned", "cache_expires_at": 1200}], "genesis_fallback_allowed": true, "now": 1000},
+      "expected": {"source": "genesis", "selected": "https://iicp.network/api", "reason": "local_candidates_rejected", "mdns_query": true}
+    },
+    {
+      "id": "oversized_txt_rejected",
+      "input": {"mode": "public", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "available", "candidates": [{"endpoint": "https://large.test/api", "txt": {"pv": "0", "path": "/.well-known/iicp-directory.json", "transport": "https"}, "txt_bytes": 513, "descriptor_did": "did:key:zLarge", "descriptor_signature_valid": true, "descriptor_expires_at": 1300, "trust": "pinned", "cache_expires_at": 1200}], "genesis_fallback_allowed": true, "now": 1000},
+      "expected": {"source": "genesis", "selected": "https://iicp.network/api", "reason": "local_candidates_rejected", "mdns_query": true}
+    },
+    {
+      "id": "expired_cache_does_not_extend_trust",
+      "input": {"mode": "private", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "unavailable", "candidates": [{"endpoint": "https://cached.test/api", "txt": {"pv": "0", "path": "/.well-known/iicp-directory.json", "transport": "https"}, "txt_bytes": 90, "descriptor_did": "did:key:zCached", "descriptor_signature_valid": true, "descriptor_expires_at": 1300, "trust": "domain", "cache_expires_at": 999}], "genesis_fallback_allowed": false, "now": 1000},
+      "expected": {"source": "none", "selected": null, "reason": "no_verified_directory", "mdns_query": true}
+    },
+    {
+      "id": "timeout_public_fallback",
+      "input": {"mode": "public", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "timeout", "candidates": [], "genesis_fallback_allowed": true, "now": 1000},
+      "expected": {"source": "genesis", "selected": "https://iicp.network/api", "reason": "local_discovery_unavailable", "mdns_query": true}
+    },
+    {
+      "id": "ssdp_is_not_directory_discovery",
+      "input": {"mode": "public", "client_kind": "native", "profile_enabled": true, "explicit_directory": null, "mdns": "ssdp_only", "candidates": [], "genesis_fallback_allowed": true, "now": 1000},
+      "expected": {"source": "genesis", "selected": "https://iicp.network/api", "reason": "ssdp_not_supported", "mdns_query": true}
+    },
+    {
+      "id": "browser_keeps_explicit_configuration",
+      "input": {"mode": "public", "client_kind": "browser", "profile_enabled": true, "explicit_directory": null, "mdns": "available", "candidates": [], "genesis_fallback_allowed": true, "now": 1000},
+      "expected": {"source": "genesis", "selected": "https://iicp.network/api", "reason": "browser_local_discovery_unsupported", "mdns_query": false}
+    },
+    {
+      "id": "profile_disabled_preserves_public_fallback",
+      "input": {"mode": "public", "client_kind": "native", "profile_enabled": false, "explicit_directory": null, "mdns": "available", "candidates": [], "genesis_fallback_allowed": true, "now": 1000},
+      "expected": {"source": "genesis", "selected": "https://iicp.network/api", "reason": "profile_disabled", "mdns_query": false}
+    }
+  ]
+}
