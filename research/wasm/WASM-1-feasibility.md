@@ -132,7 +132,7 @@ local LLM over a browser-resident model.
 | WASM-3 | Consumer-only TypeScript contract drafted | Medium |
 | WASM-4 | WebLLM optional, opt-in, small model | Low |
 
-**Repo**: `RobLe3/iicp-client-wasm` (new, private initially)
+**Repository:** create a dedicated implementation repository if this track is authorized.
 **Target**: Alpha release after Phase 5 CIP ships and TypeScript SDK (`iicp-client`) is published to npm.
 
 ---

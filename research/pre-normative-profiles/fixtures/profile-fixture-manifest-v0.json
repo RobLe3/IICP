@@ -163,6 +163,11 @@
       "sha256": "0a89ae1ee02aca25f7989576b0ab88640bf382bf2d13e37e489798c81d010d8c"
     },
     {
+      "path": "security-mechanism-lifecycle-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "af6907d831869c6973599102eafa7d39e84998662cba5b95a5c407e7542470af"
+    },
+    {
       "path": "selection-v1.json",
       "fixture_version": "1.1.0-draft",
       "sha256": "cacb87b268e480fbf2f288faab3b41e90b9d3ec14b13bd9c0a731c376e4ea3ca"
