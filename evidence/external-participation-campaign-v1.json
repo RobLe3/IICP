@@ -43,7 +43,7 @@
       "tracker": "https://github.com/RobLe3/iicp-client-rust/issues/66",
       "participant": "representative Linux/systemd operator, preferably including ARM64",
       "fixed_inputs": [
-        "iicp-client-rust 0.7.108",
+        "iicp-client-rust 0.7.107",
         "opt-in native watchdog"
       ],
       "record": "https://github.com/RobLe3/iicp-client-rust/blob/main/evidence/systemd-operator-validation-v1.json",
