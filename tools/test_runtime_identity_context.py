@@ -55,6 +55,9 @@ class RuntimeIdentityContextFixtureTests(unittest.TestCase):
 
     def test_stable_capsule_contains_no_prohibited_field_names(self) -> None:
         capsule = self.fixture["base_capsule"].lower()
+        self.assertIn("intent-based inter-agent communication protocol", capsule)
+        self.assertIn("provider-neutral control plane", capsule)
+        self.assertIn("does not mean industrial internet of things computing", capsule)
         for field in self.fixture["never_inject_fields"]:
             self.assertNotIn(field.lower(), capsule)
 
