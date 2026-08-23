@@ -155,7 +155,7 @@
     {
       "path": "runtime-identity-context-v0.json",
       "fixture_version": "0.3.0-draft",
-      "sha256": "a31064ca630ab5409fb2f57edd1ef29a5c79532b8960927f6a0d2b52d7d71c81"
+      "sha256": "3f6071dd39ca9c743ccd3c9c3da1582f1005c4c6daa210fbf62f5bae60d241ac"
     },
     {
       "path": "sdk-request-projection-v0.json",

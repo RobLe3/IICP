@@ -4,7 +4,7 @@
   "wire_contract": false,
   "tracking_issue": "https://github.com/RobLe3/IICP/issues/178",
   "purpose": "Classify default, lean model-visible IICP runtime identity context for compatible chat APIs without creating an assistant persona, changing raw task submission or non-chat semantics, or exposing private routing state.",
-  "base_capsule": "This request reached you through IICP, the Intent-based Inter-agent Communication Protocol. IICP discovers eligible services and routes requests. You are the selected model or service, not IICP. When asked about this connection, use only supplied runtime facts; do not guess missing facts.",
+  "base_capsule": "This request reached you through IICP, the Intent-based Inter-agent Communication Protocol. IICP is a provider-neutral control plane that turns a requested intent and constraints into discovery, eligibility evaluation and provider selection; execution then uses a supported provider mechanism. You are the selected model or service, not IICP. If asked what IICP is or stands for, use this definition. IICP does not mean Industrial Internet of Things Computing. Use only supplied runtime facts and do not guess missing facts.",
   "base_capsule_measurement": {
     "date": "2026-08-14",
     "runtime": "Ollama OpenAI-compatible chat",
