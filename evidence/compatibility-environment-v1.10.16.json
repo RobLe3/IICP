@@ -123,7 +123,7 @@
     },
     {
       "component": "client-python",
-      "release": "0.7.107",
+      "release": "0.7.108",
       "supported_profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -145,7 +145,7 @@
     },
     {
       "component": "client-typescript",
-      "release": "0.7.107",
+      "release": "0.7.108",
       "supported_profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -166,7 +166,7 @@
     },
     {
       "component": "client-rust",
-      "release": "0.7.107",
+      "release": "0.7.108",
       "supported_profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",

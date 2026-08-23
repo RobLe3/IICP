@@ -27,7 +27,7 @@ python3 tools/check_external_participation_campaign.py
 | --- | --- | --- | --- | --- |
 | Clean-room directory | IICP #31 | An implementation team outside the IICP repository family | Protocol Suite `v1.10.13`, `iicp-conformance` `0.3.0`, the clean-room guide and the blank evidence record | External repository, ambiguity log, compatibility matrix, and signed content-free results |
 | Newcomer usability | IICP #94 | At least one non-technical reader, one developer, and one prospective node operator | The script below and the published website/operator guide | Three consented, anonymized session records and a findings summary |
-| Linux watchdog | Rust SDK #66 | A representative Linux/systemd operator, preferably including ARM | Rust SDK `0.7.107` and its opt-in native watchdog | Slow-start, pressure, reboot/logout, linger, restart, and rollback record |
+| Linux watchdog | Rust SDK #66 | A representative Linux/systemd operator, preferably including ARM | Rust SDK `0.7.108` and its opt-in native watchdog | Slow-start, pressure, reboot/logout, linger, restart, and rollback record |
 | Relay eligibility | IICP #59 | An independent relay operator and topology measurement environment | Current pre-normative relay research | Stale, forged, replayed, overloaded and partial-evidence cases without topology leakage |
 | Standards governance | IICP #47 | A consenting lead editor, backup editor, and change controller | The current draft candidate and governance decision contract | A non-sensitive governance decision with named stewardship roles |
 
