@@ -1,0 +1,90 @@
+{
+  "assumptions": {
+    "capability_prefixes_per_domain": 64,
+    "domain_descriptor_bytes": 4096,
+    "event_tail_hours": 24,
+    "federated_event_bytes": 1024,
+    "heartbeat_interval_seconds": 300,
+    "local_index_overhead_ratio_ppm": 250000,
+    "model_version": "iicp-federation-state-scaling-v1",
+    "provider_record_bytes": 4096,
+    "state_change_events_per_provider_hour_ppm": 5000,
+    "summary_entry_bytes": 256,
+    "summary_refresh_seconds": [
+      60,
+      300
+    ]
+  },
+  "assumptions_sha256": "cf4960820db3f983add4a82b7033ee51de48024d99e3d0413c86cc51b9f12a35",
+  "results": [
+    {
+      "domains": 10,
+      "full_state_bytes_ecosystem": 51200000,
+      "full_state_bytes_per_directory": 5120000,
+      "full_state_event_bytes_ecosystem_hour": 51200,
+      "full_state_event_bytes_per_directory_hour": 5120,
+      "global_state_change_events_per_hour": 5,
+      "largest_domain_providers": 250,
+      "largest_shard_bytes": 1320960,
+      "local_heartbeats_per_hour": 1200,
+      "max_changed_providers_per_300s": 1,
+      "max_changed_providers_per_60s": 1,
+      "providers": 1000,
+      "providers_per_domain": 100,
+      "sharded_bytes_per_directory": 552960,
+      "summary_bytes_per_directory": 716800
+    },
+    {
+      "domains": 100,
+      "full_state_bytes_ecosystem": 51200000000,
+      "full_state_bytes_per_directory": 512000000,
+      "full_state_event_bytes_ecosystem_hour": 51200000,
+      "full_state_event_bytes_per_directory_hour": 512000,
+      "global_state_change_events_per_hour": 500,
+      "largest_domain_providers": 10000,
+      "largest_shard_bytes": 51609600,
+      "local_heartbeats_per_hour": 12000,
+      "max_changed_providers_per_300s": 42,
+      "max_changed_providers_per_60s": 9,
+      "providers": 100000,
+      "providers_per_domain": 1000,
+      "sharded_bytes_per_directory": 5529600,
+      "summary_bytes_per_directory": 7168000
+    },
+    {
+      "domains": 1000,
+      "full_state_bytes_ecosystem": 5120000000000,
+      "full_state_bytes_per_directory": 5120000000,
+      "full_state_event_bytes_ecosystem_hour": 5120000000,
+      "full_state_event_bytes_per_directory_hour": 5120000,
+      "global_state_change_events_per_hour": 5000,
+      "largest_domain_providers": 50000,
+      "largest_shard_bytes": 260096000,
+      "local_heartbeats_per_hour": 12000,
+      "max_changed_providers_per_300s": 417,
+      "max_changed_providers_per_60s": 84,
+      "providers": 1000000,
+      "providers_per_domain": 1000,
+      "sharded_bytes_per_directory": 9216000,
+      "summary_bytes_per_directory": 25600000
+    },
+    {
+      "domains": 10000,
+      "full_state_bytes_ecosystem": 5120000000000000,
+      "full_state_bytes_per_directory": 512000000000,
+      "full_state_event_bytes_ecosystem_hour": 5120000000000,
+      "full_state_event_bytes_per_directory_hour": 512000000,
+      "global_state_change_events_per_hour": 500000,
+      "largest_domain_providers": 1000000,
+      "largest_shard_bytes": 5160960000,
+      "local_heartbeats_per_hour": 120000,
+      "max_changed_providers_per_300s": 41667,
+      "max_changed_providers_per_60s": 8334,
+      "providers": 100000000,
+      "providers_per_domain": 10000,
+      "sharded_bytes_per_directory": 92160000,
+      "summary_bytes_per_directory": 256000000
+    }
+  ],
+  "schema": "iicp-federation-state-scaling-v1"
+}
