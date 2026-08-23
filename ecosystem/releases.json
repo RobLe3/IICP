@@ -58,9 +58,9 @@
     },
     {
       "id": "client-python",
-      "version": "0.7.107",
+      "version": "0.7.108",
       "wire_behavior": "additive",
-      "conformance_impact": "unchanged",
+      "conformance_impact": "changed",
       "profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -73,31 +73,12 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No migration is required. This coordinated release preserves 0.7.106 runtime and wire behavior.",
-      "rollback": "Install immutable 0.7.106; no persisted-state or wire migration is involved."
+      "migration": "Upgrade to receive the strengthened bounded IICP explanation context and deterministic unattended-update behavior. No wire or persisted-state migration is required.",
+      "rollback": "Install immutable 0.7.107. Automatic update retry state is local and non-authoritative."
     },
     {
       "id": "client-typescript",
-      "version": "0.7.107",
-      "wire_behavior": "additive",
-      "conformance_impact": "unchanged",
-      "profiles": [
-        "service-lifecycle-v1",
-        "runtime-health-v1",
-        "managed-operator-v1",
-        "cip-consumer-cosignature-v1",
-        "effective-capability-v1",
-        "runtime-identity-context-v0",
-        "directory-lifecycle-v1"
-      ],
-      "supported_protocol": ">=1.9.0,<2.0.0",
-      "upgrade": "recommended",
-      "migration": "No migration is required. This coordinated release preserves 0.7.106 runtime and wire behavior.",
-      "rollback": "Install immutable 0.7.106; no persisted-state or wire migration is involved."
-    },
-    {
-      "id": "client-rust",
-      "version": "0.7.107",
+      "version": "0.7.108",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -111,12 +92,31 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Upgrade the Rust CLI to make bounded IICP runtime identity automatic for compatible chat queries. Raw submission and non-chat intents remain unchanged. Restricted peer admission remains opt-in.",
-      "rollback": "Install immutable 0.7.106 to restore the prior CLI query path. No wire or persisted-state migration is required."
+      "migration": "Upgrade to receive the strengthened bounded IICP explanation context and deterministic unattended-update behavior. No wire or persisted-state migration is required.",
+      "rollback": "Install immutable 0.7.107. Automatic update retry state is local and non-authoritative."
+    },
+    {
+      "id": "client-rust",
+      "version": "0.7.108",
+      "wire_behavior": "additive",
+      "conformance_impact": "changed",
+      "profiles": [
+        "service-lifecycle-v1",
+        "runtime-health-v1",
+        "managed-operator-v1",
+        "cip-consumer-cosignature-v1",
+        "effective-capability-v1",
+        "runtime-identity-context-v0",
+        "directory-lifecycle-v1"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "recommended",
+      "migration": "Upgrade for guarded direct IICP explanations, verified DNS-SD directory resolution, the CUG configuration wizard and deterministic locked unattended updates. Public defaults and the stable wire baseline remain unchanged.",
+      "rollback": "Install immutable 0.7.107 to remove these local CLI and operator features. No wire or persisted-state migration is required."
     },
     {
       "id": "web-node",
-      "version": "0.2.5",
+      "version": "0.2.6",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -127,8 +127,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Rebuild or install the browser package. Compatible chat requests now receive bounded IICP runtime identity context automatically; non-chat requests and explicit disabled mode remain unchanged.",
-      "rollback": "Restore immutable 0.2.4 to return to opt-in-only runtime identity composition while retaining route-ticket and effective-capability support."
+      "migration": "Rebuild or install the browser package. Unsupported restricted operating modes now fail closed; public browser behavior remains unchanged.",
+      "rollback": "Restore immutable 0.2.5. The browser node remains experimental and no persisted-state migration is involved."
     }
   ]
 }
