@@ -9,9 +9,9 @@ version different contracts and do not need to match.
 | Wire compatibility baseline | 1.9.0 | stable v1.9 line |
 | iicp-directory-php | 1.10.93 | active |
 | iicp-directory-rust | 0.1.14 | operator-preview |
-| iicp-client-python | 0.7.106 | active |
-| iicp-client-typescript | 0.7.106 | active |
-| iicp-client-rust | 0.7.106 | active |
+| iicp-client-python | 0.7.107 | active |
+| iicp-client-typescript | 0.7.107 | active |
+| iicp-client-rust | 0.7.107 | active |
 | iicp-web-node | 0.2.5 | experimental |
 
 Deployment identifiers and observed live adoption are time-bound evidence and

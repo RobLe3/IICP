@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-20",
+  "generated_at": "2026-08-23",
   "releases": [
     {
       "id": "specification",
@@ -58,9 +58,9 @@
     },
     {
       "id": "client-python",
-      "version": "0.7.106",
+      "version": "0.7.107",
       "wire_behavior": "additive",
-      "conformance_impact": "changed",
+      "conformance_impact": "unchanged",
       "profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -73,14 +73,14 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state or base-wire migration is required. Heartbeat task metrics are retried as one idempotent batch until acknowledgement; older directories remain compatible but cannot acknowledge retry idempotency.",
-      "rollback": "Install immutable 0.7.105 to restore the previous at-most-once heartbeat metric delivery. Buffered calls, streaming and runtime identity behavior remain compatible."
+      "migration": "No migration is required. This coordinated release preserves 0.7.106 runtime and wire behavior.",
+      "rollback": "Install immutable 0.7.106; no persisted-state or wire migration is involved."
     },
     {
       "id": "client-typescript",
-      "version": "0.7.106",
+      "version": "0.7.107",
       "wire_behavior": "additive",
-      "conformance_impact": "changed",
+      "conformance_impact": "unchanged",
       "profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -92,12 +92,12 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state or base-wire migration is required. Heartbeat task metrics are retried as one idempotent batch until acknowledgement; older directories remain compatible but cannot acknowledge retry idempotency.",
-      "rollback": "Install immutable 0.7.105 to restore the previous at-most-once heartbeat metric delivery. Buffered calls, streaming and runtime identity behavior remain compatible."
+      "migration": "No migration is required. This coordinated release preserves 0.7.106 runtime and wire behavior.",
+      "rollback": "Install immutable 0.7.106; no persisted-state or wire migration is involved."
     },
     {
       "id": "client-rust",
-      "version": "0.7.106",
+      "version": "0.7.107",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
@@ -111,8 +111,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "No persisted-state or base-wire migration is required. Heartbeat task metrics are retried as one idempotent batch until acknowledgement; older directories remain compatible but cannot acknowledge retry idempotency.",
-      "rollback": "Install immutable 0.7.105 to restore the previous at-most-once heartbeat metric delivery. Buffered calls, streaming and runtime identity behavior remain compatible."
+      "migration": "Upgrade the Rust CLI to make bounded IICP runtime identity automatic for compatible chat queries. Raw submission and non-chat intents remain unchanged. Restricted peer admission remains opt-in.",
+      "rollback": "Install immutable 0.7.106 to restore the prior CLI query path. No wire or persisted-state migration is required."
     },
     {
       "id": "web-node",

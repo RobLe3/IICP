@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-20",
+  "generated_at": "2026-08-23",
   "current_namespace": "RobLe3",
   "planned_namespace": "iicp-protocol",
   "organization_plan": "github-free",
@@ -47,7 +47,7 @@
       "authority": "Python consumer and provider SDK",
       "language": "python",
       "protocol": "1.9",
-      "release": "0.7.106",
+      "release": "0.7.107",
       "package": "pypi:iicp-client"
     },
     {
@@ -59,7 +59,7 @@
       "authority": "TypeScript consumer and provider SDK",
       "language": "typescript",
       "protocol": "1.9",
-      "release": "0.7.106",
+      "release": "0.7.107",
       "package": "npm:@iicp/client"
     },
     {
@@ -71,7 +71,7 @@
       "authority": "Rust consumer and provider SDK",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.7.106",
+      "release": "0.7.107",
       "package": "crates:iicp-client"
     },
     {

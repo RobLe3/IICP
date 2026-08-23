@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-20",
+  "generated_at": "2026-08-23",
   "repositories": [
     {
       "authority": "normative protocol, registries and reviewed research",
@@ -39,7 +39,7 @@
       "name": "iicp-client-python",
       "package": "pypi:iicp-client",
       "protocol": "1.9",
-      "release": "0.7.106",
+      "release": "0.7.107",
       "url": "https://github.com/RobLe3/iicp-client-python"
     },
     {
@@ -50,7 +50,7 @@
       "name": "iicp-client-typescript",
       "package": "npm:@iicp/client",
       "protocol": "1.9",
-      "release": "0.7.106",
+      "release": "0.7.107",
       "url": "https://github.com/RobLe3/iicp-client-typescript"
     },
     {
@@ -61,7 +61,7 @@
       "name": "iicp-client-rust",
       "package": "crates:iicp-client",
       "protocol": "1.9",
-      "release": "0.7.106",
+      "release": "0.7.107",
       "url": "https://github.com/RobLe3/iicp-client-rust"
     },
     {
