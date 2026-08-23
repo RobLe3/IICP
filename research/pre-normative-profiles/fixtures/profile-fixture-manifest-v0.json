@@ -3,9 +3,49 @@
   "status": "pre-normative",
   "fixtures": [
     {
-      "path": "profile-compatibility-v0.json",
-      "fixture_version": "0.4.0-draft",
-      "sha256": "d039eaf52afca6866832779261db7bdd2ffd818a36bc8ba9aea1db0c9c115012"
+      "path": "a2a-execution-binding-v0.json",
+      "fixture_version": "0.1.0-research",
+      "sha256": "95d1830e41807491bd7ff2398a03d23c9c5330729dcf999c476515473a16ca1e"
+    },
+    {
+      "path": "discovery-evidence-v1.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "8db8d9d0150c7bc28a03ef955f498ff1e8e2eff7bc87c5b81029c186bb9b115a"
+    },
+    {
+      "path": "dispatch-admission-v2.json",
+      "fixture_version": "0.2.0-research",
+      "sha256": "708fc4732d1f9817ded3b185050992076669daf5cbdd2a1c4bb19b4e909c42cb"
+    },
+    {
+      "path": "dispatch-route-ticket-v1.json",
+      "fixture_version": "1.0.0-draft",
+      "sha256": "bbdbe180a543cb14cfc7791e9fdf18d0c9b5dfa88c4098690a1bed0003221a94"
+    },
+    {
+      "path": "dispatch-ticket-trust-store-v1.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "b3d70461ee4c1cde722e3371cd7254b095ed75803fd637eca0185f632b0a6261"
+    },
+    {
+      "path": "dispatch-ticket-trust-v2-crypto.json",
+      "fixture_version": "0.2.0-draft",
+      "sha256": "48be1f06e79da7849367f48deeb7a5ffa71a1de0e21800491dc6bf55d016fb94"
+    },
+    {
+      "path": "dns-aid-import-export-v0.json",
+      "fixture_version": "0.1.0-research",
+      "sha256": "d29ec68b116b50bb8cd9ef4991572154479c3de42f1b8dd5569f0e9fe240d131"
+    },
+    {
+      "path": "e050-client-credential-lifecycle-v1.json",
+      "fixture_version": "1.0.0-implementation-evidence",
+      "sha256": "4f71c44380f7a95249e7f6233fc4bce56de4e344b97a5ecc11c8740e88af12d6"
+    },
+    {
+      "path": "e050-strict-v0.json",
+      "fixture_version": "0.0.0-pre-deployment",
+      "sha256": "77307de48195abb080493d0cd4393b0de9855d70cb37b04580f68abd503c0728"
     },
     {
       "path": "effective-capability-taxonomy-v0.json",
@@ -18,14 +58,44 @@
       "sha256": "e6e3c32aa7c4cf814e639d3a97cd1c1cb49ac020ed6ebe7e1e16bc2314e14761"
     },
     {
-      "path": "runtime-identity-context-v0.json",
-      "fixture_version": "0.3.0-draft",
-      "sha256": "a31064ca630ab5409fb2f57edd1ef29a5c79532b8960927f6a0d2b52d7d71c81"
-    },
-    {
       "path": "environmental-independence-v0.json",
       "fixture_version": "0.1.0-research",
       "sha256": "2abd53b495c749021cf291eca11a6d5de5d3d2d309ddc23a7a8b7df59307f42d"
+    },
+    {
+      "path": "extension-criticality-v1.json",
+      "fixture_version": "1.0.0",
+      "sha256": "7938fe469b723baf93e71b6252845110b910f719ba4a64e7014abbdb3f33e9a8"
+    },
+    {
+      "path": "federation-chain-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "e747af2ff181b2bc1f4b7f4f37a362c99d537a1e6e5fa58b1834f6c5b72f168d"
+    },
+    {
+      "path": "identity-evidence-layering-v0.json",
+      "fixture_version": "0.1.0-research",
+      "sha256": "d96124f0dc8cba6aa38991fcf9a9da7c3083c569b3762a87574246113e683581"
+    },
+    {
+      "path": "local-directory-discovery-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "490bcc1a70153745a28299ff9680dc185312676ef06384789667174e61f374ed"
+    },
+    {
+      "path": "managed-operator-v1.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "98f450a73228ef3cf439f6b49d931975aa2e807bcc47eeb48d045870f2bba5a0"
+    },
+    {
+      "path": "mcp-era-negotiation-v0.json",
+      "fixture_version": "0.1.2-draft",
+      "sha256": "fcb8b5b65addb7d0949ad195a39e4ccf7995c73a8cf2f27d8e00d3abc28dfa9c"
+    },
+    {
+      "path": "operator-onboarding-recovery-v1.json",
+      "fixture_version": "1.0.0-operational",
+      "sha256": "e946a86efdfaaa305077367b50c3649c1732424f0dfed998fd6d62520bb8ffc1"
     },
     {
       "path": "policy-data-handling-v0.json",
@@ -33,14 +103,14 @@
       "sha256": "c7679ca8e757ce99725d10b73529168f19cd9a27a67485fefed1e19ab1a7c688"
     },
     {
-      "path": "dispatch-route-ticket-v1.json",
-      "fixture_version": "1.0.0-draft",
-      "sha256": "bbdbe180a543cb14cfc7791e9fdf18d0c9b5dfa88c4098690a1bed0003221a94"
+      "path": "policy-detail-disclosure-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "341669ad9f866d0f5f975ae9855f4443ca05fb363df0e097c6deffc7329f5012"
     },
     {
-      "path": "selection-v1.json",
-      "fixture_version": "1.1.0-draft",
-      "sha256": "cacb87b268e480fbf2f288faab3b41e90b9d3ec14b13bd9c0a731c376e4ea3ca"
+      "path": "profile-compatibility-v0.json",
+      "fixture_version": "0.4.0-draft",
+      "sha256": "d039eaf52afca6866832779261db7bdd2ffd818a36bc8ba9aea1db0c9c115012"
     },
     {
       "path": "profile-negotiation-v0.json",
@@ -48,39 +118,59 @@
       "sha256": "c86428264dd5be4f589c2d7171ac9c7e2488dc37a78f38cbb7a83ffb63339d68"
     },
     {
+      "path": "provider-admission-v1.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "63f52282b1a838d0aa588f1fd7107fedfee205f590ed404ab36874957a396c15"
+    },
+    {
+      "path": "public-measurement-v1-valid.json",
+      "fixture_version": "1.0.0-research",
+      "sha256": "19385d9c059734858b37ceb898d6683645f5f744a226559e5c2523a618b3f0e4"
+    },
+    {
+      "path": "reputation-hourly-velocity-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "5bad81668f405bcc5683712e010d9afe383ce20155a194c50f7ae3c183a40b4f"
+    },
+    {
+      "path": "reputation-outcome-v2.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "dffa9bf108e23d5ce71acc44a1fa7567bcc76feba83291086873e2a64a98fa85"
+    },
+    {
+      "path": "restricted-trust-domain-directory-decision-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "d97cbccab0ca86b546a574aab0bd5e92d3138269f4a5adb3b99cfe9dac927d6b"
+    },
+    {
+      "path": "restricted-trust-domain-membership-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "78cb70b19dabed5be0175555cf2b4bb123dd4bc77ce36b67b745f311f3d941d4"
+    },
+    {
+      "path": "restricted-trust-domain-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "0b23cc925dd3409d1c39d788e54281e60255b16dcd83fe5e4be84720ddd6039f"
+    },
+    {
+      "path": "runtime-identity-context-v0.json",
+      "fixture_version": "0.3.0-draft",
+      "sha256": "a31064ca630ab5409fb2f57edd1ef29a5c79532b8960927f6a0d2b52d7d71c81"
+    },
+    {
       "path": "sdk-request-projection-v0.json",
       "fixture_version": "0.1.0",
       "sha256": "0a89ae1ee02aca25f7989576b0ab88640bf382bf2d13e37e489798c81d010d8c"
     },
     {
-      "path": "dispatch-ticket-trust-v2-crypto.json",
-      "fixture_version": "0.2.0-draft",
-      "sha256": "48be1f06e79da7849367f48deeb7a5ffa71a1de0e21800491dc6bf55d016fb94"
-    },
-    {
-      "path": "dispatch-ticket-trust-store-v1.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "b3d70461ee4c1cde722e3371cd7254b095ed75803fd637eca0185f632b0a6261"
-    },
-    {
-      "path": "service-lifecycle-v1.json",
-      "fixture_version": "0.2.0-draft",
-      "sha256": "7bb6be604278656b960b48e1c07279ae41cb19447140d9dceeeea10f7c90b3c7"
-    },
-    {
-      "path": "service-lifecycle-persistence-v1.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "b785a929c7c32b1348d5e1b086d18de78d88a083c1e28526482a61bc7906c0b3"
+      "path": "selection-v1.json",
+      "fixture_version": "1.1.0-draft",
+      "sha256": "cacb87b268e480fbf2f288faab3b41e90b9d3ec14b13bd9c0a731c376e4ea3ca"
     },
     {
       "path": "service-lifecycle-authorization-v1.json",
       "fixture_version": "0.1.0-draft",
       "sha256": "d1dac29c01aec16b16e5d46cf51501386efebbbf97e9486043e87c9d7e24685d"
-    },
-    {
-      "path": "policy-detail-disclosure-v0.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "341669ad9f866d0f5f975ae9855f4443ca05fb363df0e097c6deffc7329f5012"
     },
     {
       "path": "service-lifecycle-distributed-v1.json",
@@ -93,99 +183,14 @@
       "sha256": "9f556c4422e690c036ec53c583557dfbea9f80fd24be1e27f7ec73e293b14dfe"
     },
     {
-      "path": "e050-strict-v0.json",
-      "fixture_version": "0.0.0-pre-deployment",
-      "sha256": "77307de48195abb080493d0cd4393b0de9855d70cb37b04580f68abd503c0728"
-    },
-    {
-      "path": "dispatch-admission-v2.json",
-      "fixture_version": "0.2.0-research",
-      "sha256": "708fc4732d1f9817ded3b185050992076669daf5cbdd2a1c4bb19b4e909c42cb"
-    },
-    {
-      "path": "mcp-era-negotiation-v0.json",
-      "fixture_version": "0.1.2-draft",
-      "sha256": "fcb8b5b65addb7d0949ad195a39e4ccf7995c73a8cf2f27d8e00d3abc28dfa9c"
-    },
-    {
-      "path": "discovery-evidence-v1.json",
+      "path": "service-lifecycle-persistence-v1.json",
       "fixture_version": "0.1.0-draft",
-      "sha256": "8db8d9d0150c7bc28a03ef955f498ff1e8e2eff7bc87c5b81029c186bb9b115a"
+      "sha256": "b785a929c7c32b1348d5e1b086d18de78d88a083c1e28526482a61bc7906c0b3"
     },
     {
-      "path": "public-measurement-v1-valid.json",
-      "fixture_version": "1.0.0-research",
-      "sha256": "19385d9c059734858b37ceb898d6683645f5f744a226559e5c2523a618b3f0e4"
-    },
-    {
-      "path": "a2a-execution-binding-v0.json",
-      "fixture_version": "0.1.0-research",
-      "sha256": "95d1830e41807491bd7ff2398a03d23c9c5330729dcf999c476515473a16ca1e"
-    },
-    {
-      "path": "dns-aid-import-export-v0.json",
-      "fixture_version": "0.1.0-research",
-      "sha256": "d29ec68b116b50bb8cd9ef4991572154479c3de42f1b8dd5569f0e9fe240d131"
-    },
-    {
-      "path": "reputation-hourly-velocity-v0.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "5bad81668f405bcc5683712e010d9afe383ce20155a194c50f7ae3c183a40b4f"
-    },
-    {
-      "path": "federation-chain-v0.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "e747af2ff181b2bc1f4b7f4f37a362c99d537a1e6e5fa58b1834f6c5b72f168d"
-    },
-    {
-      "path": "provider-admission-v1.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "63f52282b1a838d0aa588f1fd7107fedfee205f590ed404ab36874957a396c15"
-    },
-    {
-      "path": "managed-operator-v1.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "98f450a73228ef3cf439f6b49d931975aa2e807bcc47eeb48d045870f2bba5a0"
-    },
-    {
-      "path": "identity-evidence-layering-v0.json",
-      "fixture_version": "0.1.0-research",
-      "sha256": "d96124f0dc8cba6aa38991fcf9a9da7c3083c569b3762a87574246113e683581"
-    },
-    {
-      "path": "operator-onboarding-recovery-v1.json",
-      "fixture_version": "1.0.0-operational",
-      "sha256": "e946a86efdfaaa305077367b50c3649c1732424f0dfed998fd6d62520bb8ffc1"
-    },
-    {
-      "path": "e050-client-credential-lifecycle-v1.json",
-      "fixture_version": "1.0.0-implementation-evidence",
-      "sha256": "4f71c44380f7a95249e7f6233fc4bce56de4e344b97a5ecc11c8740e88af12d6"
-    },
-    {
-      "path": "local-directory-discovery-v0.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "490bcc1a70153745a28299ff9680dc185312676ef06384789667174e61f374ed"
-    },
-    {
-      "path": "restricted-trust-domain-v0.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "0b23cc925dd3409d1c39d788e54281e60255b16dcd83fe5e4be84720ddd6039f"
-    },
-    {
-      "path": "restricted-trust-domain-membership-v0.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "78cb70b19dabed5be0175555cf2b4bb123dd4bc77ce36b67b745f311f3d941d4"
-    },
-    {
-      "path": "reputation-outcome-v2.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "dffa9bf108e23d5ce71acc44a1fa7567bcc76feba83291086873e2a64a98fa85"
-    },
-    {
-      "path": "restricted-trust-domain-directory-decision-v0.json",
-      "fixture_version": "0.1.0-draft",
-      "sha256": "d97cbccab0ca86b546a574aab0bd5e92d3138269f4a5adb3b99cfe9dac927d6b"
+      "path": "service-lifecycle-v1.json",
+      "fixture_version": "0.2.0-draft",
+      "sha256": "7bb6be604278656b960b48e1c07279ae41cb19447140d9dceeeea10f7c90b3c7"
     }
   ]
 }
