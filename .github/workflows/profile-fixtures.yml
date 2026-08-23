@@ -80,6 +80,8 @@ on:
       - "tools/test_public_evidence_access.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
       - "tools/check_discovery_sdk_currency.py"
+      - "tools/manage_release_closure.py"
+      - "tools/test_manage_release_closure.py"
       - "ecosystem/releases.json"
       - "spec/v1.9/release-integrity-manifest.json"
       - "spec/v1.9/**"
@@ -166,6 +168,8 @@ on:
       - "tools/test_public_evidence_access.py"
       - "TERMINOLOGY_AND_DISCOVERABILITY.md"
       - "tools/check_discovery_sdk_currency.py"
+      - "tools/manage_release_closure.py"
+      - "tools/test_manage_release_closure.py"
       - "ecosystem/releases.json"
       - "spec/v1.9/release-integrity-manifest.json"
       - "spec/v1.9/**"
@@ -190,8 +194,9 @@ jobs:
           python-version: "3.11"
       - run: python3 -m pip install -r tools/requirements.txt
       - run: python3 -m pip install "./conformance-runner[signing]"
+      - name: Validate complete release metadata closure
+        run: python3 tools/manage_release_closure.py --check
       - run: python3 -m unittest discover -s conformance-runner/tests
-      - run: python3 tools/check_profile_fixture_manifest.py
       - run: python3 -m unittest discover -s tools -p 'test_effective_capability_taxonomy.py'
       - run: python3 -m unittest discover -s tools -p 'test_runtime_identity_context.py'
       - run: python3 -m unittest discover -s tools -p 'test_environmental_independence.py'
@@ -201,7 +206,6 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_directory_state_semantics.py'
       - run: python3 -m unittest discover -s tools -p 'test_effective_service_capability_semantics.py'
       - run: python3 -m unittest discover -s tools -p 'test_effective_capability_wire_contract.py'
-      - run: python3 tools/check_compatibility_environment.py
       - run: python3 -m unittest discover -s tools -p 'test_compatibility_environment.py'
       - run: python3 -m unittest discover -s tools -p 'test_restricted_trust_domain_fixture.py'
       - run: python3 -m unittest discover -s tools -p 'test_restricted_directory_decision_fixture.py'
@@ -239,7 +243,6 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_newcomer_validation_record.py'
       - run: python3 tools/check_clean_room_interoperability_record.py
       - run: python3 -m unittest discover -s tools -p 'test_clean_room_interoperability_record.py'
-      - run: python3 tools/check_external_participation_campaign.py
       - run: python3 -m unittest discover -s tools -p 'test_external_participation_campaign.py'
       - run: python3 tools/check_submission_governance_decision.py
       - run: python3 -m unittest discover -s tools -p 'test_submission_governance_decision.py'
@@ -247,5 +250,3 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_signed_message_envelope_boundary.py'
       - run: python3 tools/check_public_evidence_access.py
       - run: python3 -m unittest discover -s tools -p 'test_public_evidence_access.py'
-      - run: python3 tools/check_spec_release_integrity.py
-      - run: python3 tools/check_discovery_sdk_currency.py

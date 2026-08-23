@@ -99,6 +99,8 @@ def main() -> int:
         "docs/ECOSYSTEM_VERSION_TRUTH.md",
         "tools/check_ecosystem_version_truth.py",
         "tools/test_ecosystem_version_truth.py",
+        "tools/manage_release_closure.py",
+        "tools/test_manage_release_closure.py",
         "research/pre-normative-profiles/fixtures/effective-capability-v1.json",
         "tools/test_effective_capability_wire_contract.py",
         "docs/architecture/historical-compatibility-environment.md",
