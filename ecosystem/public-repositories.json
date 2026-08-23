@@ -39,7 +39,7 @@
       "name": "iicp-client-python",
       "package": "pypi:iicp-client",
       "protocol": "1.9",
-      "release": "0.7.107",
+      "release": "0.7.108",
       "url": "https://github.com/RobLe3/iicp-client-python"
     },
     {
@@ -50,7 +50,7 @@
       "name": "iicp-client-typescript",
       "package": "npm:@iicp/client",
       "protocol": "1.9",
-      "release": "0.7.107",
+      "release": "0.7.108",
       "url": "https://github.com/RobLe3/iicp-client-typescript"
     },
     {
@@ -61,7 +61,7 @@
       "name": "iicp-client-rust",
       "package": "crates:iicp-client",
       "protocol": "1.9",
-      "release": "0.7.107",
+      "release": "0.7.108",
       "url": "https://github.com/RobLe3/iicp-client-rust"
     },
     {
@@ -72,7 +72,7 @@
       "name": "iicp-web-node",
       "package": "npm:@iicp/web-node",
       "protocol": "1.9",
-      "release": "0.2.5",
+      "release": "0.2.6",
       "url": "https://github.com/RobLe3/iicp-web-node"
     }
   ],

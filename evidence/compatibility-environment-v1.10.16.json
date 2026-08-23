@@ -97,7 +97,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "869413421978009452bd84538787595b22b75800b3b332d8fa955b795f264b0b"
+          "sha256": "10e4171e100f7dd74b0886a8e1890ae67739d356cc55142ee1c6911f02fa7d37"
         }
       ]
     },
@@ -117,13 +117,13 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "869413421978009452bd84538787595b22b75800b3b332d8fa955b795f264b0b"
+          "sha256": "10e4171e100f7dd74b0886a8e1890ae67739d356cc55142ee1c6911f02fa7d37"
         }
       ]
     },
     {
       "component": "client-python",
-      "release": "0.7.107",
+      "release": "0.7.108",
       "supported_profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -139,13 +139,13 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "869413421978009452bd84538787595b22b75800b3b332d8fa955b795f264b0b"
+          "sha256": "10e4171e100f7dd74b0886a8e1890ae67739d356cc55142ee1c6911f02fa7d37"
         }
       ]
     },
     {
       "component": "client-typescript",
-      "release": "0.7.107",
+      "release": "0.7.108",
       "supported_profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -160,13 +160,13 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "869413421978009452bd84538787595b22b75800b3b332d8fa955b795f264b0b"
+          "sha256": "10e4171e100f7dd74b0886a8e1890ae67739d356cc55142ee1c6911f02fa7d37"
         }
       ]
     },
     {
       "component": "client-rust",
-      "release": "0.7.107",
+      "release": "0.7.108",
       "supported_profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -181,7 +181,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "869413421978009452bd84538787595b22b75800b3b332d8fa955b795f264b0b"
+          "sha256": "10e4171e100f7dd74b0886a8e1890ae67739d356cc55142ee1c6911f02fa7d37"
         }
       ]
     },
@@ -199,7 +199,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "869413421978009452bd84538787595b22b75800b3b332d8fa955b795f264b0b"
+          "sha256": "10e4171e100f7dd74b0886a8e1890ae67739d356cc55142ee1c6911f02fa7d37"
         }
       ]
     }
