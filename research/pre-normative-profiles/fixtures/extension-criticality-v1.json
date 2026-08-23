@@ -1,0 +1,71 @@
+{
+  "fixture_version": "1.0.0",
+  "status": "pre-normative",
+  "wire_change": false,
+  "classes": {
+    "OPTIONAL_IGNORABLE": "Omission preserves every required semantic, policy and security constraint.",
+    "OPTIONAL_NEGOTIABLE": "Behavior applies only after peers select a common supported subset.",
+    "REQUIRED_UNDERSTOOD": "Unsupported or unknown semantics reject before execution.",
+    "REQUIRED_SECURITY_CRITICAL": "Unsupported, unknown or prohibited security behavior fails closed before dispatch."
+  },
+  "cases": [
+    {
+      "id": "EC-01",
+      "class": "OPTIONAL_IGNORABLE",
+      "historical_peer": true,
+      "expected": {"dispatch_allowed": true, "extension_applied": false, "required_constraints_preserved": true}
+    },
+    {
+      "id": "EC-02",
+      "class": "OPTIONAL_NEGOTIABLE",
+      "offered": ["streaming", "buffered"],
+      "supported": ["buffered"],
+      "expected": {"selected": ["buffered"], "dispatch_allowed": true}
+    },
+    {
+      "id": "EC-03",
+      "class": "REQUIRED_UNDERSTOOD",
+      "supported": false,
+      "expected": {"dispatch_allowed": false, "failure_stage": "before_execution", "reason": "unsupported_required_semantics"}
+    },
+    {
+      "id": "EC-04",
+      "class": "REQUIRED_SECURITY_CRITICAL",
+      "supported": false,
+      "expected": {"dispatch_allowed": false, "failure_stage": "before_dispatch", "reason": "unsupported_security_requirement", "downgrade_allowed": false}
+    },
+    {
+      "id": "EC-05",
+      "class": "OPTIONAL_NEGOTIABLE",
+      "future_peer": true,
+      "historical_peer": true,
+      "expected": {"historical_peer_changed": false, "compatibility_burden": "future_peer", "common_subset_required": true}
+    }
+  ],
+  "non_llm_regressions": [
+    {
+      "id": "NL-01",
+      "provider_kind": "deterministic_rule_engine",
+      "capability": "urn:iicp:capability:classification:structured:v1",
+      "model_metadata_required": false,
+      "token_metadata_required": false,
+      "expected": {"representable_without_core_change": true, "deterministic": true}
+    },
+    {
+      "id": "NL-02",
+      "provider_kind": "human_mediated_service",
+      "capability": "urn:iicp:capability:review:human-mediated:v1",
+      "model_metadata_required": false,
+      "token_metadata_required": false,
+      "expected": {"representable_without_core_change": true, "asynchronous_profile_required": true}
+    },
+    {
+      "id": "NL-03",
+      "provider_kind": "intermittently_connected_service",
+      "capability": "urn:iicp:capability:analysis:structured:v1",
+      "model_metadata_required": false,
+      "token_metadata_required": false,
+      "expected": {"identity_persists_when_unreachable": true, "ordinary_dispatch_eligible_when_unreachable": false, "store_and_forward_claimed": false}
+    }
+  ]
+}

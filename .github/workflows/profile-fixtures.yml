@@ -197,6 +197,8 @@ jobs:
       - run: python3 -m unittest discover -s tools -p 'test_directory_state_semantics.py'
       - run: python3 -m unittest discover -s tools -p 'test_effective_service_capability_semantics.py'
       - run: python3 -m unittest discover -s tools -p 'test_effective_capability_wire_contract.py'
+      - run: python3 tools/check_compatibility_environment.py
+      - run: python3 -m unittest discover -s tools -p 'test_compatibility_environment.py'
       - run: python3 -m unittest discover -s tools -p 'test_restricted_trust_domain_fixture.py'
       - run: python3 -m unittest discover -s tools -p 'test_restricted_directory_decision_fixture.py'
       - run: python3 -m unittest discover -s tools -p 'test_restricted_trust_domain_membership.py'

@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/compatibility-environment-v1.json",
+  "title": "IICP compatibility environment v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["catalog_version", "status", "protocol_release", "semantic_environment", "implementation_projections", "integrity"],
+  "properties": {
+    "catalog_version": {"const": 1},
+    "status": {"enum": ["release-candidate", "released", "superseded"]},
+    "protocol_release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "commit", "immutable_reference", "integrity_manifest"],
+      "properties": {
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "immutable_reference": {"type": "string", "minLength": 1},
+        "integrity_manifest": {"type": "string", "minLength": 1}
+      }
+    },
+    "semantic_environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registry", "schemas", "profiles", "bindings", "identity_and_security_profiles", "extension_rules", "fixtures", "relationships"],
+      "properties": {
+        "registry": {"$ref": "#/$defs/versionedArtifact"},
+        "schemas": {"type": "array", "items": {"$ref": "#/$defs/namedArtifact"}},
+        "profiles": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "optional", "deprecated"],
+          "properties": {
+            "required": {"$ref": "#/$defs/artifactList"},
+            "optional": {"$ref": "#/$defs/artifactList"},
+            "deprecated": {"$ref": "#/$defs/artifactList"}
+          }
+        },
+        "bindings": {"$ref": "#/$defs/artifactList"},
+        "identity_and_security_profiles": {"$ref": "#/$defs/artifactList"},
+        "extension_rules": {"$ref": "#/$defs/artifact"},
+        "fixtures": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["positive", "negative", "downgrade", "compatibility"],
+          "properties": {
+            "positive": {"$ref": "#/$defs/artifactList"},
+            "negative": {"$ref": "#/$defs/artifactList"},
+            "downgrade": {"$ref": "#/$defs/artifactList"},
+            "compatibility": {"$ref": "#/$defs/artifactList"}
+          }
+        },
+        "relationships": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["replacements", "deprecations"],
+          "properties": {
+            "replacements": {"type": "array", "items": {"$ref": "#/$defs/relationship"}},
+            "deprecations": {"type": "array", "items": {"$ref": "#/$defs/relationship"}}
+          }
+        }
+      }
+    },
+    "implementation_projections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component", "release", "supported_profiles", "supported_bindings", "evidence"],
+        "properties": {
+          "component": {"type": "string", "minLength": 1},
+          "release": {"type": "string", "minLength": 1},
+          "supported_profiles": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "supported_bindings": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "evidence": {"$ref": "#/$defs/artifactList"}
+        }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest_algorithm", "catalog_digest_location"],
+      "properties": {
+        "digest_algorithm": {"const": "sha-256"},
+        "catalog_digest_location": {"type": "string", "minLength": 1}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference", "sha256"],
+      "properties": {
+        "reference": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "namedArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "reference", "sha256"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "reference": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "versionedArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "reference", "sha256"],
+      "properties": {
+        "version": {"type": "string", "minLength": 1},
+        "reference": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "artifactList": {"type": "array", "items": {"$ref": "#/$defs/namedArtifact"}},
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "effective_release"],
+      "properties": {
+        "from": {"type": "string", "minLength": 1},
+        "to": {"type": "string", "minLength": 1},
+        "effective_release": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}
