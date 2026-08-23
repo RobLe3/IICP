@@ -1,6 +1,6 @@
 {
   "files": {
-    ".github/workflows/profile-fixtures.yml": "eae11f09879e217a1e54201e8d3d92b706874f3a1851fb0bcc24a27139c4c2af",
+    ".github/workflows/profile-fixtures.yml": "3c12b12ef4f2042daf6e04ba9aadd51ec74e97ca22e663d01fcf3ac4b152678b",
     "CHANGELOG.md": "10ae3612d9c5cc4e7b6c89f4c4b5ee6c91c4f4670f1661ec60b1bc811c232403",
     "CONTINUATION.md": "2d019aba2d7d084987506c356be52efc7e15d2b5afc14b5747bd4f89d591209f",
     "CONTRIBUTING.md": "4b4f82a12e8422e1105591781dc69e222734315fcb6ff78b074a20c2e52df7cb",
@@ -207,8 +207,9 @@
     "tools/check_relay_eligibility_record.py": "b883f0172d895b664f5269dd56448ef02d64a49fadbf55da5704bba8466f3cd8",
     "tools/check_security_considerations_coverage.py": "182d29f056e1e396d3331a1d1bac66d28d83bb4acf6beb4c785dc16c5acaccfe",
     "tools/check_signed_message_envelope_boundary.py": "6ff4228e34408681bdcc4485d3470b9a86b7f7b4a4fd5bbf56e830e2fcc53c5b",
-    "tools/check_spec_release_integrity.py": "865bd02d0cd2321863676723a8c7f9034173ebc05e696e0381d66dd731331dcd",
+    "tools/check_spec_release_integrity.py": "b9b1a4974b9321ed3ab3b615c89f4d5c41ccb1aa74bbb8fb44770d092e99d636",
     "tools/check_submission_governance_decision.py": "a249100bf6c2836ea01ceee353fa5c139ecbe0f0b280fe250a86d11137dde9cd",
+    "tools/manage_release_closure.py": "d12427584042bf25133a0958ed0313cb41107c9f9f7a11f6e950ab4dcb3c1f73",
     "tools/requirements.txt": "c0134412c5344bebbcef0bbe0cd3ed6f94f984f3cf990bb5c9a0ce79123c9e02",
     "tools/test_audit_intent_sources.py": "8286e32879fcf48647f00facc8bca1fbf9a460393e9fc607e50440cd1fae063f",
     "tools/test_clean_room_interoperability_record.py": "2f2cc274dfb5e9503b0d24d91bc5ee2e1878301c464ad3ff65d9afaa267a847b",
@@ -226,6 +227,7 @@
     "tools/test_intent_payload_fixture.py": "cae5bc663eca3673e90f4a0d0315dab25d15a193d4b8a726b5a4926776fa522f",
     "tools/test_intent_registry.py": "105ecb1edfc034d0fae433c2c17f16f905d405715d40c521dc1feb124fa146f5",
     "tools/test_local_directory_discovery.py": "28da74bfd751320b4a7578bed38fd07b028e5801d12181cecf190b0d4253178c",
+    "tools/test_manage_release_closure.py": "2d724bf099fecc7814ab15a5e9e574a5d67c0ac6f91c8ace2b3e823526b15fa8",
     "tools/test_newcomer_validation_record.py": "1342734ce07741bf276ce02a097ddbb7be05970cac60a4c3a2dbc03e25dc54a4",
     "tools/test_node_observability_contract.py": "f22c490c5ab3e0990b6175f509aad9a061eaf97e951493f5ad859904ead1d00b",
     "tools/test_operator_onboarding_recovery.py": "ffd287d990e212ef476740f769159b2c12e8d91654542e21ca369fcd0f57e005",
