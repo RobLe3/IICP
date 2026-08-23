@@ -173,6 +173,10 @@ on:
       - "SPEC_RELEASE_PROCESS.md"
       - ".github/workflows/profile-fixtures.yml"
 
+concurrency:
+  group: profile-fixtures-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 

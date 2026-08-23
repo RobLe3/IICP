@@ -6,6 +6,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: ecosystem-manifest-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
