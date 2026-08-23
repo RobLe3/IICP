@@ -34,9 +34,13 @@ PATTERN_EXEMPTIONS = {
     "tools/test_public_artifact_closure.py",
 }
 TEXT_SUFFIXES = {".md", ".json", ".py", ".toml", ".yml", ".yaml", ".txt"}
-PRIVATE_REPOSITORY = re.compile(
-    r"(?:https://github\.com/RobLe3/(?:iicp\.network|iicp-network-ops|iicp-network-internal)"
-    r"|(?<![A-Za-z0-9./-])(?:iicp-network-ops|iicp-network-internal)(?![A-Za-z0-9.-]))"
+PUBLIC_PROJECT_REPOSITORIES = {
+    "IICP", "iicp-client-python", "iicp-client-rust", "iicp-client-typescript",
+    "iicp-directory-php", "iicp-directory-rust", "iicp-management",
+    "iicp-node-monitor", "iicp-web-node",
+}
+PROJECT_REPOSITORY = re.compile(
+    r"(?:https://github\.com/RobLe3/|(?<![/A-Za-z0-9])RobLe3/)([A-Za-z0-9_.-]+)"
 )
 INTERNAL_PATH = re.compile(r"(?<![A-Za-z0-9_./:-])project/[A-Za-z0-9_.@/+-]+")
 WORKSTATION_PATH = re.compile(r"(?:/Users/[^/\s]+/|/home/[^/\s]+/|[A-Za-z]:\\Users\\[^\\\s]+\\)")
@@ -104,8 +108,10 @@ def validate(root: Path = ROOT, paths: set[str] | None = None) -> list[Finding]:
         text = source.read_text(encoding="utf-8", errors="replace")
         for line_number, line in enumerate(text.splitlines(), 1):
             if relative not in PATTERN_EXEMPTIONS:
-                if PRIVATE_REPOSITORY.search(line):
-                    findings.append(Finding(relative, line_number, "depends on or names a private repository"))
+                names = {name.removesuffix(".git") for name in PROJECT_REPOSITORY.findall(line)}
+                unavailable = sorted(name for name in names if name not in PUBLIC_PROJECT_REPOSITORIES)
+                if unavailable:
+                    findings.append(Finding(relative, line_number, "depends on or names an unavailable repository"))
                 if INTERNAL_PATH.search(line):
                     findings.append(Finding(relative, line_number, "depends on an unavailable internal project path"))
                 if WORKSTATION_PATH.search(line):

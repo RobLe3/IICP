@@ -35,9 +35,9 @@ class PublicArtifactClosureTest(unittest.TestCase):
     def test_private_repository_is_rejected(self) -> None:
         root = self.make_root()
         (root / "doc.md").write_text(
-            "See https://github.com/RobLe3/iicp.network/issues/1\n", encoding="utf-8"
+            "See https://github.com/RobLe3/unavailable-component/issues/1\n", encoding="utf-8"
         )
-        self.assertIn("private repository", validate(root, {"doc.md"})[0].message)
+        self.assertIn("unavailable repository", validate(root, {"doc.md"})[0].message)
 
     def test_internal_and_workstation_paths_are_rejected(self) -> None:
         root = self.make_root()

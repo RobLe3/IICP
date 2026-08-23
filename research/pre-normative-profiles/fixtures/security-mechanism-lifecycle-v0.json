@@ -1,0 +1,17 @@
+{
+  "profile": "iicp.security-mechanism-lifecycle.v0",
+  "status": "pre-normative",
+  "decision_steps": ["understand", "verify", "trust", "authorize"],
+  "lifecycle_states": ["active", "deprecated", "prohibited", "replaced"],
+  "cases": [
+    {"id":"active-authorized","mechanism":"sig-current","known":true,"verified":true,"lifecycle":"active","policy_allows":true,"action_authorized":true,"expected":"execute"},
+    {"id":"deprecated-policy-refusal","mechanism":"sig-legacy","known":true,"verified":true,"lifecycle":"deprecated","policy_allows":false,"action_authorized":true,"expected":"refuse_policy"},
+    {"id":"prohibited-valid-signature","mechanism":"sig-obsolete","known":true,"verified":true,"lifecycle":"prohibited","policy_allows":false,"action_authorized":true,"expected":"refuse_prohibited"},
+    {"id":"unknown-required-mechanism","mechanism":"sig-unknown","known":false,"verified":false,"lifecycle":null,"policy_allows":false,"action_authorized":false,"expected":"refuse_unknown_required"},
+    {"id":"downgrade-attempt","mechanism":"sig-legacy","known":true,"verified":true,"lifecycle":"deprecated","policy_allows":false,"action_authorized":true,"stronger_mutual_mechanism_removed":true,"expected":"refuse_downgrade"},
+    {"id":"verified-not-authorized","mechanism":"sig-current","known":true,"verified":true,"lifecycle":"active","policy_allows":true,"action_authorized":false,"expected":"refuse_unauthorized"},
+    {"id":"gateway-truthful-boundary","mechanism":"sig-current","known":true,"verified":true,"lifecycle":"active","policy_allows":true,"action_authorized":true,"gateway":{"gateway_profile":"sig-current","endpoint_profile":"sig-legacy","claims_endpoint_used_gateway_profile":false},"expected":"execute_via_gateway"},
+    {"id":"gateway-misleading-claim","mechanism":"sig-current","known":true,"verified":true,"lifecycle":"active","policy_allows":true,"action_authorized":true,"gateway":{"gateway_profile":"sig-current","endpoint_profile":"sig-legacy","claims_endpoint_used_gateway_profile":true},"expected":"refuse_misattributed_evidence"}
+  ],
+  "replacement_relations": [{"from":"sig-legacy","to":"sig-current","preserves_historical_meaning":true,"implies_equal_properties":false}]
+}
