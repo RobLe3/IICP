@@ -38,3 +38,14 @@ properties require an authenticated key-set and replay state, so they are a
 future v2 design rather than an untestable promise in v1. A v1 client fails
 closed on invalid signatures, expiry, audience, node, intent, or issuer
 mismatch; it must not infer any stronger admission or revocation guarantee.
+
+
+## Rollback and recovery boundary
+
+A durable trust-bundle store cannot detect restoration of its complete state by
+itself. The companion `trust-bundle-rollback-anchor-v0` decision and fixture use
+an independently protected monotonic anchor where available and require an
+explicit authenticated administrator recovery action when the anchor is lost or
+the host binding changes. This remains a semantic candidate: native adapter,
+governance and recovery-drill evidence are required before strict trust can be a
+default.

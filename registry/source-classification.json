@@ -784,6 +784,7 @@
             "tests/test_relay_session.py",
             "tests/test_relay_worker_client.py",
             "tests/test_request_projection_fixture.py",
+            "tests/test_restricted_directory.py",
             "tests/test_serve.py",
             "tests/test_serve_multiplex.py",
             "tests/test_task_rate_limit.py"
@@ -810,6 +811,7 @@
             "src/client.rs",
             "src/confidentiality.rs",
             "src/conformance.rs",
+            "src/consumer_token.rs",
             "src/dispatch_ticket.rs",
             "src/identity.rs",
             "src/iicp_tcp.rs",
@@ -840,7 +842,9 @@
             "tests/proxy_fixtures.json",
             "tests/relay_http_poll_tests.rs",
             "tests/request_projection_fixture.rs",
-            "tests/serve_multiplex_tests.rs"
+            "tests/restricted_directory_client.rs",
+            "tests/serve_multiplex_tests.rs",
+            "tests/service_manager_cli.rs"
           ]
         },
         {
@@ -900,6 +904,7 @@
             "tests/relay_session.test.ts",
             "tests/relay_worker_client.test.ts",
             "tests/request_projection_fixture.test.ts",
+            "tests/restricted_directory.test.ts",
             "tests/serve.test.ts",
             "tests/serve_multiplex.test.ts",
             "tests/task_rate_limit.test.ts"
@@ -944,6 +949,7 @@
             "tests/Feature/RegistryTest.php",
             "tests/Feature/RelayBindTicketTest.php",
             "tests/Feature/ReplicaEventApplierTest.php",
+            "tests/Feature/RestrictedDomainMembershipTest.php",
             "tests/Feature/SharedBehaviorContractTest.php",
             "tests/Feature/SignReplicaResponseTest.php",
             "tests/Feature/SnapshotEndpointTest.php",
@@ -977,6 +983,7 @@
             "parity/dispatch-route-ticket-v1.json",
             "parity/effective-capability-v1/fixture.json",
             "parity/runtime-identity-context-v0/fixture.json",
+            "scripts/browser-compatibility.mjs",
             "src/browserNodeProvider.ts",
             "src/iicpConsumer.ts",
             "src/runtimeIdentity.ts",
@@ -1203,6 +1210,7 @@
             "parity/runtime-identity-context-v0/fixture.json",
             "src/backends/anthropic.rs",
             "src/backends/openai_compat.rs",
+            "src/bin/iicp_node.rs",
             "src/node.rs",
             "tests/backends_tests.rs",
             "tests/runtime_identity_fixture.rs"

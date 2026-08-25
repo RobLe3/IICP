@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1.0-research",
+  "profile": "urn:iicp:profile:dispatch-ticket-trust-anchor:v0",
+  "status": "pre-normative",
+  "reason_codes": [
+    "anchor_ok",
+    "rollback_detected",
+    "anchor_unavailable",
+    "anchor_mismatch",
+    "recovery_required",
+    "recovery_authorized"
+  ],
+  "anchor_state_fields": [
+    "bundle_version",
+    "bundle_digest",
+    "key_binding",
+    "machine_binding",
+    "checkpoint_sequence"
+  ],
+  "forbidden_state_fields": [
+    "prompt",
+    "response",
+    "credential",
+    "endpoint",
+    "task_payload"
+  ],
+  "vectors": [
+    {
+      "id": "current_state_matches_anchor",
+      "local": {"bundle_version": 12, "bundle_digest": "sha256:bundle-12"},
+      "anchor": {"available": true, "bundle_version": 12, "bundle_digest": "sha256:bundle-12", "machine_binding_matches": true},
+      "authorization": {"recovery": false},
+      "expected": {"decision": "accept", "reason": "anchor_ok"}
+    },
+    {
+      "id": "whole_store_rollback",
+      "local": {"bundle_version": 9, "bundle_digest": "sha256:bundle-9"},
+      "anchor": {"available": true, "bundle_version": 12, "bundle_digest": "sha256:bundle-12", "machine_binding_matches": true},
+      "authorization": {"recovery": false},
+      "expected": {"decision": "reject", "reason": "rollback_detected"}
+    },
+    {
+      "id": "same_version_altered_bundle",
+      "local": {"bundle_version": 12, "bundle_digest": "sha256:altered"},
+      "anchor": {"available": true, "bundle_version": 12, "bundle_digest": "sha256:bundle-12", "machine_binding_matches": true},
+      "authorization": {"recovery": false},
+      "expected": {"decision": "reject", "reason": "anchor_mismatch"}
+    },
+    {
+      "id": "machine_clone",
+      "local": {"bundle_version": 12, "bundle_digest": "sha256:bundle-12"},
+      "anchor": {"available": true, "bundle_version": 12, "bundle_digest": "sha256:bundle-12", "machine_binding_matches": false},
+      "authorization": {"recovery": false},
+      "expected": {"decision": "reject", "reason": "recovery_required"}
+    },
+    {
+      "id": "secure_store_loss_no_authorization",
+      "local": {"bundle_version": 12, "bundle_digest": "sha256:bundle-12"},
+      "anchor": {"available": false, "bundle_version": null, "bundle_digest": null, "machine_binding_matches": null},
+      "authorization": {"recovery": false},
+      "expected": {"decision": "reject", "reason": "anchor_unavailable"}
+    },
+    {
+      "id": "secure_store_loss_authorized_recovery",
+      "local": {"bundle_version": 12, "bundle_digest": "sha256:bundle-12"},
+      "anchor": {"available": false, "bundle_version": null, "bundle_digest": null, "machine_binding_matches": null},
+      "authorization": {"recovery": true, "audit_receipt": "synthetic-recovery-receipt"},
+      "expected": {"decision": "recover", "reason": "recovery_authorized"}
+    },
+    {
+      "id": "clone_authorized_rebind",
+      "local": {"bundle_version": 12, "bundle_digest": "sha256:bundle-12"},
+      "anchor": {"available": true, "bundle_version": 12, "bundle_digest": "sha256:bundle-12", "machine_binding_matches": false},
+      "authorization": {"recovery": true, "audit_receipt": "synthetic-rebind-receipt"},
+      "expected": {"decision": "recover", "reason": "recovery_authorized"}
+    }
+  ]
+}

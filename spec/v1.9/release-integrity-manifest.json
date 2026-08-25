@@ -90,7 +90,7 @@
     "registry/schemas/safety-moderate-v1-input.json": "0df26d42bd9b96597e69397952af84a08fd60fd36a1963a31e1ca95368b63656",
     "registry/schemas/safety-moderate-v1-output.json": "2ad76c1f4fbcff037c68e2478c737da7ca879d60917c52369c5c965339bbe1d5",
     "registry/schemas/translate-v1-input.json": "197067000ec2acfeba9ab463c61d733008a302a4a836bebc5ba02eec228823e4",
-    "registry/source-classification.json": "53ec26269ee27c4532d37f148f2d0b81368a641d18bc7c0b0d448ff851c144bb",
+    "registry/source-classification.json": "fe01d4cc22394fd74c1b734aaf469e5f6201b8229d792f30ca570c6a124f44b1",
     "research/RESEARCH.md": "323dd757c9871aba21bf5933715ee746745fbecfc615d709f046deca7a6b58c5",
     "research/native-ai-infrastructure/fixtures/native-framing-fixture-manifest-v1.json": "a162b83304cc10cf07a73a70204a3fb7fc543a2c4f2f6585f6c58de92ab01245",
     "research/native-ai-infrastructure/fixtures/native-framing-v1.json": "e73a871c069f194c42716f462d2bde04fb79d769e1e98249c2d17c9af50bcfc1",

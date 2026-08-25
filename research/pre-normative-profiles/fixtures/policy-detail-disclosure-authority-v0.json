@@ -1,0 +1,72 @@
+{
+  "profile": "urn:iicp:profile:policy-detail-disclosure:v0",
+  "fixture_version": "0.2.0-draft",
+  "status": "pre-normative",
+  "allowed_detail_fields": [
+    "retention_intervals",
+    "subprocessor_references",
+    "approval_evidence_references",
+    "operational_evidence_references"
+  ],
+  "reason_precedence": [
+    "consumer_auth_required",
+    "consumer_auth_invalid",
+    "consumer_auth_expired",
+    "consumer_auth_revoked",
+    "dispatch_ticket_invalid",
+    "dispatch_ticket_expired",
+    "dispatch_ticket_revoked",
+    "disclosure_forbidden",
+    "resource_concealed",
+    "compatible"
+  ],
+  "cases": [
+    {
+      "id": "POLICY-DISCLOSURE-09",
+      "context": {
+        "consumer_auth": "revoked",
+        "disclosure_allowed": true
+      },
+      "expected": {
+        "status": 401,
+        "reason": "consumer_auth_revoked"
+      }
+    },
+    {
+      "id": "POLICY-DISCLOSURE-10",
+      "context": {
+        "consumer_auth": "valid",
+        "dispatch_ticket": "invalid",
+        "disclosure_allowed": true
+      },
+      "expected": {
+        "status": 401,
+        "reason": "dispatch_ticket_invalid"
+      }
+    },
+    {
+      "id": "POLICY-DISCLOSURE-11",
+      "context": {
+        "consumer_auth": "valid",
+        "dispatch_ticket": "expired",
+        "disclosure_allowed": true
+      },
+      "expected": {
+        "status": 401,
+        "reason": "dispatch_ticket_expired"
+      }
+    },
+    {
+      "id": "POLICY-DISCLOSURE-12",
+      "context": {
+        "consumer_auth": "valid",
+        "dispatch_ticket": "revoked",
+        "disclosure_allowed": true
+      },
+      "expected": {
+        "status": 401,
+        "reason": "dispatch_ticket_revoked"
+      }
+    }
+  ]
+}
