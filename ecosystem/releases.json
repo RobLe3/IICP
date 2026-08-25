@@ -60,9 +60,9 @@
     },
     {
       "id": "client-python",
-      "version": "0.7.108",
+      "version": "0.7.109",
       "wire_behavior": "additive",
-      "conformance_impact": "changed",
+      "conformance_impact": "unchanged",
       "profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -75,14 +75,14 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Upgrade to receive the strengthened bounded IICP explanation context and deterministic unattended-update behavior. No wire or persisted-state migration is required.",
-      "rollback": "Install immutable 0.7.107. Automatic update retry state is local and non-authoritative."
+      "migration": "Upgrade to add side-effect-free Bash, Zsh, Fish and PowerShell completion. No wire, profile or persisted-state migration is required.",
+      "rollback": "Install immutable 0.7.108 to remove the local completion command. Protocol behavior and persisted state are unchanged."
     },
     {
       "id": "client-typescript",
-      "version": "0.7.108",
+      "version": "0.7.109",
       "wire_behavior": "additive",
-      "conformance_impact": "changed",
+      "conformance_impact": "unchanged",
       "profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -94,14 +94,14 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Upgrade to receive the strengthened bounded IICP explanation context and deterministic unattended-update behavior. No wire or persisted-state migration is required.",
-      "rollback": "Install immutable 0.7.107. Automatic update retry state is local and non-authoritative."
+      "migration": "Upgrade to add side-effect-free Bash, Zsh, Fish and PowerShell completion. No wire, profile or persisted-state migration is required.",
+      "rollback": "Install immutable 0.7.108 to remove the local completion command. Protocol behavior and persisted state are unchanged."
     },
     {
       "id": "client-rust",
-      "version": "0.7.108",
+      "version": "0.7.109",
       "wire_behavior": "additive",
-      "conformance_impact": "changed",
+      "conformance_impact": "unchanged",
       "profiles": [
         "service-lifecycle-v1",
         "runtime-health-v1",
@@ -113,8 +113,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Upgrade for guarded direct IICP explanations, verified DNS-SD directory resolution, the CUG configuration wizard and deterministic locked unattended updates. Public defaults and the stable wire baseline remain unchanged.",
-      "rollback": "Install immutable 0.7.107 to remove these local CLI and operator features. No wire or persisted-state migration is required."
+      "migration": "Upgrade to add side-effect-free Bash, Zsh, Fish and PowerShell completion. No wire, profile or persisted-state migration is required.",
+      "rollback": "Install immutable 0.7.108 to remove the local completion command. Protocol behavior and persisted state are unchanged."
     },
     {
       "id": "web-node",
