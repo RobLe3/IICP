@@ -1,0 +1,52 @@
+{
+  "manifest_version": "0.1.0-candidate",
+  "status": "pre-normative",
+  "purpose": "First-party security and compatibility evidence for IICP issues #56 and #58; not a protocol release manifest.",
+  "fixtures": [
+    {
+      "path": "policy-data-handling-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "c7679ca8e757ce99725d10b73529168f19cd9a27a67485fefed1e19ab1a7c688"
+    },
+    {
+      "path": "policy-detail-disclosure-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "341669ad9f866d0f5f975ae9855f4443ca05fb363df0e097c6deffc7329f5012"
+    },
+    {
+      "path": "policy-detail-disclosure-authority-v0.json",
+      "fixture_version": "0.2.0-draft",
+      "sha256": "a357b4c5ece7fa58e6eaf9a0ec9fefdced0c830a27a198687ddf328b2e2c7568"
+    },
+    {
+      "path": "policy-operational-evidence-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "b73c15974c878f297daeb97f378cef1fa63a273a3587955012470264b278ae28"
+    },
+    {
+      "path": "dispatch-route-ticket-v1.json",
+      "fixture_version": "1.0.0-draft",
+      "sha256": "bbdbe180a543cb14cfc7791e9fdf18d0c9b5dfa88c4098690a1bed0003221a94"
+    },
+    {
+      "path": "dispatch-ticket-trust-v2.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "e8aecab6585d54f8abd4d60c31b9bd8023ca4a985a89b2826b040bfd4f8dcd94"
+    },
+    {
+      "path": "dispatch-ticket-trust-v2-crypto.json",
+      "fixture_version": "0.2.0-draft",
+      "sha256": "48be1f06e79da7849367f48deeb7a5ffa71a1de0e21800491dc6bf55d016fb94"
+    },
+    {
+      "path": "dispatch-ticket-trust-store-v1.json",
+      "fixture_version": null,
+      "sha256": "b3d70461ee4c1cde722e3371cd7254b095ed75803fd637eca0185f632b0a6261"
+    },
+    {
+      "path": "trust-bundle-rollback-anchor-v0.json",
+      "fixture_version": "0.1.0-research",
+      "sha256": "4fbfe88019b7edbc77491d8d30fe9ea9d9162c8acbd6a71a9aef075fafad4f12"
+    }
+  ]
+}
