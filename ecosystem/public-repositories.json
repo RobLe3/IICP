@@ -39,7 +39,7 @@
       "name": "iicp-client-python",
       "package": "pypi:iicp-client",
       "protocol": "1.9",
-      "release": "0.7.108",
+      "release": "0.7.109",
       "url": "https://github.com/RobLe3/iicp-client-python"
     },
     {
@@ -50,7 +50,7 @@
       "name": "iicp-client-typescript",
       "package": "npm:@iicp/client",
       "protocol": "1.9",
-      "release": "0.7.108",
+      "release": "0.7.109",
       "url": "https://github.com/RobLe3/iicp-client-typescript"
     },
     {
@@ -61,7 +61,7 @@
       "name": "iicp-client-rust",
       "package": "crates:iicp-client",
       "protocol": "1.9",
-      "release": "0.7.108",
+      "release": "0.7.109",
       "url": "https://github.com/RobLe3/iicp-client-rust"
     },
     {
@@ -74,6 +74,17 @@
       "protocol": "1.9",
       "release": "0.2.6",
       "url": "https://github.com/RobLe3/iicp-web-node"
+    },
+    {
+      "authority": "implementation-neutral management contracts, deterministic core and conformance material",
+      "id": "management",
+      "language": "rust",
+      "lifecycle": "developer-preview",
+      "name": "iicp-management",
+      "package": "crates:iicp-management-core",
+      "protocol": "1.9",
+      "release": "0.4.0",
+      "url": "https://github.com/RobLe3/iicp-management"
     }
   ],
   "schema": "iicp.public-repositories.v1"

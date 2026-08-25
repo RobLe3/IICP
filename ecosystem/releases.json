@@ -131,6 +131,21 @@
       "upgrade": "recommended",
       "migration": "Rebuild or install the browser package. Unsupported restricted operating modes now fail closed; public browser behavior remains unchanged.",
       "rollback": "Restore immutable 0.2.5. The browser node remains experimental and no persisted-state migration is involved."
+    },
+    {
+      "id": "management",
+      "version": "0.4.0",
+      "wire_behavior": "unchanged",
+      "conformance_impact": "changed",
+      "profiles": [
+        "management-profile-v1",
+        "policy-lifecycle-v1",
+        "progressive-authority-v1"
+      ],
+      "supported_protocol": ">=1.9.0,<2.0.0",
+      "upgrade": "optional",
+      "migration": "Install the optional Management Foundation developer preview with its published lockfile. It does not alter ordinary clients, Directories or IICP wire behavior.",
+      "rollback": "Install immutable 0.3.0 to remove the administrator trial harness. No service or target state is changed by package rollback."
     }
   ]
 }

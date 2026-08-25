@@ -30,6 +30,12 @@
       "release": "0.1.14",
       "visibility": "public"
     },
+    "management": {
+      "lifecycle": "developer-preview",
+      "name": "iicp-management",
+      "release": "0.4.0",
+      "visibility": "public"
+    },
     "specification": {
       "lifecycle": "active",
       "name": "IICP",

@@ -20,6 +20,7 @@ LIFECYCLES = {
     "publication-review",
     "restructuring",
     "archived",
+    "developer-preview",
 }
 
 
@@ -126,6 +127,7 @@ def render_current_markdown(projection: dict) -> str:
         "client-typescript",
         "client-rust",
         "web-node",
+        "management",
     )
     lines = [
         "# Current IICP version axes",
