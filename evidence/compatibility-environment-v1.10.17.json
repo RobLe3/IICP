@@ -122,7 +122,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "db254392f168f494bb4ab738cfb9304de3306c62f7bd7b5f0da6374b8c20bf8b"
+          "sha256": "b2651c18e674d2c392d22a80166344f44891d65e7a2df42009b22f43c43366ea"
         }
       ]
     },
@@ -142,7 +142,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "db254392f168f494bb4ab738cfb9304de3306c62f7bd7b5f0da6374b8c20bf8b"
+          "sha256": "b2651c18e674d2c392d22a80166344f44891d65e7a2df42009b22f43c43366ea"
         }
       ]
     },
@@ -164,7 +164,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "db254392f168f494bb4ab738cfb9304de3306c62f7bd7b5f0da6374b8c20bf8b"
+          "sha256": "b2651c18e674d2c392d22a80166344f44891d65e7a2df42009b22f43c43366ea"
         }
       ]
     },
@@ -185,7 +185,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "db254392f168f494bb4ab738cfb9304de3306c62f7bd7b5f0da6374b8c20bf8b"
+          "sha256": "b2651c18e674d2c392d22a80166344f44891d65e7a2df42009b22f43c43366ea"
         }
       ]
     },
@@ -206,7 +206,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "db254392f168f494bb4ab738cfb9304de3306c62f7bd7b5f0da6374b8c20bf8b"
+          "sha256": "b2651c18e674d2c392d22a80166344f44891d65e7a2df42009b22f43c43366ea"
         }
       ]
     },
@@ -224,7 +224,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "db254392f168f494bb4ab738cfb9304de3306c62f7bd7b5f0da6374b8c20bf8b"
+          "sha256": "b2651c18e674d2c392d22a80166344f44891d65e7a2df42009b22f43c43366ea"
         }
       ]
     }
