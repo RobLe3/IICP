@@ -83,7 +83,7 @@
       "name": "iicp-management",
       "package": "crates:iicp-management-core",
       "protocol": "1.9",
-      "release": "0.4.0",
+      "release": "0.5.0",
       "url": "https://github.com/RobLe3/iicp-management"
     }
   ],
