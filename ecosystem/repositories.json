@@ -47,7 +47,7 @@
       "authority": "Python consumer and provider SDK",
       "language": "python",
       "protocol": "1.9",
-      "release": "0.7.108",
+      "release": "0.7.109",
       "package": "pypi:iicp-client"
     },
     {
@@ -59,7 +59,7 @@
       "authority": "TypeScript consumer and provider SDK",
       "language": "typescript",
       "protocol": "1.9",
-      "release": "0.7.108",
+      "release": "0.7.109",
       "package": "npm:@iicp/client"
     },
     {
@@ -71,7 +71,7 @@
       "authority": "Rust consumer and provider SDK",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.7.108",
+      "release": "0.7.109",
       "package": "crates:iicp-client"
     },
     {
