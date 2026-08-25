@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## v1.10.17 — 2026-08-25
+
+Pre-normative preservation and traceability candidate. It does not ratify a
+Profile, change the stable v1.9 base wire or enable a runtime default.
+
+- Binds the existing consumer-cosignature and runtime-health fixtures to the
+  release-integrity and historical-compatibility environment.
+- Binds the authenticated policy-detail and rollback-anchor evidence added by
+  the first-party Profile security hardening slice.
+- Makes compatibility-environment closure follow the candidate suite version
+  while retaining the immutable v1.10.16 catalog.
 - Adds a pre-normative, deterministic Ed25519 binding for restricted-domain
   membership assertions and authenticated gossip. Directory bearer credentials
   remain confined to directory operations; the peer artifacts contain no

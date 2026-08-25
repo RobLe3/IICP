@@ -18,7 +18,8 @@ def digest(path: Path) -> str:
 def main() -> int:
     manifest = json.loads(MANIFEST_PATH.read_text())
     errors: list[str] = []
-    if (ROOT / "spec/v1.9/VERSION").read_text().strip() != manifest["protocol_suite_version"]:
+    suite_version = (ROOT / "spec/v1.9/VERSION").read_text().strip()
+    if suite_version != manifest["protocol_suite_version"]:
         errors.append("suite version differs from release manifest")
     registry = json.loads((ROOT / "registry/intents.json").read_text())
     if registry.get("version") != manifest["registry_version"]:
@@ -102,11 +103,22 @@ def main() -> int:
         "tools/manage_release_closure.py",
         "tools/test_manage_release_closure.py",
         "research/pre-normative-profiles/fixtures/effective-capability-v1.json",
+        "research/pre-normative-profiles/fixtures/cip-consumer-cosignature-v1.json",
+        "research/runtime-supervision/fixtures/runtime-health-fixture-manifest-v1.json",
+        "research/runtime-supervision/fixtures/runtime-health-snapshot-v1.schema.json",
+        "research/runtime-supervision/fixtures/runtime-health-v1.json",
+        "tools/check_runtime_health_fixture.py",
+        "tools/test_runtime_health_fixture.py",
         "tools/test_effective_capability_wire_contract.py",
         "docs/architecture/historical-compatibility-environment.md",
         "schemas/compatibility-environment-v1.json",
-        "evidence/compatibility-environment-v1.10.16.json",
+        f"evidence/compatibility-environment-v{suite_version}.json",
         "research/pre-normative-profiles/fixtures/extension-criticality-v1.json",
+        "research/pre-normative-profiles/fixtures/policy-detail-disclosure-authority-v0.json",
+        "research/pre-normative-profiles/fixtures/profile-security-candidate-manifest-v0.json",
+        "research/pre-normative-profiles/fixtures/trust-bundle-rollback-anchor-v0.json",
+        "tools/check_profile_security_candidate.py",
+        "tools/test_profile_security_candidate.py",
         "tools/check_compatibility_environment.py",
         "tools/test_compatibility_environment.py",
         "research/pre-normative-profiles/fixtures/runtime-identity-context-v0.json",

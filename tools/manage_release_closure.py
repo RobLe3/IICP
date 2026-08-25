@@ -71,7 +71,8 @@ def artifact_entries(value: object):
 
 
 def sync_compatibility_catalog(root: Path) -> None:
-    path = root / "evidence/compatibility-environment-v1.10.16.json"
+    version = (root / "spec/v1.9/VERSION").read_text(encoding="utf-8").strip()
+    path = root / f"evidence/compatibility-environment-v{version}.json"
     catalog = json.loads(path.read_text())
     for artifact in artifact_entries(catalog):
         reference = artifact["reference"]

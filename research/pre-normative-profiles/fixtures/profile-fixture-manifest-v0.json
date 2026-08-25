@@ -1,11 +1,16 @@
 {
-  "manifest_version": "0.28.0-draft",
+  "manifest_version": "0.29.0-draft",
   "status": "pre-normative",
   "fixtures": [
     {
       "path": "a2a-execution-binding-v0.json",
       "fixture_version": "0.1.0-research",
       "sha256": "95d1830e41807491bd7ff2398a03d23c9c5330729dcf999c476515473a16ca1e"
+    },
+    {
+      "path": "cip-consumer-cosignature-v1.json",
+      "fixture_version": "1.0.0-draft",
+      "sha256": "d3ecfccf110c250306e7e183ee70c48c88606c2bd2370ac9bfadce0aec6414fe"
     },
     {
       "path": "discovery-evidence-v1.json",
@@ -103,6 +108,11 @@
       "sha256": "c7679ca8e757ce99725d10b73529168f19cd9a27a67485fefed1e19ab1a7c688"
     },
     {
+      "path": "policy-detail-disclosure-authority-v0.json",
+      "fixture_version": "0.2.0-draft",
+      "sha256": "d41f1804a8a3f8119eed49d16f372fa22e1d82fb335bbd72210b5ad9db67e214"
+    },
+    {
       "path": "policy-detail-disclosure-v0.json",
       "fixture_version": "0.1.0-draft",
       "sha256": "341669ad9f866d0f5f975ae9855f4443ca05fb363df0e097c6deffc7329f5012"
@@ -116,6 +126,11 @@
       "path": "profile-negotiation-v0.json",
       "fixture_version": "0.2.0-draft",
       "sha256": "c86428264dd5be4f589c2d7171ac9c7e2488dc37a78f38cbb7a83ffb63339d68"
+    },
+    {
+      "path": "profile-security-candidate-manifest-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "b69ee733c18f7bf3adda3d3608838c9568761eadb8452151d36294ae3147cd28"
     },
     {
       "path": "provider-admission-v1.json",
@@ -196,6 +211,11 @@
       "path": "service-lifecycle-v1.json",
       "fixture_version": "0.2.0-draft",
       "sha256": "7bb6be604278656b960b48e1c07279ae41cb19447140d9dceeeea10f7c90b3c7"
+    },
+    {
+      "path": "trust-bundle-rollback-anchor-v0.json",
+      "fixture_version": "0.1.0-draft",
+      "sha256": "4fbfe88019b7edbc77491d8d30fe9ea9d9162c8acbd6a71a9aef075fafad4f12"
     }
   ]
 }

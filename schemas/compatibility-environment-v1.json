@@ -14,8 +14,16 @@
       "required": ["version", "commit", "immutable_reference", "integrity_manifest"],
       "properties": {
         "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
-        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "immutable_reference": {"type": "string", "minLength": 1},
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "Reviewed source-evidence cutoff used to assemble the catalog; this is not the self-referential release-tag commit."
+        },
+        "immutable_reference": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Immutable release reference that contains the catalog and its integrity manifest."
+        },
         "integrity_manifest": {"type": "string", "minLength": 1}
       }
     },
