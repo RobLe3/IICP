@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-23",
+  "generated_at": "2026-08-25",
   "repositories": [
     {
       "authority": "normative protocol, registries and reviewed research",
@@ -83,7 +83,7 @@
       "name": "iicp-management",
       "package": "crates:iicp-management-core",
       "protocol": "1.9",
-      "release": "0.5.0",
+      "release": "0.6.0",
       "url": "https://github.com/RobLe3/iicp-management"
     }
   ],

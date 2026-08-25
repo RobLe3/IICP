@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-23",
+  "generated_at": "2026-08-25",
   "releases": [
     {
       "id": "specification",
@@ -134,18 +134,19 @@
     },
     {
       "id": "management",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "wire_behavior": "unchanged",
       "conformance_impact": "changed",
       "profiles": [
         "management-profile-v1",
         "policy-lifecycle-v1",
-        "progressive-authority-v1"
+        "progressive-authority-v1",
+        "resolution-inspection-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "Install the optional Management Foundation developer preview with its published lockfile. Version 0.5 adds read-only application-policy and dynamic routing inspection; it does not alter ordinary clients, Directories or IICP wire behavior.",
-      "rollback": "Install immutable 0.4.0 to remove the operational inspection commands. No service or target state is changed by package rollback."
+      "migration": "Install the optional Management Foundation developer preview with its published lockfile. Version 0.6 adds candidate-aware, read-only eligibility inspection while preserving the 0.5 facts-based projection; it performs no ranking, selection, dispatch, mutation or IICP wire change.",
+      "rollback": "Install immutable 0.5.0 to remove candidate-aware inspection. Package rollback changes no Directory, service, accepted management state or target state."
     }
   ]
 }
