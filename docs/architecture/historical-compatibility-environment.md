@@ -15,6 +15,13 @@ Every referenced artifact is immutable within the release and carries a
 SHA-256 digest. The catalog itself is covered by the existing release-integrity
 manifest and release checksum.
 
+The v1 `protocol_release.commit` value is the reviewed source-evidence cutoff
+from which the catalog was assembled. It cannot be the commit that contains the
+catalog itself without creating a self-reference. The
+`protocol_release.immutable_reference`, release-integrity manifest and published
+archive checksum bind the finished catalog to its released tree. Consumers must
+not treat the evidence-cutoff commit alone as the complete release identity.
+
 ## Authority clarification
 
 HTTP and HTTPS requirements in the connected-network specifications define the
