@@ -122,7 +122,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+          "sha256": "ba431060c68bbc722b3897afa70b07821b6b30270c2c115254de12f51bb0a2dd"
         }
       ]
     },
@@ -142,7 +142,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+          "sha256": "ba431060c68bbc722b3897afa70b07821b6b30270c2c115254de12f51bb0a2dd"
         }
       ]
     },
@@ -164,7 +164,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+          "sha256": "ba431060c68bbc722b3897afa70b07821b6b30270c2c115254de12f51bb0a2dd"
         }
       ]
     },
@@ -185,7 +185,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+          "sha256": "ba431060c68bbc722b3897afa70b07821b6b30270c2c115254de12f51bb0a2dd"
         }
       ]
     },
@@ -206,7 +206,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+          "sha256": "ba431060c68bbc722b3897afa70b07821b6b30270c2c115254de12f51bb0a2dd"
         }
       ]
     },
@@ -224,7 +224,7 @@
         {
           "id": "coordinated-release-record",
           "reference": "ecosystem/releases.json",
-          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+          "sha256": "ba431060c68bbc722b3897afa70b07821b6b30270c2c115254de12f51bb0a2dd"
         }
       ]
     }

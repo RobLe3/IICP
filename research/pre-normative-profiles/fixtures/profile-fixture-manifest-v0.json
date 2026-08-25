@@ -15,7 +15,7 @@
     {
       "path": "discovery-evidence-v1.json",
       "fixture_version": "0.1.0-draft",
-      "sha256": "b089a35ec01ac320f59fad75b5133bfc834799e4105e316f24efa6cde33b939b"
+      "sha256": "7fbf0b54d3a3e4fab4a9e0cb9e86ac7c082e534bf3c4c510c9241403d18ffaf2"
     },
     {
       "path": "dispatch-admission-v2.json",
