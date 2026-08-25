@@ -16,7 +16,7 @@
     {
       "path": "policy-detail-disclosure-authority-v0.json",
       "fixture_version": "0.2.0-draft",
-      "sha256": "a357b4c5ece7fa58e6eaf9a0ec9fefdced0c830a27a198687ddf328b2e2c7568"
+      "sha256": "d41f1804a8a3f8119eed49d16f372fa22e1d82fb335bbd72210b5ad9db67e214"
     },
     {
       "path": "policy-operational-evidence-v0.json",

@@ -8,14 +8,14 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FIXTURE = (
-    ROOT
-    / "research/pre-normative-profiles/fixtures/policy-detail-disclosure-authority-v0.json"
-)
+FIXTURES = ROOT / "research/pre-normative-profiles/fixtures"
+HISTORICAL = FIXTURES / "policy-detail-disclosure-v0.json"
+AUTHORITY = FIXTURES / "policy-detail-disclosure-authority-v0.json"
 
 
 def main() -> int:
-    fixture = json.loads(FIXTURE.read_text())
+    fixture = json.loads(AUTHORITY.read_text())
+    historical = json.loads(HISTORICAL.read_text())
     if fixture["status"] != "pre-normative":
         raise SystemExit("policy-detail fixture must remain pre-normative")
     if fixture["fixture_version"] != "0.2.0-draft":
@@ -23,7 +23,7 @@ def main() -> int:
 
     outcomes = {
         (case["expected"]["status"], case["expected"]["reason"])
-        for case in fixture["cases"]
+        for case in historical["cases"] + fixture["cases"]
     }
     required = {
         (200, "compatible"),
