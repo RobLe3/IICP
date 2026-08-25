@@ -85,6 +85,18 @@
       "protocol": "1.9",
       "release": "0.2.6",
       "package": "npm:@iicp/web-node"
+    },
+    {
+      "id": "management",
+      "name": "iicp-management",
+      "url": "https://github.com/RobLe3/iicp-management",
+      "visibility": "public",
+      "lifecycle": "developer-preview",
+      "authority": "implementation-neutral management contracts, deterministic core and conformance material",
+      "language": "rust",
+      "protocol": "1.9",
+      "release": "0.5.0",
+      "package": "crates:iicp-management-core"
     }
   ]
 }
