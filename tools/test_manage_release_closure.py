@@ -49,6 +49,26 @@ class ReleaseClosureTests(unittest.TestCase):
             closure.sync_repository_versions(root)
             self.assertEqual(json.loads(path.read_text())["repositories"][0]["release"], "0.7.108")
 
+    def test_compatibility_catalog_follows_suite_version(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "spec/v1.9").mkdir(parents=True)
+            (root / "evidence").mkdir()
+            (root / "artifact.json").write_text("candidate\n")
+            (root / "spec/v1.9/VERSION").write_text("9.8.7\n")
+            path = root / "evidence/compatibility-environment-v9.8.7.json"
+            path.write_text(json.dumps({
+                "artifact": {"reference": "artifact.json", "sha256": "stale"}
+            }))
+
+            closure.sync_compatibility_catalog(root)
+
+            updated = json.loads(path.read_text())
+            self.assertEqual(
+                updated["artifact"]["sha256"],
+                closure.sha256(root / "artifact.json"),
+            )
+
     def test_check_reports_every_failure_without_fail_fast(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

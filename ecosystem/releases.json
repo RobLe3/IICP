@@ -4,22 +4,24 @@
   "releases": [
     {
       "id": "specification",
-      "version": "1.10.16",
+      "version": "1.10.17",
       "wire_behavior": "additive",
       "conformance_impact": "changed",
       "profiles": [
-        "directory-public-v1",
+        "cip-consumer-cosignature-v1",
         "directory-dispatch-v1",
         "directory-lifecycle-v1",
-        "service-lifecycle-v1",
+        "directory-public-v1",
         "mcp-era-negotiation-v0",
+        "restricted-trust-domain-v1",
+        "runtime-health-v1",
         "runtime-identity-context-v0",
-        "restricted-trust-domain-v1"
+        "service-lifecycle-v1"
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "Directories start a new outcome-v2 reputation epoch at 0.5. Latency, health, integrity and semantic quality remain separately labelled evidence. Heartbeat metrics batches gain additive retry-safe acknowledgement; older clients and directories remain compatible but cannot prove retry idempotency.",
-      "rollback": "Restore immutable v1.10.15 artifacts and retain any outcome-v2 epoch data as labelled audit evidence. Do not relabel a legacy score as outcome-v2."
+      "migration": "No wire or runtime migration. This candidate binds existing pre-normative compatibility, runtime-health, consumer-cosignature, policy-disclosure and rollback-anchor evidence to one immutable release set.",
+      "rollback": "Restore immutable v1.10.16 artifacts. Do not reinterpret or promote any pre-normative Profile solely because it is preserved in this candidate."
     },
     {
       "id": "directory-php",

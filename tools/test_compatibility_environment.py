@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 from pathlib import Path
 import unittest
 
-from check_compatibility_environment import CATALOG, validate
+from check_compatibility_environment import CATALOG, catalog_path, validate
 
 ROOT = Path(__file__).resolve().parents[1]
 CRITICALITY = ROOT / "research/pre-normative-profiles/fixtures/extension-criticality-v1.json"
@@ -19,6 +20,33 @@ class CompatibilityEnvironmentTest(unittest.TestCase):
 
     def test_current_catalog_closes_local_references(self) -> None:
         self.assertEqual([], validate(self.catalog))
+
+    def test_catalog_path_follows_suite_version(self) -> None:
+        self.assertEqual(CATALOG, catalog_path())
+
+    def test_historical_catalog_remains_immutable(self) -> None:
+        historical = ROOT / "evidence/compatibility-environment-v1.10.16.json"
+        self.assertEqual(
+            "9571cefa0823d21433bc092bac4bb8c537d074bcf03c36be3c7f9704ddb5d994",
+            hashlib.sha256(historical.read_bytes()).hexdigest(),
+        )
+
+    def test_candidate_binds_previously_workspace_only_profiles(self) -> None:
+        optional = {
+            item["id"]: item
+            for item in self.catalog["semantic_environment"]["profiles"]["optional"]
+        }
+        self.assertIn("cip-consumer-cosignature-v1", optional)
+        self.assertIn("runtime-health-v1", optional)
+        for item in optional.values():
+            self.assertNotIn("://", item["reference"])
+
+        security = {
+            item["id"]
+            for item in self.catalog["semantic_environment"]["identity_and_security_profiles"]
+        }
+        self.assertIn("policy-detail-disclosure-authority-v0", security)
+        self.assertIn("trust-bundle-rollback-anchor-v0", security)
 
     def test_missing_or_changed_artifact_fails(self) -> None:
         changed = copy.deepcopy(self.catalog)

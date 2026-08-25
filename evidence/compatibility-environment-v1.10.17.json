@@ -1,0 +1,236 @@
+{
+  "catalog_version": 1,
+  "status": "release-candidate",
+  "protocol_release": {
+    "version": "1.10.17",
+    "commit": "e1f076fe65b52ecf9c6a01aab416639099687bc5",
+    "immutable_reference": "https://github.com/RobLe3/IICP/releases/tag/v1.10.17",
+    "integrity_manifest": "spec/v1.9/release-integrity-manifest.json"
+  },
+  "semantic_environment": {
+    "registry": {
+      "version": "1.4.0",
+      "reference": "registry/intents.json",
+      "sha256": "25accced37921b3ac78a0f43106f3b443919dbd4650c935e3a8286b61c3f1534"
+    },
+    "schemas": [
+      {
+        "id": "intent-registry-v1.4",
+        "reference": "registry/schemas/intent-registry-v1.4.json",
+        "sha256": "ea7c6933c230e749aa6bf8e1af3a07b342cce458701554f0dc0052b88e326065"
+      }
+    ],
+    "profiles": {
+      "required": [],
+      "optional": [
+        {
+          "id": "cip-consumer-cosignature-v1",
+          "reference": "research/pre-normative-profiles/fixtures/cip-consumer-cosignature-v1.json",
+          "sha256": "d3ecfccf110c250306e7e183ee70c48c88606c2bd2370ac9bfadce0aec6414fe"
+        },
+        {
+          "id": "effective-capability-v1",
+          "reference": "research/pre-normative-profiles/fixtures/effective-capability-v1.json",
+          "sha256": "e6e3c32aa7c4cf814e639d3a97cd1c1cb49ac020ed6ebe7e1e16bc2314e14761"
+        },
+        {
+          "id": "restricted-trust-domain-v1",
+          "reference": "research/pre-normative-profiles/restricted-trust-domain-v0.md",
+          "sha256": "e64e800f56b980082af2682958e2369b167e116d7885b60c0e46cca094b78959"
+        },
+        {
+          "id": "runtime-health-v1",
+          "reference": "research/runtime-supervision/fixtures/runtime-health-v1.json",
+          "sha256": "7641f794db3a660e5338785ec26df510ecef7374c0df9977cfeec8c0071e4732"
+        }
+      ],
+      "deprecated": []
+    },
+    "bindings": [
+      {
+        "id": "connected-http-json",
+        "reference": "spec/v1.9/iicp-core.md",
+        "sha256": "9731eb9556af07d8c775dd14bba0cc24aa705934801570fdbeaa5d426648bc97"
+      },
+      {
+        "id": "native-framing-draft",
+        "reference": "spec/v1.9/iicp-framing.md",
+        "sha256": "97e62a411b989f72d097b44bebfb5b8349f48315cec9bf7bb324d17462e2629c"
+      }
+    ],
+    "identity_and_security_profiles": [
+      {
+        "id": "policy-detail-disclosure-authority-v0",
+        "reference": "research/pre-normative-profiles/fixtures/policy-detail-disclosure-authority-v0.json",
+        "sha256": "d41f1804a8a3f8119eed49d16f372fa22e1d82fb335bbd72210b5ad9db67e214"
+      },
+      {
+        "id": "restricted-trust-domain-membership-v0",
+        "reference": "research/pre-normative-profiles/fixtures/restricted-trust-domain-membership-v0.json",
+        "sha256": "78cb70b19dabed5be0175555cf2b4bb123dd4bc77ce36b67b745f311f3d941d4"
+      },
+      {
+        "id": "signed-message-envelope-v0",
+        "reference": "research/pre-normative-profiles/fixtures/signed-message-envelope-boundary-v0.json",
+        "sha256": "17cb5f369d1658fee1784ddd96953aa882e007afd8571c5ec567ab8ddb039159"
+      },
+      {
+        "id": "trust-bundle-rollback-anchor-v0",
+        "reference": "research/pre-normative-profiles/fixtures/trust-bundle-rollback-anchor-v0.json",
+        "sha256": "4fbfe88019b7edbc77491d8d30fe9ea9d9162c8acbd6a71a9aef075fafad4f12"
+      }
+    ],
+    "extension_rules": {
+      "reference": "docs/architecture/environmental-independence-v1.json",
+      "sha256": "36ccbbd9c78e718065f62439088316bd8c8e975238badbf55d692c053667c9f7"
+    },
+    "fixtures": {
+      "positive": [],
+      "negative": [],
+      "downgrade": [],
+      "compatibility": [
+        {
+          "id": "profile-compatibility-v0",
+          "reference": "conformance-runner/src/iicp_conformance/fixtures/profile-compatibility-v0.json",
+          "sha256": "d039eaf52afca6866832779261db7bdd2ffd818a36bc8ba9aea1db0c9c115012"
+        },
+        {
+          "id": "profile-security-candidate-manifest-v0",
+          "reference": "research/pre-normative-profiles/fixtures/profile-security-candidate-manifest-v0.json",
+          "sha256": "b69ee733c18f7bf3adda3d3608838c9568761eadb8452151d36294ae3147cd28"
+        }
+      ]
+    },
+    "relationships": {
+      "replacements": [],
+      "deprecations": []
+    }
+  },
+  "implementation_projections": [
+    {
+      "component": "directory-php",
+      "release": "1.10.93",
+      "supported_profiles": [
+        "directory-implementation-metadata-v1",
+        "discovery-evidence-v1",
+        "effective-capability-v1",
+        "restricted-trust-domain-v1",
+        "reputation-outcome-v2"
+      ],
+      "supported_bindings": [],
+      "evidence": [
+        {
+          "id": "coordinated-release-record",
+          "reference": "ecosystem/releases.json",
+          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+        }
+      ]
+    },
+    {
+      "component": "directory-rust",
+      "release": "0.1.14",
+      "supported_profiles": [
+        "directory-implementation-metadata-v1",
+        "discovery-evidence-v1",
+        "runtime-health-v1",
+        "effective-capability-v1",
+        "restricted-trust-domain-v1",
+        "reputation-outcome-v2"
+      ],
+      "supported_bindings": [],
+      "evidence": [
+        {
+          "id": "coordinated-release-record",
+          "reference": "ecosystem/releases.json",
+          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+        }
+      ]
+    },
+    {
+      "component": "client-python",
+      "release": "0.7.108",
+      "supported_profiles": [
+        "service-lifecycle-v1",
+        "runtime-health-v1",
+        "managed-operator-v1",
+        "cip-consumer-cosignature-v1",
+        "effective-capability-v1",
+        "runtime-identity-context-v0",
+        "dispatch-route-ticket-v1",
+        "directory-lifecycle-v1"
+      ],
+      "supported_bindings": [],
+      "evidence": [
+        {
+          "id": "coordinated-release-record",
+          "reference": "ecosystem/releases.json",
+          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+        }
+      ]
+    },
+    {
+      "component": "client-typescript",
+      "release": "0.7.108",
+      "supported_profiles": [
+        "service-lifecycle-v1",
+        "runtime-health-v1",
+        "managed-operator-v1",
+        "cip-consumer-cosignature-v1",
+        "effective-capability-v1",
+        "runtime-identity-context-v0",
+        "directory-lifecycle-v1"
+      ],
+      "supported_bindings": [],
+      "evidence": [
+        {
+          "id": "coordinated-release-record",
+          "reference": "ecosystem/releases.json",
+          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+        }
+      ]
+    },
+    {
+      "component": "client-rust",
+      "release": "0.7.108",
+      "supported_profiles": [
+        "service-lifecycle-v1",
+        "runtime-health-v1",
+        "managed-operator-v1",
+        "cip-consumer-cosignature-v1",
+        "effective-capability-v1",
+        "runtime-identity-context-v0",
+        "directory-lifecycle-v1"
+      ],
+      "supported_bindings": [],
+      "evidence": [
+        {
+          "id": "coordinated-release-record",
+          "reference": "ecosystem/releases.json",
+          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+        }
+      ]
+    },
+    {
+      "component": "web-node",
+      "release": "0.2.5",
+      "supported_profiles": [
+        "directory-implementation-metadata-v1",
+        "dispatch-route-ticket-v1",
+        "effective-capability-v1",
+        "runtime-identity-context-v0"
+      ],
+      "supported_bindings": [],
+      "evidence": [
+        {
+          "id": "coordinated-release-record",
+          "reference": "ecosystem/releases.json",
+          "sha256": "3577d9e87c1c74795db4bdf25dd37a01c32747c161895116c5c52950c0040a32"
+        }
+      ]
+    }
+  ],
+  "integrity": {
+    "digest_algorithm": "sha-256",
+    "catalog_digest_location": "release checksum asset"
+  }
+}

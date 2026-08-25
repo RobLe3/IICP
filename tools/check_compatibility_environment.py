@@ -11,7 +11,14 @@ from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = ROOT / "schemas/compatibility-environment-v1.json"
-CATALOG = ROOT / "evidence/compatibility-environment-v1.10.16.json"
+
+
+def catalog_path(root: Path = ROOT) -> Path:
+    version = (root / "spec/v1.9/VERSION").read_text(encoding="utf-8").strip()
+    return root / f"evidence/compatibility-environment-v{version}.json"
+
+
+CATALOG = catalog_path()
 
 
 def sha256(path: Path) -> str:
