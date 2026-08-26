@@ -134,9 +134,9 @@
     },
     {
       "id": "management",
-      "version": "0.10.0",
+      "version": "0.10.1",
       "wire_behavior": "unchanged",
-      "conformance_impact": "changed",
+      "conformance_impact": "unchanged",
       "profiles": [
         "management-profile-v1",
         "policy-lifecycle-v1",
@@ -145,8 +145,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "Install the optional Management Foundation developer preview with its published lockfile. Version 0.10 composes a supplied canonical RuntimeConfigV1, optional content-minimized runtime-health evidence, diagnostics and a desired-state proposal into one non-authorizing first-run preparation envelope. It performs no discovery, activation, service control or network access.",
-      "rollback": "Install immutable 0.9.0 to remove the composed first-run preparation command. Package rollback changes no Directory, service, accepted management state or target state."
+      "migration": "Install the optional Management Foundation 0.10.1 developer preview with its published lockfile. This corrective package preserves iicp.management-bootstrap-workflow.v1, pins the locked graph to the declared Rust 1.86 minimum and creates Unix controller sockets owner-only from bind time. It performs no discovery, activation, service control or network access.",
+      "rollback": "Install immutable 0.10.0 to remove the packaging and Unix socket-creation corrections. Package rollback changes no Directory, service, accepted management state or target state."
     }
   ]
 }
