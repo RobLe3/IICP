@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-25",
+  "generated_at": "2026-08-26",
   "current_namespace": "RobLe3",
   "planned_namespace": "iicp-protocol",
   "organization_plan": "github-free",
@@ -95,7 +95,7 @@
       "authority": "implementation-neutral management contracts, deterministic core and conformance material",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.9.0",
+      "release": "0.10.0",
       "package": "crates:iicp-management-core"
     }
   ]
