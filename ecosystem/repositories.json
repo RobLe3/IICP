@@ -95,7 +95,7 @@
       "authority": "implementation-neutral management contracts, deterministic core and conformance material",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.7.0",
+      "release": "0.8.0",
       "package": "crates:iicp-management-core"
     }
   ]

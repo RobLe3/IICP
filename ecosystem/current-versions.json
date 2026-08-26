@@ -33,7 +33,7 @@
     "management": {
       "lifecycle": "developer-preview",
       "name": "iicp-management",
-      "release": "0.7.0",
+      "release": "0.8.0",
       "visibility": "public"
     },
     "specification": {
