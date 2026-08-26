@@ -1,0 +1,566 @@
+{
+  "schema": "iicp.pre1-feature-baseline.v1",
+  "updated_at": "2026-08-26",
+  "status": "SPECIFICATION_RECONCILIATION",
+  "non_authorizing": true,
+  "stable_designation_authorized": false,
+  "scope": "client-directory-management",
+  "scope_rule": "A coordinated stable designation may cover only REQUIRED_STABLE and COMPATIBILITY_ANCHOR capabilities. Optional, experimental, research and unsupported surfaces remain outside that claim unless a later reviewed baseline adds them and their full evidence passes.",
+  "classification_semantics": {
+    "REQUIRED_STABLE": "Required in every applicable declared support cell before coordinated promotion.",
+    "COMPATIBILITY_ANCHOR": "Existing behavior required to preserve compatibility while its replacement or retirement remains separately gated.",
+    "OPTIONAL_STABLE": "A supported additive surface that does not block the coordinated baseline when absent from a component.",
+    "EXPERIMENTAL": "Implemented or useful, but excluded from the coordinated stable claim.",
+    "RESEARCH": "A question or candidate mechanism, not a release commitment.",
+    "UNSUPPORTED": "Explicitly outside the declared baseline. It must not be inferred from adjacent support."
+  },
+  "compatibility_rules": {
+    "unknown_required_data": "fail_closed",
+    "unknown_optional_data": "ignore_or_negotiate_as_declared",
+    "directory_authority": "php_genesis_preserved",
+    "rust_directory_role": "non_serving_candidate_until_separate_cutover",
+    "management_authority": "domain_local_controller_only",
+    "task_payload_path": "direct_client_to_provider",
+    "wire_change_rule": "Update the specification, fixtures and compatibility environment before candidate evidence is accepted."
+  },
+  "component_reviews": [
+    {
+      "component": "client-python",
+      "repository": "RobLe3/iicp-client-python",
+      "issue": 119,
+      "status": "OPEN"
+    },
+    {
+      "component": "client-typescript",
+      "repository": "RobLe3/iicp-client-typescript",
+      "issue": 104,
+      "status": "OPEN"
+    },
+    {
+      "component": "client-rust",
+      "repository": "RobLe3/iicp-client-rust",
+      "issue": 150,
+      "status": "OPEN"
+    },
+    {
+      "component": "directory-php",
+      "repository": "RobLe3/iicp-directory-php",
+      "issue": 140,
+      "status": "OPEN"
+    },
+    {
+      "component": "directory-rust",
+      "repository": "RobLe3/iicp-directory-rust",
+      "issue": 102,
+      "status": "OPEN"
+    },
+    {
+      "component": "management",
+      "repository": "RobLe3/iicp-management",
+      "issue": 143,
+      "status": "OPEN"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "intent-task-envelope",
+      "title": "Intent identifiers and direct task envelopes",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-core.md",
+        "spec/v1.9/iicp-semantics.md",
+        "registry/fixtures/intent-payloads-v1.json"
+      ],
+      "fixture_refs": [
+        "registry/fixtures/intent-payloads-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust"
+      ],
+      "boundary": "Directories return routing information and never receive task payloads.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "directory-registration-heartbeat-discovery",
+      "title": "Registration, heartbeat and discovery",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixture_refs": [
+        "conformance-runner/src/iicp_conformance/fixtures/directory-public-v1.json",
+        "conformance-runner/src/iicp_conformance/fixtures/directory-dispatch-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust",
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust"
+      ],
+      "boundary": "PHP and Rust are tested in isolated authority lanes.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "public-route-free-discovery",
+      "title": "Route-free public directory projection",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixture_refs": [
+        "conformance-runner/src/iicp_conformance/fixtures/directory-public-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust"
+      ],
+      "boundary": "Public presentation and observation do not disclose provider routes.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "ticketed-dispatch",
+      "title": "Endpoint-safe ticketed dispatch",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-dir.md",
+        "research/pre-normative-profiles/fixtures/dispatch-route-ticket-v1.json"
+      ],
+      "fixture_refs": [
+        "conformance-runner/src/iicp_conformance/fixtures/dispatch-route-ticket-v1.json",
+        "conformance-runner/src/iicp_conformance/fixtures/dispatch-ticket-trust-v2.json",
+        "conformance-runner/src/iicp_conformance/fixtures/dispatch-ticket-trust-v2-crypto.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust",
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust"
+      ],
+      "boundary": "Ticket support is required; changing the default view or retiring legacy dispatch remains a separate adoption decision.",
+      "contradiction_status": "CLEAR_WITH_EXPLICIT_BOUNDARY"
+    },
+    {
+      "id": "legacy-dispatch-compatibility",
+      "title": "Legacy route-bearing dispatch projection",
+      "classification": "COMPATIBILITY_ANCHOR",
+      "authority_refs": [
+        "spec/v1.9/iicp-dir.md"
+      ],
+      "fixture_refs": [
+        "conformance-runner/src/iicp_conformance/fixtures/directory-dispatch-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust"
+      ],
+      "boundary": "Compatibility support is not endorsement as the future default and cannot be retired without external-client and rollback evidence.",
+      "contradiction_status": "CLEAR_WITH_EXPLICIT_BOUNDARY"
+    },
+    {
+      "id": "effective-capability-eligibility",
+      "title": "Effective capability and eligibility before ranking",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/node-capability-format.md",
+        "research/pre-normative-profiles/fixtures/effective-capability-v1.json"
+      ],
+      "fixture_refs": [
+        "research/pre-normative-profiles/fixtures/effective-capability-v1.json",
+        "research/pre-normative-profiles/fixtures/selection-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust",
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust"
+      ],
+      "boundary": "Mandatory eligibility is evaluated before preference or ranking.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "identity-token-lifecycle",
+      "title": "Node identity, ownership and token lifecycle",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-identity-slot.md",
+        "research/pre-normative-profiles/fixtures/e050-client-credential-lifecycle-v1.json"
+      ],
+      "fixture_refs": [
+        "research/pre-normative-profiles/fixtures/e050-client-credential-lifecycle-v1.json",
+        "research/pre-normative-profiles/fixtures/e050-strict-v0.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust",
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust"
+      ],
+      "boundary": "Credential continuity is required; enabling strict E050 in production remains a separately reviewed migration.",
+      "contradiction_status": "CLEAR_WITH_EXPLICIT_BOUNDARY"
+    },
+    {
+      "id": "service-lifecycle",
+      "title": "Task lifecycle, cancellation, retry and idempotency",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-service-lifecycle-profile.md"
+      ],
+      "fixture_refs": [
+        "conformance-runner/src/iicp_conformance/fixtures/directory-lifecycle-v1.json",
+        "research/pre-normative-profiles/fixtures/service-lifecycle-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust",
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust"
+      ],
+      "boundary": "Task state, execution attempts and transport connections remain distinct.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "restricted-trust-domain",
+      "title": "Restricted trust-domain operation",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "research/pre-normative-profiles/fixtures/restricted-trust-domain-v0.json",
+        "research/pre-normative-profiles/fixtures/restricted-trust-domain-directory-decision-v0.json"
+      ],
+      "fixture_refs": [
+        "research/pre-normative-profiles/fixtures/restricted-trust-domain-membership-v0.json",
+        "research/pre-normative-profiles/fixtures/restricted-trust-domain-bootstrap-v0.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust",
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust"
+      ],
+      "boundary": "This is a project-owned, pre-normative profile and does not imply standards ratification or cross-domain federation.",
+      "contradiction_status": "CLEAR_WITH_EXPLICIT_BOUNDARY"
+    },
+    {
+      "id": "local-only-operation",
+      "title": "Local-only client, Directory and Management operation",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-sdk-request-projection-profile.md",
+        "research/pre-normative-profiles/fixtures/local-directory-discovery-v0.json"
+      ],
+      "fixture_refs": [
+        "research/pre-normative-profiles/fixtures/local-directory-discovery-v0.json",
+        "research/pre-normative-profiles/fixtures/environmental-independence-v0.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust",
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust",
+        "RobLe3/iicp-management"
+      ],
+      "boundary": "Local and restricted modes cannot silently contact the public Directory.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "payload-confidentiality",
+      "title": "Fail-closed payload confidentiality when keyed",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-confidentiality.md"
+      ],
+      "fixture_refs": [
+        "research/pre-normative-profiles/fixtures/endpoint-security-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust"
+      ],
+      "boundary": "Remote executors can read work they execute; metadata confidentiality and universal live key readiness are not claimed.",
+      "contradiction_status": "CLEAR_WITH_EXPLICIT_BOUNDARY"
+    },
+    {
+      "id": "directory-events-outcome-evidence",
+      "title": "Signed events, receipts, outcomes and reputation evidence",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-dir.md",
+        "spec/v1.9/iicp-recognition.md",
+        "spec/v1.9/iicp-telemetry.md"
+      ],
+      "fixture_refs": [
+        "research/pre-normative-profiles/fixtures/reputation-outcome-v2.json",
+        "research/pre-normative-profiles/fixtures/policy-operational-evidence-v0.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust"
+      ],
+      "boundary": "Evidence supports local decisions; a Directory is not a universal trust authority.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "php-directory-authority",
+      "title": "PHP Directory compatibility and Genesis authority",
+      "classification": "COMPATIBILITY_ANCHOR",
+      "authority_refs": [
+        "spec/v1.9/iicp-dir.md",
+        "fixtures/directory-implementation-metadata-v1.json"
+      ],
+      "fixture_refs": [
+        "conformance-runner/src/iicp_conformance/fixtures/directory-public-v1.json",
+        "conformance-runner/src/iicp_conformance/fixtures/directory-lifecycle-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-php"
+      ],
+      "boundary": "Qualification preserves the deployed PHP authority and rollback path.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "rust-directory-parity",
+      "title": "Rust Directory behavior and persistent non-serving operation",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-dir.md",
+        "spec/v1.9/replica-lifecycle-contract-v1.json"
+      ],
+      "fixture_refs": [
+        "conformance-runner/src/iicp_conformance/fixtures/directory-public-v1.json",
+        "conformance-runner/src/iicp_conformance/fixtures/directory-lifecycle-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-rust"
+      ],
+      "boundary": "Passing evidence grants no Genesis, replica-registration, traffic-serving or cutover authority.",
+      "contradiction_status": "CLEAR_WITH_EXPLICIT_BOUNDARY"
+    },
+    {
+      "id": "management-bootstrap-diagnostics",
+      "title": "Local Management bootstrap, doctor and diagnostics",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "RobLe3/iicp-management:contracts/bootstrap-workflow-v1.schema.json",
+        "RobLe3/iicp-management:contracts/diagnostic-bundle-v2.schema.json"
+      ],
+      "fixture_refs": [
+        "RobLe3/iicp-management:fixtures/bootstrap-workflow-conformance-v1.json",
+        "RobLe3/iicp-management:fixtures/diagnostic-bundle-conformance-v2.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-management"
+      ],
+      "boundary": "Inspection and preparation are non-authorizing and work with networking disabled.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "management-policy-lifecycle",
+      "title": "Typed Management policy lifecycle and simulation",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "RobLe3/iicp-management:contracts/policy-lifecycle-v1.schema.json"
+      ],
+      "fixture_refs": [
+        "RobLe3/iicp-management:fixtures/policy-lifecycle-conformance-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-management"
+      ],
+      "boundary": "Typed objects, not CLI text or a GUI, are the shared semantic surface.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "management-authorized-local-change",
+      "title": "Domain-local authorization, apply, recovery and rollback",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "RobLe3/iicp-management:contracts/progressive-authority-v1.schema.json",
+        "RobLe3/iicp-management:contracts/local-recovery-v1.schema.json"
+      ],
+      "fixture_refs": [
+        "RobLe3/iicp-management:fixtures/progressive-authority-conformance-v1.json",
+        "RobLe3/iicp-management:fixtures/management-portable-conformance-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-management"
+      ],
+      "boundary": "The domain-local controller independently authorizes each mutation; no Directory or remote service gains authority.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "management-rollout-drift-evidence",
+      "title": "Bounded rollout, drift and diagnostic evidence",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "RobLe3/iicp-management:contracts/management-profile-v1.schema.json",
+        "RobLe3/iicp-management:contracts/diagnostic-bundle-v2.schema.json"
+      ],
+      "fixture_refs": [
+        "RobLe3/iicp-management:fixtures/management-profile-conformance-v1.json",
+        "RobLe3/iicp-management:fixtures/adapter-inspection-conformance-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-management"
+      ],
+      "boundary": "Rollout and reconciliation remain sequential, receipt-bound and subject to each target's local apply gate.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "native-binary-framing",
+      "title": "Native binary framing",
+      "classification": "OPTIONAL_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-framing.md",
+        "spec/v1.9/iicp-cbor-wire.md"
+      ],
+      "fixture_refs": [
+        "research/native-ai-infrastructure/fixtures/native-framing-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust"
+      ],
+      "boundary": "HTTP-capable stable operation does not require the optional binary binding.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "runtime-identity-context",
+      "title": "Bounded runtime-identity context",
+      "classification": "OPTIONAL_STABLE",
+      "authority_refs": [
+        "research/pre-normative-profiles/fixtures/runtime-identity-context-v0.json"
+      ],
+      "fixture_refs": [
+        "research/pre-normative-profiles/fixtures/runtime-identity-context-v0.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust"
+      ],
+      "boundary": "Compatible chat helpers may add bounded context; raw submission, non-chat intents and disabled mode retain prior behavior.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "mcp-binding",
+      "title": "MCP gateway and negotiation binding",
+      "classification": "OPTIONAL_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-mcp-binding.md"
+      ],
+      "fixture_refs": [
+        "research/pre-normative-profiles/fixtures/mcp-era-negotiation-v0.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust"
+      ],
+      "boundary": "MCP remains an adjacent tool binding rather than IICP routing authority.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "billing-credit-extension",
+      "title": "Billing, credits and economic extensions",
+      "classification": "OPTIONAL_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-billing-extension.md"
+      ],
+      "fixture_refs": [
+        "research/aiospf/fixtures/cip-economic-attribution-v0.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust"
+      ],
+      "boundary": "Core discovery and direct execution do not require a particular settlement mechanism.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "relay-routing",
+      "title": "Relay routing and browser-provider reachability",
+      "classification": "EXPERIMENTAL",
+      "authority_refs": [
+        "spec/v1.9/iicp-core.md"
+      ],
+      "fixture_refs": [
+        "conformance-runner/src/iicp_conformance/fixtures/dispatch-ticket-trust-v2.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-client-rust",
+        "RobLe3/iicp-web-node"
+      ],
+      "boundary": "No stable routing default, independent relay trust, metadata confidentiality or production browser-provider claim is made.",
+      "contradiction_status": "CLEAR_WITH_EXPLICIT_BOUNDARY"
+    },
+    {
+      "id": "federated-directory",
+      "title": "Federated Directory control plane",
+      "classification": "RESEARCH",
+      "authority_refs": [
+        "spec/v1.9/iicp-federated-directory.md",
+        "spec/v1.9/replica-lifecycle-contract-v1.json"
+      ],
+      "fixture_refs": [
+        "conformance-runner/src/iicp_conformance/fixtures/federation-chain-v0.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust"
+      ],
+      "boundary": "No public federation, DNS pool, production shadow or Rust cutover is authorized.",
+      "contradiction_status": "CLEAR_WITH_EXPLICIT_BOUNDARY"
+    },
+    {
+      "id": "cross-domain-disconnected-management",
+      "title": "Cross-domain and disconnected Management",
+      "classification": "RESEARCH",
+      "authority_refs": [
+        "RobLe3/iicp-management:COMPATIBILITY.md"
+      ],
+      "fixture_refs": [],
+      "implementations": [
+        "RobLe3/iicp-management"
+      ],
+      "boundary": "No cross-domain apply, federation authority, DTN binding or long-delay core field is part of the baseline.",
+      "contradiction_status": "CLEAR_WITH_EXPLICIT_BOUNDARY"
+    },
+    {
+      "id": "management-network-service",
+      "title": "Deployed Management network service",
+      "classification": "UNSUPPORTED",
+      "authority_refs": [
+        "RobLe3/iicp-management:COMPATIBILITY.md"
+      ],
+      "fixture_refs": [],
+      "implementations": [],
+      "boundary": "Management is a local library and CLI foundation; no deployed management service is claimed or planned by this baseline.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "stable-meshllm-ensemble",
+      "title": "Stable MeshLLM ensemble integration",
+      "classification": "UNSUPPORTED",
+      "authority_refs": [
+        "spec/v1.9/iicp-cooperative-inference.md"
+      ],
+      "fixture_refs": [
+        "research/aiospf/fixtures/cip-conformance-v0.json"
+      ],
+      "implementations": [],
+      "boundary": "The research profile and opt-in adapter do not establish a supported stable runtime.",
+      "contradiction_status": "CLEAR"
+    }
+  ],
+  "capability_ids_sha256": "sha256:51cb23ce24f7fefd8c7ff1831d835be7d8ce180d69f750efd71051aae9cdb333"
+}

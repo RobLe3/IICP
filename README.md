@@ -7,7 +7,7 @@
 
 *Building the HTTP for the Age of Generative AI*
 
-**Protocol-suite release**: v1.10.16<br>
+**Protocol-suite release**: v1.10.17<br>
 **Wire compatibility baseline**: v1.9.0<br>
 **Reference implementation**: [iicp.network](https://iicp.network)
 **Status**: Project-normative beta suite; individual profiles retain their own status
@@ -143,6 +143,7 @@ progress and are not IETF endorsement.
 | [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) | 200+ machine-verifiable test IDs (DIR-*, PROXY-*, SEC-*, CIP-*, DIR-FED-*) mapped to REACH probes |
 | [validation-methodology.md](spec/v1.9/validation-methodology.md) | How to validate implementations; performance claim disclosure |
 | [iicp-v1.5-overview.md](spec/v1.9/iicp-v1.5-overview.md) | What changed in v1.5; migration guide from v1.4.2 |
+| [Pre-1.0 feature boundary](pre1/README.md) | Bounded client, Directory and Management capability crosswalk; not a stable-release authorization |
 
 ### Supporting assets
 

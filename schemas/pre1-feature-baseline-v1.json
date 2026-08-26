@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iicp.network/schemas/pre1-feature-baseline-v1.json",
+  "title": "IICP pre-1.0 feature baseline v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "updated_at", "status", "non_authorizing",
+    "stable_designation_authorized", "scope", "scope_rule",
+    "classification_semantics", "compatibility_rules", "component_reviews",
+    "capabilities", "capability_ids_sha256"
+  ],
+  "properties": {
+    "schema": {"const": "iicp.pre1-feature-baseline.v1"},
+    "updated_at": {"type": "string", "format": "date"},
+    "status": {"enum": ["SPECIFICATION_RECONCILIATION", "CANDIDATE_BOUNDARY_FROZEN", "QUALIFIED"]},
+    "non_authorizing": {"const": true},
+    "stable_designation_authorized": {"type": "boolean"},
+    "scope": {"const": "client-directory-management"},
+    "scope_rule": {"type": "string", "minLength": 1},
+    "classification_semantics": {"type": "object", "minProperties": 6},
+    "compatibility_rules": {"type": "object", "minProperties": 6},
+    "component_reviews": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component", "repository", "issue", "status"],
+        "properties": {
+          "component": {"type": "string", "minLength": 1},
+          "repository": {"type": "string", "pattern": "^RobLe3/"},
+          "issue": {"type": "integer", "minimum": 1},
+          "status": {"enum": ["OPEN", "PASS"]}
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "classification", "authority_refs", "fixture_refs", "implementations", "boundary", "contradiction_status"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+          "title": {"type": "string", "minLength": 1},
+          "classification": {"enum": ["REQUIRED_STABLE", "COMPATIBILITY_ANCHOR", "OPTIONAL_STABLE", "EXPERIMENTAL", "RESEARCH", "UNSUPPORTED"]},
+          "authority_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "fixture_refs": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "implementations": {"type": "array", "items": {"type": "string", "pattern": "^RobLe3/"}},
+          "boundary": {"type": "string", "minLength": 1},
+          "contradiction_status": {"enum": ["CLEAR", "CLEAR_WITH_EXPLICIT_BOUNDARY", "OPEN"]}
+        }
+      }
+    },
+    "capability_ids_sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
