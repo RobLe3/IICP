@@ -134,7 +134,7 @@
     },
     {
       "id": "management",
-      "version": "0.8.0",
+      "version": "0.9.0",
       "wire_behavior": "unchanged",
       "conformance_impact": "changed",
       "profiles": [
@@ -145,8 +145,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "Install the optional Management Foundation developer preview with its published lockfile. Version 0.8 adds a target-independent runtime-aware diagnostic bundle v2 while preserving diagnostic v1 when no runtime evidence is supplied. Both remain read-only, non-authorizing and outside IICP wire semantics.",
-      "rollback": "Install immutable 0.7.0 to remove runtime-aware diagnostic bundle v2. Package rollback changes no Directory, service, accepted management state or target state."
+      "migration": "Install the optional Management Foundation developer preview with its published lockfile. Version 0.9 adds explicit, non-authorizing bootstrap assessment from a supplied canonical RuntimeConfigV1 and optional content-minimized runtime-health evidence. It performs no discovery, activation, service control or network access.",
+      "rollback": "Install immutable 0.8.0 to remove runtime-configuration bootstrap preflight. Package rollback changes no Directory, service, accepted management state or target state."
     }
   ]
 }
