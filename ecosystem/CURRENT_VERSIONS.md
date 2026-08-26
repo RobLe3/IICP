@@ -13,7 +13,7 @@ version different contracts and do not need to match.
 | iicp-client-typescript | 0.7.109 | active |
 | iicp-client-rust | 0.7.109 | active |
 | iicp-web-node | 0.2.6 | experimental |
-| iicp-management | 0.8.0 | developer-preview |
+| iicp-management | 0.9.0 | developer-preview |
 
 Deployment identifiers and observed live adoption are time-bound evidence and
 are intentionally not represented as release versions in this projection.

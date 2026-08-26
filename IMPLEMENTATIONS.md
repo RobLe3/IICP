@@ -14,7 +14,7 @@ not public build, conformance or governance dependencies.
 | [iicp-client-typescript](https://github.com/RobLe3/iicp-client-typescript) | TypeScript consumer and provider SDK | typescript | public | active | 0.7.109 |
 | [iicp-client-rust](https://github.com/RobLe3/iicp-client-rust) | Rust consumer and provider SDK | rust | public | active | 0.7.109 |
 | [iicp-web-node](https://github.com/RobLe3/iicp-web-node) | browser-native IICP consumer and provider implementation | typescript | public | experimental | 0.2.6 |
-| [iicp-management](https://github.com/RobLe3/iicp-management) | implementation-neutral management contracts, deterministic core and conformance material | rust | public | developer-preview | 0.8.0 |
+| [iicp-management](https://github.com/RobLe3/iicp-management) | implementation-neutral management contracts, deterministic core and conformance material | rust | public | developer-preview | 0.9.0 |
 
 ## Governance boundary
 
