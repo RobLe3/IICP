@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-25",
+  "generated_at": "2026-08-26",
   "releases": [
     {
       "id": "specification",
@@ -134,7 +134,7 @@
     },
     {
       "id": "management",
-      "version": "0.9.0",
+      "version": "0.10.0",
       "wire_behavior": "unchanged",
       "conformance_impact": "changed",
       "profiles": [
@@ -145,8 +145,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "Install the optional Management Foundation developer preview with its published lockfile. Version 0.9 adds explicit, non-authorizing bootstrap assessment from a supplied canonical RuntimeConfigV1 and optional content-minimized runtime-health evidence. It performs no discovery, activation, service control or network access.",
-      "rollback": "Install immutable 0.8.0 to remove runtime-configuration bootstrap preflight. Package rollback changes no Directory, service, accepted management state or target state."
+      "migration": "Install the optional Management Foundation developer preview with its published lockfile. Version 0.10 composes a supplied canonical RuntimeConfigV1, optional content-minimized runtime-health evidence, diagnostics and a desired-state proposal into one non-authorizing first-run preparation envelope. It performs no discovery, activation, service control or network access.",
+      "rollback": "Install immutable 0.9.0 to remove the composed first-run preparation command. Package rollback changes no Directory, service, accepted management state or target state."
     }
   ]
 }
