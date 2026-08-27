@@ -36,7 +36,7 @@
       "authority": "pre-1.0 Rust directory operator preview; not the production Genesis authority",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.1.14"
+      "release": "0.1.15"
     },
     {
       "id": "client-python",
@@ -95,7 +95,7 @@
       "authority": "implementation-neutral management contracts, deterministic core and conformance material",
       "language": "rust",
       "protocol": "1.9",
-      "release": "0.10.1",
+      "release": "0.11.0",
       "package": "crates:iicp-management-core"
     }
   ]
