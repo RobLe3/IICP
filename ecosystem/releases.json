@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-26",
+  "generated_at": "2026-08-28",
   "releases": [
     {
       "id": "specification",
@@ -42,8 +42,8 @@
     },
     {
       "id": "directory-rust",
-      "version": "0.1.14",
-      "wire_behavior": "additive",
+      "version": "0.1.15",
+      "wire_behavior": "unchanged",
       "conformance_impact": "changed",
       "profiles": [
         "directory-implementation-metadata-v1",
@@ -55,8 +55,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "recommended",
-      "migration": "Apply the matching outcome-v2 schema migration in a disposable or authorized operator-preview database. The release pins PHP 1.10.93 parity and keeps restricted-domain mode disabled by default.",
-      "rollback": "Restore immutable 0.1.13 through the guarded updater and restore the pre-migration database snapshot where required. PHP remains Genesis authority and no cutover is authorized."
+      "migration": "Install the immutable 0.1.15 operator preview. MySQL-backed registration and re-registration now retain the existing canonical cx_public_key discovery evidence, and the packaged source boundary excludes ignored nested cache metadata. No database, HTTP, schema or Genesis migration is required.",
+      "rollback": "Restore immutable 0.1.14 through the guarded updater. No schema rollback is required, but registrations handled after rollback will not receive the 0.1.15 cx_public_key persistence correction. PHP remains Genesis authority and no cutover is authorized."
     },
     {
       "id": "client-python",
@@ -134,9 +134,9 @@
     },
     {
       "id": "management",
-      "version": "0.10.1",
+      "version": "0.11.0",
       "wire_behavior": "unchanged",
-      "conformance_impact": "unchanged",
+      "conformance_impact": "changed",
       "profiles": [
         "management-profile-v1",
         "policy-lifecycle-v1",
@@ -145,8 +145,8 @@
       ],
       "supported_protocol": ">=1.9.0,<2.0.0",
       "upgrade": "optional",
-      "migration": "Install the optional Management Foundation 0.10.1 developer preview with its published lockfile. This corrective package preserves iicp.management-bootstrap-workflow.v1, pins the locked graph to the declared Rust 1.86 minimum and creates Unix controller sockets owner-only from bind time. It performs no discovery, activation, service control or network access.",
-      "rollback": "Install immutable 0.10.0 to remove the packaging and Unix socket-creation corrections. Package rollback changes no Directory, service, accepted management state or target state."
+      "migration": "Install the optional Management Foundation 0.11.0 developer preview with its published lockfile. It adds a fail-closed, process-local bridge from an active Management policy generation to the Rust client's existing routing boundary. It adds no Directory authority, network service, activation, discovery or protocol-wire semantics.",
+      "rollback": "Install immutable 0.10.1 to remove the process-local routing-enforcement bridge. Package rollback changes no Directory, service, accepted management state or target state."
     }
   ]
 }

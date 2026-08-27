@@ -28,7 +28,7 @@
       "lifecycle": "operator-preview",
       "name": "iicp-directory-rust",
       "protocol": "1.9",
-      "release": "0.1.14",
+      "release": "0.1.15",
       "url": "https://github.com/RobLe3/iicp-directory-rust"
     },
     {
@@ -83,7 +83,7 @@
       "name": "iicp-management",
       "package": "crates:iicp-management-core",
       "protocol": "1.9",
-      "release": "0.10.1",
+      "release": "0.11.0",
       "url": "https://github.com/RobLe3/iicp-management"
     }
   ],

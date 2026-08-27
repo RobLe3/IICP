@@ -27,13 +27,13 @@
     "directory-rust": {
       "lifecycle": "operator-preview",
       "name": "iicp-directory-rust",
-      "release": "0.1.14",
+      "release": "0.1.15",
       "visibility": "public"
     },
     "management": {
       "lifecycle": "developer-preview",
       "name": "iicp-management",
-      "release": "0.10.1",
+      "release": "0.11.0",
       "visibility": "public"
     },
     "specification": {
