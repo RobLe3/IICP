@@ -1637,6 +1637,19 @@
       ]
     },
     {
+      "urn": "urn:iicp:intent:pre1:discovery-scale:v1",
+      "classification": "candidate-unregistered",
+      "disposition": "observed outside the canonical registry; requires separate review and evidence",
+      "sources": [
+        {
+          "repository": "iicp-directory-rust",
+          "paths": [
+            "src/db.rs"
+          ]
+        }
+      ]
+    },
+    {
       "urn": "urn:iicp:intent:research:summarize:v1",
       "classification": "canonical",
       "disposition": "present in registry/intents.json",
