@@ -438,7 +438,7 @@
     {
       "id": "native-binary-framing",
       "title": "Native binary framing",
-      "classification": "OPTIONAL_STABLE",
+      "classification": "EXPERIMENTAL",
       "authority_refs": [
         "spec/v1.9/iicp-framing.md",
         "spec/v1.9/iicp-cbor-wire.md"
@@ -451,8 +451,8 @@
         "RobLe3/iicp-client-typescript",
         "RobLe3/iicp-client-rust"
       ],
-      "boundary": "HTTP-capable stable operation does not require the optional binary binding.",
-      "contradiction_status": "CLEAR"
+      "boundary": "Cross-SDK framing vectors remain experimental evidence. Maintained native TCP is an explicitly enabled plaintext development profile and is excluded from the coordinated stable and production baseline.",
+      "contradiction_status": "CLEAR_WITH_EXPLICIT_BOUNDARY"
     },
     {
       "id": "runtime-identity-context",
