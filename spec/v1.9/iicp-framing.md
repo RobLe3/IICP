@@ -1,8 +1,8 @@
 # IICP Binary Framing Layer
 
 **Document**: `spec/iicp-framing.md`  
-**Version**: 0.1.9-draft
-**Date**: 2026-08-08
+**Version**: 0.1.10-draft
+**Date**: 2026-08-28
 **Status**: Draft — NOT YET RATIFIED (see §12)  
 **Authority**: Protocol Steward  
 **Issue**: #231  
@@ -21,16 +21,16 @@ document are to be interpreted as described in RFC 2119 / BCP 14.
 
 ## Abstract
 
-This document defines the binary framing layer for the Intent-based Inter-agent
-Communication Protocol (IICP). It specifies the wire format for IICP frames
-transmitted over TCP and QUIC, the CBOR payload encoding rules for all 14 core
-message types (ported from IICP v1.4.2), a formal HTTP fallback mode for Phase 1-3
-interoperability, a custom/proprietary extension range, version negotiation, and
-error-handling behavior.
+This document is the draft binary framing binding for IICP over an ordered byte
+stream. It defines the 12-byte frame, CBOR payload rules, HTTP compatibility
+mapping, extension range, version negotiation and error behavior. Native framed
+TCP is implemented but remains an optional pre-ratification binding. QUIC is a
+non-normative research mapping and is not a supported IICP transport.
 
-The framing layer is a Phase 4 MUST requirement. It does NOT replace the HTTP/JSON
-transport (Phase 1-3) — both are first-class IICP transport tiers. See §5 for the
-HTTP fallback mode specification.
+The IICP Core semantics remain transport-independent. A stable implementation can
+satisfy the current contract through the supported HTTP binding without native
+framing. See §5 and the transport decision in
+`standards/TRANSPORT_BINDING_AND_PORT_DECISION_2026-08-21.md`.
 
 ---
 
@@ -70,9 +70,9 @@ authentication (see §9).
 #### Version (1 byte)
 
 The framing layer version negotiated for this connection. Current value: `0x01`.
-Upper 4 bits are reserved and MUST be zero on send; MUST be ignored on receive.
-Receivers MUST NOT accept frames with a Version lower than their minimum supported
-version (see §6).
+A sender MUST emit the exact negotiated byte. Before another version is defined,
+a receiver MUST reject every other value without allocating the announced payload
+(see §6 and §9.7). Version-bit masking is not negotiation.
 
 #### Type (1 byte)
 
@@ -108,11 +108,11 @@ bytes and confirming Length is within its configured maximum (see §2).
 | Limit | Value | Rationale |
 |-------|-------|-----------|
 | Minimum payload | 0 bytes | Valid for PING / PONG frames |
-| Maximum single frame | 16,777,216 bytes (16 MiB) | Prevents memory amplification |
-| Recommended segment | 65,536 bytes (64 KiB) | Fits within a single QUIC datagram after overhead |
-| Maximum CALL payload (compressed) | 1,048,576 bytes (1 MiB) | Hard limit for task invocations |
-| Maximum CALL payload (uncompressed) | 33,554,432 bytes (32 MiB) | Reject inflate beyond this |
-| Fragmentation threshold | 65,536 bytes | Frames exceeding this SHOULD use fragmentation |
+| Maximum frame payload | 16,777,216 bytes (16 MiB) | Length-field limit; excludes the 12-byte header |
+| Recommended local I/O chunk | 65,536 bytes (64 KiB) | Implementation choice only; not a wire or datagram boundary |
+| Maximum compressed CALL bytes | 1,048,576 bytes (1 MiB) | Applies only after compression is negotiated |
+| Maximum decompressed CALL bytes | 33,554,432 bytes (32 MiB) | Bounded decompression output |
+| Logical fragmentation threshold | Not yet stable | Fragmentation is a separate, unimplemented draft profile |
 
 A receiver MUST close the connection with error code `frame_too_large` if the
 Length field exceeds 16,777,216 bytes. The check MUST be performed before allocating
@@ -155,22 +155,32 @@ The 256-value type byte is partitioned as follows:
 | `0x0D` | OBSERVE | bidirectional | Stream telemetry subscription or event |
 | `0x0E` | TELEMETRY | bidirectional | Diagnostic telemetry report |
 
+> **Pre-ratification opcode collision:** maintained SDK relay experiments use
+> `0x0B`/`0x0C` as `RELAY_BIND`/`RELAY_ACK`, while the inherited core table above
+> assigns `CONTROL`/`ADVERTISE`. Those meanings are not interoperable. Until the
+> registry work resolves the collision, a stable native profile MUST NOT claim
+> support for any of these four messages on `0x0B`/`0x0C`. Existing relay use
+> remains experimental and cannot count as stable framing conformance.
+
 ---
 
 ## 4. CBOR Payload Encoding
 
 ### 4.1 Encoding baseline
 
-All CBOR payloads in IICP MUST use **Deterministic CBOR** as defined in RFC 8949 §4.2.1:
+Native senders MUST emit **Deterministic CBOR** as defined in RFC 8949 §4.2.1:
 
-- Integer keys over string keys where both options exist (numbered field maps)
-- Shortest encoding for each value
-- Map keys sorted lexicographically by their encoded byte representation
-- No indefinite-length items (arrays and maps MUST be definite-length)
-- No duplicate map keys
+- integer keys where the message schema defines numbered fields;
+- shortest encoding for each value;
+- deterministic encoded-key ordering;
+- definite-length arrays and maps; and
+- no duplicate map keys.
 
-Receivers MUST reject frames whose CBOR payload violates deterministic encoding
-rules. This requirement enables signature verification (ADR-024) without normalization.
+A receiver MAY accept a semantically valid non-deterministic payload for an
+unsigned base message during the pre-ratification compatibility period. A payload
+covered by a signature or receipt MUST be rejected unless its exact encoded form
+is deterministic. Implementations MUST NOT re-encode non-deterministic signed
+input and then treat the normalized bytes as what the peer signed.
 
 ### 4.2 Integer-keyed field maps
 
@@ -793,9 +803,15 @@ exposed as output chunks.
 
 ### 10.1 When to fragment
 
-Implementations SHOULD fragment frames whose payload exceeds 65,536 bytes. Over
-QUIC, fragmentation at the IICP layer is OPTIONAL — QUIC handles segmentation
-transparently. Over TCP, IICP-layer fragmentation is the application's responsibility.
+TCP and QUIC streams already segment bytes below this layer. The 12-byte Length
+field, not a packet or read call, defines one frame boundary. An implementation
+MUST therefore accept a supported frame split across arbitrary stream reads and
+MUST NOT require logical fragmentation merely because a payload exceeds 64 KiB.
+
+The FRAGMENTED flag and §10.2–10.3 describe a future logical-message profile for
+payloads that exceed a negotiated frame limit. That profile is not part of the
+current stable support surface and MUST NOT be advertised without independent
+negotiation and the reassembly safety checks below.
 
 ### 10.2 Fragment frame format
 
@@ -839,13 +855,14 @@ Two further caps MUST be enforced per connection:
 These bound worst-case reassembly memory to a fixed `MAX_REASSEMBLY_BYTES` per connection,
 **independent of how an attacker distributes fragments across `fragment_id`s** — so the
 amplification factor at N concurrent incomplete frames is O(1), not O(N). Implementations
-MAY expose both caps as configuration but MUST default to at least the limits above and
-MUST NOT disable them.
+MAY expose stricter caps as configuration but MUST default to no more than the limits
+above and MUST NOT disable them.
 
-### 10.4 QUIC transport profile
+### 10.4 QUIC research mapping (non-normative)
 
-IICP-over-QUIC uses QUIC streams for multiplexing concurrent requests without
-head-of-line blocking.
+IICP-over-QUIC is not currently supported. The following mapping is a research
+target that must not be presented as implemented or interoperable. It illustrates
+how a future binding could multiplex requests without changing IICP Core semantics.
 
 **Stream mapping:**
 
@@ -878,40 +895,29 @@ over QUIC**. QUIC STREAM frames partition the byte stream arbitrarily at the net
 layer; IICP frames may span multiple QUIC STREAM frames. The Length field is the
 authoritative frame boundary marker regardless of transport.
 
-### 10.5 Fragmentation over QUIC
+### 10.5 Segmentation and future QUIC behavior
 
-QUIC handles network-layer segmentation transparently. IICP-layer fragmentation
-(§10.1–10.3) is therefore **OPTIONAL** over QUIC:
+Both TCP and a QUIC stream present an ordered byte stream. Either transport may
+split one IICP frame across arbitrary transport records. Logical IICP
+fragmentation is needed only when a negotiated message exceeds the peer's frame
+limit; 64 KiB is not a protocol threshold.
 
-- If a CALL payload exceeds the peer's advertised `max_frame_size` (negotiated via
-  §7.3 capability map, default 16 MiB), IICP-layer fragmentation MUST be used.
-- If no `max_frame_size` constraint applies, implementations SHOULD let QUIC handle
-  segmentation and SHOULD NOT set the FRAGMENTED flag.
-- Over TCP, where no transport-level message segmentation occurs, IICP-layer
-  fragmentation (§10.1–10.3) is the application's responsibility for payloads
-  exceeding 65,536 bytes.
-
-| Property | TCP | QUIC |
-|----------|-----|------|
-| Frame boundary | Length field (§1.2) | Length field (§1.2) — same requirement |
-| Head-of-line blocking | Yes (single stream) | No (stream-per-request) |
-| Application-layer fragmentation | Required for payload > 65 KiB | Optional — QUIC segments natively |
-| Concurrent CALL/RESPONSE pairs | No | Yes (independent streams) |
-| 0-RTT connection resumption | No | Available; IICP INIT replay is replay-protected by `session_id` nonce |
+| Property | Supported TCP binding | Future QUIC binding |
+|----------|-----------------------|---------------------|
+| Frame boundary | Length field (§1.2) | Length field (§1.2) |
+| Concurrent CALL/RESPONSE pairs | Multiple connections | Intended independent streams |
+| Logical fragmentation | Future negotiated profile | Future negotiated profile |
+| 0-RTT | Not applicable | Unspecified; replay policy requires separate review |
 
 ### 10.6 CBOR encoding constraints
 
 **Deterministic encoding (RFC 8949 §4.2.1):**
 
-IICP messages that carry ADR-024 signature fields MUST use deterministic CBOR
-encoding. Deterministic CBOR requires:
-- Integers encoded in minimal form (no leading zero bytes).
-- Map keys sorted by length then lexicographic order.
-- Indefinite-length items MUST NOT be used.
-
-The following message types carry ADR-024 signature fields and therefore MUST use
-deterministic CBOR: CALL (0x05), RESPONSE (0x06), INIT (0x01), FEEDBACK (0x08),
-TELEMETRY (0x0E).
+All native senders use deterministic CBOR as required by §4.1. Receivers MUST
+enforce deterministic encoding for any message covered by ADR-024 signature or
+receipt bytes. Unsigned compatibility behavior is also defined in §4.1. Map keys
+follow RFC 8949 deterministic encoded-key ordering; the older phrase “length then
+lexicographic order” is not a separate IICP algorithm.
 
 **Indefinite-length CBOR:**
 
@@ -1143,3 +1149,4 @@ mechanisms are complementary.
 | 0.1.7-draft | 2026-07-30 | Protocol Steward | Corrected IANA procedure and provisional port wording; limited current port convention to TCP; removed invalid/unassigned CBOR-tag claims; left media types pending. No wire behavior changed. |
 | 0.1.8-draft | 2026-08-08 | Protocol Steward | Resolved the base-versus-profile RESPONSE contradiction: base CALLs remain buffered and single-terminal; negotiated service-lifecycle streaming uses incremental partials plus one terminal response. Clarified accounting, HTTP fallback, QUIC closure, sequence ownership and fragmentation terminology. No base-frame or required-field change. |
 | 0.1.9-draft | 2026-08-08 | Protocol Steward | Specifies the negotiated lifecycle-envelope location in RESPONSE key 13 and OBSERVE `data`, including call/task correlation, status/finality mapping and native negative vectors. Key 13 remains profile-only; no base-frame or required-field change. |
+| 0.1.10-draft | 2026-08-28 | Protocol Steward | Aligns the draft with the transport decision: native TCP remains optional, QUIC is research-only, Length is payload-only, 64 KiB is not a stream/datagram boundary, logical fragmentation is not stable, reassembly defaults are true maxima, deterministic-CBOR receive scope is explicit, and the unresolved `0x0B`/`0x0C` relay collision is recorded. |

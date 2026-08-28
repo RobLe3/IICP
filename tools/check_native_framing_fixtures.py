@@ -42,6 +42,12 @@ def main() -> int:
     layout = frame.get("layout", [])
     if frame.get("header_bytes") != 12:
         errors.append("header_bytes must be 12")
+    if frame.get("max_payload_bytes") != 16 * 1024 * 1024:
+        errors.append("max_payload_bytes must be the payload-only 16 MiB limit")
+    if frame.get("length_semantics") != "payload_bytes_excluding_12_byte_header":
+        errors.append("Length semantics must exclude the 12-byte header")
+    if frame.get("decode_contract", {}).get("framing_version") != "exactly_1":
+        errors.append("framing version contract must require exactly version 1")
     if sum(item.get("bytes", 0) for item in layout) != 12:
         errors.append("frame layout does not sum to 12 bytes")
     expected = [("magic", 0, 4), ("version", 4, 1), ("type", 5, 1),
@@ -49,6 +55,21 @@ def main() -> int:
     actual = [(item.get("name"), item.get("offset"), item.get("bytes")) for item in layout]
     if actual != expected:
         errors.append(f"unexpected canonical layout: {actual!r}")
+    scenarios = data.get("scenarios", [])
+    names = [scenario.get("name") for scenario in scenarios]
+    if len(names) != len(set(names)):
+        errors.append("scenario names must be unique")
+    required = {
+        "unsupported_framing_version": "unsupported_version",
+        "payload_length_exceeds_limit_before_body_read": "payload_too_large",
+    }
+    by_name = {scenario.get("name"): scenario for scenario in scenarios}
+    for name, reason in required.items():
+        scenario = by_name.get(name)
+        if scenario is None:
+            errors.append(f"missing required negative vector: {name}")
+        elif scenario.get("expected", {}).get("reason") != reason:
+            errors.append(f"{name}: expected reason must be {reason}")
     for copy in args.copy:
         if not copy.is_file():
             errors.append(f"missing SDK fixture copy: {copy}")
