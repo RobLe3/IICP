@@ -19,6 +19,9 @@ python3 "$root/tools/check_native_framing_fixtures.py" \
   --copy "$python/tests/fixtures/native-framing-v1.json" \
   --copy "$typescript/tests/fixtures/native-framing-v1.json"
 
-(cd "$rust" && cargo test --test native_framing_fixture)
+(cd "$rust" && \
+  ./scripts/with_disposable_cargo_target.sh \
+    --label protocol-native-framing \
+    -- cargo test --locked --test native_framing_fixture)
 (cd "$python" && .venv/bin/python -m pytest -q tests/test_native_framing_fixture.py)
 (cd "$typescript" && npx tsx --test tests/native_framing_fixture.test.ts)
