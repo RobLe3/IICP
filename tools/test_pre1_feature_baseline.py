@@ -23,7 +23,7 @@ class Pre1FeatureBaselineTests(unittest.TestCase):
     def test_current_baseline_is_valid_and_open(self) -> None:
         self.assertEqual(module.validate(self.value), [])
         result = module.evaluate(self.value)
-        self.assertEqual(result["capabilities"], 27)
+        self.assertEqual(result["capabilities"], 28)
         self.assertEqual(len(result["open_component_reviews"]), 6)
         self.assertFalse(result["strict_ready"])
 
@@ -56,6 +56,17 @@ class Pre1FeatureBaselineTests(unittest.TestCase):
         value["capabilities"][0]["authority_refs"] = ["spec/does-not-exist.md"]
         errors = module.validate(value)
         self.assertTrue(any("missing referenced artifact" in error for error in errors))
+
+    def test_native_framing_cannot_reenter_the_stable_baseline(self) -> None:
+        value = copy.deepcopy(self.value)
+        row = next(
+            row
+            for row in value["capabilities"]
+            if row["id"] == "native-binary-framing"
+        )
+        row["classification"] = "OPTIONAL_STABLE"
+        errors = module.validate(value)
+        self.assertTrue(any("must remain experimental" in error for error in errors))
 
 
 if __name__ == "__main__":

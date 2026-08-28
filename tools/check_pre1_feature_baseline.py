@@ -82,6 +82,17 @@ def validate(value: dict, root: Path = ROOT) -> list[str]:
             "OPEN",
         }:
             errors.append(f"invalid contradiction status: {row_id}")
+
+    native = next(
+        (row for row in capabilities if row.get("id") == "native-binary-framing"),
+        None,
+    )
+    if native is None:
+        errors.append("native binary framing capability is missing")
+    elif native.get("classification") != "EXPERIMENTAL":
+        errors.append(
+            "native binary framing must remain experimental while native TCP is excluded"
+        )
     return errors
 
 
