@@ -1,7 +1,7 @@
 {
   "fixture_version": "1.0.0-draft",
   "status": "implementation-backed-pre-ratification",
-  "purpose": "Cross-implementation native framing vectors for the current ordered-stream binding. They cover bounded frame decoding and the fail-closed stable task-session type boundary. Dispatch direction, TLS, lifecycle, dedicated experimental relay sessions, logical fragmentation and unsupported QUIC behavior remain outside this fixture.",
+  "purpose": "Cross-implementation native framing vectors for the current experimental ordered-stream binding. They cover bounded frame decoding and the fail-closed task-session type boundary. Passing these vectors does not admit native TCP to the coordinated stable or production baseline. Dispatch direction, TLS, lifecycle, dedicated experimental relay sessions, logical fragmentation and unsupported QUIC behavior remain outside this fixture.",
   "frame": {
     "framing_version": 1,
     "header_bytes": 12,
@@ -71,7 +71,7 @@
     "conflict": "0x0B/0x0C are CONTROL/ADVERTISE in the draft registry but RELAY_BIND/RELAY_ACK in maintained relay experiments; stable task sessions reject both bytes before proportional allocation.",
     "relay_boundary": "Experimental relay sessions remain isolated on their dedicated transport and do not count as stable task-profile conformance.",
     "extension_boundary": "0xF0-0xFE require negotiated extension state; the current stable task profile negotiates none and rejects them before proportional allocation.",
-    "production_security_disposition": "open_qualify_or_exclude",
+    "production_security_disposition": "excluded_from_stable_baseline",
     "plaintext_scope": "development_only",
     "stable_claim": "not_admitted"
   },
