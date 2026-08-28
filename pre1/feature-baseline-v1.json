@@ -1,6 +1,6 @@
 {
   "schema": "iicp.pre1-feature-baseline.v1",
-  "updated_at": "2026-08-26",
+  "updated_at": "2026-08-28",
   "status": "SPECIFICATION_RECONCILIATION",
   "non_authorizing": true,
   "stable_designation_authorized": false,
@@ -101,6 +101,27 @@
         "RobLe3/iicp-client-rust"
       ],
       "boundary": "PHP and Rust are tested in isolated authority lanes.",
+      "contradiction_status": "CLEAR"
+    },
+    {
+      "id": "provider-route-readiness",
+      "title": "Verified provider route readiness before dispatch eligibility",
+      "classification": "REQUIRED_STABLE",
+      "authority_refs": [
+        "spec/v1.9/iicp-dir.md",
+        "docs/architecture/directory-state-semantics.md"
+      ],
+      "fixture_refs": [
+        "docs/architecture/directory-state-semantics-v1.json"
+      ],
+      "implementations": [
+        "RobLe3/iicp-directory-php",
+        "RobLe3/iicp-directory-rust",
+        "RobLe3/iicp-client-python",
+        "RobLe3/iicp-client-typescript",
+        "RobLe3/iicp-client-rust"
+      ],
+      "boundary": "Allocated endpoints, running processes and usable routes are distinct. Dynamic public routes become eligible only after the provider listener and public health path are verified.",
       "contradiction_status": "CLEAR"
     },
     {
@@ -562,5 +583,5 @@
       "contradiction_status": "CLEAR"
     }
   ],
-  "capability_ids_sha256": "sha256:51cb23ce24f7fefd8c7ff1831d835be7d8ce180d69f750efd71051aae9cdb333"
+  "capability_ids_sha256": "sha256:7a198e074b7d43db022b57768e06ee428b566ef065f14df84f704235850c5071"
 }

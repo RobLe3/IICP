@@ -1,7 +1,7 @@
 # IICP Conformance Test Suite
 
-**Version**: 4.51.0
-**Date**: 2026-08-20
+**Version**: 4.52.0
+**Date**: 2026-08-28
 **Status**: draft
 **Issue**: #22
 **Authority**: Protocol Steward + Integration Validator
@@ -61,6 +61,7 @@ docker compose up -d   # brings up directory + adapter + database
 | `DIR-REG-07` | `node_token` stored as bcrypt hash, never plaintext | Code review: `NodeRegistry` uses `Hash::make()` before insert | code review only |
 | `DIR-REG-08` | `POST /v1/register` with unrecognised `capabilities[].quantization` value (e.g. `"fp64"`) → 201 | Directory MUST NOT reject unrecognised advisory field values; per iicp-core.md §2.1 v1.2.4 | — (directory unit test: `RegisterTest::test_accepts_unrecognised_quantization_value`) |
 | `DIR-REG-09` | `POST /v1/register` with unrecognised `capabilities[].inference_engine` value (e.g. `"tensorrt"`) → 201 | Directory MUST NOT reject unrecognised advisory field values; per iicp-core.md §2.1 v1.2.4 | — (directory unit test: `RegisterTest::test_accepts_unrecognised_inference_engine_value`) |
+| `DIR-REG-10` | REGISTER declares `transport_method=external_tunnel` but public `/iicp/health` is not serving | Reject without issuing credentials or publishing the route; accept only after the same route passes the admission probe | PHP: `RegisterTest::test_external_tunnel_is_not_eligible_before_public_health_is_serving` + `test_external_tunnel_registers_after_public_health_is_serving`; Rust: `validate::tests::rt04_unknown_nat_does_not_bypass_probe` external-tunnel assertion |
 
 ### 3.2 Heartbeat (MUST)
 
@@ -999,6 +1000,7 @@ canonical fixture and schema are
 
 | Version | Date | Change |
 |---------|------|--------|
+| 4.52.0 | 2026-08-28 | DIR-REG-10 makes the existing external-tunnel liveness rule directly testable: allocating a public URL does not make a route eligible before the provider listener and public health path are serving. |
 | 4.51.0 | 2026-08-20 | REP-01 now covers slow successful execution; REP-08 separates audit integrity evidence from outcome reputation; REP-09 requires idempotent metrics-batch retries. |
 | 4.50.0 | 2026-08-02 | §3.3l registers DIR-LIFECYCLE-01..06 for registration, authenticated heartbeat, token-authenticated refresh, stale-token rejection and deregistration. Runner state is ephemeral and result bundles remain content-free. Existing public and dispatch fixtures remain immutable. |
 | 4.49.0 | 2026-08-02 | §3.3k registers the loopback-only DIR-DISPATCH-01..05 ticket-safety profile and reconciles the suite header and single changelog authority. Existing 4.45 result manifests remain immutable and verifiable. |

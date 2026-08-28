@@ -254,6 +254,11 @@ endpoint like any other public endpoint: it MUST still run the normal liveness
 and routability checks, and it MUST NOT depend on vendor-specific tunnel APIs or
 vendor state.
 
+Allocation or log observation of an external-tunnel URL is not liveness
+evidence. A provider MUST start its local listener before the Directory's
+admission probe can succeed, and a Directory MUST NOT issue credentials or make
+the route eligible while the public `/iicp/health` check is unsuccessful.
+
 Accountless or ephemeral external tunnels are an onboarding fallback, not a
 durable production reachability guarantee. Provider SDKs SHOULD apply local
 creation back-pressure before creating such tunnels so multiple node services on
