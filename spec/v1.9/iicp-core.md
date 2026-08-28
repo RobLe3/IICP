@@ -1,7 +1,7 @@
 # IICP Core — Wire Format and Mandatory Requirements
 
-**Version**: 1.3.3
-**Date**: 2026-07-09
+**Version**: 1.3.4
+**Date**: 2026-08-28
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -128,7 +128,7 @@ Content-Type: `application/json`
 
 | Field | Type | Constraint |
 |-------|------|-----------|
-| `endpoint` | string (URL) | Routable URL for the node's control plane (health probe, heartbeat, HTTP fallback transport). HTTPS MUST be used for Phase 1 deployments; http:// is accepted for Phase 3+ native-transport nodes advertising the control plane directly on port 9484 (IPv6-direct tier, where iicp-native framing provides its own integrity). MUST be validated by directory liveness check [→ DIR-REG-04]. See iicp-dir.md §3.1 for full transport/scheme matrix. |
+| `endpoint` | string (URL) | Routable URL for the node's control plane (health probe, heartbeat, supported HTTP task transport). HTTPS MUST be used for production and coordinated stable deployments. Explicit development profiles MAY use `http://` when the directory's liveness and routability policy permits it, but plaintext native framing does not provide transport integrity. MUST be validated by directory liveness check [→ DIR-REG-04]. See iicp-dir.md §3.1 for the full transport/scheme matrix. |
 | `region` | string | IANA-style tag (e.g., `us-west`, `eu-central`); max 64 chars |
 | `capabilities` | array | MUST contain at least one capability object |
 | `capabilities[].intent` | string | Standard: `urn:iicp:intent:<domain>:<action>:v<N>`; Custom: `urn:iicp:intent:x.<vendor>:<action>:v<N>` — see `iicp-semantics.md §1.1` |
@@ -401,10 +401,10 @@ the HTTPS endpoint configured by the operator and is not required to use 9484.
 
 | Aspect | Phase 1 (deployed) | Phase 2 (deployed) | Phase 3 (target) | Phase 4+ (roadmap) |
 |--------|-------------------|--------------------|-------------------|---------------------|
-| Port | Advertised HTTPS port | Advertised HTTPS port | Advertised task/native port | TCP profile implemented; QUIC/UDP remains a draft |
+| Port | Advertised HTTPS port | Advertised HTTPS port | Advertised task port | Experimental TCP profile implemented; QUIC/UDP remains a draft |
 | Encoding | JSON | JSON + CBOR optional | CBOR preferred (`application/cbor`) | CBOR (default) |
-| Transport | HTTPS/1.1 or HTTPS/2 | HTTPS/2 | HTTP or negotiated native TCP | QUIC mapping is future work |
-| Framing | REST (no custom framing) | REST + HMAC-SHA256 envelope | REST (IICP binary framing optional) | Native IICP binary framing |
+| Transport | HTTPS/1.1 or HTTPS/2 | HTTPS/2 | HTTP; explicitly enabled native TCP remains experimental | QUIC mapping is future work |
+| Framing | REST (no custom framing) | REST + HMAC-SHA256 envelope | REST; experimental IICP binary framing optional | Native framing and QUIC remain post-baseline research |
 | TLS version | TLS 1.3 MUST [→ SEC-TLS-01] | TLS 1.3 MUST | TLS 1.3 MUST | TLS 1.3 + PQ option |
 | Auth | Bearer node_token | JWT HS256 | W3C DID (Phase 3+) | PQ — Dilithium3 |
 | Peer discovery | Directory REST | Gossip (PEER_EXCHANGE) | DID-resolved mesh | — |
@@ -414,10 +414,13 @@ tooling compatibility and minimise implementation risk at PoC scale. CBOR and QU
 deferred; the current transport boundary and evidence are recorded in
 `docs/architecture/environmental-independence-and-extension-architecture.md`.
 
-**Current transport evidence**: Maintained implementations support HTTP task
-endpoints and a native framed TCP profile. Deployment metadata can negotiate or
-advertise ports other than 9484. The QUIC mapping remains an active draft and is
-not a mandatory conformance requirement.
+**Current transport evidence and release boundary**: Maintained implementations
+support HTTP task endpoints. They also contain an explicitly enabled plaintext
+native framed TCP development profile with cross-SDK byte-vector coverage. That
+profile has no maintained native TLS terminator and is excluded from the
+coordinated stable and production baseline. Deployment metadata can advertise
+ports other than 9484. The QUIC mapping remains an active draft and is not a
+mandatory conformance requirement.
 
 **Standards intent**: IICP is being prepared for external review. This project
 intent is not IETF endorsement, IANA assignment or external ratification.
@@ -429,12 +432,13 @@ All components MUST validate TLS certificates on outbound connections.
 | Surface | Scheme rule |
 |---------|-------------|
 | Directory control plane (`/v1/register`, `/v1/discover`, `/v1/heartbeat`, etc.) | HTTPS/TLS 1.3 MUST. |
-| Node task/control endpoint advertised as `endpoint` | HTTPS is preferred. Routable `http://` MAY be accepted for native/node consumers only when the directory's liveness and routability checks pass and the deployment profile permits it (see iicp-dir.md §3.1). |
+| Node task/control endpoint advertised as `endpoint` | HTTPS is required for production and coordinated stable deployments. Routable `http://` MAY be accepted only by an explicit development profile when the directory's liveness and routability checks pass (see iicp-dir.md §3.1). |
 | Browser consumers from `https://iicp.network` | HTTPS, browser-safe relay, or WebRTC path only; a public `http://` node endpoint is not browser-usable from the HTTPS site because browsers block mixed active content. |
-| Native data plane | `iicp://` or `iicpsec://` per `transport_endpoint`; `iicpsec://` SHOULD be preferred where available. |
+| Native data plane | Experimental and outside the coordinated stable/production baseline. `iicp://` is plaintext development use. `iicpsec://` may be advertised only when a real native TLS path exists; an HTTPS proxy or tunnel is not such evidence. |
 
 Plaintext HTTP to the directory MUST be rejected. Plaintext HTTP node endpoints
-are route evidence, not browser usability or confidentiality evidence.
+are development route evidence, not browser usability, confidentiality or
+stable-production evidence.
 
 ---
 
@@ -495,7 +499,7 @@ in active use:
 
 ## 8. Security Requirements (Phase 1 minimum)
 
-- TLS 1.3 MUST be enforced on all endpoints [→ SEC-TLS-01]. Exception: Phase 3+ nodes registering an http:// `endpoint` on port 9484 (IPv6-direct, native IICP transport tier) — such nodes SHOULD use `iicpsec://` for their `transport_endpoint` and are exempt from the HTTPS requirement only for the control-plane port-9484 listener where iicp-native framing provides its own integrity.
+- TLS 1.3 MUST be enforced on every production and coordinated stable endpoint [→ SEC-TLS-01]. Explicit development profiles MAY use plaintext `http://` and `iicp://` with visible warnings, but they are outside stable/production claims. Native framing, magic bytes and task authentication do not provide transport confidentiality or integrity.
 - `POST /v1/register` rate limit: 10/min per IP MUST be enforced [→ DIR-RL-01]
 - `node_token`: 32+ bytes cryptographically random, stored bcrypt-hashed, returned once [→ DIR-REG-05, DIR-REG-07]
 - Adapter MUST validate `node_token` on every `POST /v1/task` [→ TASK-1]
@@ -504,7 +508,7 @@ in active use:
 - **Privacy (PA-1..PA-4)**: Implementers and operators MUST inform clients that the inference-executing node receives the full task payload in plaintext, including any user-provided content. IICP provides confidentiality for transit (TLS 1.3) and isolation of the directory from payload content; it does not provide confidentiality against the inference-executing node. [→ SEC-PRIV-01]
 - Relay nodes and directory operators MUST NOT log task payload content beyond the TTL required for rate-limiting. [→ SEC-PRIV-03]
 - Registration `node_id` MUST default to an anonymized UUID not tied to hardware or operator identity. [→ SEC-PRIV-08]
-- All IICP connections MUST use TLS 1.3 or higher with ephemeral key exchange (forward secrecy). [→ SEC-TLS-01, SEC-PRIV-09]. Same Phase 3+ port-9484 exception applies as above.
+- All production and coordinated stable IICP connections MUST use TLS 1.3 or higher with ephemeral key exchange (forward secrecy). [→ SEC-TLS-01, SEC-PRIV-09].
 - **Privacy adversary model** (PA-1..PA-4) and its trust boundaries are defined in `docs/security/privacy-adversary-and-trust-model.md` and SHALL be considered when implementing any component that handles task routing or node metadata.
 
 ---
@@ -600,11 +604,12 @@ status or health command (e.g., `iicp-proxy status`).
 
 ### 11.3 Default Port
 
-Port **9484/TCP** is the provisional default for the native peer profile. It is
-IANA-unassigned and is not reserved for IICP. Implementations MAY use it while
-it remains available, but MUST advertise the actual selected port. Directory
-HTTPS endpoints and HTTP task endpoints use their advertised ports. No IICP
-UDP service port is specified by this release.
+Port **9484/TCP** is the provisional convention for the explicitly enabled
+experimental native peer profile. It is IANA-unassigned and is not reserved for
+IICP. Development implementations MAY use it while it remains available, but
+MUST advertise the actual selected port. Directory HTTPS endpoints and HTTP task
+endpoints use their advertised ports. No IICP UDP service port is specified by
+this release.
 
 ---
 
@@ -612,6 +617,7 @@ UDP service port is specified by this release.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3.4 | 2026-08-28 | Corrects the transport security and release boundary: supported HTTP is the coordinated stable qualification target; plaintext native TCP is explicit development-only and excluded from stable/production claims; native framing is not transport integrity and HTTPS routing does not prove `iicpsec://`. |
 | 1.3.3 | 2026-07-30 | Corrected transport and registry status: 9484 is an unassigned provisional TCP convention, not an IANA reservation; directory HTTPS and advertised endpoint ports are separate; QUIC/UDP remains draft. |
 | 1.3.2 | 2026-07-09 | #614 adds optional `generated_by_ai` response metadata and the compatibility-proxy header rule; it is a transparency notice, not authenticity proof. |
 | 1.3.1 | 2026-06-28 | §8 replaces the stale blanket "plaintext HTTP rejected" wording with an endpoint scheme matrix: directory control plane is HTTPS/TLS-only; node task endpoints may be routable `http://` for native consumers where IICP-DIR permits and probes them; browser consumers require HTTPS/relay/WebRTC-safe paths; native data plane uses `iicp://`/`iicpsec://`. |

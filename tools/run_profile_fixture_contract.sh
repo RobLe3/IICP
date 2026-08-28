@@ -54,6 +54,7 @@ python3 tools/check_submission_governance_decision.py
 python3 -m unittest discover -s tools -p 'test_submission_governance_decision.py'
 python3 tools/check_signed_message_envelope_boundary.py
 python3 -m unittest discover -s tools -p 'test_signed_message_envelope_boundary.py'
+python3 tools/check_native_framing_fixtures.py
 python3 tools/check_public_evidence_access.py
 python3 -m unittest discover -s tools -p 'test_public_evidence_access.py'
 python3 -m unittest discover -s tools -p 'test_ci_required_check_contract.py'

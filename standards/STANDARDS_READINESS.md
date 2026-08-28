@@ -2,7 +2,12 @@
 
 **Date:** 2026-07-30
 
-The fixed-port and binding evidence was dispositioned on 2026-08-21 in [the transport binding and port decision](TRANSPORT_BINDING_AND_PORT_DECISION_2026-08-21.md). The current decision is to make no IANA request and retain native TCP as an optional project binding.
+The fixed-port and binding evidence was dispositioned on 2026-08-21 and amended
+on 2026-08-28 in [the transport binding and port decision](TRANSPORT_BINDING_AND_PORT_DECISION_2026-08-21.md).
+The current decision is to make no IANA request, retain native TCP as an
+experimental project binding, and exclude it from the coordinated stable and
+production baseline. The supported HTTP binding remains the stable transport
+qualification target.
 
 This record separates work that can proceed now from actions that still need
 evidence or maintainer authority.
@@ -83,7 +88,8 @@ independent evidence.
 Public standards material may describe a running beta network and maintained
 implementations. It must not claim heavy production throughput without a
 published measurement, call port 9484 assigned, describe the Rust directory as
-independent, or imply IETF/IANA endorsement.
+independent, imply IETF/IANA endorsement, or treat native framing conformance as
+native TLS or production-support evidence.
 
 No item in this record authorizes deployment, an Internet-Draft upload, a
 mailing-list post or an IANA application.

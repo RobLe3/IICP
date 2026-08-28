@@ -1,7 +1,7 @@
 # IICP Binary Framing Layer
 
 **Document**: `spec/iicp-framing.md`  
-**Version**: 0.1.11-draft
+**Version**: 0.1.12-draft
 **Date**: 2026-08-28
 **Status**: Draft — NOT YET RATIFIED (see §12)  
 **Authority**: Protocol Steward  
@@ -24,12 +24,16 @@ document are to be interpreted as described in RFC 2119 / BCP 14.
 This document is the draft binary framing binding for IICP over an ordered byte
 stream. It defines the 12-byte frame, CBOR payload rules, HTTP compatibility
 mapping, extension range, version negotiation and error behavior. Native framed
-TCP is implemented but remains an optional pre-ratification binding. QUIC is a
-non-normative research mapping and is not a supported IICP transport.
+TCP is implemented but remains an optional pre-ratification binding. It is
+explicitly excluded from the coordinated stable and production baseline. QUIC
+is a non-normative research mapping and is not a supported IICP transport.
 
-The IICP Core semantics remain transport-independent. A stable implementation can
-satisfy the current contract through the supported HTTP binding without native
-framing. See §5 and the transport decision in
+The IICP Core semantics remain transport-independent. A stable implementation
+can satisfy the current contract through the supported HTTP binding without
+native framing. Cross-SDK framing vectors prove byte-level compatibility only;
+they do not prove TLS, authentication, lifecycle safety, production operation or
+performance. Native TCP can be reconsidered for a later stable support surface
+only after those properties are qualified. See §5 and the transport decision in
 `standards/TRANSPORT_BINDING_AND_PORT_DECISION_2026-08-21.md`.
 
 ---
@@ -82,7 +86,7 @@ Receivers that receive an unknown Type in the range 0x0F–0xEF MUST send a
 receive a Type in the CUSTOM range (0xF0–0xFE) and have not negotiated that type
 via INIT MUST send a `CLOSE` frame with error code `unsupported_extension`.
 The receiver MUST validate the Type after the fixed header and before allocating
-or waiting for a buffer proportional to Length. The current stable task-session
+or waiting for a buffer proportional to Length. The current bounded task-session
 profile accepts `0x01`–`0x0A` and `0x0D`–`0x0E`. It rejects `0x0B`/`0x0C` with
 `conflicted_type` until the pre-ratification relay collision in §3 is resolved.
 
@@ -709,6 +713,13 @@ MUST NOT be used in production. Development environments MAY use plaintext with
 explicit configuration; implementations MUST require explicit opt-in and MUST log
 a warning when plaintext mode is active.
 
+The maintained SDK implementations currently expose only the explicitly enabled
+plaintext development form of this binding. They do not provide a native TLS
+terminator. Therefore their native TCP paths MUST NOT be advertised as
+production-secure or counted toward a coordinated stable designation. An HTTPS
+reverse proxy or tunnel for the HTTP endpoint does not establish native TLS and
+MUST NOT be used as evidence for an `iicpsec://` endpoint.
+
 ### 9.2 Magic bytes are not authentication
 
 The IICP magic bytes (§1.2) provide fast peer-identity guarding against accidental
@@ -1011,6 +1022,11 @@ values 65532–65534 are not claimed. Current IICP messages use untagged maps.
 This document is at **DRAFT** status. The following gates must be cleared before
 ratification:
 
+Ratification of the framing document and admission of native TCP to a stable
+implementation baseline are separate decisions. Native TCP is excluded from the
+current coordinated stable/production baseline; the supported HTTP binding is
+the transport qualification target for that baseline.
+
 - [x] Research issues #232 (FRAME1), #233 (FRAME2), #234 (FRAME3), #235 (FRAME4),
   #236 (FRAME5), #237 (FRAME6), #238 (FRAME7) resolved; no open blocking findings
   — FRAME5 closed: §10.4-10.6 (QUIC profile, CBOR constraints) 2026-05-20
@@ -1162,3 +1178,4 @@ mechanisms are complementary.
 | 0.1.9-draft | 2026-08-08 | Protocol Steward | Specifies the negotiated lifecycle-envelope location in RESPONSE key 13 and OBSERVE `data`, including call/task correlation, status/finality mapping and native negative vectors. Key 13 remains profile-only; no base-frame or required-field change. |
 | 0.1.10-draft | 2026-08-28 | Protocol Steward | Aligns the draft with the transport decision: native TCP remains optional, QUIC is research-only, Length is payload-only, 64 KiB is not a stream/datagram boundary, logical fragmentation is not stable, reassembly defaults are true maxima, deterministic-CBOR receive scope is explicit, and the unresolved `0x0B`/`0x0C` relay collision is recorded. |
 | 0.1.11-draft | 2026-08-28 | Protocol Steward | Defines the finite stable task-session type allowlist, requires type rejection before proportional allocation, isolates dedicated experimental relay opcodes, and keeps production native TCP at the open qualify-or-exclude security gate. |
+| 0.1.12-draft | 2026-08-28 | Protocol Steward | Resolves the finite gate by excluding native TCP from the coordinated stable/production baseline. Cross-SDK framing vectors remain valid experimental evidence, but do not prove native TLS, lifecycle, production operation or performance. |

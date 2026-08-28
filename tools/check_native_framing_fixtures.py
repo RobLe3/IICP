@@ -75,8 +75,8 @@ def main() -> int:
         errors.append("stable task accepted types must be 0x01-0x0A and 0x0D-0x0E")
     if task_profile.get("conflicted_message_types") != [11, 12]:
         errors.append("stable task conflicted types must be 0x0B and 0x0C")
-    if task_profile.get("production_security_disposition") != "open_qualify_or_exclude":
-        errors.append("production security disposition must remain open qualify-or-exclude")
+    if task_profile.get("production_security_disposition") != "excluded_from_stable_baseline":
+        errors.append("production security disposition must remain excluded from the stable baseline")
     if task_profile.get("plaintext_scope") != "development_only":
         errors.append("plaintext native TCP must remain development-only")
     if task_profile.get("stable_claim") != "not_admitted":

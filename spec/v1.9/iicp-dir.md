@@ -1,7 +1,7 @@
 # IICP-DIR — Directory Sub-Protocol Specification
 
-**Version**: 1.1.25
-**Date**: 2026-08-20
+**Version**: 1.1.26
+**Date**: 2026-08-28
 **Status**: draft
 **Issue**: #14
 **Authority**: Protocol Steward
@@ -154,22 +154,22 @@ the verified `operator_pubkey` + trust tier (`did_key` self-asserted in Phase A;
 domain-verified in Phase B). An invalid delegation leaves the node operator-unverified but does NOT
 reject the registration (no false binding is possible without the operator's signature). [→ DIR-OPID-01]
 
-**Dual-endpoint model (v1.5.0, optional — default to HTTP-only)**:
+**Dual-endpoint model (v1.5.0, experimental — default to HTTP-only)**:
 
 A node MAY advertise two endpoints with distinct roles:
 
 | Field | Scheme | Role | Used by |
 |-------|--------|------|---------|
 | `endpoint` | `http://` / `https://` | Control plane: health probe, registration heartbeat, HTTP fallback transport | Directory `assertLive`; legacy clients |
-| `transport_endpoint` | `iicp://` / `iicpsec://` | Data plane: native binary framing per ADR-040 (default port 9484) | Clients preferring native transport |
+| `transport_endpoint` | `iicp://` / `iicpsec://` | Experimental data plane: native binary framing per ADR-040 (provisional port 9484 convention) | Explicitly configured experimental peers |
 
 Rules:
 - `endpoint` is REQUIRED (no change from prior versions).
-- `transport_endpoint` is OPTIONAL. When present its URI scheme MUST be `iicp` (plaintext binary framing) or `iicpsec` (TLS-wrapped framing). Default port for both is 9484 (ADR-040 §3).
+- `transport_endpoint` is OPTIONAL and outside the coordinated stable/production baseline. When present its URI scheme MUST be `iicp` (plaintext binary framing) or `iicpsec` (TLS-wrapped framing). Port 9484 is a provisional, unassigned convention; the advertised port is authoritative (ADR-040 §3).
 - The directory MUST NOT perform an HTTP probe against `transport_endpoint` — its liveness is implied by `endpoint`'s `/iicp/health` response (Phase 5.x scope; native-protocol dial-back is Phase 6).
-- Clients SHOULD prefer `transport_endpoint` when issuing task CALLs. When absent or unreachable, clients fall back to `endpoint` (HTTP transport per spec §3.3).
+- Stable clients MUST NOT infer production support from the field or prefer it by default. A client MAY use `transport_endpoint` only when its experimental native binding is explicitly enabled and the advertised scheme is supported. Otherwise it uses `endpoint` (HTTP transport per spec §3.3).
 - Both endpoints MUST resolve to the same node (operator MUST NOT advertise a `transport_endpoint` belonging to a different host).
-- `endpoint` and `transport_endpoint` MAY share the same host:port: a node MAY multiplex the HTTP control plane and the native binary transport on one listener via first-byte protocol detection (the IICP frame magic `IICP` distinguishes a native connection from an HTTP request line). Single-port operation lets a CGNAT node serve both planes through one pinhole, so the native transport is reachable exactly when `endpoint` is (#457; the reference SDKs default to this).
+- `endpoint` and `transport_endpoint` MAY share the same host:port when the operator explicitly enables the experimental listener: a node MAY multiplex the HTTP control plane and the native binary transport on one listener via first-byte protocol detection (the IICP frame magic `IICP` distinguishes a native connection from an HTTP request line). Maintained provider defaults do not mount or advertise native TCP. Same-port advertisement does not prove native TLS or production readiness.
 
 Example with both endpoints:
 
@@ -552,7 +552,7 @@ set as safe presentation metadata only.
 
 | Field | Type | Notes |
 |-------|------|-------|
-| `transport_endpoint` | string\|null | Native IICP binary endpoint (ADR-040). Scheme `iicp://` (plaintext) or `iicpsec://` (TLS). Clients SHOULD prefer this over `endpoint`. `null` = node only serves HTTP transport via `endpoint`. |
+| `transport_endpoint` | string\|null | Experimental native IICP binary endpoint (ADR-040), outside the coordinated stable/production baseline. Scheme `iicp://` (plaintext development use) or `iicpsec://` (TLS only when a real native TLS terminator exists). Clients use it only after explicit binding enablement; `null` means the node only advertises HTTP transport via `endpoint`. |
 | `reputation_score` | float [0.0, 1.0] | Delta-based EMA per spec §11.2 (ADR-023). Default 0.5 for nodes with no heartbeat history. |
 | `probation` | boolean | `true` when `completed_tasks_count < 100`. Nodes in probation are excluded from `?qos=interactive` and `?qos=realtime` queries. |
 | `completed_tasks_count` | integer | Cumulative count of successfully completed tasks (heartbeat-reported). Used for probation tier gating (spec §11.3). |
@@ -1876,6 +1876,7 @@ Tracking: #508
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.1.26 | 2026-08-28 | Corrects the native transport support boundary: `transport_endpoint` remains experimental and optional, maintained stable defaults use HTTP, clients do not prefer it without explicit enablement, and HTTPS route evidence must not be treated as native TLS evidence. |
 | 1.1.25 | 2026-08-20 | HEARTBEAT adds `reputation_model`, opaque epoch and retry-safe metrics batch acknowledgement. AUDIT_REPORT integrity evidence is separated from `outcome-v2` execution-outcome reputation. |
 | 1.1.23 | 2026-07-18 | #534 clarifies adoption-gated strict E050: every re-registration of an existing secured node requires the current token, including unchanged routes, so a tokenless refresh cannot mint a credential and then authorize a second-step route takeover. Transitional old-endpoint-absence behavior remains unchanged until an explicit cutover. |
 | 1.1.22 | 2026-07-11 | #618 accountless operator-key lifecycle: dual-key signed normal rotation preserves linked-node, credit/reputation and recognition continuity atomically while policy manifests remain independently re-signed; signed revocation fails closed for node operator bindings. Old keys become ineligible for new claims, and public receipts remain redacted/no-store. |

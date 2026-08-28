@@ -1,7 +1,8 @@
 # IICP transport binding and service-port decision
 
 **Decision date:** 2026-08-21  
-**Status:** reviewed project decision; no IANA request
+**Amended:** 2026-08-28
+**Status:** reviewed project decision; no IANA request; native TCP excluded from the current stable baseline
 
 ## Decision
 
@@ -9,6 +10,13 @@ IICP Core remains independent of transport, port and locator. HTTP projections
 and native framing are bindings. The native framed TCP binding remains optional
 and project-draft. It is not required for selection and eligibility
 interoperability and is not promoted to a general conformance requirement.
+
+For the coordinated stable baseline, the supported HTTP application binding is
+the qualification target. Native framed TCP is explicitly excluded from stable
+and production claims. Maintained SDKs compile its framing and connection code
+for compatibility and research, but provider listeners require the explicit
+development opt-in `IICP_ENABLE_EXPERIMENTAL_NATIVE_TCP=1`. Compilation, fixture
+parity or a configured `transport_endpoint` is not production-security evidence.
 
 The project will not request a service-name or port registration now. Port 9484
 is an unassigned local convention for the implemented native TCP lane. It is
@@ -40,6 +48,11 @@ covers encoding, decoding, invalid magic, truncation, reserved-byte behavior and
 unknown flags. It does not open a TCP connection or test TLS, authentication,
 stream multiplexing, NAT traversal, QUIC, HTTP/3 or WAN behavior.
 
+On 28 August 2026 the fixture was extended with the finite task-type boundary
+and explicit stable exclusion disposition. Its current digest is
+`02cc7bfbd3c238191ca3961aa03d09f143a51a43397e056d496977e5a9bf0471`.
+The additional metadata changes no framing bytes and adds no production claim.
+
 The current maintained HTTP lane has implementation and integration coverage in
 the SDK, node and directory repositories. Its evidence is repository-specific
 rather than one artificial cross-transport benchmark. HTTP and native framing
@@ -66,7 +79,7 @@ The environment is reported for reproduction, not as a portability claim.
 | Lane | Current evidence | Supported conclusion | Unsupported conclusion |
 |---|---|---|---|
 | HTTPS/HTTP application projection | Maintained client, node and directory paths plus repository integration tests | A current interoperable application binding | Comparative superiority, HTTP/3 support or universal streaming behavior |
-| Native framed TCP | Canonical bytes across three SDKs; maintained Rust connection/runtime code | Optional project binding with cross-SDK framing compatibility | Two independent network implementations, fixed-port need or standards readiness |
+| Native framed TCP | Canonical bytes across three SDKs; explicitly enabled development listeners | Experimental project binding with cross-SDK framing compatibility; excluded from the current stable/production baseline | Native TLS, production support, two independent network implementations, fixed-port need or standards readiness |
 | Native QUIC/UDP | Descriptive draft text and local socket experiments only | Research input | Interoperability, production support, UDP registration or congestion-behavior evidence |
 | MCP and A2A | Published adjacent protocols plus IICP binding/crosswalk work | Execution can follow IICP selection when an application supports the binding | That MCP/A2A are transports below IICP or require IICP |
 | Dynamic signed endpoint | Current directory route metadata and short-lived ticket work | Ports and locators can be carried without changing Intent | That a permanent fixed port is unnecessary in every deployment |
@@ -124,7 +137,9 @@ packet remains a separate, explicitly authorized action.
 
 ## Compatibility and deployment
 
-This decision changes no default port, endpoint schema, wire bytes, release or
-live deployment. Existing uses of 9484/TCP remain valid as a provisional project
-convention. Implementations must continue to advertise the actual endpoint and
-must not describe 9484 as assigned.
+This decision changes no endpoint schema, wire bytes, release or live deployment.
+Existing explicitly enabled development uses of 9484/TCP remain valid as a
+provisional project convention. Maintained providers must not mount or advertise
+the native listener by default, must advertise the actual endpoint when enabled,
+and must not describe 9484 as assigned. An HTTPS proxy or tunnel does not prove a
+native TLS path and must not be rewritten or advertised as `iicpsec://`.
