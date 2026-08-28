@@ -1,7 +1,7 @@
 # IICP Binary Framing Layer
 
 **Document**: `spec/iicp-framing.md`  
-**Version**: 0.1.10-draft
+**Version**: 0.1.11-draft
 **Date**: 2026-08-28
 **Status**: Draft — NOT YET RATIFIED (see §12)  
 **Authority**: Protocol Steward  
@@ -81,6 +81,10 @@ Receivers that receive an unknown Type in the range 0x0F–0xEF MUST send a
 `CLOSE` frame with error code `unknown_type` and close the connection. Receivers that
 receive a Type in the CUSTOM range (0xF0–0xFE) and have not negotiated that type
 via INIT MUST send a `CLOSE` frame with error code `unsupported_extension`.
+The receiver MUST validate the Type after the fixed header and before allocating
+or waiting for a buffer proportional to Length. The current stable task-session
+profile accepts `0x01`–`0x0A` and `0x0D`–`0x0E`. It rejects `0x0B`/`0x0C` with
+`conflicted_type` until the pre-ratification relay collision in §3 is resolved.
 
 #### Flags (1 byte)
 
@@ -161,6 +165,12 @@ The 256-value type byte is partitioned as follows:
 > registry work resolves the collision, a stable native profile MUST NOT claim
 > support for any of these four messages on `0x0B`/`0x0C`. Existing relay use
 > remains experimental and cannot count as stable framing conformance.
+
+The maintained relay experiment uses a dedicated session implementation. Its
+`RELAY_BIND`/`RELAY_ACK` frames MUST NOT enter the stable task-session decoder,
+and rejection of `0x0B`/`0x0C` there does not alter the isolated experimental
+relay behavior. Type direction and connection-state checks remain additional to
+this header-level allowlist.
 
 ---
 
@@ -362,7 +372,7 @@ terminal RESPONSE requirement.
 | 2 | message | tstr | MAY | Human-readable description |
 | 3 | session_id | tstr | MAY | Session being closed |
 
-Standard close reason codes: `graceful`, `unknown_type`, `unsupported_extension`,
+Standard close reason codes: `graceful`, `unknown_type`, `unsupported_extension`, `conflicted_type`,
 `frame_too_large`, `payload_too_large`, `version_mismatch`, `auth_failed`,
 `idle_timeout`, `protocol_error`.
 
@@ -743,6 +753,7 @@ security principle: fail closed, fail cheap, fail loudly (log at warn level).
 | Version unknown and peer rejected downgrade | Version negotiation §6 | Send CLOSE(version_mismatch); close connection | `version_mismatch` |
 | Type = 0x00 (RESERVED) | Header parse | Send CLOSE(invalid_type); reject | `invalid_type` |
 | Type = 0xFF (RESERVED) | Header parse | Send CLOSE(invalid_type); reject | `invalid_type` |
+| Type = 0x0B or 0x0C in the stable task profile | Header parse | Reject before proportional allocation; dedicated experimental relay sessions remain separate | `conflicted_type` |
 | Type in 0x0F–0xEF (future IICP reserved) | Header parse | Send CLOSE(unknown_type) if not forward-compat; MUST NOT process payload | `unknown_type` |
 | Type in 0xF0–0xFE and no capability negotiated | Header parse | Send CLOSE(unsupported_extension); reject | `unsupported_extension` |
 | Flags: unknown bits set | Header parse | MUST ignore unknown flag bits; process frame normally | — (extensibility rule) |
@@ -1150,3 +1161,4 @@ mechanisms are complementary.
 | 0.1.8-draft | 2026-08-08 | Protocol Steward | Resolved the base-versus-profile RESPONSE contradiction: base CALLs remain buffered and single-terminal; negotiated service-lifecycle streaming uses incremental partials plus one terminal response. Clarified accounting, HTTP fallback, QUIC closure, sequence ownership and fragmentation terminology. No base-frame or required-field change. |
 | 0.1.9-draft | 2026-08-08 | Protocol Steward | Specifies the negotiated lifecycle-envelope location in RESPONSE key 13 and OBSERVE `data`, including call/task correlation, status/finality mapping and native negative vectors. Key 13 remains profile-only; no base-frame or required-field change. |
 | 0.1.10-draft | 2026-08-28 | Protocol Steward | Aligns the draft with the transport decision: native TCP remains optional, QUIC is research-only, Length is payload-only, 64 KiB is not a stream/datagram boundary, logical fragmentation is not stable, reassembly defaults are true maxima, deterministic-CBOR receive scope is explicit, and the unresolved `0x0B`/`0x0C` relay collision is recorded. |
+| 0.1.11-draft | 2026-08-28 | Protocol Steward | Defines the finite stable task-session type allowlist, requires type rejection before proportional allocation, isolates dedicated experimental relay opcodes, and keeps production native TCP at the open qualify-or-exclude security gate. |
