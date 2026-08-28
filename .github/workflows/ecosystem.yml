@@ -2,8 +2,6 @@ name: Ecosystem manifest
 
 on:
   pull_request:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -21,4 +19,7 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.13"
+      - run: python3 -m pip install -r tools/requirements.txt
+      - run: python3 -m pip install "./conformance-runner[signing]"
       - run: python3 tools/generate_implementations.py --check
+      - run: tools/run_profile_fixture_contract.sh
