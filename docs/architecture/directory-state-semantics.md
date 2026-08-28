@@ -1,7 +1,7 @@
 # Architecture decision: directory state and dispatch eligibility
 
 **Status:** Accepted semantic boundary; current connected-directory behavior retained  
-**Recorded:** 2026-08-14  
+**Recorded:** 2026-08-14; clarified 2026-08-28
 **Machine-readable contract:**
 [`directory-state-semantics-v1.json`](directory-state-semantics-v1.json)  
 **Related work:** IICP #39, #63, #160 and #163
@@ -33,6 +33,9 @@ discovery contract does not change:
 
 - Registration establishes a current advertisement only after identity,
   authorization, endpoint-safety and liveness checks pass.
+- Allocation or observation of an `external_tunnel` URL establishes only a
+  candidate locator. The provider listener and the public `/iicp/health` route
+  must be serving before registration can make that locator eligible.
 - An authenticated heartbeat refreshes self-reported reachability and runtime
   state. `available: false` keeps the node unavailable and ineligible.
 - More than 90 seconds without a valid heartbeat makes reachability stale,
@@ -86,6 +89,8 @@ expired, revoked, superseded or policy-ineligible evidence.
   but default discovery omits it.
 - **Superseded:** an accepted newer advertisement replaces the old one. The old
   locator cannot be selected even if it still responds.
+- **Tunnel starting:** identity may be valid and a public URL may exist, but a
+  failed admission probe leaves the route unregistered and dispatch-ineligible.
 - **Revoked:** identity or advertisement revocation makes dispatch ineligible
   regardless of reachability.
 - **Policy-ineligible:** route and service may be healthy, but an unmet policy,

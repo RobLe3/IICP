@@ -1,5 +1,5 @@
 {
-  "decision_version": "1.0.0",
+  "decision_version": "1.1.0",
   "status": "accepted-semantic-boundary",
   "wire_change": false,
   "default_discovery_change": false,
@@ -48,6 +48,18 @@
         "advertisement": "current",
         "reachability": "verified",
         "dispatch": "eligible_if_all_other_gates_pass"
+      }
+    },
+    {
+      "name": "external_tunnel_created_not_serving",
+      "expected": {
+        "identity": "valid_or_pending",
+        "advertisement": "not_current",
+        "reachability": "unverified",
+        "availability": "unavailable",
+        "dispatch": "ineligible",
+        "registration_token_issued": false,
+        "default_discovery_contains": false
       }
     },
     {

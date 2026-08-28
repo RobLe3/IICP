@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Clarifies the existing external-tunnel admission invariant and registers
+  `DIR-REG-10`: allocation of a public tunnel URL is not route-readiness
+  evidence, so registration and discovery eligibility wait for the provider
+  listener and public `/iicp/health` probe.
+
 ## v1.10.17 — 2026-08-25
 
 Pre-normative preservation and traceability candidate. It does not ratify a

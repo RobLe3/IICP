@@ -55,6 +55,15 @@ class DirectoryStateSemanticsTest(unittest.TestCase):
         self.assertFalse(rotation["unverified_new_route_published"])
         self.assertIn("after_new_route_validation", rotation["old_advertisement"])
 
+    def test_external_tunnel_url_is_not_route_readiness_evidence(self) -> None:
+        starting = self.scenarios["external_tunnel_created_not_serving"]
+        self.assertEqual("unverified", starting["reachability"])
+        self.assertEqual("ineligible", starting["dispatch"])
+        self.assertFalse(starting["registration_token_issued"])
+        self.assertFalse(starting["default_discovery_contains"])
+        self.assertIn("external_tunnel", self.directory_spec)
+        self.assertIn("normal liveness", self.directory_spec)
+
     def test_signed_state_does_not_imply_current_freshness(self) -> None:
         delayed = self.scenarios["delayed_federation_sync"]
         self.assertTrue(delayed["signature_may_remain_valid"])
