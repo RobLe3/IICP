@@ -55,7 +55,7 @@
       {
         "id": "native-framing-draft",
         "reference": "spec/v1.9/iicp-framing.md",
-        "sha256": "803a0a20620df53c8bbcc7534d05e8ddd391d0d3d55752541bc1478764e914cf"
+        "sha256": "75a11f6d5c75f2ee77827989d2180ff98add5c4b44ae979f8503a567e8fc1bf4"
       }
     ],
     "identity_and_security_profiles": [

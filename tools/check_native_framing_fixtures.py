@@ -70,6 +70,46 @@ def main() -> int:
             errors.append(f"missing required negative vector: {name}")
         elif scenario.get("expected", {}).get("reason") != reason:
             errors.append(f"{name}: expected reason must be {reason}")
+    task_profile = data.get("stable_task_profile", {})
+    if task_profile.get("accepted_message_types") != [*range(1, 11), 13, 14]:
+        errors.append("stable task accepted types must be 0x01-0x0A and 0x0D-0x0E")
+    if task_profile.get("conflicted_message_types") != [11, 12]:
+        errors.append("stable task conflicted types must be 0x0B and 0x0C")
+    if task_profile.get("production_security_disposition") != "open_qualify_or_exclude":
+        errors.append("production security disposition must remain open qualify-or-exclude")
+    if task_profile.get("plaintext_scope") != "development_only":
+        errors.append("plaintext native TCP must remain development-only")
+    if task_profile.get("stable_claim") != "not_admitted":
+        errors.append("native TCP must not be admitted to the stable claim by this fixture")
+    type_scenarios = data.get("stable_task_type_scenarios", [])
+    type_names = [scenario.get("name") for scenario in type_scenarios]
+    if len(type_names) != len(set(type_names)):
+        errors.append("stable task type scenario names must be unique")
+    by_type = {scenario.get("message_type"): scenario for scenario in type_scenarios}
+    required_types = {
+        0: "invalid_type",
+        1: None,
+        5: None,
+        11: "conflicted_type",
+        12: "conflicted_type",
+        13: None,
+        15: "unknown_type",
+        240: "unsupported_extension",
+        255: "invalid_type",
+    }
+    for message_type, reason in required_types.items():
+        scenario = by_type.get(message_type)
+        if scenario is None:
+            errors.append(f"missing stable task type vector: 0x{message_type:02x}")
+            continue
+        expected_result = scenario.get("expected", {})
+        expected_outcome = "accept" if reason is None else "reject"
+        if expected_result.get("outcome") != expected_outcome:
+            errors.append(
+                f"type 0x{message_type:02x}: expected outcome must be {expected_outcome}"
+            )
+        if expected_result.get("reason") != reason:
+            errors.append(f"type 0x{message_type:02x}: expected reason must be {reason}")
     for copy in args.copy:
         if not copy.is_file():
             errors.append(f"missing SDK fixture copy: {copy}")

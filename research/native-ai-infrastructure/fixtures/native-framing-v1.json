@@ -1,7 +1,7 @@
 {
   "fixture_version": "1.0.0-draft",
   "status": "implementation-backed-pre-ratification",
-  "purpose": "Cross-implementation native framing vectors for the current ordered-stream binding. They cover bounded frame decoding only; dispatch, TLS, lifecycle, experimental relay opcodes, logical fragmentation and unsupported QUIC behavior are outside this fixture.",
+  "purpose": "Cross-implementation native framing vectors for the current ordered-stream binding. They cover bounded frame decoding and the fail-closed stable task-session type boundary. Dispatch direction, TLS, lifecycle, dedicated experimental relay sessions, logical fragmentation and unsupported QUIC behavior remain outside this fixture.",
   "frame": {
     "framing_version": 1,
     "header_bytes": 12,
@@ -47,6 +47,33 @@
     },
     "max_payload_bytes": 16777216,
     "length_semantics": "payload_bytes_excluding_12_byte_header"
+  },
+  "stable_task_profile": {
+    "status": "implementation_backed_pre_ratification",
+    "accepted_message_types": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      13,
+      14
+    ],
+    "conflicted_message_types": [
+      11,
+      12
+    ],
+    "conflict": "0x0B/0x0C are CONTROL/ADVERTISE in the draft registry but RELAY_BIND/RELAY_ACK in maintained relay experiments; stable task sessions reject both bytes before proportional allocation.",
+    "relay_boundary": "Experimental relay sessions remain isolated on their dedicated transport and do not count as stable task-profile conformance.",
+    "extension_boundary": "0xF0-0xFE require negotiated extension state; the current stable task profile negotiates none and rejects them before proportional allocation.",
+    "production_security_disposition": "open_qualify_or_exclude",
+    "plaintext_scope": "development_only",
+    "stable_claim": "not_admitted"
   },
   "scenarios": [
     {
@@ -135,6 +162,77 @@
       "expected": {
         "outcome": "reject",
         "reason": "payload_too_large"
+      }
+    }
+  ],
+  "stable_task_type_scenarios": [
+    {
+      "name": "init_is_in_stable_task_profile",
+      "message_type": 1,
+      "expected": {
+        "outcome": "accept"
+      }
+    },
+    {
+      "name": "call_is_in_stable_task_profile",
+      "message_type": 5,
+      "expected": {
+        "outcome": "accept"
+      }
+    },
+    {
+      "name": "observe_is_in_stable_task_profile",
+      "message_type": 13,
+      "expected": {
+        "outcome": "accept"
+      }
+    },
+    {
+      "name": "zero_is_invalid",
+      "message_type": 0,
+      "expected": {
+        "outcome": "reject",
+        "reason": "invalid_type"
+      }
+    },
+    {
+      "name": "control_relay_bind_collision_is_rejected",
+      "message_type": 11,
+      "expected": {
+        "outcome": "reject",
+        "reason": "conflicted_type"
+      }
+    },
+    {
+      "name": "advertise_relay_ack_collision_is_rejected",
+      "message_type": 12,
+      "expected": {
+        "outcome": "reject",
+        "reason": "conflicted_type"
+      }
+    },
+    {
+      "name": "future_core_type_is_unknown",
+      "message_type": 15,
+      "expected": {
+        "outcome": "reject",
+        "reason": "unknown_type"
+      }
+    },
+    {
+      "name": "unnegotiated_private_extension_is_rejected",
+      "message_type": 240,
+      "expected": {
+        "outcome": "reject",
+        "reason": "unsupported_extension"
+      }
+    },
+    {
+      "name": "maximum_type_is_invalid",
+      "message_type": 255,
+      "expected": {
+        "outcome": "reject",
+        "reason": "invalid_type"
       }
     }
   ]
