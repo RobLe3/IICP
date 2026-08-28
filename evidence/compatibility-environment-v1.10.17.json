@@ -50,12 +50,12 @@
       {
         "id": "connected-http-json",
         "reference": "spec/v1.9/iicp-core.md",
-        "sha256": "9731eb9556af07d8c775dd14bba0cc24aa705934801570fdbeaa5d426648bc97"
+        "sha256": "9a782a382d3c434b6c99163e1f6d3838105a1739cd31cc6878e474ac8dee98c2"
       },
       {
         "id": "native-framing-draft",
         "reference": "spec/v1.9/iicp-framing.md",
-        "sha256": "75a11f6d5c75f2ee77827989d2180ff98add5c4b44ae979f8503a567e8fc1bf4"
+        "sha256": "6c1a9f395f974adb63c1875a44684779b8f52755d8233e510fbd3d365351e77e"
       }
     ],
     "identity_and_security_profiles": [
