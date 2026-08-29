@@ -50,7 +50,7 @@
       {
         "id": "connected-http-json",
         "reference": "spec/v1.9/iicp-core.md",
-        "sha256": "9a782a382d3c434b6c99163e1f6d3838105a1739cd31cc6878e474ac8dee98c2"
+        "sha256": "72ecc4746db302b33196cb06294e1765458542271912ca772b846e9fa99914c3"
       },
       {
         "id": "native-framing-draft",

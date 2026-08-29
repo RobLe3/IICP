@@ -60,3 +60,4 @@ python3 -m unittest discover -s tools -p 'test_pre1_feature_baseline.py'
 python3 tools/check_public_evidence_access.py
 python3 -m unittest discover -s tools -p 'test_public_evidence_access.py'
 python3 -m unittest discover -s tools -p 'test_ci_required_check_contract.py'
+python3 -m unittest discover -s tools -p 'test_http_task_resource_boundary_fixture.py'
