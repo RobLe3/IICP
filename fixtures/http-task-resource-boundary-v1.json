@@ -1,0 +1,22 @@
+{
+  "fixture_version": "1.0.0",
+  "profile": "iicp-supported-http-task-resource-boundary-v1",
+  "scope": "POST /v1/task HTTP/JSON coordinated stable binding",
+  "max_encoded_request_bytes": 1048576,
+  "max_encoded_response_bytes": 1048576,
+  "supported_content_encodings": ["identity"],
+  "vectors": [
+    {"id": "request_exact_limit", "direction": "request", "encoded_bytes": 1048576, "expected": "accept"},
+    {"id": "request_limit_plus_one", "direction": "request", "encoded_bytes": 1048577, "expected": "reject", "http_status": 413, "error_code": "request_too_large", "retryable": false, "fallback": false},
+    {"id": "declared_request_over_limit", "direction": "request", "content_length": 1048577, "expected": "reject_before_body_read", "http_status": 413, "error_code": "request_too_large"},
+    {"id": "conflicting_content_length", "direction": "request", "content_length_values": [12, 13], "expected": "reject", "http_status": 400, "error_code": "invalid_http_body"},
+    {"id": "chunked_exact_limit", "direction": "request", "transfer_encoding": "chunked", "encoded_bytes": 1048576, "expected": "accept"},
+    {"id": "chunked_limit_plus_one", "direction": "request", "transfer_encoding": "chunked", "encoded_bytes": 1048577, "expected": "reject_on_overrun", "http_status": 413, "error_code": "request_too_large"},
+    {"id": "unsupported_request_encoding", "direction": "request", "content_encoding": "gzip", "expected": "reject_before_decode", "http_status": 415, "error_code": "unsupported_content_encoding"},
+    {"id": "malformed_json", "direction": "request", "expected": "reject", "http_status": 400, "error_code": "invalid_http_body"},
+    {"id": "disconnect_before_declared_length", "direction": "request", "expected": "reject", "http_status": 400, "error_code": "invalid_http_body"},
+    {"id": "response_exact_limit", "direction": "response", "encoded_bytes": 1048576, "expected": "accept"},
+    {"id": "response_limit_plus_one", "direction": "response", "encoded_bytes": 1048577, "expected": "abort_and_reject", "error_code": "response_too_large", "retryable": false, "fallback": false},
+    {"id": "generated_response_over_limit", "direction": "response", "encoded_bytes": 1048577, "expected": "replace_with_bounded_error", "http_status": 500, "error_code": "response_too_large", "retryable": false}
+  ]
+}

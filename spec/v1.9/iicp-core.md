@@ -1,7 +1,7 @@
 # IICP Core — Wire Format and Mandatory Requirements
 
-**Version**: 1.3.4
-**Date**: 2026-08-28
+**Version**: 1.3.5
+**Date**: 2026-08-29
 **Status**: draft
 **Issue**: #17 (S.5 — spec split)
 **Authority**: Protocol Steward
@@ -279,6 +279,48 @@ HTTP 200 OK
 On error: `status = "error"`, `result = null`, `error = {"code": "...", "message": "..."}`.
 Error responses MUST NOT include stack traces, file paths, or database structure [→ ERR-2].
 
+### 3.2.1 Supported HTTP task resource boundary
+
+The coordinated stable HTTP/JSON binding supports a maximum of **1,048,576
+bytes (1 MiB)** for each encoded `POST /v1/task` request body and each encoded
+response body. The limit applies independently to successful and error
+responses. It is an encoded-message limit, not a promise about arbitrary
+logical payload sizes or a native-transport frame limit.
+
+For this baseline, `Content-Encoding` MUST be absent or `identity`. A provider
+MUST return `415 unsupported_content_encoding` for any other content encoding;
+it MUST NOT decompress an unsupported body. A client MUST reject an encoded
+request larger than the limit before opening or writing a provider request.
+
+Providers MUST enforce the request limit before JSON decoding and before
+admission or task execution:
+
+- A valid `Content-Length` larger than the limit MUST be rejected immediately
+  with `413 request_too_large`, without allocating or reading that body.
+- Repeated or comma-joined `Content-Length` values MUST be valid decimal
+  integers and identical. Conflicting or malformed values, and a request that
+  carries both `Content-Length` and `Transfer-Encoding`, MUST be rejected with
+  `400 invalid_http_body`.
+- A chunked or otherwise lengthless body MUST be counted incrementally and
+  rejected as soon as it exceeds the limit. A connection with unread rejected
+  body bytes MUST not be reused.
+- A body shorter than its declared length and malformed JSON MUST be rejected
+  with `400 invalid_http_body`.
+
+Clients MUST apply the same 1 MiB limit incrementally to provider responses,
+including non-success responses. A declared or observed oversize response MUST
+be aborted and surfaced as non-retryable `response_too_large`; it MUST NOT
+trigger retry of the same provider or fallback to another provider. A provider
+whose locally generated task response exceeds the limit MUST instead return a
+bounded `500 response_too_large` JSON error. This resource failure is
+deterministic for that request and MUST be treated as non-retryable.
+
+These limits do not add Directory fields or resource-specific capability
+semantics. A later profile may negotiate a different bound or compression, but
+absence of such a profile means the limit above. The deterministic vectors are
+in `fixtures/http-task-resource-boundary-v1.json` [→ NODE-TASK-09,
+SDK-HTTP-BOUNDARY-01].
+
 ### 3.3 Consensus Mode (`constraints.consensus`)
 
 **Phase 5 — opt-in cross-validation inference.**
@@ -456,6 +498,10 @@ stable-production evidence.
 | `backend_error` | 502 | Inference backend failed (details not exposed) |
 | `no_consensus` | 502 | Consensus mode active and no majority agreement reached (§3.3) |
 | `validation_error` | 422 | Input schema validation failed |
+| `invalid_http_body` | 400 | Malformed/conflicting HTTP body framing, truncated body, or invalid JSON |
+| `request_too_large` | 413 | Encoded `POST /v1/task` request exceeds the supported 1 MiB boundary |
+| `unsupported_content_encoding` | 415 | Stable HTTP task binding received a content encoding other than absent/identity |
+| `response_too_large` | 500 | Encoded task response exceeds the supported 1 MiB boundary; deterministic and non-retryable |
 
 All error responses MUST use structured JSON:
 
@@ -617,6 +663,7 @@ this release.
 
 | Version | Date | Change |
 |---------|------|--------|
+| 1.3.5 | 2026-08-29 | #250 defines the finite supported HTTP task resource boundary: 1 MiB encoded requests and responses, identity encoding only, early/incremental enforcement, structured errors, and non-retryable oversize behavior. |
 | 1.3.4 | 2026-08-28 | Corrects the transport security and release boundary: supported HTTP is the coordinated stable qualification target; plaintext native TCP is explicit development-only and excluded from stable/production claims; native framing is not transport integrity and HTTPS routing does not prove `iicpsec://`. |
 | 1.3.3 | 2026-07-30 | Corrected transport and registry status: 9484 is an unassigned provisional TCP convention, not an IANA reservation; directory HTTPS and advertised endpoint ports are separate; QUIC/UDP remains draft. |
 | 1.3.2 | 2026-07-09 | #614 adds optional `generated_by_ai` response metadata and the compatibility-proxy header rule; it is a transparency notice, not authenticity proof. |

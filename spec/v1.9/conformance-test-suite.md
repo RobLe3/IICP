@@ -1,7 +1,7 @@
 # IICP Conformance Test Suite
 
-**Version**: 4.52.0
-**Date**: 2026-08-28
+**Version**: 4.53.0
+**Date**: 2026-08-29
 **Status**: draft
 **Issue**: #22
 **Authority**: Protocol Steward + Integration Validator
@@ -279,6 +279,7 @@ Spec reference: `spec/iicp-telemetry.md §T4.3`. Issue: #187. Validated by RESA 
 | `NODE-TASK-04` | Response contains `metrics.latency_ms` | Numeric value ≥ 0 | `adapter/tests/test_task.py::test_task_success` |
 | `NODE-TASK-05` | `POST /v1/task` with invalid/missing token → 401 | `error.code = "unauthorized"` | `adapter/tests/test_task.py::test_task_rejects_invalid_token` |
 | `NODE-TASK-06` | `POST /v1/task` with duplicate `task_id` → 409 | `error.code = "conflict"` | `adapter/tests/test_idempotency.py::test_duplicate_task_id_returns_409` |
+| `NODE-TASK-09` | Provider enforces the supported HTTP task body boundary before JSON decode/admission and bounds generated success/error responses | Exact 1 MiB request/response accepted; limit+1, declared oversize, malformed/conflicting length, unsupported encoding, chunk overrun and truncated body fail with the errors in `fixtures/http-task-resource-boundary-v1.json`; no task execution on rejection | Python/TypeScript/Rust SDK provider boundary tests |
 | `NODE-TASK-07` | Backend error returns 502, not raw exception | No `Traceback` in response body | `adapter/tests/test_task.py::test_task_returns_502_on_backend_error` |
 | `NODE-TASK-08` | Response never exposes internal file paths | No `/Users/`, `/home/`, `/var/` in body | `adapter/tests/test_task.py::test_task_structured_error_never_exposes_internals` |
 

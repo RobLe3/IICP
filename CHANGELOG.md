@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Defines the finite coordinated-stable HTTP task resource boundary: 1 MiB
+  encoded requests and responses, identity encoding only, early and incremental
+  enforcement, structured errors, and non-retryable oversize behavior.
 - Clarifies the existing external-tunnel admission invariant and registers
   `DIR-REG-10`: allocation of a public tunnel URL is not route-readiness
   evidence, so registration and discovery eligibility wait for the provider
