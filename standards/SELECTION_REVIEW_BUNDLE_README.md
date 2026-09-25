@@ -9,7 +9,8 @@ Read in this order:
 2. `standards/SELECTION_TRUST_AND_REVALIDATION.md`
 3. `standards/SELECTION_CANDIDATE_ADVERSARIAL_REVIEW_2026-08-21.md`
 4. `standards/IICP_PROTOCOL_POSITIONING.md`
-5. `standards/PROTOCOL_COMPARISON_2026-08-15.md`
+5. `standards/PROTOCOL_COMPARISON_2026-09-25.md` for the current source and
+   requirements assessment; the 2026-08-15 comparison remains historical
 6. `IMPLEMENTATIONS.md` and `SPEC_STATUS.md`
 7. the capability, directory-state and observability decisions under `docs/`
 8. the core, semantics, directory and conformance sources under `spec/v1.9/`

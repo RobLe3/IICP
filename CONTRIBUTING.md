@@ -4,12 +4,22 @@ Start with a public issue that identifies an interoperability problem rather
 than a preferred implementation. Specification changes should include schemas,
 compatibility behavior and conformance vectors where applicable.
 
-Run the repository checks before proposing a change:
+From the repository root, use an isolated Python environment with the
+requirements in `tools/requirements.txt` and the local conformance runner
+(`python3 -m pip install './conformance-runner[signing]'`). Run the checks
+relevant to the files changed before proposing a pull request:
 
 ```bash
 python3 tools/generate_implementations.py --check
+tools/run_profile_fixture_contract.sh
 python3 tools/check_public_prose.py --strict README.md GOVERNANCE.md CONTRIBUTING.md
+python3 tools/check_public_artifact_closure.py --all-public
 ```
+
+`ecosystem.yml` contains the required pull-request `validate` job.
+`profile-fixtures.yml` is a manual diagnostic workflow, not an additional
+qualification pass. Do not interpret a skipped, unrun or dependency-failed
+check as passing evidence. Run locally first to conserve hosted CI minutes.
 
 The prose check blocks objective citation artifacts and reports stylistic or
 substance heuristics for human review. It checks writing quality, not whether a
@@ -26,6 +36,11 @@ checks, but it is not part of the public acceptance contract.
 Implementation bugs belong in the owning repository listed in
 `IMPLEMENTATIONS.md`. Never include production credentials, private topology or
 real task data.
+
+An implementation result may expose a discrepancy in the specification, but
+it cannot silently change released semantics. Record the applicable release,
+Profile and binding; propose any interoperable correction with compatibility
+behavior and fixtures. Preserve immutable tags and release assets.
 
 ## Where to open an issue
 

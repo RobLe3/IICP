@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import posixpath
+import re
 from pathlib import Path
 import subprocess
 import tempfile
@@ -39,12 +41,37 @@ class SelectionReviewBundleTests(unittest.TestCase):
                     "standards/SELECTION_TRUST_AND_REVALIDATION.md",
                     "docs/architecture/node-observability-interfaces.md",
                     "standards/PROTOCOL_COMPARISON_2026-08-15.md",
+                    "standards/PROTOCOL_COMPARISON_2026-09-25.md",
+                    "standards/EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-09-25.md",
                     "IMPLEMENTATIONS.md",
+                    "ecosystem/CURRENT_VERSIONS.md",
+                    "pre1/README.md",
+                    "pre1/feature-baseline-v1.json",
+                    "docs/architecture/identifier-registry-v1.json",
                     "spec/v1.9/conformance-test-suite.md",
                     "SHA256SUMS.json",
                 ):
                     self.assertIn(PREFIX + required, names)
                 manifest = json.loads(archive.read(PREFIX + "SHA256SUMS.json"))
+                comparison = json.loads(archive.read(PREFIX + "standards/protocol-comparison-v1.json"))
+                references = {
+                    row[field]
+                    for row in comparison["intent_routing_requirements"]
+                    for field in ("iicp_reference", "fixture_reference")
+                    if row.get(field)
+                }
+                self.assertTrue(references.issubset(manifest["files"]))
+                for relative in manifest["files"]:
+                    if not relative.endswith(".md"):
+                        continue
+                    markdown = archive.read(PREFIX + relative).decode("utf-8")
+                    for target in re.findall(r"(?<!!)\[[^]]+\]\(([^)]+)\)", markdown):
+                        target = target.split("#")[0].split(" ")[0]
+                        if not target or target.startswith(("http:", "https:", "mailto:", "/")):
+                            continue
+                        linked = posixpath.normpath((Path(relative).parent / target).as_posix())
+                        if (ROOT / linked).is_file():
+                            self.assertIn(linked, manifest["files"], relative)
                 self.assertIn("not submitted", manifest["status"])
                 self.assertNotIn("standards/ietf/draft-roble-iicp-peer.md", manifest["files"])
                 for relative, expected in manifest["files"].items():

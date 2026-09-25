@@ -23,7 +23,7 @@ IICP also has bounded supporting presence in:
 | L2, Sovereign Infrastructure | Self-hosted public, private and local control-plane designs without a mandatory commercial service | [Portability and non-capture](architecture/portability-and-non-capture.md), [restricted trust-domain Profile](../research/pre-normative-profiles/restricted-trust-domain-v0.md) |
 | L3, Agent Data Substrate | Provider, capability, health and routing-evidence records; task payloads remain outside the directory | [Directory state semantics](architecture/directory-state-semantics.md), [privacy threat model](security/privacy-adversary-and-trust-model.md) |
 | L5, Inference & Retrieval | Selection among eligible inference or retrieval providers; IICP does not define model internals | [Effective service capabilities](architecture/effective-service-capability-semantics.md), [protocol positioning](../standards/IICP_PROTOCOL_POSITIONING.md) |
-| L7, Orchestration & Workflow | Intent resolution, policy-aware eligibility, provider selection, route authorization and binding handoff | [Core specification](../spec/v1.9/iicp-core.md), [mechanism comparison](../standards/PROTOCOL_COMPARISON_2026-08-15.md) |
+| L7, Orchestration & Workflow | Intent resolution, policy-aware eligibility, provider selection, route authorization and binding handoff | [Core specification](../spec/v1.9/iicp-core.md), [current protocol positioning](../standards/IICP_PROTOCOL_POSITIONING.md) |
 | L8, Continuity Fabric | Signed events, receipts, provenance and conformance evidence with explicit claim boundaries | [Conformance suite](../spec/v1.9/conformance-test-suite.md), [public evidence access](public-evidence-access.md) |
 
 This mapping does not claim that IICP owns each layer. Models, agent runtimes,

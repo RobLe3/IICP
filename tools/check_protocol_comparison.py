@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
@@ -26,6 +27,8 @@ def validate(path: Path = DATA) -> list[str]:
     allowed_scores = {0, 1, 2, 3, 4, None}
     values = set(data.get("comparison_values", []))
     entries = data.get("entries", [])
+    if data.get("legacy_assessment_as_of") != "2026-08-15":
+        errors.append("legacy maturity assessments must retain their historical evidence date")
     if len(entries) < 6:
         errors.append("comparison must include at least six subjects")
     ids: set[str] = set()
@@ -34,6 +37,8 @@ def validate(path: Path = DATA) -> list[str]:
         if ident in ids:
             errors.append(f"duplicate id: {ident}")
         ids.add(ident)
+        if entry.get("assessment_status") != "historical_2026-08-15_not_refreshed":
+            errors.append(f"{ident}: old maturity assessments must remain explicitly historical")
         for field in (
             "name", "category", "version", "formal_status", "updated",
             "source", "role", "dimensions", "maturity",
@@ -93,6 +98,56 @@ def validate(path: Path = DATA) -> list[str]:
     if chronology_dates != sorted(chronology_dates):
         errors.append("mechanism chronology must be date sorted")
 
+    inventory = data.get("source_inventory", [])
+    source_ids: set[str] = set()
+    for index, source in enumerate(inventory):
+        label = f"source_inventory[{index}]"
+        ident = source.get("id")
+        if not ident or ident in source_ids:
+            errors.append(f"{label}: missing or duplicate id")
+        source_ids.add(ident)
+        for field in ("document", "formal_status", "relevant_sections", "scope",
+                      "evidence_class", "retrieval_limitations"):
+            if not source.get(field):
+                errors.append(f"{label}: missing {field}")
+        revision = _validate_date(errors, source.get("revision_date"), f"{label}: revision date", as_of)
+        verified = _validate_date(errors, source.get("verified_at"), f"{label}: verification date", as_of)
+        if revision is not None and verified is not None and revision > verified:
+            errors.append(f"{label}: revision date cannot be later than verification date")
+        _validate_url(errors, source.get("source", ""), f"{label}: source")
+        if source.get("formal_status") == "individual_internet_draft" and not str(source.get("document", "")).startswith("draft-"):
+            errors.append(f"{label}: individual Internet-Draft must name its draft")
+    required_sources = {
+        "iaip", "aidip", "cirp", "intent-routing-requirements", "dawn",
+        "dns-aid", "dmsc-architecture", "dmsc-information-architecture",
+        "aipf", "iacp", "agent-routing-policy", "agent-session-requirements",
+        "security-principal-binding", "scitt-agent-action-receipt",
+    }
+    if source_ids != required_sources:
+        errors.append("current source inventory is incomplete or contains an unreviewed row")
+
+    requirements = data.get("intent_routing_requirements", [])
+    if [item.get("id") for item in requirements] != [f"REQ-{i}" for i in range(1, 18)]:
+        errors.append("intent routing mapping must contain ordered REQ-1 through REQ-17 exactly once")
+    dispositions = {"ALIGNED", "PARTIAL", "DIFFERENT_DESIGN", "OUT_OF_SCOPE", "NOT_ESTABLISHED"}
+    for index, requirement in enumerate(requirements):
+        label = f"intent_routing_requirements[{index}]"
+        for field in ("title", "source_document", "source_section", "iicp_reference",
+                      "scope", "implementation_evidence", "positive_negative_cases",
+                      "limitation"):
+            if not requirement.get(field):
+                errors.append(f"{label}: missing {field}")
+        if requirement.get("source_document") != "draft-feng-dmsc-intent-routing-requirements-00":
+            errors.append(f"{label}: wrong source revision")
+        if requirement.get("disposition") not in dispositions:
+            errors.append(f"{label}: invalid disposition")
+        _validate_date(errors, requirement.get("verified_at"), f"{label}: verification date", as_of)
+        _validate_url(errors, requirement.get("source", ""), f"{label}: source")
+        for field in ("iicp_reference", "fixture_reference"):
+            relative = requirement.get(field)
+            if relative and (Path(relative).is_absolute() or not (ROOT / relative).is_file()):
+                errors.append(f"{label}: invalid {field}")
+
     forbidden = {"overall_score", "composite_score", "winner", "quality_rank", "rank"}
     if _contains_forbidden_key(data, forbidden):
         errors.append("composite ranking fields are forbidden")
@@ -119,8 +174,11 @@ def _validate_url(errors: list[str], value: str, label: str) -> None:
 
 
 def _parse_date(errors: list[str], value: object, label: str) -> date | None:
+    if not isinstance(value, str) or re.fullmatch(r"\d{4}-\d{2}-\d{2}", value) is None:
+        errors.append(f"{label} must use YYYY-MM-DD")
+        return None
     try:
-        return date.fromisoformat(str(value))
+        return date.fromisoformat(value)
     except ValueError:
         errors.append(f"{label} must use YYYY-MM-DD")
         return None
@@ -128,10 +186,11 @@ def _parse_date(errors: list[str], value: object, label: str) -> date | None:
 
 def _validate_date(
     errors: list[str], value: object, label: str, as_of: date | None
-) -> None:
+) -> date | None:
     parsed = _parse_date(errors, value, label)
     if parsed is not None and as_of is not None and parsed > as_of:
         errors.append(f"{label} cannot be later than the evidence date")
+    return parsed
 
 
 def _contains_forbidden_key(value: object, forbidden: set[str]) -> bool:

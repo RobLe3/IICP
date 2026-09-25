@@ -6,8 +6,7 @@ registration, health and discovery; the selected agents exchange the task
 directly.
 
 For the boundary with IAIP, AIDIP, MCP, A2A and DNS-based discovery, read the
-[protocol positioning](../standards/IICP_PROTOCOL_POSITIONING.md) and
-[source-backed comparison](../standards/PROTOCOL_COMPARISON_2026-08-15.md).
+[current positioning and comparison entry point](../standards/IICP_PROTOCOL_POSITIONING.md).
 The short version is that IICP selects an eligible provider; the selected
 execution protocol defines how that provider performs the task.
 
@@ -30,12 +29,15 @@ rather than treating this protocol overview as an installation runbook.
    `https://iicp.network`.
 3. Express the requested capability as an intent URN, for example
    `urn:iicp:intent:llm:chat:v1`.
-4. Discover eligible providers and apply the SDK's health, policy and
-   confidentiality checks.
+4. Discover candidates and apply the SDK's non-overridable capability,
+   security, policy, health and confidentiality eligibility checks. Default
+   selection preserves directory recommendation order unless a declared
+   supported selection Profile permits reordering within the eligible set.
 5. Obtain dispatch authorization when the directory requires it.
 6. Send the task to the selected provider endpoint, not to the directory.
 7. Validate the response or receipt. If the provider fails, rediscover or try
-   another eligible result within the task's retry policy.
+   another eligible result only within the task's retry and route-authority
+   rules. A single-route ticket does not permit provider substitution.
 
 Installation:
 
@@ -57,8 +59,9 @@ the specification.
    source control.
 3. Declare only the intents, models, limits and policy that the runtime can
    serve.
-4. Register a routable endpoint, then send heartbeats at the required
-   interval.
+4. Register a routable endpoint, then send heartbeats at the applicable
+   interval. Registration credentials authorize provider-directory control
+   operations; they are not arbitrary consumer execution credentials.
 5. Keep health output consistent with registered capabilities. Remove a model
    from registration when the runtime no longer exposes it.
 6. Authenticate incoming tasks, enforce local policy and return structured

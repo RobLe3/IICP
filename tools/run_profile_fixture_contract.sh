@@ -2,6 +2,10 @@
 set -euo pipefail
 
 python3 tools/manage_release_closure.py --check
+python3 tools/check_protocol_comparison.py
+python3 -m unittest discover -s tools -p 'test_protocol_comparison.py'
+python3 -m unittest discover -s tools -p 'test_selection_review_bundle.py'
+python3 -m unittest discover -s tools -p 'test_standards_review_bundle.py'
 python3 -m unittest discover -s conformance-runner/tests
 python3 -m unittest discover -s tools -p 'test_effective_capability_taxonomy.py'
 python3 -m unittest discover -s tools -p 'test_runtime_identity_context.py'

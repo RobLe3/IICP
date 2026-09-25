@@ -31,6 +31,14 @@ operations, credentials, raw logs, and agent tooling do not.
 | Identifiers and registry governance | [Identifier and registry architecture](identifier-and-registry-architecture.md) | Treat released identifiers as opaque, stable project identifiers without implying IANA assignment |
 | Portability and independent continuation | [Portability and non-capture](portability-and-non-capture.md) | Explain how users can choose implementations and operate without a mandatory commercial control plane |
 | Node health and third-party operator tooling | [Node observability interfaces](node-observability-interfaces.md) | Distinguish authoritative health, directory-reported state, local observation, and inference |
+| Management, policy and restricted domains | [Pre-1.0 feature boundary](../../pre1/README.md) and the [Management implementation](https://github.com/RobLe3/iicp-management) | Distinguish desired, accepted, observed and effective state; policy constrains eligibility but does not grant execution or override domain-local authority |
+
+Closed User Groups apply domain-local policy and eligibility; optional
+Management contracts coordinate desired and observed state above the protocol
+execution boundary. Local enforcement evidence must not be described as a
+deployed remote-administration service. Future Software Defined Intelligence
+proposals are research, not an additional released Core contract. For exact
+Management APIs or installation, use its owning repository.
 
 ## Publication rule
 
@@ -56,4 +64,3 @@ For each accepted or superseded decision, reviewers should ask:
 - Does the guide link to the authority instead of copying unstable details?
 - Are published, deployed, adopted, and experimental states kept separate?
 - If a later decision replaced this one, are stale examples removed or clearly historical?
-

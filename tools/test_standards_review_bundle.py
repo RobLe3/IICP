@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import posixpath
+import re
 from pathlib import Path
 import subprocess
 import tempfile
@@ -58,9 +60,19 @@ class StandardsReviewBundleTest(unittest.TestCase):
                     "CONTINUATION.md",
                     "docs/governance/public-artifact-boundary.md",
                     "ecosystem/public-repositories.json",
+                    "ecosystem/CURRENT_VERSIONS.md",
+                    "pre1/README.md",
+                    "pre1/feature-baseline-v1.json",
+                    "docs/architecture/identifier-registry-v1.json",
+                    "docs/architecture/effective-service-capability-v1.json",
+                    "schemas/effective-capability-advertisement-v1.json",
+                    "schemas/capability-requirements-v1.json",
+                    "schemas/capability-refusal-v1.json",
                     "standards/REVIEWING.md",
                     "standards/IICP_PROTOCOL_POSITIONING.md",
                     "standards/PROTOCOL_COMPARISON_2026-08-15.md",
+                    "standards/PROTOCOL_COMPARISON_2026-09-25.md",
+                    "standards/EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-09-25.md",
                     "standards/protocol-comparison-v1.json",
                     "standards/ietf/evidence-matrix.md",
                     f"standards/ietf/{SOURCE.name}",
@@ -71,6 +83,25 @@ class StandardsReviewBundleTest(unittest.TestCase):
                 ):
                     self.assertIn(prefix + required, names)
                 manifest = json.loads(archive.read(prefix + "SHA256SUMS.json"))
+                comparison = json.loads(archive.read(prefix + "standards/protocol-comparison-v1.json"))
+                references = {
+                    row[field]
+                    for row in comparison["intent_routing_requirements"]
+                    for field in ("iicp_reference", "fixture_reference")
+                    if row.get(field)
+                }
+                self.assertTrue(references.issubset(manifest["files"]))
+                for relative in manifest["files"]:
+                    if not relative.endswith(".md"):
+                        continue
+                    markdown = archive.read(prefix + relative).decode("utf-8")
+                    for target in re.findall(r"(?<!!)\[[^]]+\]\(([^)]+)\)", markdown):
+                        target = target.split("#")[0].split(" ")[0]
+                        if not target or target.startswith(("http:", "https:", "mailto:", "/")):
+                            continue
+                        linked = posixpath.normpath((Path(relative).parent / target).as_posix())
+                        if (ROOT / linked).is_file():
+                            self.assertIn(linked, manifest["files"], relative)
                 for relative, expected in manifest["files"].items():
                     actual = hashlib.sha256(archive.read(prefix + relative)).hexdigest()
                     self.assertEqual(expected, actual, relative)
