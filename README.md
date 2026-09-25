@@ -1,6 +1,6 @@
 # IICP — Intent-based Inter-agent Communication Protocol
 
-![IICP Logo](IICP_Logo.webp)
+![IICP — Open AI Mesh: Discover, Route, Connect](IICP_Title.png)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![OIA pending classification](https://agenticsorg.github.io/community-projects/badges/RobLe3/IICP.svg)](https://agenticsorg.github.io/community-projects/oia-matrix.html#oia-roble3-iicp)
