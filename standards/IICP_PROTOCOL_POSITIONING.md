@@ -93,7 +93,10 @@ not independent interoperability or standards adoption. The native peer draft
 is an unsubmitted individual-draft candidate. `urn:iicp:` identifiers and port
 9484 have no IANA assignment.
 
-The [September maturity comparison](PROTOCOL_COMPARISON_2026-09-25.md#specification-and-implementation-maturity)
+The [September feature crosswalk](PROTOCOL_COMPARISON_2026-09-25.md#direct-protocol-feature-crosswalk)
+shows where IAIP and AIDIP overlap IICP's selection function, where CIRP
+chooses unranked discovery and session authorization, and where IICP's
+route and evidence semantics differ. The [separate maturity comparison](PROTOCOL_COMPARISON_2026-09-25.md#specification-and-implementation-maturity)
 finds substantially stronger implementation-backed conformance and
 project-operated evidence for IICP than for the directly overlapping IAIP,
 AIDIP and CIRP individual drafts in the reviewed public sources. This is a
