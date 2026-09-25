@@ -201,7 +201,7 @@
     "tools/README.md": "4786a2353cfa698646c8fa1b16cdf08884c581139fe0ce85ad390962dad75b98",
     "tools/audit_intent_sources.py": "ddd871d23fa2687d1c4bc575e0e3c6a22461474a5ecb9406300d4607c3a9bebe",
     "tools/build_selection_review_bundle.py": "1c34d26595d585b769a220544534f8ddcd1daa93577a42a221fe319470dc5a0f",
-    "tools/build_standards_review_bundle.py": "4eeefbe9e04ec969877cae2969e2ff0b75112100240b5c69455b1558fea7ba92",
+    "tools/build_standards_review_bundle.py": "3e9db1fa3c0f8c19007c38c2976e1b76b3b9cfbee893594aa2da7c21763bbb36",
     "tools/check_clean_room_interoperability_record.py": "eed5d9a0d5eba295a3e7d5069cad2b526dad5983d3c82dc8a84cc1be1c3510f5",
     "tools/check_compatibility_environment.py": "9248a9297ff23058199081d68d9f1a822a29c8bdb1f4c7548978ce6ede27a9de",
     "tools/check_conformance_version_truth.py": "74feac0c41759115108cccea2498cc736dd2cf481239daada860a20009bbbc91",
@@ -266,7 +266,7 @@
     "tools/test_selection_review_bundle.py": "0b55b8d5c7b8eabdd35f596dc18f9b20fbe0cec5cd068a881104ad3f88d1696f",
     "tools/test_service_lifecycle_fixture.py": "95bac952af648bf78ba86e67bd2b70a309b156dedd411fc0d3ef9e1d760b070c",
     "tools/test_signed_message_envelope_boundary.py": "8519856e2bfe5eb7850f1b598df27d06563a7389cb4052750bb77d82afc78f60",
-    "tools/test_standards_review_bundle.py": "0111c001f8192714821fe1b2b035d517ba89215de0c003e2cbe8fe781652932a",
+    "tools/test_standards_review_bundle.py": "7b6c9d9f9bd95b1ec4f19d546da14b6d92dbfc0dbf095aea6e41e4ca0b5ead23",
     "tools/test_submission_governance_decision.py": "d89a8a27a67e5c3daa0cfeed0fc61d1fbfe827787c8152dde9443713c05e8547",
     "tools/test_task_time_semantics.py": "f7f9d9eb4e6798f7691831726c425483840ea543c4f14321db63087890ddf53e"
   },
