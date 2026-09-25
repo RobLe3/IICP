@@ -16,10 +16,13 @@ Start with:
    for verifier, freshness, replay and consumer revalidation boundaries;
 3. [`standards/IICP_PROTOCOL_POSITIONING.md`](IICP_PROTOCOL_POSITIONING.md)
    for the narrow problem and protocol boundary;
-4. [`standards/PROTOCOL_COMPARISON_2026-08-15.md`](PROTOCOL_COMPARISON_2026-08-15.md)
-   and [`standards/EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-08-21.md`](EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-08-21.md)
-   for current overlap, per-dimension evidence maturity and chronology across
-   IAIP, AIDIP, MCP, A2A and related work;
+4. [`standards/PROTOCOL_COMPARISON_2026-09-25.md`](PROTOCOL_COMPARISON_2026-09-25.md)
+   and [`standards/EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-09-25.md`](EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-09-25.md)
+   for the currently verified overlap, REQ-1–17 mapping and security revision
+   update. The [August comparison](PROTOCOL_COMPARISON_2026-08-15.md) and
+   [August security crosswalk](EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-08-21.md)
+   remain dated historical snapshots; their maturity scores were not
+   automatically refreshed;
 5. `standards/ietf/draft-roble-iicp-peer.md`;
 6. `standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_2026-08-13.md`;
 7. [`standards/ietf/evidence-matrix.md`](ietf/evidence-matrix.md);

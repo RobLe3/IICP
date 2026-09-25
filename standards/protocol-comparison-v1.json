@@ -1,6 +1,6 @@
 {
   "schema": "iicp.protocol-comparison.v1",
-  "as_of": "2026-08-15",
+  "as_of": "2026-09-25",
   "status": "informative_research_not_endorsement",
   "date_semantics": "Each entry updated value is the cited source revision date when published; otherwise it is the verification date.",
   "comparison_values": [
@@ -111,12 +111,13 @@
       },
       "first_public_evidence": {
         "date": "2025-10-27",
-        "kind": "initial_public_spec_commit",
-        "artifact": "IICP v1.4.2 initial public draft",
+        "kind": "earliest_inspected_spec_commit",
+        "artifact": "IICP v1.4.2 commit; public accessibility on that date not independently verified",
         "source": "https://github.com/RobLe3/IICP/commit/686676ea24a620f6db4e62e8c1900ba75217d3e2",
-        "confidence": "high"
+        "confidence": "commit_timestamp_only_public_access_not_independently_verified"
       },
-      "relative_to_iicp_first_public": "same_day"
+      "relative_to_iicp_first_public": "same_day",
+      "assessment_status": "historical_2026-08-15_not_refreshed"
     },
     {
       "id": "iaip",
@@ -185,7 +186,8 @@
         "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/history/",
         "confidence": "high"
       },
-      "relative_to_iicp_first_public": "postdates"
+      "relative_to_iicp_first_public": "postdates",
+      "assessment_status": "historical_2026-08-15_not_refreshed"
     },
     {
       "id": "aidip",
@@ -254,7 +256,8 @@
         "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/history/",
         "confidence": "high"
       },
-      "relative_to_iicp_first_public": "predates"
+      "relative_to_iicp_first_public": "predates",
+      "assessment_status": "historical_2026-08-15_not_refreshed"
     },
     {
       "id": "aipf",
@@ -323,7 +326,8 @@
         "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework/history/",
         "confidence": "high"
       },
-      "relative_to_iicp_first_public": "postdates"
+      "relative_to_iicp_first_public": "postdates",
+      "assessment_status": "historical_2026-08-15_not_refreshed"
     },
     {
       "id": "iacp",
@@ -392,7 +396,8 @@
         "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp/history/",
         "confidence": "high"
       },
-      "relative_to_iicp_first_public": "postdates"
+      "relative_to_iicp_first_public": "postdates",
+      "assessment_status": "historical_2026-08-15_not_refreshed"
     },
     {
       "id": "a2a",
@@ -461,7 +466,8 @@
         "source": "https://api.github.com/repos/a2aproject/A2A",
         "confidence": "high"
       },
-      "relative_to_iicp_first_public": "predates"
+      "relative_to_iicp_first_public": "predates",
+      "assessment_status": "historical_2026-08-15_not_refreshed"
     },
     {
       "id": "mcp",
@@ -530,7 +536,8 @@
         "source": "https://api.github.com/repos/modelcontextprotocol/modelcontextprotocol",
         "confidence": "high"
       },
-      "relative_to_iicp_first_public": "predates"
+      "relative_to_iicp_first_public": "predates",
+      "assessment_status": "historical_2026-08-15_not_refreshed"
     },
     {
       "id": "dns-aid",
@@ -599,7 +606,8 @@
         "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/history/",
         "confidence": "high"
       },
-      "relative_to_iicp_first_public": "predates"
+      "relative_to_iicp_first_public": "predates",
+      "assessment_status": "historical_2026-08-15_not_refreshed"
     },
     {
       "id": "agntcy",
@@ -668,7 +676,8 @@
         "source": "https://api.github.com/repos/agntcy/acp-spec",
         "confidence": "high"
       },
-      "relative_to_iicp_first_public": "predates"
+      "relative_to_iicp_first_public": "predates",
+      "assessment_status": "historical_2026-08-15_not_refreshed"
     },
     {
       "id": "anp",
@@ -737,7 +746,8 @@
         "source": "https://api.github.com/repos/agent-network-protocol/AgentNetworkProtocol",
         "confidence": "high"
       },
-      "relative_to_iicp_first_public": "predates"
+      "relative_to_iicp_first_public": "predates",
+      "assessment_status": "historical_2026-08-15_not_refreshed"
     }
   ],
   "overlap_evidence": {
@@ -1084,6 +1094,436 @@
       "artifact": "IICP protocol positioning comparison",
       "source": "https://github.com/RobLe3/IICP/blob/main/standards/IICP_PROTOCOL_POSITIONING.md",
       "confidence": "high"
+    }
+  ],
+  "legacy_assessment_as_of": "2026-08-15",
+  "current_assessment": "standards/PROTOCOL_COMPARISON_2026-09-25.md",
+  "first_public_evidence_note": "A Git commit date is not independent proof of when a repository became publicly accessible; chronology establishes neither influence nor priority.",
+  "source_inventory": [
+    {
+      "id": "iaip",
+      "document": "draft-sz-dmsc-iaip-02",
+      "revision_date": "2026-05-25",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "6-8",
+      "scope": "Gateway matching, selection and forwarding",
+      "source": "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip-02/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "aidip",
+      "document": "draft-cui-ai-agent-discovery-invocation-02",
+      "revision_date": "2026-07-06",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "architecture and protocol procedures",
+      "scope": "Discovery, selection and invocation",
+      "source": "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation-02/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "cirp",
+      "document": "draft-verma-cirp-02",
+      "revision_date": "2026-08-10",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "1; 6-10",
+      "scope": "Scoped discovery, session authorization and receipts",
+      "source": "https://datatracker.ietf.org/doc/draft-verma-cirp-02/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "intent-routing-requirements",
+      "document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "revision_date": "2026-08-14",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "3.1-3.9",
+      "scope": "REQ-1 through REQ-17; requirements, not implementation",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements-00/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "dns-aid",
+      "document": "draft-mozleywilliams-dnsop-dnsaid-02",
+      "revision_date": "2026-05-27",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "architecture and discovery records",
+      "scope": "DNS discovery input",
+      "source": "https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid-02/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "dmsc-architecture",
+      "document": "draft-li-dmsc-architecture-01",
+      "revision_date": "2026-05-29",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "architecture",
+      "scope": "DMSC architecture context",
+      "source": "https://datatracker.ietf.org/doc/draft-li-dmsc-architecture-01/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "dmsc-information-architecture",
+      "document": "draft-li-dmsc-inf-architecture-07",
+      "revision_date": "2026-05-22",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "architecture",
+      "scope": "DMSC information architecture context",
+      "source": "https://datatracker.ietf.org/doc/draft-li-dmsc-inf-architecture-07/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "aipf",
+      "document": "draft-zahed-agent-comm-framework-01",
+      "revision_date": "2026-07-19",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "architecture",
+      "scope": "Agent communication framework",
+      "source": "https://datatracker.ietf.org/doc/draft-zahed-agent-comm-framework-01/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "iacp",
+      "document": "draft-gebauer-iacp-03",
+      "revision_date": "2026-07-28",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "architecture",
+      "scope": "Broader agent communication architecture",
+      "source": "https://datatracker.ietf.org/doc/draft-gebauer-iacp-03/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "agent-routing-policy",
+      "document": "draft-ahuja-agent-routing-policy-00",
+      "revision_date": "2026-09-17",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "4-5",
+      "scope": "Inter-domain policy grammar",
+      "source": "https://datatracker.ietf.org/doc/draft-ahuja-agent-routing-policy-00/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "agent-session-requirements",
+      "document": "draft-feng-agentproto-session-requirements-02",
+      "revision_date": "2026-08-20",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "requirements",
+      "scope": "Post-discovery session requirements",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-agentproto-session-requirements-02/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "security-principal-binding",
+      "document": "draft-bu-agentproto-security-principal-binding-07",
+      "revision_date": "2026-09-15",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "terminology and verifier questions",
+      "scope": "Claim and verifier boundary",
+      "source": "https://datatracker.ietf.org/doc/draft-bu-agentproto-security-principal-binding-07/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "scitt-agent-action-receipt",
+      "document": "draft-noa-scitt-ai-agent-receipt-01",
+      "revision_date": "2026-08-15",
+      "verified_at": "2026-09-25",
+      "formal_status": "individual_internet_draft",
+      "relevant_sections": "receipt profile",
+      "scope": "Action receipts; not an adopted SCITT WG result",
+      "source": "https://datatracker.ietf.org/doc/draft-noa-scitt-ai-agent-receipt-01/",
+      "evidence_class": "official_datatracker_document_text_and_metadata",
+      "retrieval_limitations": "Document text and formal status reviewed; external implementation and deployment searches are not exhaustive."
+    },
+    {
+      "id": "dawn",
+      "document": "charter-ietf-dawn-00-07",
+      "revision_date": "2026-09-11",
+      "verified_at": "2026-09-25",
+      "formal_status": "proposed_working_group_and_charter",
+      "relevant_sections": "proposed charter scope",
+      "scope": "Initial discovery; proposed charter excludes semantic matching, ranking and selection",
+      "source": "https://datatracker.ietf.org/wg/dawn/about/",
+      "evidence_class": "official_datatracker_group_status",
+      "retrieval_limitations": "Group page verified on date shown; charter revision date not separately established."
+    }
+  ],
+  "intent_routing_requirements": [
+    {
+      "id": "REQ-1",
+      "title": "Open Participation",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.1.1",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "spec/v1.9/iicp-dir.md",
+      "scope": "released_connected_directory",
+      "implementation_evidence": "Published SDK/provider and directory registration paths; same-project implementation only.",
+      "fixture_reference": "spec/v1.9/conformance-test-suite.md",
+      "positive_negative_cases": "Registration success and invalid credential/rejected registration are named; open global participation has no vector.",
+      "disposition": "PARTIAL",
+      "limitation": "Public registration and SDK support do not establish unrestricted global participation or independent implementation.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-2",
+      "title": "Heterogeneous Handlers",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.1.2",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "docs/architecture/effective-service-capability-semantics.md",
+      "scope": "released_and_implementation",
+      "implementation_evidence": "Published provider adapters and both directory flavors advertise typed capabilities; same-project implementation only.",
+      "fixture_reference": "research/pre-normative-profiles/fixtures/effective-capability-v1.json",
+      "positive_negative_cases": "Positive effective-capability advertisement and negative invalid limit; arbitrary handler types not enumerated.",
+      "disposition": "ALIGNED",
+      "limitation": "Supported adapters demonstrate heterogeneity; arbitrary handler classes are not qualified.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-3",
+      "title": "Control/Data Plane Separation",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.2.1",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "spec/v1.9/iicp-core.md",
+      "scope": "released_supported_bindings",
+      "implementation_evidence": "Maintained SDK consumers dispatch to providers after Directory discovery; same-project implementation only.",
+      "fixture_reference": "spec/v1.9/conformance-test-suite.md",
+      "positive_negative_cases": "Discovery and direct task path have named tests; no measured independence at Internet scale.",
+      "disposition": "ALIGNED",
+      "limitation": "Direct payload path is specified; throughput independence is not measured here.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-4",
+      "title": "Bounded State",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.3.1",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "spec/v1.9/iicp-federated-directory.md",
+      "scope": "released_design_not_scale_qualification",
+      "implementation_evidence": "Signed snapshot/event-tail design and directory flavors are published, but no sublinear-state implementation claim.",
+      "fixture_reference": null,
+      "positive_negative_cases": "No positive/negative Internet-scale bounded-state fixture located.",
+      "disposition": "NOT_ESTABLISHED",
+      "limitation": "No proof that any single directory has state sublinear in total registrations.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-5",
+      "title": "Capability Aggregation",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.3.2",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "spec/v1.9/iicp-dir.md",
+      "scope": "released_connected_directory",
+      "implementation_evidence": "Directory discovery is implemented; aggregate cross-domain advertisement is not specified.",
+      "fixture_reference": null,
+      "positive_negative_cases": "No aggregation or withdrawal fixture equivalent to the draft requirement.",
+      "disposition": "DIFFERENT_DESIGN",
+      "limitation": "No cross-domain aggregate advertisement contract equivalent to requirement.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-6",
+      "title": "Local Forwarding Decisions",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.4.1",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "spec/v1.9/iicp-semantics.md",
+      "scope": "released_connected_directory",
+      "implementation_evidence": "Directory recommendation and client policy run in maintained SDKs; no datagram-local forwarding implementation.",
+      "fixture_reference": null,
+      "positive_negative_cases": "No positive/negative local-only forwarding fixture; this is a different design.",
+      "disposition": "DIFFERENT_DESIGN",
+      "limitation": "Directory-assisted selection differs from local-only datagram forwarding.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-7",
+      "title": "Real-Time State Decided by Its Holder",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.4.2",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "docs/architecture/directory-state-semantics.md",
+      "scope": "working_main_architecture_and_implementation",
+      "implementation_evidence": "Provider availability reports and directory probes are implemented; both are same-project evidence.",
+      "fixture_reference": "docs/architecture/directory-state-semantics-v1.json",
+      "positive_negative_cases": "Available/reachable versus stale/unavailable cases; holder-only real-time selection not proven.",
+      "disposition": "PARTIAL",
+      "limitation": "Provider admission is local, while directory eligibility uses observations and reports with bounded freshness.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-8",
+      "title": "Delivery Endpoint Declared by Handler Policy",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.4.3",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "spec/v1.9/iicp-dir.md",
+      "scope": "released_connected_directory",
+      "implementation_evidence": "Provider route advertisement and bounded ticket validation exist in maintained implementations.",
+      "fixture_reference": "spec/v1.9/conformance-test-suite.md",
+      "positive_negative_cases": "Routable versus non-routable endpoint cases; callback-delivery alternative absent.",
+      "disposition": "PARTIAL",
+      "limitation": "Advertised routes exist; draft callback-delivery alternative is not a general IICP contract.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-9",
+      "title": "Session-Agnostic Delivery",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.4.4",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "docs/architecture/environmental-independence-and-extension-architecture.md",
+      "scope": "working_main_architecture",
+      "implementation_evidence": "HTTP task binding and draft native binding keep task identity separate from transport.",
+      "fixture_reference": "docs/architecture/environmental-independence-v1.json",
+      "positive_negative_cases": "Same logical intent over bindings is modeled; identical datagram-delivery behavior not tested.",
+      "disposition": "PARTIAL",
+      "limitation": "IICP task identity is binding-neutral but no identical datagram-delivery mechanism is specified.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-10",
+      "title": "Matching Based on Routable Identifiers",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.5.1",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "docs/architecture/identifier-and-registry-architecture.md",
+      "scope": "working_main_architecture",
+      "implementation_evidence": "Directory exact-match intent matching is implemented in both flavors.",
+      "fixture_reference": "registry/fixtures/intent-payloads-v1.json",
+      "positive_negative_cases": "Known exact intent versus unknown/mismatched intent; no prefix-routing vector.",
+      "disposition": "DIFFERENT_DESIGN",
+      "limitation": "IICP opaque exact-match identifiers are not routable prefixes.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-11",
+      "title": "Deterministic Forwarding, No Data-Path Inference",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.5.2",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "spec/v1.9/iicp-core.md",
+      "scope": "released_supported_bindings",
+      "implementation_evidence": "Maintained Directory is outside direct task-payload path; no data-path inference is required.",
+      "fixture_reference": "spec/v1.9/conformance-test-suite.md",
+      "positive_negative_cases": "Direct CALL/RESPONSE and refusal cases are named; Internet-scale forwarding cost unmeasured.",
+      "disposition": "ALIGNED",
+      "limitation": "Directory is not task-payload transit; no Internet-wide forwarding performance proof.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-12",
+      "title": "Routable Hierarchical Namespace",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.6.1",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "docs/architecture/identifier-and-registry-architecture.md",
+      "scope": "working_main_architecture",
+      "implementation_evidence": "Opaque project identifier architecture is documented; no prefix-aggregation implementation.",
+      "fixture_reference": null,
+      "positive_negative_cases": "No positive/negative prefix-matching or aggregate-state fixture.",
+      "disposition": "DIFFERENT_DESIGN",
+      "limitation": "Textual URN hierarchy does not imply aggregability or prefix matching.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-13",
+      "title": "Isolation and Cross-Domain Authorization",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.6.2",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "research/pre-normative-profiles/restricted-trust-domain-v0.md",
+      "scope": "optional_pre_normative_profile",
+      "implementation_evidence": "Restricted-domain membership and local policy are pre-normative same-project fixtures.",
+      "fixture_reference": "research/pre-normative-profiles/fixtures/restricted-trust-domain-v0.json",
+      "positive_negative_cases": "Allowed member and denied foreign/unverified member are covered in local fixtures; no external deployment proof.",
+      "disposition": "PARTIAL",
+      "limitation": "No qualified cross-domain deployment or independent enforcement evidence.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-14",
+      "title": "Bounded Convergence",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.7.1",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "spec/v1.9/iicp-federated-directory.md",
+      "scope": "released_design_not_scale_qualification",
+      "implementation_evidence": "Snapshot/event-tail federation exists as a design and preview implementation, not a bounded-convergence result.",
+      "fixture_reference": null,
+      "positive_negative_cases": "No latency-bound convergence fixture at cross-domain scale.",
+      "disposition": "NOT_ESTABLISHED",
+      "limitation": "No bounded cross-domain convergence result at draft scale.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-15",
+      "title": "Delivery Reachability",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.8.1",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "docs/architecture/directory-state-semantics.md",
+      "scope": "working_main_architecture_and_implementation",
+      "implementation_evidence": "Directory reachability and availability gates exist in maintained directories.",
+      "fixture_reference": "docs/architecture/directory-state-semantics-v1.json",
+      "positive_negative_cases": "Eligible/current versus stale/unreachable cases; delivery to every registered handler is not guaranteed.",
+      "disposition": "PARTIAL",
+      "limitation": "Registered is not necessarily available or reachable; eligible routes can fail.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-16",
+      "title": "Return-Path Reachability",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.8.2",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "spec/v1.9/iicp-core.md",
+      "scope": "released_supported_bindings",
+      "implementation_evidence": "Supported HTTP task handlers return responses directly to callers.",
+      "fixture_reference": "spec/v1.9/conformance-test-suite.md",
+      "positive_negative_cases": "Response and timeout/error paths are named; adverse-network return reachability unmeasured.",
+      "disposition": "ALIGNED",
+      "limitation": "Direct request/response path exists; adverse-network scale unmeasured.",
+      "verified_at": "2026-09-25"
+    },
+    {
+      "id": "REQ-17",
+      "title": "Intent Decomposed at the Originator",
+      "source_document": "draft-feng-dmsc-intent-routing-requirements-00",
+      "source_section": "3.9.1",
+      "source": "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/",
+      "iicp_reference": "spec/v1.9/iicp-semantics.md",
+      "scope": "released_supported_bindings",
+      "implementation_evidence": "Maintained consumers submit explicit intent identifiers.",
+      "fixture_reference": "registry/fixtures/intent-payloads-v1.json",
+      "positive_negative_cases": "Known and unknown intent handling; natural-language decomposition is application-owned and untested by IICP.",
+      "disposition": "ALIGNED",
+      "limitation": "Application supplies intent; natural-language decomposition remains outside Core.",
+      "verified_at": "2026-09-25"
     }
   ]
 }

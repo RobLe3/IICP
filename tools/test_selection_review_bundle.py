@@ -39,6 +39,8 @@ class SelectionReviewBundleTests(unittest.TestCase):
                     "standards/SELECTION_TRUST_AND_REVALIDATION.md",
                     "docs/architecture/node-observability-interfaces.md",
                     "standards/PROTOCOL_COMPARISON_2026-08-15.md",
+                    "standards/PROTOCOL_COMPARISON_2026-09-25.md",
+                    "standards/EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-09-25.md",
                     "IMPLEMENTATIONS.md",
                     "spec/v1.9/conformance-test-suite.md",
                     "SHA256SUMS.json",

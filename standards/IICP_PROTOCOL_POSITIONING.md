@@ -1,6 +1,6 @@
 # IICP protocol positioning for reviewers
 
-**Evidence date:** 2026-08-15  
+**Evidence date:** 2026-09-25
 **Status:** informative project material; not an IETF submission or endorsement
 
 ## The narrow problem
@@ -44,13 +44,16 @@ semantics in its Core.
 
 ## Where the overlap is real
 
-Current individual Internet-Drafts such as IAIP and AIDIP also cover
-capability advertisement, intent-aware discovery, candidate matching and
-selection. This is direct overlap, not a naming difference. The question for
-review is whether IICP's combination of effective service capabilities,
-caller-visible policy eligibility, content-minimized directory operation and
-short-lived dispatch authorization forms a useful separable contract, or
-whether those parts should converge with adjacent work.
+Individual Internet-Drafts such as [IAIP](https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/)
+and [AIDIP](https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/)
+also cover capability advertisement, intent-aware matching and selection.
+IAIP also filters mandatory constraints before ranking; that sequence alone
+is not IICP's differentiator. [CIRP](https://datatracker.ietf.org/doc/draft-verma-cirp/02/)
+has scoped discovery and session authorization but leaves ranking outside its
+scope. The [DAWN proposed charter](https://datatracker.ietf.org/wg/dawn/about/)
+focuses on initial discovery and excludes semantic matchmaking and selection.
+These are distinct design boundaries, not proof of interoperable wire formats
+or of one project's superiority.
 
 ## The smallest interoperability claim
 
@@ -79,15 +82,20 @@ profile applies.
 
 ## Current evidence and limits
 
-IICP publishes a specification suite, two directory implementations, three
-SDK families, a browser implementation, fixtures and a conformance runner.
+IICP publishes a project-normative beta suite, two directory implementations,
+three SDK families, an experimental browser implementation, optional
+Management preview, fixtures and a conformance runner. The
+[generated version projection](../ecosystem/CURRENT_VERSIONS.md) names current
+component releases; the [pre-1.0 boundary](../pre1/README.md) is not a
+completed qualification result.
 Most are maintained by the same project. Their agreement is parity evidence,
 not independent interoperability or standards adoption. The native peer draft
 is an unsubmitted individual-draft candidate. `urn:iicp:` identifiers and port
 9484 have no IANA assignment.
 
-For the feature comparison, per-dimension evidence-maturity ratings, chronology
-and primary sources, read
-[`PROTOCOL_COMPARISON_2026-08-15.md`](PROTOCOL_COMPARISON_2026-08-15.md). The
-same dated facts are available as
-[`protocol-comparison-v1.json`](protocol-comparison-v1.json).
+For the current dated source inventory, bounded role comparison and individual
+REQ-1–17 analysis, read the
+[25 September assessment](PROTOCOL_COMPARISON_2026-09-25.md). The
+[15 August assessment](PROTOCOL_COMPARISON_2026-08-15.md) remains historical;
+its per-dimension maturity ratings have not been silently refreshed. The
+[machine-readable comparison](protocol-comparison-v1.json) marks that limit.

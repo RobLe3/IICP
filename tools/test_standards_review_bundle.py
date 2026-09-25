@@ -61,6 +61,8 @@ class StandardsReviewBundleTest(unittest.TestCase):
                     "standards/REVIEWING.md",
                     "standards/IICP_PROTOCOL_POSITIONING.md",
                     "standards/PROTOCOL_COMPARISON_2026-08-15.md",
+                    "standards/PROTOCOL_COMPARISON_2026-09-25.md",
+                    "standards/EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-09-25.md",
                     "standards/protocol-comparison-v1.json",
                     "standards/ietf/evidence-matrix.md",
                     f"standards/ietf/{SOURCE.name}",
