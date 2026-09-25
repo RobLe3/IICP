@@ -23,6 +23,8 @@ PUBLIC_INPUTS = (
     "CONTINUATION.md",
     "TERMINOLOGY_AND_DISCOVERABILITY.md",
     "ecosystem/public-repositories.json",
+    "ecosystem/CURRENT_VERSIONS.md",
+    "pre1/README.md",
     "standards/REVIEWING.md",
     "standards/SELECTION_REVIEW_BUNDLE_README.md",
     "standards/SELECTION_ELIGIBILITY_PROBLEM_STATEMENT.md",

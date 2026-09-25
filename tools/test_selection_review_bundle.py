@@ -42,6 +42,8 @@ class SelectionReviewBundleTests(unittest.TestCase):
                     "standards/PROTOCOL_COMPARISON_2026-09-25.md",
                     "standards/EMERGING_SECURITY_SESSION_EVIDENCE_CROSSWALK_2026-09-25.md",
                     "IMPLEMENTATIONS.md",
+                    "ecosystem/CURRENT_VERSIONS.md",
+                    "pre1/README.md",
                     "spec/v1.9/conformance-test-suite.md",
                     "SHA256SUMS.json",
                 ):

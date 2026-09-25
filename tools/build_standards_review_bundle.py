@@ -29,6 +29,8 @@ PUBLIC_INPUTS = (
     "docs/governance/public-artifact-boundary.md",
     "docs/security/privacy-adversary-and-trust-model.md",
     "ecosystem/public-repositories.json",
+    "ecosystem/CURRENT_VERSIONS.md",
+    "pre1/README.md",
     "standards/REVIEWING.md",
     "standards/IICP_PROTOCOL_POSITIONING.md",
     "standards/PROTOCOL_COMPARISON_2026-08-15.md",

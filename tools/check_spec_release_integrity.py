@@ -76,6 +76,7 @@ def main() -> int:
         "docs/governance/public-artifact-boundary.md",
         "docs/security/privacy-adversary-and-trust-model.md",
         "docs/architecture/environmental-independence-and-extension-architecture.md",
+        "docs/architecture/decision-documentation-map.md",
         "docs/architecture/environmental-independence-v1.json",
         "tools/test_environmental_independence_decision.py",
         "docs/architecture/identifier-and-registry-architecture.md",
