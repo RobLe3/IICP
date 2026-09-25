@@ -21,6 +21,52 @@ class ProtocolComparisonTests(unittest.TestCase):
     def test_canonical_dataset_passes(self) -> None:
         self.assertEqual(validate(), [])
 
+    def test_bounded_not_identified_is_valid(self) -> None:
+        self.assertEqual(validate(), [])
+        data = json.loads(DATA.read_text(encoding="utf-8"))
+        iaip = next(row for row in data["implementation_evidence"]["rows"] if row["id"] == "iaip")
+        self.assertEqual(iaip["dimensions"]["maintained_implementation"]["status"], "not_identified")
+        self.assertTrue(iaip["reviewed_scope"])
+
+    def test_unsupported_nonexistence_claim_fails(self) -> None:
+        errors = self._validate_mutation(lambda data: data["implementation_evidence"]["rows"][1]
+            ["dimensions"]["maintained_implementation"].__setitem__("status", "none_exists"))
+        self.assertTrue(any("unsupported evidence status" in item for item in errors))
+
+    def test_prototype_classification_is_supported(self) -> None:
+        errors = self._validate_mutation(lambda data: data["implementation_evidence"]["rows"][2]
+            ["dimensions"]["maintained_implementation"].__setitem__("status", "prototype"))
+        self.assertEqual(errors, [])
+
+    def test_implementation_claim_requires_public_source(self) -> None:
+        errors = self._validate_mutation(lambda data: data["implementation_evidence"]["rows"][0]
+            ["dimensions"]["maintained_implementation"].__setitem__("sources", []))
+        self.assertTrue(any("public sources required" in item for item in errors))
+
+    def test_operational_claim_requires_scope(self) -> None:
+        errors = self._validate_mutation(lambda data: data["implementation_evidence"]["rows"][0].pop("operational_scope"))
+        self.assertTrue(any("operational scope required" in item for item in errors))
+
+    def test_implementation_evidence_cannot_postdate_verification(self) -> None:
+        errors = self._validate_mutation(lambda data: data["implementation_evidence"]["rows"][0]
+            .__setitem__("evidence_date", "2026-09-26"))
+        self.assertTrue(any("evidence date cannot follow verification" in item for item in errors))
+
+    def test_implementation_verification_cannot_postdate_assessment(self) -> None:
+        errors = self._validate_mutation(lambda data: data["implementation_evidence"]["rows"][0]
+            .__setitem__("verified_at", "2026-09-26"))
+        self.assertTrue(any("cannot be later than the evidence date" in item for item in errors))
+
+    def test_same_project_parity_cannot_claim_independent_implementation(self) -> None:
+        errors = self._validate_mutation(lambda data: data["implementation_evidence"]["rows"][0]
+            ["dimensions"]["independent_implementation"].__setitem__("status", "verified"))
+        self.assertTrue(any("cannot be inferred from same-project parity" in item for item in errors))
+
+    def test_charter_is_not_implementation_evidence(self) -> None:
+        errors = self._validate_mutation(lambda data: data["implementation_evidence"]["rows"][5]
+            ["dimensions"]["maintained_implementation"].__setitem__("status", "verified"))
+        self.assertTrue(any("not implementation evidence" in item for item in errors))
+
     def test_unknown_value_fails(self) -> None:
         errors = self._validate_mutation(
             lambda data: data["entries"][0]["dimensions"].__setitem__("selection", "yes")

@@ -21,7 +21,7 @@ IETF adoption.
 | [AIDIP](https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/) | `draft-cui-ai-agent-discovery-invocation-02`, 2026-07-06 | Individual I-D; agent discovery, optional intent-aware candidate selection and invocation. |
 | [CIRP](https://datatracker.ietf.org/doc/draft-verma-cirp/02/) | `draft-verma-cirp-02`, 2026-08-10 | Individual I-D; scoped capability discovery, authorization tickets, peer sessions and receipts; ranking is outside scope (§§1, 6–10). |
 | [Intent Routing Requirements](https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/) | `draft-feng-dmsc-intent-routing-requirements-00`, 2026-08-14 | Individual requirements I-D; REQ-1–17 in §3, not an implemented routing protocol. |
-| [DAWN](https://datatracker.ietf.org/wg/dawn/about/) | proposed charter `charter-ietf-dawn-00-07`, checked 2026-09-25 | Proposed WG; initial naming/discovery, excluding semantic matchmaking, ranking and selection in the proposed charter. |
+| [DAWN](https://datatracker.ietf.org/wg/dawn/about/) | [charter history](https://datatracker.ietf.org/doc/charter-ietf-dawn/history/) records `charter-ietf-dawn-00-07` on 2026-09-11; group status checked 2026-09-25 | Proposed WG; initial naming/discovery, excluding semantic matchmaking, ranking and selection in the proposed charter. |
 | [DNS-AID](https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/02/) | `draft-mozleywilliams-dnsop-dnsaid-02`, 2026-05-27 | Individual I-D; DNS-based discovery of connectivity and capability-document references. |
 | [DMSC architecture](https://datatracker.ietf.org/doc/draft-li-dmsc-architecture/01/) | `draft-li-dmsc-architecture-01`, 2026-05-29 | Individual architecture I-D; compare domain boundaries and architecture, not an adopted DMSC standard. |
 | [DMSC information architecture](https://datatracker.ietf.org/doc/draft-li-dmsc-inf-architecture/07/) | `draft-li-dmsc-inf-architecture-07`, 2026-05-22 | Individual architecture I-D; an additional DMSC context source, not an implementation result. |
@@ -57,6 +57,68 @@ heterogeneous providers using current capability, policy, security and route
 evidence. It does not replace initial naming, session protocols or execution
 bindings. The exact-match `urn:iicp:` identifier design does **not** establish
 prefix aggregation or bounded Internet-wide routing state.
+
+## Specification and implementation maturity
+
+Protocol responsibility and implementation maturity answer different questions.
+The [versioned IICP suite](https://github.com/RobLe3/IICP/blob/main/ecosystem/CURRENT_VERSIONS.md) has a separate
+v1.9.0 wire baseline; neither version axis grants a coordinated stable label.
+Its [implementation catalogue](https://github.com/RobLe3/IICP/blob/main/IMPLEMENTATIONS.md) lists PHP and Rust
+Directory codebases, Python, TypeScript and Rust consumer/provider SDKs, an
+experimental browser node and an optional Management developer preview. The
+[public schemas](https://github.com/RobLe3/IICP/blob/main/schemas/capability-requirements-v1.json),
+[registry](https://github.com/RobLe3/IICP/blob/main/registry/intents.json), [executable conformance fixtures](https://github.com/RobLe3/IICP/blob/main/spec/v1.9/conformance-test-suite.md),
+[negative/security guidance](https://github.com/RobLe3/IICP/blob/main/standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_2026-08-13.md),
+[standalone black-box runner](https://github.com/RobLe3/IICP/blob/main/conformance-runner/README.md),
+[clean-room instructions](https://github.com/RobLe3/IICP/blob/main/conformance-runner/CLEAN_ROOM_IMPLEMENTATION.md),
+[signed content-free evidence support](https://github.com/RobLe3/IICP/blob/main/conformance-runner/README.md),
+[release-integrity manifest](https://github.com/RobLe3/IICP/blob/main/spec/v1.9/release-integrity-manifest.json),
+[compatibility-environment records](https://github.com/RobLe3/IICP/blob/main/SDK_QUALITY_EVIDENCE.md) and
+[release-candidate controls](https://github.com/RobLe3/IICP/blob/main/RELEASE_CANDIDATES.md) make these claims
+inspectable. [Public operational evidence](https://iicp.network/external-evidence)
+is project-operated. The [pre-1.0 boundary](https://github.com/RobLe3/IICP/blob/main/pre1/README.md) remains an open
+qualification program, not a certificate.
+
+The table compares *located public evidence*, not protocol merit or the
+existence of all private work. “Not identified” means that the cited revision,
+its references, relevant public repository search and, for AIDIP, the IETF 124
+Hackathon record did not establish the stated evidence as of 2026-09-25. IAIP
+and CIRP are individual drafts with different scopes; CIRP is technically
+detailed, which is distinct from proof of running code. The
+[AIDIP draft](https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/)
+still contains a placeholder source URL. The
+[IETF 124 Hackathon record](https://github.com/ietf/wiki.ietf.org/blob/main/meeting/124/hackathon.md)
+describes a related implementation plan, not a verified maintained AIDIP
+codebase or conformance result.
+
+| Public evidence | IICP | IAIP | AIDIP | CIRP | Intent Routing Requirements | DAWN |
+|---|---|---|---|---|---|---|
+| Versioned contract | Published project suite | Individual draft | Individual draft | Individual draft | Requirements only | Proposed charter |
+| Machine-readable contracts | Published schemas and registry | Partial draft description | Partial draft description | Partial draft description | Not applicable | Not applicable |
+| Maintained implementation | Multiple project codebases | Not identified | Not identified; Hackathon plan noted | Not identified | Not applicable | Not applicable |
+| Multiple languages | Python, TypeScript, Rust, PHP | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Executable and negative fixtures | Project-owned fixtures | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Standalone conformance runner | Project-owned runner | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Release-integrity tooling | Published | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Operational evidence | Project-operated Genesis | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Independent implementation | Not independently established | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Policy/Management code | Optional developer preview | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+
+The [machine-readable evidence rows](protocol-comparison-v1.json) identify
+source URLs, artifact class, verification date, bounded search scope and each
+limitation. The reviewed evidence supports a material difference: IICP has
+substantially stronger *implementation-backed conformance and operational
+evidence* than the directly overlapping IAIP, AIDIP and CIRP individual
+drafts reviewed here. This does not establish universal design superiority,
+equivalent scope, IETF adoption or independent IICP interoperability. The
+maintained IICP implementations are predominantly same-project work.
+
+Requirements and charters, individual drafts, executable specifications,
+maintained implementations, cross-language fixtures, packaged releases,
+project-operated deployments and independently authored interoperability are
+different evidence stages. They are not a quality ranking: a narrow charter
+can be valuable without code, and project-operated code cannot satisfy an
+independent-implementation gate.
 
 ## Intent Routing Requirements mapping
 

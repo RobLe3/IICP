@@ -1266,7 +1266,8 @@
       "scope": "Initial discovery; proposed charter excludes semantic matching, ranking and selection",
       "source": "https://datatracker.ietf.org/wg/dawn/about/",
       "evidence_class": "official_datatracker_group_status",
-      "retrieval_limitations": "Group page verified on date shown; charter revision date not separately established."
+      "retrieval_limitations": "Charter history establishes the 2026-09-11 revision; group page establishes proposed status. Neither is implementation evidence.",
+      "revision_source": "https://datatracker.ietf.org/doc/charter-ietf-dawn/history/"
     }
   ],
   "intent_routing_requirements": [
@@ -1525,5 +1526,592 @@
       "limitation": "Application supplies intent; natural-language decomposition remains outside Core.",
       "verified_at": "2026-09-25"
     }
-  ]
+  ],
+  "implementation_evidence": {
+    "schema": "iicp.implementation-evidence.v1",
+    "dimensions": [
+      "versioned_contract",
+      "machine_readable_contracts",
+      "maintained_implementation",
+      "implementation_diversity",
+      "executable_conformance",
+      "negative_security_vectors",
+      "standalone_conformance_runner",
+      "release_integrity",
+      "operational_evidence",
+      "independent_implementation",
+      "policy_management_implementation"
+    ],
+    "rows": [
+      {
+        "id": "iicp",
+        "artifact_type": "published_project_suite",
+        "evidence_date": "2026-09-25",
+        "verified_at": "2026-09-25",
+        "implementation_languages": [
+          "Python",
+          "TypeScript",
+          "Rust",
+          "PHP"
+        ],
+        "reviewed_scope": [
+          "Official repository catalogue, release artifacts, conformance runner and public project-operated evidence"
+        ],
+        "dimensions": {
+          "versioned_contract": {
+            "status": "verified",
+            "note": "Published project-normative beta suite; wire baseline is a separate axis.",
+            "sources": [
+              "https://github.com/RobLe3/IICP/blob/main/ecosystem/CURRENT_VERSIONS.md",
+              "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/README.md"
+            ]
+          },
+          "machine_readable_contracts": {
+            "status": "verified",
+            "note": "Schemas, registries and versioned fixtures are published.",
+            "sources": [
+              "https://github.com/RobLe3/IICP/blob/main/schemas/capability-requirements-v1.json",
+              "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/conformance-test-suite.md"
+            ]
+          },
+          "maintained_implementation": {
+            "status": "verified",
+            "note": "Published PHP Directory and maintained Python, TypeScript and Rust SDKs.",
+            "sources": [
+              "https://github.com/RobLe3/IICP/blob/main/IMPLEMENTATIONS.md"
+            ]
+          },
+          "implementation_diversity": {
+            "status": "verified",
+            "note": "Two directory codebases and three SDK languages are maintained by the IICP project; this is not independent authorship.",
+            "sources": [
+              "https://github.com/RobLe3/IICP/blob/main/IMPLEMENTATIONS.md"
+            ]
+          },
+          "executable_conformance": {
+            "status": "verified",
+            "note": "Project-owned executable fixtures and profile checks exist.",
+            "sources": [
+              "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/conformance-test-suite.md"
+            ]
+          },
+          "negative_security_vectors": {
+            "status": "verified",
+            "note": "Project-owned negative and adversarial fixture coverage is documented; coverage is not a security certification.",
+            "sources": [
+              "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/conformance-test-suite.md",
+              "https://github.com/RobLe3/IICP/blob/main/standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_2026-08-13.md"
+            ]
+          },
+          "standalone_conformance_runner": {
+            "status": "verified",
+            "note": "Standalone runner accepts content-free results; its own README distinguishes project and independent evidence.",
+            "sources": [
+              "https://github.com/RobLe3/IICP/blob/main/conformance-runner/README.md"
+            ]
+          },
+          "release_integrity": {
+            "status": "verified",
+            "note": "Working-main release-integrity manifest and checker protect reviewed artifacts.",
+            "sources": [
+              "https://github.com/RobLe3/IICP/blob/main/spec/v1.9/release-integrity-manifest.json"
+            ]
+          },
+          "operational_evidence": {
+            "status": "verified",
+            "note": "Public project-operated Genesis evidence exists; it does not establish independent operation.",
+            "sources": [
+              "https://iicp.network/external-evidence"
+            ]
+          },
+          "independent_implementation": {
+            "status": "not_independently_established",
+            "note": "Same-project language parity is not a clean-room third-party implementation.",
+            "sources": [
+              "https://github.com/RobLe3/IICP/blob/main/conformance-runner/README.md"
+            ]
+          },
+          "policy_management_implementation": {
+            "status": "verified",
+            "note": "Optional Management Foundation is a developer preview, not a deployed remote authority.",
+            "sources": [
+              "https://github.com/RobLe3/iicp-management/blob/main/README.md",
+              "https://github.com/RobLe3/IICP/blob/main/IMPLEMENTATIONS.md"
+            ]
+          }
+        },
+        "operational_scope": "Project-operated Genesis PHP Directory and public evidence only; no independent deployment certification.",
+        "evidence_class": "same_project_and_project_operated"
+      },
+      {
+        "id": "iaip",
+        "artifact_type": "individual_internet_draft",
+        "evidence_date": "2026-09-25",
+        "verified_at": "2026-09-25",
+        "implementation_languages": [],
+        "reviewed_scope": [
+          "draft -02; its references and public-repository search by draft identifier/title"
+        ],
+        "dimensions": {
+          "versioned_contract": {
+            "status": "verified",
+            "note": "Versioned individual Internet-Draft, not an adopted IETF standard.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/"
+            ]
+          },
+          "machine_readable_contracts": {
+            "status": "partial",
+            "note": "No standalone machine-readable conformance contract was established in the reviewed sources.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/"
+            ]
+          },
+          "maintained_implementation": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/"
+            ]
+          },
+          "implementation_diversity": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/"
+            ]
+          },
+          "executable_conformance": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/"
+            ]
+          },
+          "negative_security_vectors": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/"
+            ]
+          },
+          "standalone_conformance_runner": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/"
+            ]
+          },
+          "release_integrity": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/"
+            ]
+          },
+          "operational_evidence": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/"
+            ]
+          },
+          "independent_implementation": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/"
+            ]
+          },
+          "policy_management_implementation": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/"
+            ]
+          }
+        },
+        "evidence_class": "individual_draft_and_bounded_search"
+      },
+      {
+        "id": "aidip",
+        "artifact_type": "individual_internet_draft",
+        "evidence_date": "2026-09-25",
+        "verified_at": "2026-09-25",
+        "implementation_languages": [],
+        "reviewed_scope": [
+          "draft -02; IETF 124 Hackathon project plan; public-repository search by draft identifier/title"
+        ],
+        "dimensions": {
+          "versioned_contract": {
+            "status": "verified",
+            "note": "Versioned individual Internet-Draft, not an adopted IETF standard.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/"
+            ]
+          },
+          "machine_readable_contracts": {
+            "status": "partial",
+            "note": "No standalone machine-readable conformance contract was established in the reviewed sources.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/"
+            ]
+          },
+          "maintained_implementation": {
+            "status": "not_identified",
+            "note": "IETF 124 describes a related Hackathon implementation plan, but reviewed sources did not establish a maintained codebase or executable conformance result.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/",
+              "https://github.com/ietf/wiki.ietf.org/blob/main/meeting/124/hackathon.md"
+            ]
+          },
+          "implementation_diversity": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/",
+              "https://github.com/ietf/wiki.ietf.org/blob/main/meeting/124/hackathon.md"
+            ]
+          },
+          "executable_conformance": {
+            "status": "not_identified",
+            "note": "IETF 124 describes a related Hackathon implementation plan, but reviewed sources did not establish a maintained codebase or executable conformance result.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/",
+              "https://github.com/ietf/wiki.ietf.org/blob/main/meeting/124/hackathon.md"
+            ]
+          },
+          "negative_security_vectors": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/",
+              "https://github.com/ietf/wiki.ietf.org/blob/main/meeting/124/hackathon.md"
+            ]
+          },
+          "standalone_conformance_runner": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/",
+              "https://github.com/ietf/wiki.ietf.org/blob/main/meeting/124/hackathon.md"
+            ]
+          },
+          "release_integrity": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/",
+              "https://github.com/ietf/wiki.ietf.org/blob/main/meeting/124/hackathon.md"
+            ]
+          },
+          "operational_evidence": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/",
+              "https://github.com/ietf/wiki.ietf.org/blob/main/meeting/124/hackathon.md"
+            ]
+          },
+          "independent_implementation": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/",
+              "https://github.com/ietf/wiki.ietf.org/blob/main/meeting/124/hackathon.md"
+            ]
+          },
+          "policy_management_implementation": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/",
+              "https://github.com/ietf/wiki.ietf.org/blob/main/meeting/124/hackathon.md"
+            ]
+          }
+        },
+        "evidence_class": "individual_draft_hackathon_plan_and_bounded_search"
+      },
+      {
+        "id": "cirp",
+        "artifact_type": "individual_internet_draft",
+        "evidence_date": "2026-09-25",
+        "verified_at": "2026-09-25",
+        "implementation_languages": [],
+        "reviewed_scope": [
+          "draft -02; its references and public-repository search by draft identifier/title"
+        ],
+        "dimensions": {
+          "versioned_contract": {
+            "status": "verified",
+            "note": "Versioned individual Internet-Draft, not an adopted IETF standard.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-verma-cirp/02/"
+            ]
+          },
+          "machine_readable_contracts": {
+            "status": "partial",
+            "note": "No standalone machine-readable conformance contract was established in the reviewed sources.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-verma-cirp/02/"
+            ]
+          },
+          "maintained_implementation": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-verma-cirp/02/"
+            ]
+          },
+          "implementation_diversity": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-verma-cirp/02/"
+            ]
+          },
+          "executable_conformance": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-verma-cirp/02/"
+            ]
+          },
+          "negative_security_vectors": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-verma-cirp/02/"
+            ]
+          },
+          "standalone_conformance_runner": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-verma-cirp/02/"
+            ]
+          },
+          "release_integrity": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-verma-cirp/02/"
+            ]
+          },
+          "operational_evidence": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-verma-cirp/02/"
+            ]
+          },
+          "independent_implementation": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-verma-cirp/02/"
+            ]
+          },
+          "policy_management_implementation": {
+            "status": "not_identified",
+            "note": "No maintained public implementation or equivalent executable evidence was identified in the bounded reviewed sources; this does not establish nonexistence.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-verma-cirp/02/"
+            ]
+          }
+        },
+        "evidence_class": "individual_draft_and_bounded_search"
+      },
+      {
+        "id": "intent-routing-requirements",
+        "artifact_type": "requirements_draft",
+        "evidence_date": "2026-09-25",
+        "verified_at": "2026-09-25",
+        "implementation_languages": [],
+        "reviewed_scope": [
+          "requirements draft -00; implementation comparison is not applicable to the document itself"
+        ],
+        "dimensions": {
+          "versioned_contract": {
+            "status": "requirements_only",
+            "note": "Requirements/charter scope, not an executable protocol contract.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/"
+            ]
+          },
+          "machine_readable_contracts": {
+            "status": "not_applicable",
+            "note": "This artifact does not supply an implementation contract.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/"
+            ]
+          },
+          "maintained_implementation": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/"
+            ]
+          },
+          "implementation_diversity": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/"
+            ]
+          },
+          "executable_conformance": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/"
+            ]
+          },
+          "negative_security_vectors": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/"
+            ]
+          },
+          "standalone_conformance_runner": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/"
+            ]
+          },
+          "release_integrity": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/"
+            ]
+          },
+          "operational_evidence": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/"
+            ]
+          },
+          "independent_implementation": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/"
+            ]
+          },
+          "policy_management_implementation": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/"
+            ]
+          }
+        },
+        "evidence_class": "requirements_document"
+      },
+      {
+        "id": "dawn",
+        "artifact_type": "proposed_charter",
+        "evidence_date": "2026-09-25",
+        "verified_at": "2026-09-25",
+        "implementation_languages": [],
+        "reviewed_scope": [
+          "proposed charter -00-07, group status and linked charter/document repository"
+        ],
+        "dimensions": {
+          "versioned_contract": {
+            "status": "charter_only",
+            "note": "Requirements/charter scope, not an executable protocol contract.",
+            "sources": [
+              "https://datatracker.ietf.org/wg/dawn/about/"
+            ]
+          },
+          "machine_readable_contracts": {
+            "status": "not_applicable",
+            "note": "This artifact does not supply an implementation contract.",
+            "sources": [
+              "https://datatracker.ietf.org/wg/dawn/about/"
+            ]
+          },
+          "maintained_implementation": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/wg/dawn/about/",
+              "https://datatracker.ietf.org/doc/charter-ietf-dawn/history/"
+            ]
+          },
+          "implementation_diversity": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/wg/dawn/about/",
+              "https://datatracker.ietf.org/doc/charter-ietf-dawn/history/"
+            ]
+          },
+          "executable_conformance": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/wg/dawn/about/",
+              "https://datatracker.ietf.org/doc/charter-ietf-dawn/history/"
+            ]
+          },
+          "negative_security_vectors": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/wg/dawn/about/",
+              "https://datatracker.ietf.org/doc/charter-ietf-dawn/history/"
+            ]
+          },
+          "standalone_conformance_runner": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/wg/dawn/about/",
+              "https://datatracker.ietf.org/doc/charter-ietf-dawn/history/"
+            ]
+          },
+          "release_integrity": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/wg/dawn/about/",
+              "https://datatracker.ietf.org/doc/charter-ietf-dawn/history/"
+            ]
+          },
+          "operational_evidence": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/wg/dawn/about/",
+              "https://datatracker.ietf.org/doc/charter-ietf-dawn/history/"
+            ]
+          },
+          "independent_implementation": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/wg/dawn/about/",
+              "https://datatracker.ietf.org/doc/charter-ietf-dawn/history/"
+            ]
+          },
+          "policy_management_implementation": {
+            "status": "not_applicable",
+            "note": "Requirement or proposed-charter artifact; do not infer implementation status of all related projects.",
+            "sources": [
+              "https://datatracker.ietf.org/wg/dawn/about/",
+              "https://datatracker.ietf.org/doc/charter-ietf-dawn/history/"
+            ]
+          }
+        },
+        "evidence_class": "proposed_charter"
+      }
+    ],
+    "assessment_note": "Evidence-stage comparison, not a quality ranking; not_identified is a bounded search result, not a nonexistence claim."
+  }
 }
