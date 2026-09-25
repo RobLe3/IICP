@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import posixpath
+import re
 from pathlib import Path
 import subprocess
 import tempfile
@@ -89,6 +91,17 @@ class StandardsReviewBundleTest(unittest.TestCase):
                     if row.get(field)
                 }
                 self.assertTrue(references.issubset(manifest["files"]))
+                for relative in manifest["files"]:
+                    if not relative.endswith(".md"):
+                        continue
+                    markdown = archive.read(prefix + relative).decode("utf-8")
+                    for target in re.findall(r"(?<!!)\[[^]]+\]\(([^)]+)\)", markdown):
+                        target = target.split("#")[0].split(" ")[0]
+                        if not target or target.startswith(("http:", "https:", "mailto:", "/")):
+                            continue
+                        linked = posixpath.normpath((Path(relative).parent / target).as_posix())
+                        if (ROOT / linked).is_file():
+                            self.assertIn(linked, manifest["files"], relative)
                 for relative, expected in manifest["files"].items():
                     actual = hashlib.sha256(archive.read(prefix + relative)).hexdigest()
                     self.assertEqual(expected, actual, relative)

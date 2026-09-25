@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import posixpath
+import re
 from pathlib import Path
 import subprocess
 import tempfile
@@ -59,6 +61,17 @@ class SelectionReviewBundleTests(unittest.TestCase):
                     if row.get(field)
                 }
                 self.assertTrue(references.issubset(manifest["files"]))
+                for relative in manifest["files"]:
+                    if not relative.endswith(".md"):
+                        continue
+                    markdown = archive.read(PREFIX + relative).decode("utf-8")
+                    for target in re.findall(r"(?<!!)\[[^]]+\]\(([^)]+)\)", markdown):
+                        target = target.split("#")[0].split(" ")[0]
+                        if not target or target.startswith(("http:", "https:", "mailto:", "/")):
+                            continue
+                        linked = posixpath.normpath((Path(relative).parent / target).as_posix())
+                        if (ROOT / linked).is_file():
+                            self.assertIn(linked, manifest["files"], relative)
                 self.assertIn("not submitted", manifest["status"])
                 self.assertNotIn("standards/ietf/draft-roble-iicp-peer.md", manifest["files"])
                 for relative, expected in manifest["files"].items():
