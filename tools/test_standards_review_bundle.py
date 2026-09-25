@@ -60,6 +60,7 @@ class StandardsReviewBundleTest(unittest.TestCase):
                     "ecosystem/public-repositories.json",
                     "ecosystem/CURRENT_VERSIONS.md",
                     "pre1/README.md",
+                    "pre1/feature-baseline-v1.json",
                     "standards/REVIEWING.md",
                     "standards/IICP_PROTOCOL_POSITIONING.md",
                     "standards/PROTOCOL_COMPARISON_2026-08-15.md",

@@ -44,6 +44,7 @@ class SelectionReviewBundleTests(unittest.TestCase):
                     "IMPLEMENTATIONS.md",
                     "ecosystem/CURRENT_VERSIONS.md",
                     "pre1/README.md",
+                    "pre1/feature-baseline-v1.json",
                     "spec/v1.9/conformance-test-suite.md",
                     "SHA256SUMS.json",
                 ):
