@@ -45,6 +45,7 @@ PUBLIC_INPUTS = (
     "docs/architecture/environmental-independence-and-extension-architecture.md",
     "docs/architecture/environmental-independence-v1.json",
     "docs/architecture/identifier-and-registry-architecture.md",
+    "docs/architecture/identifier-registry-v1.json",
     "registry/fixtures/intent-payloads-v1.json",
     "research/pre-normative-profiles/fixtures/effective-capability-v1.json",
     "research/pre-normative-profiles/fixtures/restricted-trust-domain-v0.json",

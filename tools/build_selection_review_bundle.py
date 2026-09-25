@@ -44,6 +44,7 @@ PUBLIC_INPUTS = (
     "docs/architecture/directory-state-semantics-v1.json",
     "docs/architecture/environmental-independence-v1.json",
     "docs/architecture/identifier-and-registry-architecture.md",
+    "docs/architecture/identifier-registry-v1.json",
     "docs/architecture/node-observability-interfaces.md",
     "docs/architecture/node-observability-v1.json",
     "docs/architecture/environmental-independence-and-extension-architecture.md",
