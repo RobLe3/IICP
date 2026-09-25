@@ -1,6 +1,6 @@
 # IICP — Intent-based Inter-agent Communication Protocol
 
-![IICP Logo](IICP_Logo.webp)
+![IICP — Open AI Mesh: Discover, Route, Connect](IICP_Title.png)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![OIA pending classification](https://agenticsorg.github.io/community-projects/badges/RobLe3/IICP.svg)](https://agenticsorg.github.io/community-projects/oia-matrix.html#oia-roble3-iicp)
@@ -118,6 +118,11 @@ versioning, security, implementations, conformance, independent implementation,
 deployment and governance. It does not calculate a winner score. The chronology
 also separates the age of a protocol from the first public appearance of an
 overlapping mechanism.
+The [September implementation-evidence comparison](standards/PROTOCOL_COMPARISON_2026-09-25.md#specification-and-implementation-maturity)
+also records IICP's maintained Directory and SDK codebases, executable fixtures,
+standalone conformance runner and project-operated deployment evidence beside
+the narrower evidence currently located for overlapping individual drafts.
+Same-project parity is not independent interoperability.
 
 This boundary has real overlap with individual Internet-Drafts such as IAIP and
 AIDIP; mandatory filtering before ranking is not unique to IICP.

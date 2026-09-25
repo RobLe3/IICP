@@ -125,6 +125,11 @@ def validate(path: Path = DATA) -> list[str]:
     }
     if source_ids != required_sources:
         errors.append("current source inventory is incomplete or contains an unreviewed row")
+    for source in inventory:
+        if source.get("revision_source"):
+            _validate_url(errors, source["revision_source"], f"{source['id']}: revision source")
+
+    _validate_implementation_evidence(errors, data.get("implementation_evidence"), as_of)
 
     requirements = data.get("intent_routing_requirements", [])
     if [item.get("id") for item in requirements] != [f"REQ-{i}" for i in range(1, 18)]:
@@ -152,6 +157,80 @@ def validate(path: Path = DATA) -> list[str]:
     if _contains_forbidden_key(data, forbidden):
         errors.append("composite ranking fields are forbidden")
     return errors
+
+
+def _validate_implementation_evidence(errors: list[str], evidence: object, as_of: date | None) -> None:
+    if not isinstance(evidence, dict) or evidence.get("schema") != "iicp.implementation-evidence.v1":
+        errors.append("implementation evidence schema differs")
+        return
+    required_dimensions = {
+        "versioned_contract", "machine_readable_contracts", "maintained_implementation",
+        "implementation_diversity", "executable_conformance", "negative_security_vectors",
+        "standalone_conformance_runner", "release_integrity", "operational_evidence",
+        "independent_implementation", "policy_management_implementation",
+    }
+    if set(evidence.get("dimensions", [])) != required_dimensions:
+        errors.append("implementation evidence dimensions differ")
+    statuses = {
+        "verified", "partial", "prototype", "not_identified", "not_applicable",
+        "requirements_only", "charter_only", "not_independently_established",
+    }
+    rows = evidence.get("rows", [])
+    if not isinstance(rows, list) or {row.get("id") for row in rows if isinstance(row, dict)} != {
+        "iicp", "iaip", "aidip", "cirp", "intent-routing-requirements", "dawn"
+    } or len(rows) != 6:
+        errors.append("implementation evidence subjects differ")
+        return
+    for row in rows:
+        ident = row["id"]
+        label = f"implementation evidence {ident}"
+        observed = _validate_date(errors, row.get("evidence_date"), f"{label} evidence date", as_of)
+        verified = _validate_date(errors, row.get("verified_at"), f"{label} verification date", as_of)
+        if observed and verified and observed > verified:
+            errors.append(f"{label}: evidence date cannot follow verification")
+        if not row.get("artifact_type") or not row.get("evidence_class") or not row.get("reviewed_scope"):
+            errors.append(f"{label}: missing artifact type, evidence class or reviewed scope")
+        dimensions = row.get("dimensions", {})
+        if set(dimensions) != required_dimensions:
+            errors.append(f"{label}: dimensions differ")
+            continue
+        languages = row.get("implementation_languages", [])
+        if not isinstance(languages, list) or any(not isinstance(item, str) or not item for item in languages):
+            errors.append(f"{label}: invalid implementation languages")
+        elif languages and dimensions["implementation_diversity"].get("status") != "verified":
+            errors.append(f"{label}: language claims require verified implementation diversity")
+        for dimension, claim in dimensions.items():
+            claim_label = f"{label}.{dimension}"
+            if not isinstance(claim, dict):
+                errors.append(f"{claim_label}: claim must be an object")
+                continue
+            status = claim.get("status")
+            if status not in statuses:
+                errors.append(f"{claim_label}: unsupported evidence status")
+            if not claim.get("note"):
+                errors.append(f"{claim_label}: evidence note required")
+            sources = claim.get("sources")
+            if not isinstance(sources, list) or not sources:
+                errors.append(f"{claim_label}: public sources required")
+            else:
+                for source in sources:
+                    _validate_url(errors, source, f"{claim_label} source")
+            if status == "not_identified" and not row.get("reviewed_scope"):
+                errors.append(f"{claim_label}: bounded search scope required")
+            if dimension == "operational_evidence" and status == "verified" and not row.get("operational_scope"):
+                errors.append(f"{claim_label}: operational scope required")
+        if row.get("artifact_type") in {"requirements_draft", "proposed_charter"}:
+            expected_contract = (
+                "requirements_only" if row["artifact_type"] == "requirements_draft"
+                else "charter_only"
+            )
+            if dimensions["versioned_contract"].get("status") != expected_contract:
+                errors.append(f"{label}: contract status must be {expected_contract}")
+            for dimension in required_dimensions - {"versioned_contract"}:
+                if dimensions[dimension].get("status") != "not_applicable":
+                    errors.append(f"{label}: requirements and charters are not implementation evidence")
+        if ident == "iicp" and dimensions["independent_implementation"].get("status") == "verified":
+            errors.append("iicp independent implementation cannot be inferred from same-project parity")
 
 
 def _validate_assessment(
