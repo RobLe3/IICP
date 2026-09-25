@@ -1,16 +1,47 @@
 # IICP — Intent-based Inter-agent Communication Protocol
 
-![IICP — Open AI Mesh: Discover, Route, Connect](IICP_Title.png)
+<img src="IICP_Title.png" alt="IICP — Open AI Mesh: Discover, Route, Connect" width="480">
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![OIA pending classification](https://agenticsorg.github.io/community-projects/badges/RobLe3/IICP.svg)](https://agenticsorg.github.io/community-projects/oia-matrix.html#oia-roble3-iicp)
 
 Provider-neutral discovery, eligibility and execution handoff for intelligence workloads.
 
-**Published Protocol Suite**: see the generated [current-version projection](ecosystem/CURRENT_VERSIONS.md)<br>
-**Wire compatibility baseline**: v1.9.0<br>
-**Project status**: project-normative beta; each optional Profile has its own status<br>
-**Working `main`**: may contain unreleased changes; cite an immutable tag for a released contract
+## Ecosystem status at a glance
+
+*Verified against public repository evidence on 2026-09-25. Releases,
+deployment and qualification are separate states; see the linked records for
+their exact scope.*
+
+| Area | Current evidence and status |
+|---|---|
+| Protocol | The [published suite](ecosystem/CURRENT_VERSIONS.md) is **v1.10.17**, a project-normative beta. The protected wire compatibility baseline is **v1.9.0**. Optional Profiles have their own status; working `main` can contain unreleased changes. Cite an immutable tag for a released contract. |
+| Implementations | The [public repository catalogue](IMPLEMENTATIONS.md) lists PHP and Rust Directory implementations; Python, TypeScript and Rust consumer/provider SDKs; an experimental browser node; and an optional Management developer preview. Their package versions and support boundaries are independent. |
+| Operation | The PHP Directory is the project-operated Genesis code line. The Rust Directory is an operator preview, not Genesis authority; Management is a developer preview, not a deployed service. [Public operational evidence](https://iicp.network/external-evidence) is project-operated and must not be mistaken for independent deployment. |
+| Verification | IICP publishes [schemas and registries](spec/v1.9/README.md), [executable fixtures](spec/v1.9/conformance-test-suite.md), a [standalone black-box runner](conformance-runner/README.md) and [release-integrity controls](SPEC_RELEASE_PROCESS.md). Same-project parity is implementation evidence, not independent interoperability. |
+| Open gates | The [coordinated pre-1.0 boundary](pre1/README.md) is not a completed stability certification. An [independently authored implementation](https://github.com/RobLe3/IICP/issues/31) and externally operated interoperability evidence remain unestablished. IICP has no IETF ratification or IANA service-port assignment. |
+
+### Compared with adjacent Internet-Drafts
+
+IICP has a [direct feature crosswalk](standards/PROTOCOL_COMPARISON_2026-09-25.md#direct-protocol-feature-crosswalk)
+and a separate [implementation-maturity table](standards/PROTOCOL_COMPARISON_2026-09-25.md#specification-and-implementation-maturity)
+for the exact draft revisions reviewed on 2026-09-25:
+
+| Draft | Material overlap or difference |
+|---|---|
+| [IAIP](https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/) | Also filters mandatory constraints before semantic ranking, but uses an agent-gateway forwarding architecture. Filtering before ranking is not unique to IICP. |
+| [AIDIP](https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/) | Defines agent metadata, discovery, optional intent-based ranked selection and invocation. IICP separately specifies live eligibility and route-authority boundaries. |
+| [CIRP](https://datatracker.ietf.org/doc/draft-verma-cirp/02/) | Defines scoped, unranked capability discovery, session authorization and receipts. Its `ConnectTicket` is not an IICP dispatch ticket. |
+
+The [September assessment](standards/PROTOCOL_COMPARISON_2026-09-25.md)
+also maps all 17 [Intent Routing Requirements](https://datatracker.ietf.org/doc/draft-feng-dmsc-intent-routing-requirements/00/)
+and explains the proposed [DAWN](https://datatracker.ietf.org/wg/dawn/about/)
+discovery scope. In the reviewed public sources, IICP has substantially more
+implementation, conformance and project-operated evidence than the directly
+overlapping individual drafts. This is not a protocol-quality ranking or an
+independent-interoperability claim. The
+[positioning note](standards/IICP_PROTOCOL_POSITIONING.md) gives the narrower
+standards boundary.
 
 ---
 
@@ -113,27 +144,11 @@ protocols or the transports and security standards beneath them.
 | How is the task executed? | A negotiated binding | MCP, A2A, HTTP APIs and IICP peer framing can carry the selected task |
 | What does the directory see? | Intent and bounded routing metadata, not the task payload | Depends on the adjacent protocol and deployment |
 
-The comparison rates public evidence separately for specification precision,
-versioning, security, implementations, conformance, independent implementation,
-deployment and governance. It does not calculate a winner score. The chronology
-also separates the age of a protocol from the first public appearance of an
-overlapping mechanism.
-The [September feature crosswalk](standards/PROTOCOL_COMPARISON_2026-09-25.md#direct-protocol-feature-crosswalk)
-compares IICP's intent naming, live eligibility, selection, route authority,
-execution handoff and evidence boundaries directly with IAIP, AIDIP and CIRP.
-Its [separate maturity table](standards/PROTOCOL_COMPARISON_2026-09-25.md#specification-and-implementation-maturity)
-compares published code, fixtures, negative tests, conformance tooling,
-release integrity and deployment evidence. IICP has more public
-implementation-backed evidence in the reviewed sources; its mostly
-same-project parity is not independent interoperability.
-
-This boundary has real overlap with individual Internet-Drafts such as IAIP and
-AIDIP; mandatory filtering before ranking is not unique to IICP.
-Review the [selection and eligibility problem statement](standards/SELECTION_ELIGIBILITY_PROBLEM_STATEMENT.md),
-the [current positioning entry point](standards/IICP_PROTOCOL_POSITIONING.md)
-and its dated, source-backed assessment before
-making differentiation or standards claims. Internet-Drafts are work in
-progress and are not IETF endorsement.
+The [selection and eligibility problem statement](standards/SELECTION_ELIGIBILITY_PROBLEM_STATEMENT.md)
+and [September assessment](standards/PROTOCOL_COMPARISON_2026-09-25.md)
+provide the detailed scope, evidence classes and chronology behind the
+front-page comparison. Individual Internet-Drafts are work in progress,
+not IETF endorsements.
 
 ---
 
