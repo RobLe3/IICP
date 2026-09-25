@@ -220,6 +220,12 @@ def _validate_implementation_evidence(errors: list[str], evidence: object, as_of
             if dimension == "operational_evidence" and status == "verified" and not row.get("operational_scope"):
                 errors.append(f"{claim_label}: operational scope required")
         if row.get("artifact_type") in {"requirements_draft", "proposed_charter"}:
+            expected_contract = (
+                "requirements_only" if row["artifact_type"] == "requirements_draft"
+                else "charter_only"
+            )
+            if dimensions["versioned_contract"].get("status") != expected_contract:
+                errors.append(f"{label}: contract status must be {expected_contract}")
             for dimension in required_dimensions - {"versioned_contract"}:
                 if dimensions[dimension].get("status") != "not_applicable":
                     errors.append(f"{label}: requirements and charters are not implementation evidence")

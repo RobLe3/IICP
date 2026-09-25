@@ -67,6 +67,16 @@ class ProtocolComparisonTests(unittest.TestCase):
             ["dimensions"]["maintained_implementation"].__setitem__("status", "verified"))
         self.assertTrue(any("not implementation evidence" in item for item in errors))
 
+    def test_requirements_contract_cannot_claim_a_qualified_specification(self) -> None:
+        errors = self._validate_mutation(lambda data: data["implementation_evidence"]["rows"][4]
+            ["dimensions"]["versioned_contract"].__setitem__("status", "verified"))
+        self.assertTrue(any("contract status must be requirements_only" in item for item in errors))
+
+    def test_charter_contract_cannot_claim_a_qualified_specification(self) -> None:
+        errors = self._validate_mutation(lambda data: data["implementation_evidence"]["rows"][5]
+            ["dimensions"]["versioned_contract"].__setitem__("status", "verified"))
+        self.assertTrue(any("contract status must be charter_only" in item for item in errors))
+
     def test_unknown_value_fails(self) -> None:
         errors = self._validate_mutation(
             lambda data: data["entries"][0]["dimensions"].__setitem__("selection", "yes")
