@@ -73,6 +73,14 @@ class StandardsReviewBundleTest(unittest.TestCase):
                 ):
                     self.assertIn(prefix + required, names)
                 manifest = json.loads(archive.read(prefix + "SHA256SUMS.json"))
+                comparison = json.loads(archive.read(prefix + "standards/protocol-comparison-v1.json"))
+                references = {
+                    row[field]
+                    for row in comparison["intent_routing_requirements"]
+                    for field in ("iicp_reference", "fixture_reference")
+                    if row.get(field)
+                }
+                self.assertTrue(references.issubset(manifest["files"]))
                 for relative, expected in manifest["files"].items():
                     actual = hashlib.sha256(archive.read(prefix + relative)).hexdigest()
                     self.assertEqual(expected, actual, relative)

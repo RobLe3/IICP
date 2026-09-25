@@ -47,6 +47,14 @@ class SelectionReviewBundleTests(unittest.TestCase):
                 ):
                     self.assertIn(PREFIX + required, names)
                 manifest = json.loads(archive.read(PREFIX + "SHA256SUMS.json"))
+                comparison = json.loads(archive.read(PREFIX + "standards/protocol-comparison-v1.json"))
+                references = {
+                    row[field]
+                    for row in comparison["intent_routing_requirements"]
+                    for field in ("iicp_reference", "fixture_reference")
+                    if row.get(field)
+                }
+                self.assertTrue(references.issubset(manifest["files"]))
                 self.assertIn("not submitted", manifest["status"])
                 self.assertNotIn("standards/ietf/draft-roble-iicp-peer.md", manifest["files"])
                 for relative, expected in manifest["files"].items():
