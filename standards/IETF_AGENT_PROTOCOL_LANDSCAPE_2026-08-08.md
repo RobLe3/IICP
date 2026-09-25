@@ -4,10 +4,10 @@
 submission, or a compatibility claim. Individual Internet-Drafts are work in
 progress, not IETF endorsement.
 
-> This dated baseline is preserved for decision history. The current comparison
-> is [`PROTOCOL_COMPARISON_2026-08-15.md`](PROTOCOL_COMPARISON_2026-08-15.md),
-> with a short reviewer introduction in
-> [`IICP_PROTOCOL_POSITIONING.md`](IICP_PROTOCOL_POSITIONING.md).
+> This dated baseline is preserved for decision history. For current guidance,
+> use [`IICP_PROTOCOL_POSITIONING.md`](IICP_PROTOCOL_POSITIONING.md) and its
+> linked assessment. The [15 August comparison](PROTOCOL_COMPARISON_2026-08-15.md)
+> is another historical snapshot.
 
 ## Narrow problem statement
 

@@ -149,29 +149,17 @@ be displayed as the Protocol Suite, OpenAPI or package version.
 
 ## 8. Version Update Procedure
 
-When making spec changes that warrant a version bump:
+For a reviewed Protocol Suite release, update this specification repository's
+`spec/v1.9/VERSION`, `CHANGELOG.md`, applicable specification documents and
+release metadata through [`SPEC_RELEASE_PROCESS.md`](SPEC_RELEASE_PROCESS.md).
+Change a sub-spec revision only in the document that owns it; the `spec/v1.9/`
+directory name is the wire-compatibility lineage, not the suite version.
 
-```bash
-# 1. Update the IICP spec repo (via GitHub API or clone)
-#    - Update spec/v1.9/VERSION
-#    - Add entry to CHANGELOG.md
-
-# 2. Update the sub-spec document version header
-#    - File: spec/iicp-cooperative-inference.md (or other sub-spec)
-#    - Field: **Version**: x.x.x
-#    - Add changelog entry in the document's own changelog table
-
-# 3. Update website badge
-#    - File: website/app/research/page.tsx
-#    - Badge: "IICP vX.Y.Z · Updated YYYY-MM-DD"
-#    - Footer: "Spec: S.12 vA.B.C"
-
-# 4. Update directory software version (only when shipping directory changes)
-#    - File: directory/config/app.php
-#    - Field: iicp_version
-
-# 5. Update website asset version (only when doing a full website deploy)
-#    - File: website/public/assets/json/version-info.json
-```
-
-The IICP spec repo version and the directory software version update on independent schedules.
+Implementation, SDK package, browser-node, Management, directory and website
+versions are updated in their **owning repositories**, on their own release
+schedules. Use [`IMPLEMENTATIONS.md`](IMPLEMENTATIONS.md), the
+[`ecosystem` registry](ecosystem/repositories.json) and the owning repository's
+release procedure to locate those sources. Update this repository's generated
+ecosystem projection from its authoritative catalogue; do not edit copied
+component paths or imply a package or deployment changed because the suite
+version changed.

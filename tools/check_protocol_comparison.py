@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
@@ -109,8 +110,10 @@ def validate(path: Path = DATA) -> list[str]:
                       "evidence_class", "retrieval_limitations"):
             if not source.get(field):
                 errors.append(f"{label}: missing {field}")
-        _validate_date(errors, source.get("revision_date"), f"{label}: revision date", as_of)
-        _validate_date(errors, source.get("verified_at"), f"{label}: verification date", as_of)
+        revision = _validate_date(errors, source.get("revision_date"), f"{label}: revision date", as_of)
+        verified = _validate_date(errors, source.get("verified_at"), f"{label}: verification date", as_of)
+        if revision is not None and verified is not None and revision > verified:
+            errors.append(f"{label}: revision date cannot be later than verification date")
         _validate_url(errors, source.get("source", ""), f"{label}: source")
         if source.get("formal_status") == "individual_internet_draft" and not str(source.get("document", "")).startswith("draft-"):
             errors.append(f"{label}: individual Internet-Draft must name its draft")
@@ -171,8 +174,11 @@ def _validate_url(errors: list[str], value: str, label: str) -> None:
 
 
 def _parse_date(errors: list[str], value: object, label: str) -> date | None:
+    if not isinstance(value, str) or re.fullmatch(r"\d{4}-\d{2}-\d{2}", value) is None:
+        errors.append(f"{label} must use YYYY-MM-DD")
+        return None
     try:
-        return date.fromisoformat(str(value))
+        return date.fromisoformat(value)
     except ValueError:
         errors.append(f"{label} must use YYYY-MM-DD")
         return None
@@ -180,10 +186,11 @@ def _parse_date(errors: list[str], value: object, label: str) -> date | None:
 
 def _validate_date(
     errors: list[str], value: object, label: str, as_of: date | None
-) -> None:
+) -> date | None:
     parsed = _parse_date(errors, value, label)
     if parsed is not None and as_of is not None and parsed > as_of:
         errors.append(f"{label} cannot be later than the evidence date")
+    return parsed
 
 
 def _contains_forbidden_key(value: object, forbidden: set[str]) -> bool:

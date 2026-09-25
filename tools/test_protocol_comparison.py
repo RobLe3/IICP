@@ -127,6 +127,45 @@ class ProtocolComparisonTests(unittest.TestCase):
         )
         self.assertTrue(any("cannot be later than the evidence date" in item for item in errors))
 
+    def test_source_revision_before_verification_passes(self) -> None:
+        def mutate(data: dict) -> None:
+            data["source_inventory"][0]["revision_date"] = "2026-09-23"
+            data["source_inventory"][0]["verified_at"] = "2026-09-24"
+
+        self.assertEqual(self._validate_mutation(mutate), [])
+
+    def test_source_revision_equal_to_verification_passes(self) -> None:
+        def mutate(data: dict) -> None:
+            data["source_inventory"][0]["revision_date"] = "2026-09-24"
+            data["source_inventory"][0]["verified_at"] = "2026-09-24"
+
+        self.assertEqual(self._validate_mutation(mutate), [])
+
+    def test_source_revision_after_verification_fails(self) -> None:
+        def mutate(data: dict) -> None:
+            data["source_inventory"][0]["revision_date"] = "2026-09-24"
+            data["source_inventory"][0]["verified_at"] = "2026-09-23"
+
+        errors = self._validate_mutation(mutate)
+        self.assertTrue(any("revision date cannot be later than verification date" in item for item in errors))
+
+    def test_malformed_source_dates_fail_cleanly(self) -> None:
+        def mutate(data: dict) -> None:
+            data["source_inventory"][0]["revision_date"] = "not-a-date"
+            data["source_inventory"][0]["verified_at"] = "2026-99-99"
+
+        errors = self._validate_mutation(mutate)
+        self.assertTrue(any("revision date must use YYYY-MM-DD" in item for item in errors))
+        self.assertTrue(any("verification date must use YYYY-MM-DD" in item for item in errors))
+
+    def test_compact_source_date_is_not_accepted_as_yyyy_mm_dd(self) -> None:
+        errors = self._validate_mutation(
+            lambda data: data["source_inventory"][0].__setitem__(
+                "revision_date", "20260924"
+            )
+        )
+        self.assertTrue(any("revision date must use YYYY-MM-DD" in item for item in errors))
+
     def test_missing_required_source_fails(self) -> None:
         errors = self._validate_mutation(
             lambda data: data["source_inventory"].pop()

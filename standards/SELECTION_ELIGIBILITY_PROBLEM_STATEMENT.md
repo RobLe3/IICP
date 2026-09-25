@@ -145,5 +145,5 @@ question before broader IICP features are considered.
   Core, Profile, Binding and Registry ownership.
 - [Privacy adversary and trust model](../docs/security/privacy-adversary-and-trust-model.md):
   directory and executor visibility boundaries.
-- [Protocol comparison](PROTOCOL_COMPARISON_2026-08-15.md): dated overlap and
-  maturity evidence for adjacent work.
+- [Protocol positioning](IICP_PROTOCOL_POSITIONING.md): current entry point
+  to dated overlap and evidence assessments for adjacent work.

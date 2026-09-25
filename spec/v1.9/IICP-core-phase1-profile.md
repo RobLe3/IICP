@@ -6,6 +6,13 @@
 **Authority**: Protocol Steward  
 **Relates to**: SPEC_ANALYSIS.md §1 and §7, GitHub issue #13  
 
+> **Historical compatibility scope:** This accepted Profile remains
+> authoritative for the original Phase-1, IICP v1.4.2-compatible subset and
+> its implementation evidence. It is not the current general implementation
+> quickstart. Start with the repository [README](../../README.md), the
+> [role-based guide](../../docs/agent-bootstrap.md), and the applicable
+> released Profile or binding for new implementations.
+
 ---
 
 ## Purpose
