@@ -4,11 +4,13 @@
 [current-version projection](../../ecosystem/CURRENT_VERSIONS.md) and
 [CHANGELOG](../../CHANGELOG.md) for the labeled release axes and history.
 
-This directory contains the normative and informational protocol documents for IICP.
+This directory contains normative and informational documents with different
+applicability. The `v1.9` path preserves the wire-compatibility lineage; it
+does not mean that every document here was released as suite v1.9.0. Pin an
+immutable suite tag, then check each document or optional Profile's status.
 
 Before interpreting IICP as a replacement for another agent protocol, read the
-informative [protocol positioning](../../standards/IICP_PROTOCOL_POSITIONING.md)
-and dated [adjacent-protocol comparison](../../standards/PROTOCOL_COMPARISON_2026-08-15.md).
+informative [current positioning and comparison entry point](../../standards/IICP_PROTOCOL_POSITIONING.md).
 They separate IICP's intent-resolution and provider-selection role from MCP,
 A2A, discovery inputs and transports.
 
@@ -16,14 +18,19 @@ A2A, discovery inputs and transports.
 
 ## Recommended reading order
 
-Start here when you are new to the protocol. Each document builds on the previous ones.
+Application developers should first use the [role-based agent guide](../../docs/agent-bootstrap.md)
+and their SDK's current API. Independent implementers should read Core,
+Directory, Semantics, then only the Profiles and bindings they declare. Node
+and directory operators should also use the owning implementation's guide;
+standards and security reviewers should start at the [architecture map](../../docs/architecture/decision-documentation-map.md)
+and [review guide](../../standards/REVIEWING.md).
 
 | # | File | What it covers |
 |---|------|----------------|
 | 1 | [`iicp-core.md`](./iicp-core.md) | **Start here.** Wire format, message types (CALL/RESPONSE/INIT), mandatory fields, error codes (IICP-E001–E033), retry/idempotency rules, QoS hints. |
 | 2 | [`iicp-dir.md`](./iicp-dir.md) | Directory sub-protocol — register, heartbeat, discover, probe endpoints; node token auth; observed-IP recording. |
 | 3 | [`iicp-semantics.md`](./iicp-semantics.md) | Routing semantics, QoS, node selection, intent URN grammar (including `x.<vendor>` custom namespace). |
-| 4 | [`IICP-core-phase1-profile.md`](./IICP-core-phase1-profile.md) | Accepted Phase 1 conformance baseline — the minimal implementation contract. |
+| 4 | [`IICP-core-phase1-profile.md`](./IICP-core-phase1-profile.md) | Historical Phase 1 compatibility subset, not the general current implementation contract. |
 | 5 | [`iicp-service-lifecycle-profile.md`](./iicp-service-lifecycle-profile.md) | Proposed optional lifecycle profile — streaming, cancellation, retry, and idempotency. |
 | 6 | [`iicp-provider-admission-profile.md`](./iicp-provider-admission-profile.md) | Proposed optional provider-admission profile — readiness, bounded capacity, and deadlines. |
 | 7 | [`iicp-confidentiality.md`](./iicp-confidentiality.md) | IICP-CX — key advertisement, payload encryption, keyless-node refusal, relay opacity, and Tier-2 confidentiality targets. |

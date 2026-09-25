@@ -5,12 +5,12 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![OIA pending classification](https://agenticsorg.github.io/community-projects/badges/RobLe3/IICP.svg)](https://agenticsorg.github.io/community-projects/oia-matrix.html#oia-roble3-iicp)
 
-*Building the HTTP for the Age of Generative AI*
+Provider-neutral discovery, eligibility and execution handoff for intelligence workloads.
 
-**Protocol-suite release**: v1.10.17<br>
+**Published Protocol Suite**: see the generated [current-version projection](ecosystem/CURRENT_VERSIONS.md)<br>
 **Wire compatibility baseline**: v1.9.0<br>
-**Reference implementation**: [iicp.network](https://iicp.network)
-**Status**: Project-normative beta suite; individual profiles retain their own status
+**Project status**: project-normative beta; each optional Profile has its own status<br>
+**Working `main`**: may contain unreleased changes; cite an immutable tag for a released contract
 
 ---
 
@@ -43,7 +43,12 @@ inspect.
 
 ## What Is IICP?
 
-IICP is an open protocol that lets AI agents discover each other, negotiate capabilities, and route tasks across a distributed network — without any central broker owning the compute or controlling the data.
+IICP specifies how a consumer expresses an intent, discovers currently eligible
+execution resources, applies non-overridable policy constraints and receives a
+route for direct execution. The directory is a control plane, not a task-payload
+broker. A selected execution binding may be HTTP, MCP, A2A or another supported
+path when that binding is implemented by the parties; native IICP execution is
+not a prerequisite for provider selection.
 
 ```
 Agent A  ──CALL──▶  IICP Node B  ──▶  LLM Backend
@@ -54,12 +59,15 @@ Agent A  ──CALL──▶  IICP Node B  ──▶  LLM Backend
           no payload passes through)
 ```
 
-The directory (`iicp.network`) is **bootstrap and discovery only** and does not receive task
-payloads. Tasks route to the selected execution node, whose operator can read the work it executes.
-Current IICP-CX clients encrypt requests across the network and relays when a provider advertises
-`cx_public_key`; this is transport confidentiality, not executor-blind inference or anonymity.
+The directory handles registration, health, discovery and route authorization;
+it does not receive task payloads. Tasks route to the selected execution node,
+whose operator can read the work it executes.
+IICP-CX can encrypt a request across the network and relays when the chosen
+client and provider support the Profile and the provider advertises a usable
+`cx_public_key`. This is route confidentiality, not executor-blind inference
+or anonymity; key advertisement alone is not a verified encrypted round trip.
 
-### The core idea
+### The core idea (conceptual, not a wire-format example)
 
 ```json
 {
@@ -70,7 +78,12 @@ Current IICP-CX clients encrypt requests across the network and relays when a pr
 }
 ```
 
-An **intent URN** expresses what you want, not which model or endpoint to call. The network finds the best available node that can serve that intent, routes the task, and returns a structured response.
+An intent identifier describes the requested operation, not a particular model
+or endpoint. Discovery returns candidates under the applicable capability,
+policy and availability rules. A client still needs the appropriate dispatch
+authority and an eligible route before execution. For executable examples,
+start with the [role-based agent guide](docs/agent-bootstrap.md) and the
+applicable released Profile or binding.
 
 ### Factual runtime self-description
 
@@ -106,10 +119,11 @@ deployment and governance. It does not calculate a winner score. The chronology
 also separates the age of a protocol from the first public appearance of an
 overlapping mechanism.
 
-This boundary has real overlap with current IAIP and AIDIP Internet-Drafts.
-Review the [`selection and eligibility problem statement`](standards/SELECTION_ELIGIBILITY_PROBLEM_STATEMENT.md), the concise [`IICP protocol positioning`](standards/IICP_PROTOCOL_POSITIONING.md)
-and the dated, source-backed
-[`mechanism comparison`](standards/PROTOCOL_COMPARISON_2026-08-15.md) before
+This boundary has real overlap with individual Internet-Drafts such as IAIP and
+AIDIP; mandatory filtering before ranking is not unique to IICP.
+Review the [selection and eligibility problem statement](standards/SELECTION_ELIGIBILITY_PROBLEM_STATEMENT.md),
+the [current positioning entry point](standards/IICP_PROTOCOL_POSITIONING.md)
+and its dated, source-backed assessment before
 making differentiation or standards claims. Internet-Drafts are work in
 progress and are not IETF endorsement.
 
@@ -121,9 +135,9 @@ progress and are not IETF endorsement.
 
 | Document | What it covers | Normative level |
 |----------|---------------|-----------------|
-| [iicp-core.md](spec/v1.9/iicp-core.md) | Wire format, 14 message types, required fields, error codes, security minimums | **MUST** |
-| [iicp-semantics.md](spec/v1.9/iicp-semantics.md) | Intent routing, QoS tiers, node scoring, retry policy, circuit breaker | SHOULD / MAY |
-| [iicp-extensions.md](spec/v1.9/iicp-extensions.md) | Billing, reputation, MCP binding, Cooperative Inference, post-quantum | MAY / future |
+| [iicp-core.md](spec/v1.9/iicp-core.md) | Core task and directory contracts, errors and security boundaries | Apply requirements within the named release and binding |
+| [iicp-semantics.md](spec/v1.9/iicp-semantics.md) | Intent routing, eligibility, selection and retry semantics | Apply requirements within the named release and Profile |
+| [iicp-extensions.md](spec/v1.9/iicp-extensions.md) | Extension and optional Profile overview | Check each Profile's own status |
 
 ### Sub-protocols
 
@@ -139,8 +153,8 @@ progress and are not IETF endorsement.
 
 | Document | What it covers |
 |----------|---------------|
-| [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) | Phase 1 field subset — the minimum viable implementation |
-| [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) | 200+ machine-verifiable test IDs (DIR-*, PROXY-*, SEC-*, CIP-*, DIR-FED-*) mapped to REACH probes |
+| [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) | Historical Phase 1 compatibility subset; not the general current quickstart |
+| [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) | Canonical test identifiers and their applicable contracts; identifiers are not passing results |
 | [validation-methodology.md](spec/v1.9/validation-methodology.md) | How to validate implementations; performance claim disclosure |
 | [iicp-v1.5-overview.md](spec/v1.9/iicp-v1.5-overview.md) | What changed in v1.5; migration guide from v1.4.2 |
 | [Pre-1.0 feature boundary](pre1/README.md) | Bounded client, Directory and Management capability crosswalk; not a stable-release authorization |
@@ -149,7 +163,7 @@ progress and are not IETF endorsement.
 
 | Path | Contents |
 |------|---------|
-| [schemas/task.json](schemas/task.json) | JSON Schema 2020-12 for `IicpTask` |
+| [schemas/task.json](schemas/task.json) | Historical Phase 1 JSON task schema, not a universal current task contract |
 | [schemas/nodelist.json](schemas/nodelist.json) | JSON Schema 2020-12 for `NodeListResponse` |
 | [registry/intents.json](registry/intents.json) | Official intent URN registry |
 | [spec/intent-risk-taxonomy.json](spec/intent-risk-taxonomy.json) | Shared prohibited/high-risk/transparency/minimal intent classification fixture |
@@ -163,24 +177,17 @@ progress and are not IETF endorsement.
 
 ---
 
-## Quick Start: Implement IICP
+## Start with the applicable contract
 
-Read [IICP-core-phase1-profile.md](spec/v1.9/IICP-core-phase1-profile.md) for the minimum field subset. A Phase 1 node must:
+- **Application or agent developer:** use the [role-based agent guide](docs/agent-bootstrap.md) for consumer discovery and direct execution; use the chosen SDK repository for its current API.
+- **Provider operator:** use the same guide for registration and the [operator onboarding path](docs/operator-onboarding-recovery.md) for persistent service behavior.
+- **Directory implementer:** read the [specification index](spec/v1.9/README.md), directory contract and applicable HTTP/OpenAPI projection. PHP and Rust implementation details belong in their own repositories.
+- **Independent implementer or reviewer:** pin a Protocol Suite release, declare supported Profiles and bindings, then use the [conformance suite](spec/v1.9/conformance-test-suite.md) and [runner](conformance-runner/README.md). The [Phase 1 profile](spec/v1.9/IICP-core-phase1-profile.md) remains a historical compatibility path, not a claim of current full support.
 
-1. **Register** — `POST /v1/register` with `{endpoint, region, capabilities[], limits}`
-2. **Heartbeat** — `POST /v1/heartbeat` every 30 s with `{load, active_jobs}`
-3. **Accept tasks** — `POST /v1/task` — validate UUID-v4 `task_id`, intent URN, `timeout_ms` bounds
-4. **Discover peers** — `GET /v1/discover?intent=urn:iicp:intent:llm:chat:v1`
-5. **Return structured errors** — never raw exceptions; always `{"error": {"code": "IICP-Exxx", ...}}`
-
-### Conformance levels
-
-| Level | Documents to satisfy | Typical implementer |
-|-------|---------------------|---------------------|
-| **Core** | iicp-core.md MUSTs only | Minimal node, embedded device |
-| **Phase 1** | Core + IICP-core-phase1-profile.md | Reference implementation |
-| **Phase 2** | Phase 1 + iicp-dir.md §3.6 (peers) | Mesh node |
-| **Phase 3+** | Phase 2 + billing/reputation extensions | Full CIP node |
+A Profile is optional to select unless the named release requires it. Once an
+implementation declares support for a Profile, that Profile's requirements
+are mandatory within its scope. Publication, test execution, qualification
+and live deployment remain separate evidence states.
 
 ---
 
@@ -199,12 +206,14 @@ and published:
 | TypeScript | `npm install @iicp/client` | [npm: @iicp/client](https://www.npmjs.com/package/@iicp/client) | [github.com/RobLe3/iicp-client-typescript](https://github.com/RobLe3/iicp-client-typescript) |
 | Rust | `cargo add iicp-client` | [crates.io: iicp-client](https://crates.io/crates/iicp-client) | [github.com/RobLe3/iicp-client-rust](https://github.com/RobLe3/iicp-client-rust) |
 
-**No install at all?** [iicp.network/browser-node](https://iicp.network/browser-node)
-runs a real model in your browser (WebGPU) and queries the live mesh as an IICP
-consumer — with a connection console that shows every discover/dispatch wire step.
+**Experimental browser path:** [iicp.network/browser-node](https://iicp.network/browser-node)
+can run a supported model with WebGPU and query the public mesh as a consumer
+on compatible browsers. It is not a general installation or availability guarantee.
 
-The SDKs are conformant reference clients — a good starting point for understanding the
-wire format in practice. Bug reports and PRs are welcome on each repository.
+These maintained reference SDKs are useful implementation examples. A package
+release or same-project parity test does not by itself establish independent
+interoperability or certification; consult the named fixtures and retained
+results for a bounded conformance claim.
 
 ### Community integrations — independently maintained
 
@@ -224,12 +233,11 @@ carry the task after IICP selects a route.
 
 ### Reachability: the automatic NAT ladder
 
-A provider node should become reachable without router surgery. The SDKs escalate
-automatically: **direct** endpoint → **UPnP** pinhole → **IPv6** GUA → **relay**
-auto-election from the directory (outbound bind; `transport_method=turn_relay`) →
-**Quick Tunnel** (zero-account `cloudflared`; `transport_method=external_tunnel`) —
-each rung tried only when the previous fails, each surfaced honestly in the node's
-`exposure_mode` so discovery and scoring can see how a node is reached.
+Maintained providers can attempt direct, UPnP, IPv6, relay and tunnel routes
+according to their runtime and configuration. Reachability depends on the
+environment and must be observed, not inferred from a running process or an
+advertised URL. Relay remains experimental. See the owning SDK's current
+operator guide and the [directory state semantics](docs/architecture/directory-state-semantics.md).
 
 ---
 
@@ -279,9 +287,16 @@ To propose a new intent, open an issue with the URN, domain justification, and e
 
 ## Node Discovery and Scoring
 
-The directory scores nodes server-side at query time. Clients receive a pre-sorted list and may only filter (remove `available=false` nodes or those with open circuit breakers).
+The directory returns an ordered, eligibility-filtered list. Hard policy,
+security, availability and required capability constraints cannot be bypassed
+by a ranker or fallback. Default clients preserve directory recommendation
+order. A declared supported selection Profile may reorder only the eligible
+set and must keep any local ranking value distinct from the canonical
+directory score. A ticket for one directory-selected route does not authorize
+provider substitution. See [selection semantics](spec/v1.9/iicp-semantics.md)
+for the scoped rules.
 
-**Phase 3 scoring formula** (currently deployed):
+**Historical Phase 3 scoring example** (not a current deployment claim):
 
 ```
 score = 0.35 × availability_factor
@@ -297,16 +312,23 @@ See [iicp-semantics.md](spec/v1.9/iicp-semantics.md) for full term definitions.
 
 ## Security Baseline
 
-All IICP implementations MUST:
+Apply the security, identifier, size and error requirements of the named
+release, Profile and binding rather than treating this overview as a
+validation grammar. Directory control endpoints require production HTTPS;
+HTTP task endpoints require HTTPS in the coordinated stable/production scope,
+with only explicit development exceptions. Plaintext native TCP is
+development-only and outside that stable scope; QUIC remains future work.
+See [Core transport and security](spec/v1.9/iicp-core.md), the
+[directory scheme rules](spec/v1.9/iicp-dir.md) and the
+[conformance identifiers](spec/v1.9/conformance-test-suite.md).
 
-- Use **TLS 1.3 minimum** for all inter-node communication
-- Validate `task_id` as **UUID v4**
-- Validate `intent` against `urn:iicp:intent:[a-z0-9:]+:v[1-9][0-9]*`
-- Validate `timeout_ms` in range **[100, 300 000]**
-- Never log or expose `payload` content
-- Return **structured errors only** — no stack traces, no filesystem paths
-
-See [conformance-test-suite.md](spec/v1.9/conformance-test-suite.md) SEC-* test IDs for machine-verifiable checks.
+Registration credentials identify a provider to its directory. Discovery
+does not give an arbitrary consumer permission to execute: provider task
+authorization uses the applicable consumer credential or dispatch mechanism.
+The historical Phase 1 body `auth.node_token` and later header-based consumer
+authorization have different scopes. HTTP error envelopes, native errors and
+optional binding errors must be interpreted under their respective contracts;
+there is no universal README-only `IICP-Exxx` JSON rule.
 
 ---
 
@@ -319,7 +341,7 @@ the authority for published component versions. The additive
 how public evidence can report deployment and adoption without treating either
 as a synonym for publication.
 
-**Cooperative Inference and routing hardening (active)**
+**Implementation and qualification evidence**
 
 The [iicp.network](https://iicp.network) directory is live and the client SDK
 release line is recorded in the generated
@@ -330,31 +352,20 @@ encryption evidence change over time; consult the
 [live stats page](https://iicp.network/stats) before treating any network
 condition as current.
 
-The mesh is usable for its current capabilities, while relay hardening, broader privacy evidence and public federation remain separate maturity gates. Remote execution still means the selected provider can read the task it executes.
+The [implementation index](IMPLEMENTATIONS.md) distinguishes published SDKs,
+the deployed PHP Genesis line, the Rust directory operator preview, the
+experimental browser node and the optional Management developer preview.
+The [pre-1.0 feature boundary](pre1/README.md) describes the proposed stable
+qualification scope; it does not grant a stable designation. The
+[SDK evidence contract](SDK_QUALITY_EVIDENCE.md) and
+[release-candidate rules](RELEASE_CANDIDATES.md) define how results must be
+attributed. Same-project parity is not independent interoperability.
 
-| Feature area | Status | Notes |
-|---|---|---|
-| Core protocol — register / discover / route | ✅ Live | Current evidence is published on the live stats page |
-| CIP coordinator (multi-node dispatch) | ✅ Implemented | Credit receipts, response integrity verification |
-| Reputation scoring | ✅ Ratified | Tier structure (§5.1.1) + bootstrap floor (§5.1.2) ratified 2026-05-24 — normative |
-| Published SDKs (Python / TypeScript / Rust) | ✅ Published | The generated [current-version projection](ecosystem/CURRENT_VERSIONS.md) is authoritative for package versions |
-| Node runtime (`iicp-node`) | ✅ Published | Ships inside every SDK (`pip install iicp-client` → `iicp-node serve`) |
-| Relay transport for unreachable workers | ✅ Shipped (v0.7.56) | HTTP long-poll worker transport — browsers and CGNAT operators bind outbound to a relay-capable node; consumers route through path-scoped relay endpoints with zero client changes |
-| **Browser node** (WebGPU, zero install) | ✅ Live | [iicp.network/browser-node](https://iicp.network/browser-node) — runs a real model in the browser via WebLLM, queries the live mesh as an IICP consumer (with a wire-level connection console), and can serve into the mesh via a relay. First **directory-listed browser node** verified end-to-end on 2026-06-12 |
-| Browser-consumable nodes (CORS) | ✅ Shipped (v0.7.56) | Every node endpoint answers CORS preflights — any https-exposed node can serve web-page consumers directly |
-| Automatic NAT escalation incl. Quick Tunnel | ✅ Shipped (all 3 flavours) | Ladder: direct → UPnP → IPv6 → relay auto-election → zero-account Cloudflare Quick Tunnel fallback. Direct paths stay preferred; Quick Tunnel remains a low-friction bootstrap/fallback rather than a production availability promise |
-| Signed event log + compliance attestation | ✅ Live | Every registration/heartbeat/eviction in a cryptographically signed log (federation bootstrap source); signed compliance attestation endpoint |
-| Federation (Phase 6 groundwork) | 🟢 FED-READY-1 proven | Rust replica directory bootstraps from the PHP seed via snapshot + signed event tail |
-| Operator identity (Ed25519 delegation) | 🟢 Phase A live | ADR-045 — operators sign a delegation binding their Ed25519 key to each node; the directory verifies + resolves a public `operator_display_name` in discovery. `operator_pubkey` is directory-private, never served. |
-| Founder recognition | 🟢 Live | Time-gated founder ordinals (iicp-recognition §5.4) — #1 reserved for the maintainer, #2..N earned by genuine served nodes; dedicated non-federated signed chain |
-
-**IICP is currently in Beta. You can join and test it if its current scope fits your use case.**
-
-The mesh works end-to-end, the SDKs are publicly installable with full three-language parity, and a browser tab can both consume the mesh and (via relay) serve into it. Current maturation work includes:
-- A standing public relay (the transport is built and verified; one reachable host activates browser/CGNAT serving for everyone)
-- A portable operator identity wallet (so node identities survive machine changes)
-- Security and authentication hardening to production standard
-- Complete live SDK/key adoption and verified privacy receipts before strict fail-closed privacy wording
+The public mesh can be used within its observed capabilities, but relay
+hardening, privacy evidence and federation operation remain separate gates.
+The selected remote executor can read the task it performs. Check dated
+[live evidence](https://iicp.network/stats) rather than assuming a published
+feature is deployed or currently reachable.
 
 Follow this repo or [iicp.network](https://iicp.network) for announcements.
 
@@ -382,7 +393,10 @@ but publishing it does not move production traffic or deprecate PHP. The three
 SDK repositories provide consumer and provider runtimes; the browser-node
 repository provides the experimental browser implementation.
 
-The protocol specification in this repository is the authoritative source for building interoperable implementations. Third-party implementations that conform to the spec (see conformance test suite) are fully compatible with the live network.
+This repository is authoritative for released interoperability semantics.
+Conformance must name a release, supported Profiles and bindings, environment,
+fixtures and retained results. It does not by itself prove compatibility with
+every current live-directory feature or deployment policy.
 
 Directory implementations also share an implementation-neutral
 [context and signed service-event ownership](docs/architecture/context-and-service-event-ownership.md)
@@ -443,14 +457,21 @@ or successor effort can preserve compatibility and release history.
 
 ---
 
-## Tools
+## Verification tools
+
+Start with the current [contribution checks](CONTRIBUTING.md), the
+[profile fixture contract](tools/run_profile_fixture_contract.sh) and the
+[public artifact closure check](tools/check_public_artifact_closure.py).
+The conformance runner and its supported Profiles are documented in their
+own [runner guide](conformance-runner/README.md).
 
 | File | Purpose |
 |------|---------|
 | [tools/protocol_integrity_analysis.py](tools/protocol_integrity_analysis.py) | Analyses a spec file for internal consistency |
 | [tools/quick_validation.py](tools/quick_validation.py) | Quick syntax + field validation against v1.4.2 |
 
-The simulation-oriented tools use optional scientific dependencies. Install
+The tools in the table above are historical analysis aids, not the current
+validation entry point. Their optional scientific dependencies can be installed
 them in an isolated environment with
 `python3 -m pip install -r tools/research-requirements.txt`. They are historical
 research aids, not normative conformance or release gates.

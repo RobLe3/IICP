@@ -8,7 +8,9 @@
 
 **Format**: `MAJOR.MINOR.PATCH` (semver)  
 **Source of truth**: `spec/v1.9/VERSION` in the [`RobLe3/IICP`](https://github.com/RobLe3/IICP) spec repo  
-**Displayed as**: `IICP v1.9.0` or `IICP Protocol v1.9.0`  
+**Displayed as**: `IICP Protocol Suite v<release>`; read the generated
+[`ecosystem/CURRENT_VERSIONS.md`](ecosystem/CURRENT_VERSIONS.md) before citing
+the latest published release.
 **Changelog**: `CHANGELOG.md` in the IICP spec repo
 
 This is the version that external implementers, operators, and IETF reviewers see. It covers
@@ -24,7 +26,7 @@ the entire IICP specification suite (core, CIP, framing, identity, telemetry, et
 | v1.9.0 | 2026-05-30 | RT-01/RT-05 reputation caps and directory drift closeout |
 | v1.9.1 | 2026-07-30 | Status/version governance and transport/IANA errata; superseded because its bundled implementation index was stale |
 | v1.9.2 | 2026-07-30 | Corrective immutable release with synchronized implementation/package references and a version-truth gate |
-| **v1.10.17** | **2026-08-25** | **Current candidate** — binds existing pre-normative compatibility and security evidence without ratifying a Profile or changing the base wire |
+| v1.10.17 | 2026-08-25 | Published suite release; binds existing pre-normative compatibility and security evidence without ratifying every Profile or changing the base wire |
 | v1.10.16 | 2026-08-20 | Outcome-v2 reputation semantics and retry-safe metrics acknowledgement; no base-wire change |
 | v1.10.15 | 2026-08-20 | Restricted trust-domain semantic vectors and security-profile evidence; no base-wire change |
 | v1.10.14 | 2026-08-15 | Compatible chat helpers default to the bounded runtime-identity context; raw submit and non-chat operations remain unchanged; no base-wire change |
@@ -69,7 +71,9 @@ which version of a sub-document contains which normative text.
 
 **Rules:**
 - Sub-spec versions are for editors. End users see the Protocol Suite version.
-- When displaying both: `IICP v1.10.17 · S.12 CIP v0.6.13` (suite first, sub-spec second)
+- When displaying both: name the published suite release and the applicable
+  sub-spec revision separately; do not present a working-main revision as a
+  published release.
 - Never use a sub-spec version alone as "the" IICP version on public-facing surfaces
 
 ---
@@ -87,7 +91,8 @@ releases MAY implement the same OpenAPI version.
 
 **Format**: `vMAJOR.MINOR.PATCH`  
 **Scope**: Each software component has its own version  
-**Source**: `directory/config/app.php iicp_version` (directory service)
+**Source**: the owning component repository and its immutable package or
+release metadata; runtime self-reporting is separate deployment evidence.
 
 The reference implementation version tracks software releases, not protocol releases.
 A software version can be ahead of or behind the spec version (e.g., directory v1.10.x
@@ -97,9 +102,8 @@ implements Protocol Suite v1.9.0).
 |-----------|----------------|----------|
 | Directory (PHP Genesis) | Check `IMPLEMENTATIONS.md` and the release registry | Current Genesis implementation |
 | Directory (Rust preview) | Check `IMPLEMENTATIONS.md` and the release registry | Official second flavour; operator preview |
-| Adapter (Python) | v1.x — check adapter/VERSION or pyproject.toml | |
-| Proxy (Python) | v1.x | |
-| Rust node | v0.x | `iicp-node/Cargo.toml` |
+| Consumer/provider SDKs | Check `IMPLEMENTATIONS.md` and each owning repository | Independently versioned Python, TypeScript and Rust releases |
+| Browser node and Management | Check `IMPLEMENTATIONS.md` | Experimental and developer-preview lines, respectively |
 
 **Rules:**
 - Never use the directory software version as "the" IICP version on public surfaces
@@ -128,10 +132,10 @@ be displayed as the Protocol Suite, OpenAPI or package version.
 
 | Surface | What to display | Example |
 |---------|----------------|---------|
-| Research page badge | Protocol Suite version | Use `spec/v1.9/VERSION` and label the axis |
-| Spec references in page body | Suite + sub-spec | `IICP v1.10.17 · S.12 v0.6.13` |
-| Implementation evidence | Software version | `directory v1.9.19` |
-| PR commit messages | Component + software version | `[directory] v1.9.19` |
+| Research page badge | Published Protocol Suite version | Use the generated release projection and label the axis |
+| Spec references in page body | Suite + sub-spec | Name each applicable release or revision separately |
+| Implementation evidence | Software version | Name the component, immutable release or commit and evidence date |
+| PR commit messages | Component + software version | Name the component and intended release only if one is actually being prepared |
 | IICP repo CHANGELOG | Protocol Suite version | `## v1.7.0 — 2026-05-24` |
 | Spec file headers | Sub-spec version | `**Version**: 0.6.13` |
 

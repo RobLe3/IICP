@@ -48,9 +48,9 @@ implementation worktree.
 
 ## Boundaries
 
-- Current executable behavior takes precedence over contradictory historical
-  prose; record the discrepancy and correction rather than retroactively
-  reinterpreting wire behavior.
+- Current executable behavior can expose a contradiction in historical prose;
+  record it and propose the correction. It cannot override a released
+  normative contract or retroactively reinterpret wire behavior.
 - Registry entries require implementation evidence and payload/schema review.
 - Base-frame changes require an independent compatibility, malformed-input,
   and cross-implementation evidence package. Semantic profiles are preferred.
