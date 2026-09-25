@@ -118,11 +118,14 @@ versioning, security, implementations, conformance, independent implementation,
 deployment and governance. It does not calculate a winner score. The chronology
 also separates the age of a protocol from the first public appearance of an
 overlapping mechanism.
-The [September implementation-evidence comparison](standards/PROTOCOL_COMPARISON_2026-09-25.md#specification-and-implementation-maturity)
-also records IICP's maintained Directory and SDK codebases, executable fixtures,
-standalone conformance runner and project-operated deployment evidence beside
-the narrower evidence currently located for overlapping individual drafts.
-Same-project parity is not independent interoperability.
+The [September feature crosswalk](standards/PROTOCOL_COMPARISON_2026-09-25.md#direct-protocol-feature-crosswalk)
+compares IICP's intent naming, live eligibility, selection, route authority,
+execution handoff and evidence boundaries directly with IAIP, AIDIP and CIRP.
+Its [separate maturity table](standards/PROTOCOL_COMPARISON_2026-09-25.md#specification-and-implementation-maturity)
+compares published code, fixtures, negative tests, conformance tooling,
+release integrity and deployment evidence. IICP has more public
+implementation-backed evidence in the reviewed sources; its mostly
+same-project parity is not independent interoperability.
 
 This boundary has real overlap with individual Internet-Drafts such as IAIP and
 AIDIP; mandatory filtering before ranking is not unique to IICP.

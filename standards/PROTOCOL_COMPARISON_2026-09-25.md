@@ -58,17 +58,50 @@ evidence. It does not replace initial naming, session protocols or execution
 bindings. The exact-match `urn:iicp:` identifier design does **not** establish
 prefix aggregation or bounded Internet-wide routing state.
 
+## Direct protocol-feature crosswalk
+
+This table compares the mechanisms in the [exact draft revisions above](#sources-and-roles),
+not interchangeable wire formats. “Not specified here” means only that the
+cited draft does not define an equivalent contract in that revision. IICP
+references are the [released suite index](https://github.com/RobLe3/IICP/blob/main/spec/v1.9/README.md),
+[directory-state decision](https://github.com/RobLe3/IICP/blob/main/docs/architecture/directory-state-semantics.md),
+[effective-capability decision](https://github.com/RobLe3/IICP/blob/main/docs/architecture/effective-service-capability-semantics.md)
+and [conformance suite](https://github.com/RobLe3/IICP/blob/main/spec/v1.9/conformance-test-suite.md).
+
+| Mechanism | IICP | IAIP -02 | AIDIP -02 | CIRP -02 |
+|---|---|---|---|---|
+| Request and capability naming | Versioned, exact-match Intent identifiers and effective capabilities; a required unknown extension fails eligibility. This is not prefix routing. | `INTENT_REQ` is semantically matched against gateway-held `CAP_ADV` profiles (§§7–8). | Agent metadata supports attribute search and optional natural-language intent selection; matching is implementation-specific (§§4, 6). | Versioned capability identifiers and scoped advertisements; discovery is capability-oriented (§§5–6). |
+| Registration and current state | Registration, authenticated heartbeat, route observation, availability and advertisement freshness are distinct eligibility inputs. | Agent identity and capability advertisement populate a local gateway registry with lifecycle maintenance (§§6, 8.3). | Registry metadata, discovery and invocation are described; the optional selection example can carry `expires_at` (§§4, 6). | Registries admit scoped capability advertisements and separate discovery from authorization (§§5–7). |
+| Hard constraints and ranking | Required capability, policy, security and live-state checks precede ranking. Default directory order is preserved unless a supported selection Profile applies; a ranker cannot admit an ineligible candidate. | Mandatory constraints are filtered *before* semantic evaluation and ranking; policy can further narrow the set (§8.4). That order is shared, not unique to IICP. | Optional intent selection can evaluate constraints and return ranked candidates. Understood selection constraints should be binding; its match-score scale is registry-specific (§6). | Scope and admission govern visibility. Discovery results are explicitly unranked; preference ordering is outside CIRP (§6). |
+| Result and authorization | Discovery does not authorize execution. A dispatch ticket discloses one selected eligible route; binding-specific endpoint authentication remains necessary. | Gateway decision and forwarding follow candidate selection; this revision does not define an IICP-compatible route-disclosure ticket (§§8.4–8.7). | A ranked candidate response can include an endpoint and invocation metadata; the client may inspect more metadata, invoke or decline (§6). Selection alone is not an IICP ticket. | Registry-issued `ConnectTicket` binds consumer, provider and capability for session authorization (§7). It is not an IICP dispatch ticket. |
+| Task path and lifecycle | The Directory does not receive task payloads. The selected executor receives them through a supported binding; native TCP is outside the coordinated stable baseline. | Its gateway architecture includes forwarding and loop prevention, while the draft also describes a direct-execution path; topology depends on the procedure (§§6, 8). | Specifies normal invocation using the selected agent's interface; optional selection precedes invocation (§§5–6). | Registry leaves the post-authorization peer session path; the draft specifies a protected session and invocation envelope (§§7–9). |
+| Domain policy and evidence | Optional CUG and Management constrain eligibility without granting Management provider-selection authority. Directory observations, provider reports and receipts have separate provenance. | Local gateway policy and routing feedback are defined (§§8–9); no IICP Management compatibility follows. | Registry/host selection constraints and explanations are described; `selection_reason` is not a security assertion (§6). | Visibility scopes, policy receipts and dual-signed fulfillment records are specified (§§6, 10). Their semantics differ from IICP evidence. |
+
+The [Intent Routing Requirements mapping](#intent-routing-requirements-mapping)
+tests IICP against each of that draft's 17 requirements; it is not a competing
+executable protocol. [DAWN's proposed charter](https://datatracker.ietf.org/wg/dawn/about/)
+addresses initial discovery, not semantic selection. [DNS-AID](https://datatracker.ietf.org/doc/draft-mozleywilliams-dnsop-dnsaid/02/)
+could supply discovery input. The [Agent Routing Policy draft](https://datatracker.ietf.org/doc/draft-ahuja-agent-routing-policy/00/)
+describes policy grammar, not a deployed enforcement service. None of these
+roles, by itself, establishes interoperability with IICP.
+
 ## Specification and implementation maturity
 
 Protocol responsibility and implementation maturity answer different questions.
 The [versioned IICP suite](https://github.com/RobLe3/IICP/blob/main/ecosystem/CURRENT_VERSIONS.md) has a separate
 v1.9.0 wire baseline; neither version axis grants a coordinated stable label.
-Its [implementation catalogue](https://github.com/RobLe3/IICP/blob/main/IMPLEMENTATIONS.md) lists PHP and Rust
-Directory codebases, Python, TypeScript and Rust consumer/provider SDKs, an
-experimental browser node and an optional Management developer preview. The
+Its [implementation catalogue](https://github.com/RobLe3/IICP/blob/main/IMPLEMENTATIONS.md) links the
+[PHP Directory](https://github.com/RobLe3/iicp-directory-php),
+[Rust Directory](https://github.com/RobLe3/iicp-directory-rust),
+[Python](https://github.com/RobLe3/iicp-client-python),
+[TypeScript](https://github.com/RobLe3/iicp-client-typescript) and
+[Rust](https://github.com/RobLe3/iicp-client-rust) consumer/provider SDKs,
+the [experimental browser node](https://github.com/RobLe3/iicp-web-node) and
+the optional [Management developer preview](https://github.com/RobLe3/iicp-management). The
 [public schemas](https://github.com/RobLe3/IICP/blob/main/schemas/capability-requirements-v1.json),
-[registry](https://github.com/RobLe3/IICP/blob/main/registry/intents.json), [executable conformance fixtures](https://github.com/RobLe3/IICP/blob/main/spec/v1.9/conformance-test-suite.md),
-[negative/security guidance](https://github.com/RobLe3/IICP/blob/main/standards/SECURITY_PRIVACY_OPERATIONAL_CONSIDERATIONS_2026-08-13.md),
+[registry](https://github.com/RobLe3/IICP/blob/main/registry/intents.json),
+[executable conformance fixtures](https://github.com/RobLe3/IICP/blob/main/spec/v1.9/conformance-test-suite.md),
+[negative/security vectors](https://github.com/RobLe3/IICP/tree/main/conformance-runner/src/iicp_conformance/fixtures),
 [standalone black-box runner](https://github.com/RobLe3/IICP/blob/main/conformance-runner/README.md),
 [clean-room instructions](https://github.com/RobLe3/IICP/blob/main/conformance-runner/CLEAN_ROOM_IMPLEMENTATION.md),
 [signed content-free evidence support](https://github.com/RobLe3/IICP/blob/main/conformance-runner/README.md),
@@ -91,18 +124,35 @@ still contains a placeholder source URL. The
 describes a related implementation plan, not a verified maintained AIDIP
 codebase or conformance result.
 
-| Public evidence | IICP | IAIP | AIDIP | CIRP | Intent Routing Requirements | DAWN |
+| Public evidence located | IICP | IAIP | AIDIP | CIRP | Intent Routing Requirements | DAWN |
 |---|---|---|---|---|---|---|
-| Versioned contract | Published project suite | Individual draft | Individual draft | Individual draft | Requirements only | Proposed charter |
-| Machine-readable contracts | Published schemas and registry | Partial draft description | Partial draft description | Partial draft description | Not applicable | Not applicable |
-| Maintained implementation | Multiple project codebases | Not identified | Not identified; Hackathon plan noted | Not identified | Not applicable | Not applicable |
-| Multiple languages | Python, TypeScript, Rust, PHP | Not identified | Not identified | Not identified | Not applicable | Not applicable |
-| Executable and negative fixtures | Project-owned fixtures | Not identified | Not identified | Not identified | Not applicable | Not applicable |
-| Standalone conformance runner | Project-owned runner | Not identified | Not identified | Not identified | Not applicable | Not applicable |
-| Release-integrity tooling | Published | Not identified | Not identified | Not identified | Not applicable | Not applicable |
-| Operational evidence | Project-operated Genesis | Not identified | Not identified | Not identified | Not applicable | Not applicable |
-| Independent implementation | Not independently established | Not identified | Not identified | Not identified | Not applicable | Not applicable |
-| Policy/Management code | Optional developer preview | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Versioned specification contract | Published project suite; separate wire baseline | Individual draft | Individual draft | Detailed individual draft | Requirements only | Proposed charter |
+| Machine-readable schemas/registries | Published schemas and intent registry | Message fields in draft; standalone contract not identified | JSON examples in draft; standalone contract not identified | Binary/CBOR structures in draft; standalone contract not identified | Not applicable | Not applicable |
+| Maintained public implementation | PHP/Rust Directories and three SDK families | Not identified | Not identified; Hackathon plan noted | Not identified | Not applicable | Not applicable |
+| Multiple maintained codebases | Two Directories, three SDKs, browser and Management preview, mostly same-project | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Multiple implementation languages | Python, TypeScript, Rust, PHP | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Executable conformance fixtures | Project-owned, including cross-language parity material | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Negative/security vectors | Published project-owned refusal, ticket and resource-boundary cases | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Standalone black-box runner | Directory profiles and offline evidence checks | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Release-integrity tooling | Manifest and validation tools | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Packaged component releases | Independently versioned project releases | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Operational deployment evidence | Project-operated PHP Genesis; not an independent deployment | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Independent implementation/interoperability | Not independently established | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+| Policy/Management implementation | Optional developer preview; not deployed authority | Not identified | Not identified | Not identified | Not applicable | Not applicable |
+
+The external evidence check was bounded to each exact draft, links it provides
+and a focused public repository search on the draft identifier. For AIDIP it
+also included the [IETF 124 Hackathon record](https://github.com/ietf/wiki.ietf.org/blob/main/meeting/124/hackathon.md).
+
+| Draft | Implementation evidence found in that scope | What remains unestablished |
+|---|---|---|
+| [IAIP -02](https://datatracker.ietf.org/doc/draft-sz-dmsc-iaip/02/) | A detailed gateway procedure, message fields and examples in the individual draft. | No maintained public implementation, executable conformance suite or operational deployment was identified in the reviewed sources. |
+| [AIDIP -02](https://datatracker.ietf.org/doc/draft-cui-ai-agent-discovery-invocation/02/) | Agent metadata, REST examples and optional selection fields in the draft. Its source-repository URL is still a placeholder. The Hackathon record describes related implementation activity as a plan, not a verified release. | No maintained public AIDIP implementation, cross-implementation result, executable conformance suite or deployment was identified in the reviewed sources. |
+| [CIRP -02](https://datatracker.ietf.org/doc/draft-verma-cirp/02/) | Detailed scope, binary ticket, session and dual-signed receipt specifications. This is substantial specification detail. | No maintained public implementation, executable conformance suite or operational deployment was identified in the reviewed sources. Draft detail alone cannot settle runtime maturity. |
+
+These are findings about *located evidence*, not claims that no code exists.
+The requirements draft and proposed charter are different artifact types, so
+their lack of an executable implementation is not scored as a defect.
 
 The [machine-readable evidence rows](protocol-comparison-v1.json) identify
 source URLs, artifact class, verification date, bounded search scope and each
@@ -113,12 +163,20 @@ drafts reviewed here. This does not establish universal design superiority,
 equivalent scope, IETF adoption or independent IICP interoperability. The
 maintained IICP implementations are predominantly same-project work.
 
-Requirements and charters, individual drafts, executable specifications,
-maintained implementations, cross-language fixtures, packaged releases,
-project-operated deployments and independently authored interoperability are
-different evidence stages. They are not a quality ranking: a narrow charter
-can be valuable without code, and project-operated code cannot satisfy an
-independent-implementation gate.
+The evidence stages are distinct:
+
+```text
+requirements / charter -> individual draft -> executable specification
+-> maintained implementation(s) -> cross-implementation fixtures
+-> conformance tooling -> packaged releases -> operational deployment
+-> independently authored implementation and external interoperability
+```
+
+This is not a quality ranking: a narrow charter can be valuable without code,
+and project-operated code cannot satisfy an independent-implementation gate.
+IICP has passed the specification-only stage through its maintained codebases,
+fixtures, tooling, releases and project-operated deployment. Its independent
+implementation and externally operated interoperability stage remains open.
 
 ## Intent Routing Requirements mapping
 
