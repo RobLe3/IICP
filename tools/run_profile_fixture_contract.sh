@@ -27,6 +27,7 @@ python3 tools/check_intent_registry_schema.py
 python3 -m unittest discover -s tools -p 'test_intent_registry.py'
 python3 -m unittest discover -s tools -p 'test_intent_payload_fixture.py'
 python3 tools/audit_intent_sources.py --check
+python3 -m unittest discover -s tools -p 'test_audit_intent_sources.py'
 python3 -m unittest discover -s tools -p 'test_service_lifecycle_fixture.py'
 python3 tools/test_mcp_era_fixture.py
 python3 tools/check_e050_client_credential_lifecycle.py
