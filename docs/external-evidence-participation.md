@@ -21,6 +21,17 @@ result or a decision. Validate the index with:
 python3 tools/check_external_participation_campaign.py
 ```
 
+## Reported external binding experiments
+
+The [September 28 Correctover / CCS experiment](../evidence/IICP_CCS_INTEROPERABILITY_EXPERIMENT_2026-09-28.md)
+records externally reported composition of the released Python MCP gateway with
+an external execution-assurance layer. It preserves the tested versions,
+14/14 expected case outcomes, 415/426 checker checks and the missing reproduction
+artifacts. It is not a full IICP intent-to-execution result, independent Directory
+implementation, campaign participant acceptance or pre-1.0 qualification credit.
+Its architectural questions are tracked separately and deferred until after
+qualification; the five participation lanes below remain unchanged.
+
 ## Choose one lane
 
 | Lane | Tracker | Who is needed | Starting artifact | Completion evidence |
