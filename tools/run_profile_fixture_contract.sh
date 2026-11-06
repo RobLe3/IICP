@@ -2,6 +2,7 @@
 set -euo pipefail
 
 python3 tools/manage_release_closure.py --check
+python3 -m unittest discover -s tools -p 'test_discovery_sdk_currency.py'
 python3 tools/check_protocol_comparison.py
 python3 -m unittest discover -s tools -p 'test_protocol_comparison.py'
 python3 -m unittest discover -s tools -p 'test_selection_review_bundle.py'
