@@ -227,7 +227,7 @@
     "tools/check_submission_governance_decision.py": "a249100bf6c2836ea01ceee353fa5c139ecbe0f0b280fe250a86d11137dde9cd",
     "tools/manage_release_closure.py": "758c6a3371d032224cc6cf023f280cf4e4380e615898ab3f007413ee433c6680",
     "tools/requirements.txt": "c0134412c5344bebbcef0bbe0cd3ed6f94f984f3cf990bb5c9a0ce79123c9e02",
-    "tools/run_profile_fixture_contract.sh": "ff197ee2664ff02c37225a1f94f0a96d3f6312719fa6c4d90b8357d2aadc814f",
+    "tools/run_profile_fixture_contract.sh": "62e65f3c06f2f4995bb78acb21f86959176e8c6f646347675073420e725f8d68",
     "tools/test_audit_intent_sources.py": "a66228f6f93131fd10ac2271e80d5b2430ddca7ef652f327f7a176955eb742c9",
     "tools/test_clean_room_interoperability_record.py": "2f2cc274dfb5e9503b0d24d91bc5ee2e1878301c464ad3ff65d9afaa267a847b",
     "tools/test_compatibility_environment.py": "c5cfb6c4bda7002b500f5b727c4ebd6bcf96052aef5ae8fefd902daf0ed324c8",
